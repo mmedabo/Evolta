@@ -1,0 +1,9 @@
+{
+  "name": "evolta-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Evolta learning site (static) + serverless chat proxy for the Evolta Assistant.",
+  "engines": {
+    "node": ">=18"
+  }
+}

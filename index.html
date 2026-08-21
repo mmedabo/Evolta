@@ -857,5 +857,12 @@
             © 2026 Evolta. All rights reserved.
         </div>
     </footer>
+
+    <!-- Evolta Assistant (free AI chat) — talks to the server-side /api/chat proxy,
+         so the OpenRouter key never reaches the browser. If the proxy is deployed on a
+         separate origin (e.g. Vercel) while this page is on GitHub Pages, uncomment and
+         set the endpoint below: -->
+    <!-- <script>window.EVOLTA_CHAT_ENDPOINT = "https://YOUR-PROJECT.vercel.app/api/chat";</script> -->
+    <script src="assets/chat-widget.js" defer></script>
 </body>
 </html>
