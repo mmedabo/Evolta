@@ -33,12 +33,15 @@
 // never accidentally bill a paid model. Availability of free models changes —
 // verify the current list at https://openrouter.ai/models?max_price=0 and
 // override via the OPENROUTER_MODELS env var without touching this file.
+// Offline fallback list, used only if the live catalog fetch fails. These are
+// current free general-chat slugs — but the live discovery above is the primary
+// source, so this list going stale won't break the assistant.
 const DEFAULT_MODELS = [
-  'deepseek/deepseek-chat-v3-0324:free',
-  'google/gemini-2.0-flash-exp:free',
-  'qwen/qwen-2.5-72b-instruct:free',
-  'mistralai/mistral-small-3.1-24b-instruct:free',
-  'meta-llama/llama-3.2-3b-instruct:free',
+  'z-ai/glm-5.2:free',
+  'google/gemma-4-31b-it:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+  'google/gemma-4-26b-a4b-it:free',
+  'nvidia/nemotron-nano-9b-v2:free',
 ];
 
 const SYSTEM_PROMPT = [
@@ -97,14 +100,66 @@ function rateLimited(ip) {
   return arr.length > RATE_LIMIT;
 }
 
-// ---- Helpers -------------------------------------------------------------
+// ---- Free-model discovery ------------------------------------------------
+// Free-model availability on OpenRouter churns constantly — slugs get retired
+// and renamed, so any hard-coded list goes stale. To stay self-healing, we fetch
+// the CURRENT free models from OpenRouter's public catalog at request time and
+// try those, falling back to DEFAULT_MODELS only if the catalog is unreachable.
+// The result is cached in module scope so warm invocations don't refetch.
+let modelCache = { at: 0, list: null };
+const MODEL_CACHE_TTL_MS = 10 * 60 * 1000; // 10 min
+const MODEL_TRY_LIMIT = 8;                  // cap how many we attempt per request
+// Skip specialized / non-chat free models (safety classifiers, embeddings, etc.).
+const NON_CHAT = /content-safety|guard|moderation|embed|rerank/i;
 
-function resolveModels() {
+async function fetchLiveFreeModels() {
+  try {
+    const r = await fetch('https://openrouter.ai/api/v1/models', {
+      headers: { Accept: 'application/json' },
+    });
+    if (!r.ok) return null;
+    const data = await r.json();
+    const list = (data.data || [])
+      // Only ":free" slugs whose prompt AND completion price are exactly 0.
+      .filter((m) => typeof m.id === 'string' && m.id.endsWith(':free'))
+      .filter((m) => {
+        const p = m.pricing || {};
+        return String(p.prompt) === '0' && String(p.completion) === '0';
+      })
+      .map((m) => m.id)
+      .filter((id) => !NON_CHAT.test(id));
+    return list.length ? list : null;
+  } catch {
+    return null;
+  }
+}
+
+async function resolveModels() {
+  // Explicit env override always wins (still hard-guarded to ":free" only).
   const raw = (process.env.OPENROUTER_MODELS || '').trim();
-  const list = raw ? raw.split(',').map((s) => s.trim()).filter(Boolean) : DEFAULT_MODELS;
-  // Hard safety rail: only ":free" models are ever allowed through this proxy.
-  const free = list.filter((m) => m.endsWith(':free'));
-  return free.length ? free : DEFAULT_MODELS;
+  if (raw) {
+    const free = raw.split(',').map((s) => s.trim()).filter((m) => m.endsWith(':free'));
+    if (free.length) return free;
+  }
+  // Serve from cache while fresh.
+  const now = Date.now();
+  if (modelCache.list && now - modelCache.at < MODEL_CACHE_TTL_MS) {
+    return modelCache.list;
+  }
+  const live = await fetchLiveFreeModels();
+  let list;
+  if (live) {
+    // Try our curated defaults first (if still live), then the rest of the
+    // live catalog — so known-good general-chat models are attempted before
+    // the long tail. Hard safety rail: everything here already ends in ":free".
+    const preferred = DEFAULT_MODELS.filter((m) => live.includes(m));
+    const rest = live.filter((m) => !preferred.includes(m));
+    list = [...preferred, ...rest].slice(0, MODEL_TRY_LIMIT);
+  } else {
+    list = DEFAULT_MODELS;
+  }
+  modelCache = { at: now, list };
+  return list;
 }
 
 function allowedOrigins() {
@@ -187,7 +242,7 @@ module.exports = async function handler(req, res) {
   }
 
   const payloadMessages = [{ role: 'system', content: SYSTEM_PROMPT }, ...messages];
-  const models = resolveModels();
+  const models = await resolveModels();
 
   // Try each free model in turn — free tiers 429 often, so fall through on failure.
   for (let i = 0; i < models.length; i++) {
