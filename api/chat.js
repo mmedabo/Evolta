@@ -34,11 +34,11 @@
 // verify the current list at https://openrouter.ai/models?max_price=0 and
 // override via the OPENROUTER_MODELS env var without touching this file.
 const DEFAULT_MODELS = [
-  'meta-llama/llama-3.3-70b-instruct:free',
-  'google/gemini-2.0-flash-exp:free',
   'deepseek/deepseek-chat-v3-0324:free',
+  'google/gemini-2.0-flash-exp:free',
   'qwen/qwen-2.5-72b-instruct:free',
   'mistralai/mistral-small-3.1-24b-instruct:free',
+  'meta-llama/llama-3.2-3b-instruct:free',
 ];
 
 const SYSTEM_PROMPT = [
@@ -224,8 +224,11 @@ module.exports = async function handler(req, res) {
 
     if (!upstream.ok || !upstream.body) {
       clearTimeout(timeout);
-      // 429 / 5xx on a free model → fall through to the next one.
-      if ((upstream.status === 429 || upstream.status >= 500) && i < models.length - 1) {
+      // ANY failure on a free model → fall through and try the next one. Free-tier
+      // availability churns constantly: a slug can be rate-limited (429), retired
+      // from the free tier (404), or error upstream (5xx). We don't special-case
+      // codes — if there's another free model to try, try it.
+      if (i < models.length - 1) {
         continue;
       }
       const detail = await upstream.text().catch(() => '');
