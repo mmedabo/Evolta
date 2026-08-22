@@ -1,0 +1,13 @@
+# Secrets — the OpenRouter key belongs in Vercel env vars, NEVER in the repo.
+.env
+.env.*
+!.env.example
+
+# Node / tooling
+node_modules/
+.vercel/
+npm-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
