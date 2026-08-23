@@ -68,6 +68,41 @@ sees the key or calls OpenRouter directly.
 | **Chat proxy** (`api/chat.js`) | Node ≥18 serverless function (Vercel) | Holds the key, enforces free-only models, discovers live models, injects system prompt, rate-limits, CORS, streams reply. |
 | **OpenRouter** | External API | Routes to underlying free LLMs; returns OpenAI-style streamed completions. |
 
+### 3.1 How the free models actually run (and why they're free)
+
+**OpenRouter does not run the models on its own GPUs.** It is a *router / marketplace*:
+it forwards each call to whichever upstream provider hosts that model, and that
+provider's GPUs perform the inference.
+
+```mermaid
+flowchart LR
+    P[Your proxy<br/>api/chat.js · holds the key] --> R[OpenRouter<br/>picks a provider · no GPUs of its own]
+    R --> G[(Provider GPUs<br/>Together · DeepInfra · Novita …<br/>actual inference)]
+    G --> R --> P
+```
+
+- **Open-weight models** (Llama, Qwen, Gemma, Nemotron, GLM…) are typically served by
+  several inference providers; OpenRouter selects one by price, latency and uptime.
+- **Closed models** (GPT, Claude, Gemini) are routed to the vendor's own first-party API.
+- **`:free` slugs** run on a provider's subsidized free tier — which is why they are
+  rate-limited (429s) and occasionally retired (404s), and why the proxy discovers the
+  live catalog and falls through across models.
+
+**Why anyone offers it free — the value exchange.** Free is not charity; every party
+gets something back, and the caller "pays" in data and reliability rather than cash:
+
+| Party | What they get from the free tier |
+|-------|----------------------------------|
+| **Inference providers** (run it) | Acquisition funnel to their paid tier; **training/tuning data** from logged free traffic; utilization of otherwise-idle GPUs; volume that proves speed/uptime and wins paid routing. |
+| **Model makers** (build it) | Adoption & mindshare for open-weight models; ecosystem lock-in that drives cloud/enterprise sales; free distribution via OpenRouter's catalog. |
+| **OpenRouter** (routes it) | Developer acquisition; upsell to paid models on the same key (the actual business); stickiness once a stack routes through it. |
+| **Evolta** (pays in kind) | **$0 cash** — no GPUs, no per-token bill — in exchange for: prompts possibly **logged/used for training** (provider-dependent), and **no SLA** (rate limits, variable latency, models retired without notice). |
+
+**Implication for Evolta:** a free tier is appropriate for a public learning assistant.
+The moment the chat handles anything sensitive or needs reliability guarantees, switch
+to a **paid or first-party provider** with a real data policy and SLA (see the roadmap in
+§7). A visual version of this lives in `docs/` as the "Evolta Assistant Flow" diagram.
+
 ---
 
 ## 4. Request lifecycle (happy path)
