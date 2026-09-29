@@ -6,7 +6,7 @@
 <title>The Spread — Market Making, From Scratch | Evolta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#f1f7f3;
@@ -170,14 +170,15 @@
   <header>
     <div class="brand">
       <h1>The Spread <span class="bolt">📈</span></h1>
-      <div class="sub">Market Making — from scratch · <span class="evolta">Evolta — learn · play · evolve</span></div>
+      <div class="sub" id="brandSub"></div>
     </div>
     <div class="topbar">
       <div class="clock" id="clock" style="display:none">
         <div class="month" id="monthLabel">—</div>
-        <div class="turn" id="turnLabel">Press start</div>
+        <div class="turn" id="turnLabel"></div>
       </div>
-      <a class="back-btn" href="TradingGamePortal.html">‹ All games</a>
+      <button class="back-btn" id="langToggle" type="button" style="cursor:pointer;margin-right:8px">中文</button>
+      <a class="back-btn" id="backAll" href="TradingGamePortal.html">‹ All games</a>
     </div>
   </header>
 
@@ -187,9 +188,9 @@
       <div class="acad-steps" id="acadSteps"></div>
       <div id="lessonContent"></div>
       <div class="acad-nav">
-        <button class="ghost-btn" id="backBtn" onclick="acadBack()">‹ Back</button>
+        <button class="ghost-btn" id="backBtn" onclick="acadBack()" data-i18n="nav_back">‹ Back</button>
         <div class="right">
-          <button class="ghost-btn" id="skipBtn" onclick="startGame()">Skip to game ›</button>
+          <button class="ghost-btn" id="skipBtn" onclick="startGame()" data-i18n="nav_skip">Skip to game ›</button>
           <button class="big-btn" id="nextBtn" onclick="acadNext()" style="width:auto;padding:11px 26px">Next ›</button>
         </div>
       </div>
@@ -200,37 +201,31 @@
   <div id="game" class="grid hidden">
     <div>
       <div class="panel" id="newsPanel">
-        <h2><span class="dot"></span>Order-Flow Wire</h2>
-        <div id="newsBox">
-          <div class="news">
-            <div class="hl">You're the market maker.</div>
-            <div class="src">Evolta Trading Floor</div>
-            <div class="ex">You quote a <b>bid</b> (where you'll buy) and an <b>ask</b> (where you'll sell). Buyers and sellers hit your quotes; you pocket the <b>spread</b> — but you carry whatever <b>inventory</b> you accumulate. Set your spread &amp; skew, then advance. Read the flow to avoid getting picked off.</div>
-          </div>
-        </div>
+        <h2><span class="dot"></span><span data-i18n="pn_flow">Order-Flow Wire</span></h2>
+        <div id="newsBox"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>The Book</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_book">The Book</span></h2>
         <table class="mkt">
-          <thead><tr><th>Level</th><th style="text-align:right">Price</th><th style="text-align:right">Δ tick</th></tr></thead>
+          <thead><tr><th data-i18n="th_level">Level</th><th style="text-align:right" data-i18n="th_price">Price</th><th style="text-align:right" data-i18n="th_tick">Δ tick</th></tr></thead>
           <tbody id="mktBody"></tbody>
         </table>
         <div class="hint" id="bookHint"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Your Quotes</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_quotes">Your Quotes</span></h2>
         <div class="trade-card">
           <div class="quote-preview">
-            <div class="qbox bid"><div class="ql">Your Bid</div><div class="qv" id="bidPrev">—</div></div>
-            <div class="qbox mid"><div class="ql">Mid</div><div class="qv" id="midPrev">—</div></div>
-            <div class="qbox ask"><div class="ql">Your Ask</div><div class="qv" id="askPrev">—</div></div>
+            <div class="qbox bid"><div class="ql" data-i18n="q_bid">Your Bid</div><div class="qv" id="bidPrev">—</div></div>
+            <div class="qbox mid"><div class="ql" data-i18n="q_mid">Mid</div><div class="qv" id="midPrev">—</div></div>
+            <div class="qbox ask"><div class="ql" data-i18n="q_ask">Your Ask</div><div class="qv" id="askPrev">—</div></div>
           </div>
-          <div class="ctrl-row"><label class="tip" title="Total distance between your bid and ask. Tighter = more fills but less edge per trade. Wider = fewer fills, more edge.">Spread width</label>
+          <div class="ctrl-row"><label class="tip" id="lblWidth" data-i18n="lbl_width" data-i18n-title="tip_width">Spread width</label>
             <input type="range" min="0.4" max="5" step="0.1" value="1.6" id="widthSlider" oninput="updateQuotes()">
             <span class="val" id="widthVal">1.6</span></div>
-          <div class="ctrl-row"><label class="tip" title="Shift both quotes up or down. Skew DOWN to sell off a long inventory; skew UP to buy when you're short.">Skew</label>
+          <div class="ctrl-row"><label class="tip" id="lblSkew" data-i18n="lbl_skew" data-i18n-title="tip_skew">Skew</label>
             <input type="range" min="-3" max="3" step="0.1" value="0" id="skewSlider" oninput="updateQuotes()">
             <span class="val" id="skewVal">0.0</span></div>
           <div class="hint" id="quoteHint"></div>
@@ -243,41 +238,34 @@
 
     <div>
       <div class="panel">
-        <h2><span class="dot"></span>P&amp;L</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_pnl">P&amp;L</span></h2>
         <div class="big-num" id="pnlNum">$0</div>
-        <div class="stat"><span class="k tip" title="Edge captured by buying at your bid and selling at your ask, vs the mid price.">Spread captured</span><span class="v" id="spreadCap">$0</span></div>
-        <div class="stat"><span class="k tip" title="Gain or loss from price moving while you hold inventory.">Inventory P&amp;L</span><span class="v" id="invPL">$0</span></div>
-        <div class="stat"><span class="k">Fills</span><span class="v" id="fillCt">0</span></div>
+        <div class="stat"><span class="k tip" data-i18n="k_spread_cap" data-i18n-title="tip_spread_cap">Spread captured</span><span class="v" id="spreadCap">$0</span></div>
+        <div class="stat"><span class="k tip" data-i18n="k_inv_pl" data-i18n-title="tip_inv_pl">Inventory P&amp;L</span><span class="v" id="invPL">$0</span></div>
+        <div class="stat"><span class="k" data-i18n="k_fills">Fills</span><span class="v" id="fillCt">0</span></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Inventory</h2>
-        <div class="big-num" id="invNum" style="font-size:26px">0 <span style="font-size:13px;color:var(--txt-faint)">lots</span></div>
+        <h2><span class="dot"></span><span data-i18n="pn_inv">Inventory</span></h2>
+        <div class="big-num" id="invNum" style="font-size:26px"></div>
         <div class="meter center"><i id="invMark" style="left:50%"></i></div>
-        <div class="hint" id="invHint">Flat. No price risk.</div>
+        <div class="hint" id="invHint"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Trade Blotter</h2>
-        <div id="blotBox"><div class="hint">No fills yet.</div></div>
+        <h2><span class="dot"></span><span data-i18n="pn_blot">Trade Blotter</span></h2>
+        <div id="blotBox"></div>
       </div>
 
       <div class="panel" id="recapPanel" style="display:none">
-        <h2><span class="dot"></span>This Tick — Breakdown</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_recap">This Tick — Breakdown</span></h2>
         <div id="recapBox"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Glossary</h2>
-        <div style="font-size:11px;color:var(--txt-dim);line-height:1.7">
-          <b style="color:var(--green)">Bid / Ask</b> the prices you'll buy / sell at<br>
-          <b style="color:var(--green)">Spread</b> ask − bid; your gross edge per round-trip<br>
-          <b style="color:var(--green)">Mid</b> the fair price, halfway between bid and ask<br>
-          <b style="color:var(--green)">Inventory</b> net lots you're holding — your price risk<br>
-          <b style="color:var(--green)">Skew</b> shifting quotes to steer your inventory<br>
-          <b style="color:var(--green)">Adverse selection</b> getting filled right before the price moves against you
-        </div>
-        <div style="margin-top:12px"><button class="ghost-btn" onclick="openAcademy()" style="width:100%">↺ Replay the Academy</button></div>
+        <h2><span class="dot"></span><span data-i18n="pn_gloss">Glossary</span></h2>
+        <div style="font-size:11px;color:var(--txt-dim);line-height:1.7" id="glossBox"></div>
+        <div style="margin-top:12px"><button class="ghost-btn" onclick="openAcademy()" style="width:100%" data-i18n="replay_acad">↺ Replay the Academy</button></div>
       </div>
     </div>
   </div>
@@ -287,6 +275,330 @@
 <div class="modal-bg" id="modalBg"><div class="modal" id="modalInner"></div></div>
 
 <script>
+
+/* ================= i18n ================= */
+const I18N={
+en:{
+  doc_title:'The Spread — Market Making | Evolta',
+  lang_other:'中文', lang_aria:'Switch to Chinese',
+  brand_sub:'Market Making — from scratch · <span class="evolta">Evolta — learn · play · evolve</span>',
+  back_all:'‹ All games',
+  press_start:'Press start',
+  tick_n:n=>'Tick '+n, tick_of:n=>'of '+n,
+
+  nav_back:'‹ Back', nav_skip:'Skip to game ›', nav_next:'Next ›', nav_open:'Open the desk 📈',
+
+  pn_flow:'Order-Flow Wire', pn_book:'The Book', pn_quotes:'Your Quotes',
+  pn_pnl:'P&L', pn_inv:'Inventory', pn_blot:'Trade Blotter',
+  pn_recap:'This Tick — Breakdown', pn_gloss:'Glossary',
+
+  intro_hl:"You're the market maker.",
+  intro_src:'Evolta Trading Floor',
+  intro_ex:"You quote a <b>bid</b> (where you'll buy) and an <b>ask</b> (where you'll sell). Buyers and sellers hit your quotes; you pocket the <b>spread</b> — but you carry whatever <b>inventory</b> you accumulate. Set your spread &amp; skew, then advance. Read the flow to avoid getting picked off.",
+
+  th_level:'Level', th_price:'Price', th_tick:'Δ tick',
+  q_bid:'Your Bid', q_mid:'Mid', q_ask:'Your Ask',
+  lbl_width:'Spread width', lbl_skew:'Skew',
+  tip_width:'Total distance between your bid and ask. Tighter = more fills but less edge per trade. Wider = fewer fills, more edge.',
+  tip_skew:"Shift both quotes up or down. Skew DOWN to sell off a long inventory; skew UP to buy when you're short.",
+  btn_start:'▶ Start Session', btn_advance:'▶ Advance Tick',
+
+  k_spread_cap:'Spread captured', k_inv_pl:'Inventory P&L', k_fills:'Fills',
+  tip_spread_cap:'Edge captured by buying at your bid and selling at your ask, vs the mid price.',
+  tip_inv_pl:'Gain or loss from price moving while you hold inventory.',
+  lots:'lots', no_fills:'No fills yet.',
+  replay_acad:'↺ Replay the Academy',
+
+  gloss:'<b style="color:var(--green)">Bid / Ask</b> the prices you\'ll buy / sell at<br><b style="color:var(--green)">Spread</b> ask − bid; your gross edge per round-trip<br><b style="color:var(--green)">Mid</b> the fair price, halfway between bid and ask<br><b style="color:var(--green)">Inventory</b> net lots you\'re holding — your price risk<br><b style="color:var(--green)">Skew</b> shifting quotes to steer your inventory<br><b style="color:var(--green)">Adverse selection</b> getting filled right before the price moves against you',
+
+  row_ask:'Your Ask', row_ask_s:'where you sell',
+  row_mid:'Mid', row_mid_s:'fair price',
+  row_bid:'Your Bid', row_bid_s:'where you buy',
+  row_spread:'Spread', row_spread_s:'your edge',
+  centered:'centered', skew_lbl:v=>'skew '+v,
+  book_hint:"Mid is the market's fair price; it drifts each tick. You earn the gap between your quotes and the mid — but only on the trades that actually fill.",
+
+  qh_long:n=>"You're long "+n+' lots — consider skewing DOWN to sell some off.',
+  qh_short:n=>"You're short "+n+' lots — consider skewing UP to cover.',
+  qh_tight:'Very tight — lots of fills, thin edge. Risky if volatility is high.',
+  qh_wide:'Very wide — fat edge but you may sit idle.',
+  qh_balanced:'Balanced quote. Advance the tick to see who trades with you.',
+
+  inv_flat:'Flat. No price risk — exactly where you want to end.',
+  inv_modest:(d,n)=>d+' '+n+' lots — modest risk.',
+  inv_reduce:(d,n)=>d+' '+n+' lots — skew to reduce before a move hits.',
+  inv_limit:(d,n)=>d+' '+n+' lots — at the limit! Dangerous.',
+  long:'Long', short:'Short',
+  inv_start:'Flat. No price risk.',
+
+  bought:'Bought', sold:'Sold', one_lot:'1 lot',
+  breach:(n,slip)=>'⚠ Position limit breached — forced to flatten '+n+' lots (slippage '+slip+').',
+
+  r_fills:'Fills:', r_none:'none — your quotes were too wide for the flow',
+  r_bought:'bought', r_sold:'sold',
+  r_spread:'Spread earned:', r_move:'Price move:', r_invpl:'inventory P&L',
+  r_adverse:'Adverse selection: informed flow filled you just before the move. Wider/skewed quotes protect against this.',
+  r_piling:'Inventory is piling up — skew your quotes to push it back toward flat.',
+  read_flow:'Read the flow:',
+
+  reset_hl:'Fresh session. Quotes reset.',
+  reset_ex:'Set your spread &amp; skew, then press <b>Start Session</b>.',
+
+  ev0_hl:'Quiet, balanced two-way flow', ev0_src:'Tape', ev0_ex:'No clear direction — buyers and sellers roughly matched. Tighten up and harvest the spread.',
+  ev1_hl:'Buyers leaning in; momentum building', ev1_src:'Flow Desk', ev1_ex:"More buyers than sellers and price likely drifts up. If you sell too cheap you'll be short into a rally — skew your quotes up.",
+  ev2_hl:'Sellers pressing; risk-off tone', ev2_src:'Flow Desk', ev2_ex:"Heavy selling and price likely falls. Don't pile up longs — skew down so you're not caught holding.",
+  ev3_hl:'Volatility spike — headlines hitting the tape', ev3_src:'News', ev3_ex:'Big two-way swings. Widen your spread to get paid for the extra risk; tight quotes will get run over.',
+  ev4_hl:"Thin liquidity — you're nearly the only quote", ev4_src:'Tape', ev4_ex:'Almost all flow hits you. Easy spread, but inventory stacks up fast — manage it actively.',
+  ev5_hl:'Large informed buyer sweeping offers', ev5_src:'Surveillance', ev5_ex:"Someone who knows something is lifting asks before a jump. Classic adverse selection — skew up or widen, or you'll sell right before the pop.",
+  ev6_hl:'Forced seller dumping size', ev6_src:'Surveillance', ev6_ex:"A motivated seller is hitting bids before a drop. Skew down or widen, or you'll buy right before it falls.",
+  ev7_hl:'Steady, liquid conditions', ev7_src:'Tape', ev7_ex:'Calm and liquid. Tight spreads win lots of small, safe round-trips.',
+
+  l_kick:(i,n)=>'Academy · Lesson '+i+' of '+n,
+  l_kick3:'Academy · Lesson 3 of 5 · the hidden danger',
+  l_kick4:'Academy · Lesson 4 of 5 · the steering wheel',
+  l_kick5:'Academy complete',
+
+  l0_ttl:'A market maker is a shopkeeper for stocks',
+  l0_lede:"You don't bet on prices going up or down. You run a <b>stall</b>: you'll buy from anyone who wants to sell, and sell to anyone who wants to buy — always quoting two prices at once. You earn the gap between them, the <b>spread</b>, thousands of times a day.",
+  l0_svg1:'You quote both sides at once', l0_svg2:'BUY at your', l0_svg3:'SELL at your',
+  l0_svg4:'Spread = $1.00', l0_svg5:'buy low, sell high — over and over',
+  l0_svg6:'you provide liquidity; the spread is your fee',
+  l0_p1:'<b>You quote a bid and an ask</b> around the fair price (the "mid"). The market comes to you.',
+  l0_p2:'<b>Every round-trip earns the spread:</b> buy one share at your bid, sell one at your ask, pocket the difference.',
+  l0_p3:"<b>The risk:</b> you can't control who shows up. If only sellers come, you pile up shares — and now you're exposed if the price drops.",
+  l0_tlab:'The balancing act',
+  l0_ttxt:'Make money on the spread while keeping your <b>inventory near zero</b>. Quote too wide and nobody trades with you; too tight and you barely earn. The next lessons build the instinct.',
+
+  l1_ttl:'The spread: your price, your edge',
+  l1_lede:"Your two quotes sit on either side of the mid. The distance between them is the spread. Drag it: a <b>tight</b> spread wins lots of trades but little per trade; a <b>wide</b> spread earns more each time but scares flow away. There's no free lunch.",
+  l1_mid:'mid $100',
+  l1_p1:'<b>Tight spread (e.g. $0.40):</b> very competitive, you win most of the flow — but earn pennies each time.',
+  l1_p2:'<b>Wide spread (e.g. $4):</b> fat profit per trade, but traders go elsewhere and you sit idle.',
+  l1_p3:'<b>The art</b> is matching your spread to conditions: calm and liquid → tighten; wild and risky → widen to get paid for the danger.',
+  l1_tlab:'Rule of thumb',
+  l1_ttxt:"Your spread is the price of your service. <b>Widen it when the world gets scary</b> (volatility, one-sided flow), tighten it when it's calm. You'll do exactly this in the game.",
+  l1_fill:r=>'~'+r+'% of orders trade with you',
+  l1_read:(w,e,r,note)=>'Spread <b>$'+w+'</b> · edge per trade <b>$'+e+'</b> · fill rate <b>'+r+'%</b>. '+note,
+  l1_thin:'Razor-thin — high volume, low margin.',
+  l1_vwide:'Very wide — fat margin, few takers.',
+  l1_bal:'A balanced quote.',
+
+  l2_ttl:"Inventory: the risk you didn't choose",
+  l2_lede:"Here's what catches new market makers out. When more sellers than buyers show up, you keep <b>buying</b> — and end up holding a big pile of stock. If the price then drops, that inventory loses money fast. Stack up some inventory, then move the price and watch.",
+  l2_svg1:'Your inventory &amp; its value',
+  l2_buy:'＋ Get filled (buy 2)', l2_up:'📈 Price +$2', l2_down:'📉 Price −$2', l2_reset:'↺ Flatten',
+  l2_read:(i,p)=>'Inventory <b>'+i+'</b> · price <b>$'+p+'</b>',
+  l2_lots:n=>n+' lots',
+  l2_p1:'<b>Fills change your inventory.</b> Buy fills make you longer; sell fills make you shorter.',
+  l2_p2:'<b>Inventory × price move = P&L.</b> Long 6 lots and the price drops $2? You\'re down $12 — even though you "did nothing wrong."',
+  l2_p3:"<b>Flat is safe.</b> With zero inventory, price moves don't touch you. That's why MMs constantly try to get back to flat.",
+  l2_tlab:'The trap',
+  l2_ttxt:'A great spread-capture day can be wiped out by one bad inventory swing. <b>Managing inventory is the whole job</b> — which brings us to skew.',
+
+  l3_ttl:'Skew: nudging the flow back to flat',
+  l3_lede:"If you're stuck <b>long</b> (too much inventory), you want to sell. So you <b>shift both quotes down</b> — your ask becomes a bargain that buyers snap up, while your now-lower bid discourages more buying. That's skewing. Drag it and watch which side gets more attractive.",
+  l3_p1:'<b>Long inventory → skew DOWN.</b> Cheaper ask = buyers take your stock; you shed risk back to flat.',
+  l3_p2:'<b>Short inventory → skew UP.</b> Higher bid = sellers fill you; you cover the short.',
+  l3_p3:'<b>You give up a little edge</b> to control inventory — almost always worth it. Runaway inventory is what blows up market makers.',
+  l3_tlab:'In the game',
+  l3_ttxt:"You'll set spread width <b>and</b> skew each tick. When the flow is one-sided or you've built a position, skew is how you fight back to flat before a price move punishes you.",
+  l3_down:'Quotes shifted DOWN — your ask is cheap, sellers of risk rejoice. Good when long.',
+  l3_up:'Quotes shifted UP — your bid is rich, sellers hit it. Good when short.',
+  l3_neutral:'Neutral — symmetric quotes, no inventory pressure.',
+  l3_read:(v,msg)=>'Skew <b>'+v+'</b>. '+msg,
+  l3_bid:v=>'bid $'+v, l3_ask:v=>'ask $'+v,
+
+  l5_ttl:"You're ready to make markets",
+  l5_lede:"Everything you'll do at the desk comes down to four ideas:",
+  l5_p1:'<b>Quote both sides</b> — a bid and an ask around the mid; the spread is your fee.',
+  l5_p2:'<b>Width is a dial</b> — tight for volume in calm markets, wide to get paid in volatile ones.',
+  l5_p3:'<b>Inventory is risk</b> — every fill builds a position that price moves can punish.',
+  l5_p4:'<b>Skew to stay flat</b> — shift your quotes to bleed off inventory before it bites.',
+  l5_tlab:'Your job for the session',
+  l5_ttxt:'Across the ticks, set your <b>spread</b> and <b>skew</b>, read each order-flow headline, and harvest spread while keeping inventory near zero. Watch out for <b>adverse selection</b> — getting filled right before a one-way move. A scored <b>debrief</b> grades you, and you can replay this Academy anytime.',
+
+  d_title:'Session Debrief', d_notes:'Desk notes', d_again:'↺ Make Markets Again',
+  d_total:'Total P&L', d_spread:'Spread captured', d_invpl:'Inventory P&L',
+  d_control:'Inventory control', d_breach:'Limit breaches', d_adverse:'Adverse selection',
+  d_fills:n=>' ('+n+' fills)',
+  d_tight:'Tight', d_loose:'Loose', d_ooc:'Out of control',
+  d_peak:(s,n)=>s+' — peak '+n+' lots',
+  d_clean:'None — clean', d_flattens:n=>n+' forced flatten(s)',
+  d_dodged:'Dodged it', d_picked:n=>'Picked off '+n+'×',
+
+  c_strong:'Strong session — you harvested spread and kept inventory under control.',
+  c_red:'You finished red. Usually that means inventory losses swamped the spread you earned.',
+  c_invpl:'Inventory P&L was your problem: you held positions into adverse moves. Skew harder to get back to flat before price runs.',
+  c_limit:'You let inventory run to the limit. One sharp move there can erase a whole session — skew sooner, not later.',
+  c_adverse:n=>'You got picked off '+n+'× by informed flow. When surveillance flags a sweep or forced seller, widen or skew away from the toxic side.',
+  c_lowcap:'Low spread capture — your quotes may have been too wide. In calm, liquid ticks, tighten up to win more flow.',
+  c_ok:'Disciplined two-sided market making. Next: tighten in calm ticks to lift volume without taking on inventory risk.'
+},
+zh:{
+  doc_title:'价差 — 做市商 | Evolta',
+  lang_other:'EN', lang_aria:'切换到英文',
+  brand_sub:'做市商入门 · <span class="evolta">Evolta — 学习 · 探索 · 进化</span>',
+  back_all:'‹ 全部游戏',
+  press_start:'点击开始',
+  tick_n:n=>'第 '+n+' 轮', tick_of:n=>'共 '+n+' 轮',
+
+  nav_back:'‹ 上一课', nav_skip:'跳过，直接开始 ›', nav_next:'下一课 ›', nav_open:'进入交易台 📈',
+
+  pn_flow:'订单流快讯', pn_book:'盘口', pn_quotes:'你的报价',
+  pn_pnl:'盈亏', pn_inv:'库存', pn_blot:'成交记录',
+  pn_recap:'本轮拆解', pn_gloss:'术语表',
+
+  intro_hl:'你就是做市商。',
+  intro_src:'Evolta 交易大厅',
+  intro_ex:'你要同时报出<b>买价</b>（你愿意买入的价格）和<b>卖价</b>（你愿意卖出的价格）。买家和卖家来吃你的报价，你赚走中间的<b>价差</b>——但也要背上因此累积的<b>库存</b>。设好价差与偏移，然后推进一轮。读懂订单流，别被人抢先。',
+
+  th_level:'档位', th_price:'价格', th_tick:'本轮变动',
+  q_bid:'你的买价', q_mid:'中间价', q_ask:'你的卖价',
+  lbl_width:'价差宽度', lbl_skew:'报价偏移',
+  tip_width:'买价与卖价之间的总距离。报得越窄，成交越多但每笔赚得越少；报得越宽，成交越少但每笔赚得越多。',
+  tip_skew:'把两边报价整体上移或下移。手上多头太多就向下偏移以出货；空头太多就向上偏移以补回。',
+  btn_start:'▶ 开始交易', btn_advance:'▶ 推进一轮',
+
+  k_spread_cap:'价差收入', k_inv_pl:'库存盈亏', k_fills:'成交笔数',
+  tip_spread_cap:'相对中间价，以买价买入、以卖价卖出所赚到的价差。',
+  tip_inv_pl:'持有库存期间，价格变动带来的盈利或亏损。',
+  lots:'手', no_fills:'暂无成交。',
+  replay_acad:'↺ 重看教程',
+
+  gloss:'<b style="color:var(--green)">买价 / 卖价</b> 你愿意买入 / 卖出的价格<br><b style="color:var(--green)">价差</b> 卖价 − 买价，一次来回的毛利<br><b style="color:var(--green)">中间价</b> 买卖价正中间的公允价格<br><b style="color:var(--green)">库存</b> 你手上的净持仓——你的价格风险<br><b style="color:var(--green)">偏移</b> 移动报价以引导库存回到中性<br><b style="color:var(--green)">逆向选择</b> 刚成交价格就朝不利方向跑',
+
+  row_ask:'你的卖价', row_ask_s:'你在这里卖出',
+  row_mid:'中间价', row_mid_s:'公允价格',
+  row_bid:'你的买价', row_bid_s:'你在这里买入',
+  row_spread:'价差', row_spread_s:'你的利润空间',
+  centered:'居中', skew_lbl:v=>'偏移 '+v,
+  book_hint:'中间价是市场公认的公允价，每一轮都会漂移。你赚的是报价与中间价之间的差额——但只有真正成交的那些才算数。',
+
+  qh_long:n=>'你手上多头 '+n+' 手——可以考虑向下偏移，把货卖掉一些。',
+  qh_short:n=>'你手上空头 '+n+' 手——可以考虑向上偏移，把空头补回来。',
+  qh_tight:'报得非常窄——成交会很多，但每笔利润很薄。波动大时风险不小。',
+  qh_wide:'报得非常宽——每笔利润厚，但可能一单都接不到。',
+  qh_balanced:'报价比较均衡。推进一轮，看看谁会来跟你成交。',
+
+  inv_flat:'库存为零，没有价格风险——这正是你希望收盘时的状态。',
+  inv_modest:(d,n)=>d+' '+n+' 手——风险不大。',
+  inv_reduce:(d,n)=>d+' '+n+' 手——趁行情没动，先偏移报价把库存降下来。',
+  inv_limit:(d,n)=>d+' '+n+' 手——已到限额，很危险！',
+  long:'多头', short:'空头',
+  inv_start:'库存为零，没有价格风险。',
+
+  bought:'买入', sold:'卖出', one_lot:'1 手',
+  breach:(n,slip)=>'⚠ 持仓超限——被强制平掉 '+n+' 手（滑点 '+slip+'）。',
+
+  r_fills:'成交：', r_none:'没有成交——你的报价对这波订单流来说太宽了',
+  r_bought:'买入', r_sold:'卖出',
+  r_spread:'价差收入：', r_move:'价格变动：', r_invpl:'库存盈亏',
+  r_adverse:'逆向选择：知情资金抢在行情启动前跟你成交。把报价放宽或做偏移可以减轻这种伤害。',
+  r_piling:'库存越积越多——偏移报价，把它推回中性。',
+  read_flow:'读懂订单流：',
+
+  reset_hl:'新的一轮开始，报价已重置。',
+  reset_ex:'设好价差与偏移，然后点击 <b>开始交易</b>。',
+
+  ev0_hl:'双向订单流平稳均衡', ev0_src:'行情', ev0_ex:'没有明确方向，买卖力量大致均衡。把价差收窄，稳稳赚价差。',
+  ev1_hl:'买盘涌入，动能积聚', ev1_src:'订单流台', ev1_ex:'买家多于卖家，价格大概率上行。卖得太便宜，你就会在上涨行情里变成空头——把报价向上偏移。',
+  ev2_hl:'卖压沉重，避险情绪升温', ev2_src:'订单流台', ev2_ex:'抛压很重，价格大概率下跌。别把多头越堆越多——向下偏移，免得砸在手里。',
+  ev3_hl:'波动率飙升——消息面轮番冲击', ev3_src:'新闻', ev3_ex:'双向大幅摆动。把价差放宽，让额外风险有对应的回报；报得太窄会被反复碾压。',
+  ev4_hl:'流动性稀薄——盘口几乎只剩你一家', ev4_src:'行情', ev4_ex:'几乎所有订单都会打到你身上。价差好赚，但库存也堆得飞快——务必主动管理。',
+  ev5_hl:'知情大买家横扫卖盘', ev5_src:'监控', ev5_ex:'有人掌握了消息，正在行情跳涨前扫货。这是典型的逆向选择——向上偏移或放宽价差，否则你会刚好卖在起涨点前。',
+  ev6_hl:'被迫卖家大量抛售', ev6_src:'监控', ev6_ex:'有卖家在下跌前不计成本地砸你的买价。向下偏移或放宽价差，否则你会刚好买在下跌前。',
+  ev7_hl:'行情平稳，流动性充裕', ev7_src:'行情', ev7_ex:'市场平静、流动性好。窄价差能做出大量安全的小额来回。',
+
+  l_kick:(i,n)=>'教程 · 第 '+i+' 课 / 共 '+n+' 课',
+  l_kick3:'教程 · 第 3 课 / 共 5 课 · 隐藏的风险',
+  l_kick4:'教程 · 第 4 课 / 共 5 课 · 方向盘',
+  l_kick5:'教程完成',
+
+  l0_ttl:'做市商就是股票市场里的小店老板',
+  l0_lede:'你不去赌价格涨跌，而是开一个<b>摊位</b>：谁想卖，你就从他手里买；谁想买，你就卖给他——始终同时挂出两个价格。你赚的是这两个价格之间的<b>价差</b>，一天要赚成千上万次。',
+  l0_svg1:'你同时报出两边的价格', l0_svg2:'按你的买价', l0_svg3:'按你的卖价',
+  l0_svg4:'价差 = $1.00', l0_svg5:'低买高卖，反复不断',
+  l0_svg6:'你提供流动性，价差就是你的服务费',
+  l0_p1:'<b>你在公允价（中间价）两侧各报一个价</b>，让市场主动找上门。',
+  l0_p2:'<b>每完成一次来回就赚到价差：</b>用买价买进一份，再用卖价卖出一份，差额落袋。',
+  l0_p3:'<b>风险在于：</b>你无法决定谁来找你。如果来的全是卖家，你手上的货就会越堆越多——这时价格一跌，你就暴露了。',
+  l0_tlab:'需要拿捏的平衡',
+  l0_ttxt:'一边靠价差赚钱，一边把<b>库存维持在接近零</b>的水平。报得太宽没人跟你成交，报得太窄又几乎不赚钱。接下来的几课会帮你建立这种手感。',
+
+  l1_ttl:'价差：你的定价，也是你的利润',
+  l1_lede:'你的两个报价分列中间价两侧，它们之间的距离就是价差。拖动看看：<b>窄</b>价差能接到很多单，但每单赚得少；<b>宽</b>价差每单赚得多，却会把订单流吓跑。天下没有免费的午餐。',
+  l1_mid:'中间价 $100',
+  l1_p1:'<b>窄价差（例如 $0.40）：</b>竞争力很强，能吃到大部分订单流——但每次只赚几分钱。',
+  l1_p2:'<b>宽价差（例如 $4）：</b>每笔利润丰厚，但交易者会去别家，你只能干等着。',
+  l1_p3:'<b>功夫在于</b>让价差匹配当下的行情：平静、流动性好就收窄；剧烈、风险高就放宽，让风险有对应的回报。',
+  l1_tlab:'经验法则',
+  l1_ttxt:'价差就是你这项服务的定价。<b>世道一乱就放宽</b>（波动加大、订单流单边），平静下来就收窄。游戏里你要做的正是这件事。',
+  l1_fill:r=>'约 '+r+'% 的订单会跟你成交',
+  l1_read:(w,e,r,note)=>'价差 <b>$'+w+'</b> · 每笔利润 <b>$'+e+'</b> · 成交率 <b>'+r+'%</b>。'+note,
+  l1_thin:'薄如刀刃——走量，但利润极低。',
+  l1_vwide:'非常宽——利润厚，但少有人来。',
+  l1_bal:'比较均衡的报价。',
+
+  l2_ttl:'库存：你并没有主动选择的风险',
+  l2_lede:'新手做市商栽跟头，多半栽在这里。当卖家多于买家时，你会不断<b>买进</b>，最后手上堆了一大堆货。这时价格一跌，库存就飞快地亏钱。先堆一些库存，然后推动价格，看看会发生什么。',
+  l2_svg1:'你的库存及其价值',
+  l2_buy:'＋ 被成交（买 2 手）', l2_up:'📈 价格 +$2', l2_down:'📉 价格 −$2', l2_reset:'↺ 清空库存',
+  l2_read:(i,p)=>'库存 <b>'+i+'</b> · 价格 <b>$'+p+'</b>',
+  l2_lots:n=>n+' 手',
+  l2_p1:'<b>每一笔成交都会改变库存。</b>买入成交让你更偏多，卖出成交让你更偏空。',
+  l2_p2:'<b>库存 × 价格变动 = 盈亏。</b>手上有 6 手多头，价格跌了 $2？你就亏了 $12——哪怕你"什么都没做错"。',
+  l2_p3:'<b>零库存最安全。</b>库存为零时，价格怎么动都跟你无关。这就是做市商总想回到中性的原因。',
+  l2_tlab:'陷阱所在',
+  l2_ttxt:'辛苦一天赚来的价差，可能被一次糟糕的库存波动全部抹平。<b>管好库存就是这份工作的全部</b>——这就引出了下一课：偏移。',
+
+  l3_ttl:'偏移：把订单流推回中性',
+  l3_lede:'如果你被套成了<b>多头</b>（库存太多），你就想卖出。于是你把<b>两个报价一起下移</b>——卖价变得便宜，买家争相接手；同时压低的买价也让人不太愿意再卖给你。这就是偏移。拖一拖，看看哪一边变得更有吸引力。',
+  l3_p1:'<b>库存偏多 → 向下偏移。</b>卖价更便宜，买家把货接走，你的风险回到中性。',
+  l3_p2:'<b>库存偏空 → 向上偏移。</b>买价更高，卖家来打你的买价，你顺势补回空头。',
+  l3_p3:'<b>你会让渡一点利润</b>来换取库存可控——这几乎总是划算的。失控的库存正是做市商爆仓的原因。',
+  l3_tlab:'到了游戏里',
+  l3_ttxt:'每一轮你都要同时设定价差宽度<b>和</b>偏移。当订单流单边、或你已经积累了头寸时，偏移就是你在价格反噬之前把仓位拉回中性的手段。',
+  l3_down:'报价整体下移——你的卖价很便宜，想脱手风险的人会很高兴。手上偏多时适用。',
+  l3_up:'报价整体上移——你的买价很高，卖家会来打。手上偏空时适用。',
+  l3_neutral:'中性——两边对称，没有库存压力。',
+  l3_read:(v,msg)=>'偏移 <b>'+v+'</b>。'+msg,
+  l3_bid:v=>'买价 $'+v, l3_ask:v=>'卖价 $'+v,
+
+  l5_ttl:'你已经可以上台做市了',
+  l5_lede:'交易台上你要做的一切，归结起来就是四件事：',
+  l5_p1:'<b>同时报两边</b>——在中间价两侧各挂一个价，价差就是你的服务费。',
+  l5_p2:'<b>宽度是一个旋钮</b>——行情平静时收窄走量，波动剧烈时放宽以获得补偿。',
+  l5_p3:'<b>库存就是风险</b>——每一笔成交都在累积一个会被价格惩罚的头寸。',
+  l5_p4:'<b>用偏移回到中性</b>——在库存咬人之前，移动报价把它释放掉。',
+  l5_tlab:'本次交易的任务',
+  l5_ttxt:'在这些回合里，设定你的<b>价差</b>与<b>偏移</b>，读懂每条订单流快讯，一边赚价差一边把库存维持在接近零。当心<b>逆向选择</b>——刚成交行情就单边跑掉。结束时会有一份带评分的<b>复盘</b>，教程随时可以重看。',
+
+  d_title:'本场复盘', d_notes:'交易台点评', d_again:'↺ 再做一场',
+  d_total:'总盈亏', d_spread:'价差收入', d_invpl:'库存盈亏',
+  d_control:'库存控制', d_breach:'超限次数', d_adverse:'逆向选择',
+  d_fills:n=>'（成交 '+n+' 笔）',
+  d_tight:'很稳', d_loose:'偏松', d_ooc:'失控',
+  d_peak:(s,n)=>s+' — 峰值 '+n+' 手',
+  d_clean:'没有，干净', d_flattens:n=>'被强制平仓 '+n+' 次',
+  d_dodged:'成功避开', d_picked:n=>'被抢先 '+n+' 次',
+
+  c_strong:'表现不错——价差赚到了，库存也控制住了。',
+  c_red:'这场收在亏损。通常意味着库存亏损吞掉了你赚来的价差。',
+  c_invpl:'问题出在库存盈亏：你带着头寸迎面撞上了不利行情。要更果断地偏移，在价格跑掉之前回到中性。',
+  c_limit:'你让库存一路涨到了限额。在那个位置上一根急跌就能抹掉一整场——偏移要趁早，不要等。',
+  c_adverse:n=>'你被知情订单流抢先了 '+n+' 次。当监控提示有扫货或被迫卖家时，要么放宽价差，要么向远离那一侧偏移。',
+  c_lowcap:'价差收入偏低——你的报价可能太宽了。在平静、流动性好的回合里收窄一些，多接一点订单流。',
+  c_ok:'两边报价都很有纪律。下一步：在平静的回合里适当收窄，在不增加库存风险的前提下把成交量做上去。'
+}
+};
+let LANG=(function(){
+  const q=new URLSearchParams(location.search).get('lang');
+  if(q&&I18N[q])return q;
+  let v=null;try{v=localStorage.getItem('evolta_lang')}catch(e){}
+  return (v&&I18N[v])?v:'en';
+})();
+function t(k,...a){const v=I18N[LANG][k]!==undefined?I18N[LANG][k]:I18N.en[k];return typeof v==='function'?v(...a):v}
+
 /* =========================================================
    PART 1 — ACADEMY
    ========================================================= */
@@ -295,7 +607,7 @@ const LESSONS=[L0,L1,L2,L3,L5];
 function renderSteps(){document.getElementById('acadSteps').innerHTML=LESSONS.map((_,i)=>{const c=i<acadStep?'done':i===acadStep?'cur':'';return `<div class="s ${c}"></div>`;}).join('');}
 function renderAcademy(){renderSteps();LESSONS[acadStep]();
   document.getElementById('backBtn').style.visibility=acadStep===0?'hidden':'visible';
-  document.getElementById('nextBtn').textContent=acadStep===LESSONS.length-1?'Open the desk 📈':'Next ›';
+  document.getElementById('nextBtn').textContent=acadStep===LESSONS.length-1?t('nav_open'):t('nav_next');
   document.getElementById('skipBtn').style.display=acadStep===LESSONS.length-1?'none':'inline-block';}
 function acadNext(){if(acadStep>=LESSONS.length-1){startGame();return;}acadStep++;renderAcademy();window.scrollTo({top:0,behavior:'smooth'});}
 function acadBack(){if(acadStep>0){acadStep--;renderAcademy();window.scrollTo({top:0,behavior:'smooth'});}}
@@ -303,34 +615,34 @@ function openAcademy(){document.getElementById('game').classList.add('hidden');d
 
 function L0(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 1 of 5</div>
-    <div class="lesson-title">A market maker is a shopkeeper for stocks</div>
-    <p class="lesson-lede">You don't bet on prices going up or down. You run a <b>stall</b>: you'll buy from anyone who wants to sell, and sell to anyone who wants to buy — always quoting two prices at once. You earn the gap between them, the <b>spread</b>, thousands of times a day.</p>
+    <div class="lesson-kicker">${t('l_kick',1,5)}</div>
+    <div class="lesson-title">${t('l0_ttl')}</div>
+    <p class="lesson-lede">${t('l0_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 250" width="100%">
-          <text x="180" y="24" text-anchor="middle" font-size="11" fill="#557064">You quote both sides at once</text>
+          <text x="180" y="24" text-anchor="middle" font-size="11" fill="#557064">${t('l0_svg1')}</text>
           <rect x="40" y="60" width="110" height="70" rx="8" fill="#168058" opacity="0.12"/>
-          <text x="95" y="86" text-anchor="middle" font-size="10" fill="#557064">BUY at your</text>
+          <text x="95" y="86" text-anchor="middle" font-size="10" fill="#557064">${t('l0_svg2')}</text>
           <text x="95" y="106" text-anchor="middle" font-size="13" fill="#168058" font-weight="700">Bid $99.5</text>
           <rect x="210" y="60" width="110" height="70" rx="8" fill="#c0392b" opacity="0.10"/>
-          <text x="265" y="86" text-anchor="middle" font-size="10" fill="#557064">SELL at your</text>
+          <text x="265" y="86" text-anchor="middle" font-size="10" fill="#557064">${t('l0_svg3')}</text>
           <text x="265" y="106" text-anchor="middle" font-size="13" fill="#c0392b" font-weight="700">Ask $100.5</text>
           <line x1="150" y1="95" x2="210" y2="95" stroke="#cbe0d4" stroke-width="2" stroke-dasharray="3 3"/>
-          <text x="180" y="160" text-anchor="middle" font-size="11" fill="#0e7c7b" font-weight="600">Spread = $1.00</text>
-          <text x="180" y="184" text-anchor="middle" font-size="10" fill="#8fab9e">buy low, sell high — over and over</text>
-          <text x="180" y="214" text-anchor="middle" font-size="9.5" fill="#557064">you provide liquidity; the spread is your fee</text>
+          <text x="180" y="160" text-anchor="middle" font-size="11" fill="#0e7c7b" font-weight="600">${t('l0_svg4')}</text>
+          <text x="180" y="184" text-anchor="middle" font-size="10" fill="#8fab9e">${t('l0_svg5')}</text>
+          <text x="180" y="214" text-anchor="middle" font-size="9.5" fill="#557064">${t('l0_svg6')}</text>
         </svg>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>You quote a bid and an ask</b> around the fair price (the "mid"). The market comes to you.</li>
-          <li><b>Every round-trip earns the spread:</b> buy one share at your bid, sell one at your ask, pocket the difference.</li>
-          <li><b>The risk:</b> you can't control who shows up. If only sellers come, you pile up shares — and now you're exposed if the price drops.</li>
+          <li>${t('l0_p1')}</li>
+          <li>${t('l0_p2')}</li>
+          <li>${t('l0_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">The balancing act</div>
-          <div class="txt">Make money on the spread while keeping your <b>inventory near zero</b>. Quote too wide and nobody trades with you; too tight and you barely earn. The next lessons build the instinct.</div>
+          <div class="lab">${t('l0_tlab')}</div>
+          <div class="txt">${t('l0_ttxt')}</div>
         </div>
       </div>
     </div>`;
@@ -339,15 +651,15 @@ function L0(){
 let spW=1.6;
 function L1(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 2 of 5</div>
-    <div class="lesson-title">The spread: your price, your edge</div>
-    <p class="lesson-lede">Your two quotes sit on either side of the mid. The distance between them is the spread. Drag it: a <b>tight</b> spread wins lots of trades but little per trade; a <b>wide</b> spread earns more each time but scares flow away. There's no free lunch.</p>
+    <div class="lesson-kicker">${t('l_kick',2,5)}</div>
+    <div class="lesson-title">${t('l1_ttl')}</div>
+    <p class="lesson-lede">${t('l1_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 200" width="100%">
           <line x1="40" y1="100" x2="320" y2="100" stroke="#cbe0d4" stroke-width="2"/>
           <line x1="180" y1="40" x2="180" y2="160" stroke="#0e7c7b" stroke-width="1.5" stroke-dasharray="3 3"/>
-          <text x="180" y="32" text-anchor="middle" font-size="10" fill="#0e7c7b">mid $100</text>
+          <text x="180" y="32" text-anchor="middle" font-size="10" fill="#0e7c7b">${t('l1_mid')}</text>
           <circle id="bidDot" class="anim" cx="150" cy="100" r="9" fill="#168058"/>
           <circle id="askDot" class="anim" cx="210" cy="100" r="9" fill="#c0392b"/>
           <text id="bidT" class="anim" x="150" y="128" text-anchor="middle" font-size="10" fill="#168058" font-weight="600">$99.2</text>
@@ -355,20 +667,20 @@ function L1(){
           <text id="fillT" x="180" y="180" text-anchor="middle" font-size="10" fill="#557064"></text>
         </svg>
         <div class="viz-controls">
-          <div class="ctrl-row" style="display:flex;align-items:center;gap:10px"><label style="font-family:var(--mono);font-size:10px;text-transform:uppercase;color:#557064;min-width:96px">Spread width</label>
+          <div class="ctrl-row" style="display:flex;align-items:center;gap:10px"><label style="font-family:var(--mono);font-size:10px;text-transform:uppercase;color:#557064;min-width:96px">${t('lbl_width')}</label>
             <input type="range" min="0.4" max="5" step="0.1" value="1.6" id="spwSlider" oninput="updateSpw(+this.value)"></div>
           <div class="read-out" id="spwRead"></div>
         </div>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Tight spread (e.g. $0.40):</b> very competitive, you win most of the flow — but earn pennies each time.</li>
-          <li><b>Wide spread (e.g. $4):</b> fat profit per trade, but traders go elsewhere and you sit idle.</li>
-          <li><b>The art</b> is matching your spread to conditions: calm and liquid → tighten; wild and risky → widen to get paid for the danger.</li>
+          <li>${t('l1_p1')}</li>
+          <li>${t('l1_p2')}</li>
+          <li>${t('l1_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">Rule of thumb</div>
-          <div class="txt">Your spread is the price of your service. <b>Widen it when the world gets scary</b> (volatility, one-sided flow), tighten it when it's calm. You'll do exactly this in the game.</div>
+          <div class="lab">${t('l1_tlab')}</div>
+          <div class="txt">${t('l1_ttxt')}</div>
         </div>
       </div>
     </div>`;
@@ -382,43 +694,43 @@ function updateSpw(w){
   document.getElementById('bidT').setAttribute('x',bx); document.getElementById('bidT').textContent='$'+(100-w/2).toFixed(2);
   document.getElementById('askT').setAttribute('x',ax); document.getElementById('askT').textContent='$'+(100+w/2).toFixed(2);
   const fillRate=Math.max(8,Math.min(96,96-w*17));
-  document.getElementById('fillT').textContent=`~${fillRate.toFixed(0)}% of orders trade with you`;
-  document.getElementById('spwRead').innerHTML=`Spread <b>$${w.toFixed(2)}</b> · edge per trade <b>$${(w/2).toFixed(2)}</b> · fill rate <b>${fillRate.toFixed(0)}%</b>. ${w<0.8?'Razor-thin — high volume, low margin.':w>3.2?'Very wide — fat margin, few takers.':'A balanced quote.'}`;
+  document.getElementById('fillT').textContent=t('l1_fill',fillRate.toFixed(0));
+  document.getElementById('spwRead').innerHTML=t('l1_read',w.toFixed(2),(w/2).toFixed(2),fillRate.toFixed(0),w<0.8?t('l1_thin'):w>3.2?t('l1_vwide'):t('l1_bal'));
 }
 
 let invDemo=0, priceDemo=100;
 function L2(){
   invDemo=0; priceDemo=100;
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 3 of 5 · the hidden danger</div>
-    <div class="lesson-title">Inventory: the risk you didn't choose</div>
-    <p class="lesson-lede">Here's what catches new market makers out. When more sellers than buyers show up, you keep <b>buying</b> — and end up holding a big pile of stock. If the price then drops, that inventory loses money fast. Stack up some inventory, then move the price and watch.</p>
+    <div class="lesson-kicker">${t('l_kick3')}</div>
+    <div class="lesson-title">${t('l2_ttl')}</div>
+    <p class="lesson-lede">${t('l2_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 210" width="100%">
-          <text x="180" y="22" text-anchor="middle" font-size="10" fill="#557064">Your inventory &amp; its value</text>
+          <text x="180" y="22" text-anchor="middle" font-size="10" fill="#557064">${t('l2_svg1')}</text>
           <line x1="40" y1="150" x2="320" y2="150" stroke="#cbe0d4" stroke-width="1.5"/>
           <rect id="invBar" class="anim" x="150" y="150" width="60" height="0" rx="3" fill="#168058" opacity="0.8"/>
           <text id="invLbl" class="anim" x="180" y="145" text-anchor="middle" font-size="12" fill="#168058" font-weight="600">0 lots</text>
           <text id="plLbl" x="180" y="185" text-anchor="middle" font-size="13" font-weight="700" fill="#557064">P&amp;L: $0</text>
         </svg>
         <div class="chip-row" style="margin-top:6px">
-          <div class="chip" onclick="invAct('buy')">＋ Get filled (buy 2)</div>
-          <div class="chip" onclick="invAct('up')">📈 Price +$2</div>
-          <div class="chip" onclick="invAct('down')">📉 Price −$2</div>
-          <div class="chip" onclick="invAct('reset')">↺ Flatten</div>
+          <div class="chip" onclick="invAct('buy')">${t('l2_buy')}</div>
+          <div class="chip" onclick="invAct('up')">${t('l2_up')}</div>
+          <div class="chip" onclick="invAct('down')">${t('l2_down')}</div>
+          <div class="chip" onclick="invAct('reset')">${t('l2_reset')}</div>
         </div>
-        <div class="read-out" id="invDemoRead" style="margin-top:10px">Inventory <b>0</b> · price <b>$100</b></div>
+        <div class="read-out" id="invDemoRead" style="margin-top:10px"></div>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Fills change your inventory.</b> Buy fills make you longer; sell fills make you shorter.</li>
-          <li><b>Inventory × price move = P&amp;L.</b> Long 6 lots and the price drops $2? You're down $12 — even though you "did nothing wrong."</li>
-          <li><b>Flat is safe.</b> With zero inventory, price moves don't touch you. That's why MMs constantly try to get back to flat.</li>
+          <li>${t('l2_p1')}</li>
+          <li>${t('l2_p2')}</li>
+          <li>${t('l2_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">The trap</div>
-          <div class="txt">A great spread-capture day can be wiped out by one bad inventory swing. <b>Managing inventory is the whole job</b> — which brings us to skew.</div>
+          <div class="lab">${t('l2_tlab')}</div>
+          <div class="txt">${t('l2_ttxt')}</div>
         </div>
       </div>
     </div>`;
@@ -431,11 +743,11 @@ function drawInvDemo(){
   else{bar.setAttribute('y',base);bar.setAttribute('fill','#c0392b');}
   bar.setAttribute('height',h);
   document.getElementById('invLbl').setAttribute('y',invDemo>=0?base-h-6:base+h+16);
-  document.getElementById('invLbl').textContent=invDemo+' lots';
+  document.getElementById('invLbl').textContent=t('l2_lots',invDemo);
   const pl=invDemo*(priceDemo-100);
   const pe=document.getElementById('plLbl'); pe.textContent='P&L: '+(pl<0?'-$':'$')+Math.abs(pl).toFixed(0);
   pe.setAttribute('fill',pl>0?'#168058':pl<0?'#c0392b':'#557064');
-  document.getElementById('invDemoRead').innerHTML=`Inventory <b>${invDemo}</b> · price <b>$${priceDemo.toFixed(0)}</b>`;
+  document.getElementById('invDemoRead').innerHTML=t('l2_read',invDemo,priceDemo.toFixed(0));
 }
 function invAct(a){
   if(a==='buy')invDemo+=2;
@@ -448,15 +760,15 @@ function invAct(a){
 let skewDemo=0;
 function L3(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 4 of 5 · the steering wheel</div>
-    <div class="lesson-title">Skew: nudging the flow back to flat</div>
-    <p class="lesson-lede">If you're stuck <b>long</b> (too much inventory), you want to sell. So you <b>shift both quotes down</b> — your ask becomes a bargain that buyers snap up, while your now-lower bid discourages more buying. That's skewing. Drag it and watch which side gets more attractive.</p>
+    <div class="lesson-kicker">${t('l_kick4')}</div>
+    <div class="lesson-title">${t('l3_ttl')}</div>
+    <p class="lesson-lede">${t('l3_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 210" width="100%">
           <line x1="40" y1="105" x2="320" y2="105" stroke="#cbe0d4" stroke-width="2"/>
           <line x1="180" y1="45" x2="180" y2="165" stroke="#0e7c7b" stroke-width="1.5" stroke-dasharray="3 3"/>
-          <text x="180" y="38" text-anchor="middle" font-size="10" fill="#0e7c7b">mid $100</text>
+          <text x="180" y="38" text-anchor="middle" font-size="10" fill="#0e7c7b">${t('l1_mid')}</text>
           <circle id="sbid" class="anim" cx="150" cy="105" r="9" fill="#168058"/>
           <circle id="sask" class="anim" cx="210" cy="105" r="9" fill="#c0392b"/>
           <text id="sbidT" class="anim" x="150" y="133" text-anchor="middle" font-size="9.5" fill="#168058"></text>
@@ -464,20 +776,20 @@ function L3(){
           <text id="skewMsg" x="180" y="190" text-anchor="middle" font-size="10" fill="#557064"></text>
         </svg>
         <div class="viz-controls">
-          <div class="ctrl-row" style="display:flex;align-items:center;gap:10px"><label style="font-family:var(--mono);font-size:10px;text-transform:uppercase;color:#557064;min-width:96px">Skew</label>
+          <div class="ctrl-row" style="display:flex;align-items:center;gap:10px"><label style="font-family:var(--mono);font-size:10px;text-transform:uppercase;color:#557064;min-width:96px">${t('lbl_skew')}</label>
             <input type="range" min="-3" max="3" step="0.1" value="0" id="skSlider" oninput="updateSkew(+this.value)"></div>
           <div class="read-out" id="skRead"></div>
         </div>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Long inventory → skew DOWN.</b> Cheaper ask = buyers take your stock; you shed risk back to flat.</li>
-          <li><b>Short inventory → skew UP.</b> Higher bid = sellers fill you; you cover the short.</li>
-          <li><b>You give up a little edge</b> to control inventory — almost always worth it. Runaway inventory is what blows up market makers.</li>
+          <li>${t('l3_p1')}</li>
+          <li>${t('l3_p2')}</li>
+          <li>${t('l3_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">In the game</div>
-          <div class="txt">You'll set spread width <b>and</b> skew each tick. When the flow is one-sided or you've built a position, skew is how you fight back to flat before a price move punishes you.</div>
+          <div class="lab">${t('l3_tlab')}</div>
+          <div class="txt">${t('l3_ttxt')}</div>
         </div>
       </div>
     </div>`;
@@ -488,28 +800,27 @@ function updateSkew(s){
   const bx=mid-half+off, ax=mid+half+off;
   document.getElementById('sbid').setAttribute('cx',bx);
   document.getElementById('sask').setAttribute('cx',ax);
-  document.getElementById('sbidT').setAttribute('x',bx);document.getElementById('sbidT').textContent='bid $'+(99.2+s).toFixed(1);
-  document.getElementById('saskT').setAttribute('x',ax);document.getElementById('saskT').textContent='ask $'+(100.8+s).toFixed(1);
-  const msg=s<-0.4?'Quotes shifted DOWN — your ask is cheap, sellers of risk rejoice. Good when long.':
-            s>0.4?'Quotes shifted UP — your bid is rich, sellers hit it. Good when short.':'Neutral — symmetric quotes, no inventory pressure.';
+  document.getElementById('sbidT').setAttribute('x',bx);document.getElementById('sbidT').textContent=t('l3_bid',(99.2+s).toFixed(1));
+  document.getElementById('saskT').setAttribute('x',ax);document.getElementById('saskT').textContent=t('l3_ask',(100.8+s).toFixed(1));
+  const msg=s<-0.4?t('l3_down'):s>0.4?t('l3_up'):t('l3_neutral');
   document.getElementById('skewMsg').textContent='';
-  document.getElementById('skRead').innerHTML=`Skew <b>${s>=0?'+':''}${s.toFixed(1)}</b>. ${msg}`;
+  document.getElementById('skRead').innerHTML=t('l3_read',(s>=0?'+':'')+s.toFixed(1),msg);
 }
 
 function L5(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy complete</div>
-    <div class="lesson-title">You're ready to make markets</div>
-    <p class="lesson-lede">Everything you'll do at the desk comes down to four ideas:</p>
+    <div class="lesson-kicker">${t('l_kick5')}</div>
+    <div class="lesson-title">${t('l5_ttl')}</div>
+    <p class="lesson-lede">${t('l5_lede')}</p>
     <ul class="lesson-points" style="max-width:64ch">
-      <li><b>Quote both sides</b> — a bid and an ask around the mid; the spread is your fee.</li>
-      <li><b>Width is a dial</b> — tight for volume in calm markets, wide to get paid in volatile ones.</li>
-      <li><b>Inventory is risk</b> — every fill builds a position that price moves can punish.</li>
-      <li><b>Skew to stay flat</b> — shift your quotes to bleed off inventory before it bites.</li>
+      <li>${t('l5_p1')}</li>
+      <li>${t('l5_p2')}</li>
+      <li>${t('l5_p3')}</li>
+      <li>${t('l5_p4')}</li>
     </ul>
     <div class="takeaway" style="max-width:64ch">
-      <div class="lab">Your job for the session</div>
-      <div class="txt">Across the ticks, set your <b>spread</b> and <b>skew</b>, read each order-flow headline, and harvest spread while keeping inventory near zero. Watch out for <b>adverse selection</b> — getting filled right before a one-way move. A scored <b>debrief</b> grades you, and you can replay this Academy anytime.</div>
+      <div class="lab">${t('l5_tlab')}</div>
+      <div class="txt">${t('l5_ttxt')}</div>
     </div>`;
 }
 
@@ -522,20 +833,33 @@ function freshState(){
   return {started:false,tick:0,mid:START_MID,lastMid:START_MID,
     cash:0,inv:0,width:1.6,skew:0,
     spreadCaptured:0,fills:0,maxAbsInv:0,breaches:0,adverse:0,
-    blotter:[],pendingEvent:null,recap:null,startEquity:0,
+    blotter:[],pendingEvent:null,recap:null,startEquity:0,newsMode:'intro',
   };
 }
 const EVENTS=[
-  {hl:"Quiet, balanced two-way flow",src:"Tape",drift:0,vol:0.5,bias:0,ex:"No clear direction — buyers and sellers roughly matched. Tighten up and harvest the spread."},
-  {hl:"Buyers leaning in; momentum building",src:"Flow Desk",drift:1.5,vol:0.6,bias:1,ex:"More buyers than sellers and price likely drifts up. If you sell too cheap you'll be short into a rally — skew your quotes up."},
-  {hl:"Sellers pressing; risk-off tone",src:"Flow Desk",drift:-1.5,vol:0.6,bias:-1,ex:"Heavy selling and price likely falls. Don't pile up longs — skew down so you're not caught holding."},
-  {hl:"Volatility spike — headlines hitting the tape",src:"News",drift:0,vol:2.2,bias:0,ex:"Big two-way swings. Widen your spread to get paid for the extra risk; tight quotes will get run over."},
-  {hl:"Thin liquidity — you're nearly the only quote",src:"Tape",drift:0,vol:0.8,bias:0,thin:true,ex:"Almost all flow hits you. Easy spread, but inventory stacks up fast — manage it actively."},
-  {hl:"Large informed buyer sweeping offers",src:"Surveillance",drift:2.6,vol:0.7,bias:1,toxic:true,ex:"Someone who knows something is lifting asks before a jump. Classic adverse selection — skew up or widen, or you'll sell right before the pop."},
-  {hl:"Forced seller dumping size",src:"Surveillance",drift:-2.6,vol:0.7,bias:-1,toxic:true,ex:"A motivated seller is hitting bids before a drop. Skew down or widen, or you'll buy right before it falls."},
-  {hl:"Steady, liquid conditions",src:"Tape",drift:0.3,vol:0.5,bias:0,ex:"Calm and liquid. Tight spreads win lots of small, safe round-trips."},
+  {id:0,drift:0,vol:0.5,bias:0},
+  {id:1,drift:1.5,vol:0.6,bias:1},
+  {id:2,drift:-1.5,vol:0.6,bias:-1},
+  {id:3,drift:0,vol:2.2,bias:0},
+  {id:4,drift:0,vol:0.8,bias:0,thin:true},
+  {id:5,drift:2.6,vol:0.7,bias:1,toxic:true},
+  {id:6,drift:-2.6,vol:0.7,bias:-1,toxic:true},
+  {id:7,drift:0.3,vol:0.5,bias:0},
 ];
 function pickEvent(){return EVENTS[Math.floor(Math.random()*EVENTS.length)];}
+function newsHTML(){
+  if(S.newsMode==='event'&&S.pendingEvent){
+    const n=S.pendingEvent;
+    return '<div class="news"><div class="hl">'+t('ev'+n.id+'_hl')+'</div><div class="src">'+t('ev'+n.id+'_src')+'</div>'+
+           '<div class="ex"><b>'+t('read_flow')+'</b> '+t('ev'+n.id+'_ex')+'</div></div>';
+  }
+  if(S.newsMode==='reset'){
+    return '<div class="news"><div class="hl">'+t('reset_hl')+'</div><div class="src">'+t('intro_src')+'</div>'+
+           '<div class="ex">'+t('reset_ex')+'</div></div>';
+  }
+  return '<div class="news"><div class="hl">'+t('intro_hl')+'</div><div class="src">'+t('intro_src')+'</div>'+
+         '<div class="ex">'+t('intro_ex')+'</div></div>';
+}
 
 function bidPrice(){return S.mid - S.width/2 + S.skew;}
 function askPrice(){return S.mid + S.width/2 + S.skew;}
@@ -552,17 +876,17 @@ function updateQuotes(){
   document.getElementById('midPrev').textContent='$'+S.mid.toFixed(2);
   const qh=document.getElementById('quoteHint');
   let msg='';
-  if(S.inv>4 && S.skew>-0.3) msg='You\'re long '+S.inv+' lots — consider skewing DOWN to sell some off.';
-  else if(S.inv<-4 && S.skew<0.3) msg='You\'re short '+S.inv+' lots — consider skewing UP to cover.';
-  else if(S.width<0.8) msg='Very tight — lots of fills, thin edge. Risky if volatility is high.';
-  else if(S.width>3.2) msg='Very wide — fat edge but you may sit idle.';
-  else msg='Balanced quote. Advance the tick to see who trades with you.';
+  if(S.inv>4 && S.skew>-0.3) msg=t('qh_long',S.inv);
+  else if(S.inv<-4 && S.skew<0.3) msg=t('qh_short',Math.abs(S.inv));
+  else if(S.width<0.8) msg=t('qh_tight');
+  else if(S.width>3.2) msg=t('qh_wide');
+  else msg=t('qh_balanced');
   qh.textContent=msg;
 }
 
 function startOrAdvance(){
   if(!S.started){S.started=true;S.tick=0;S.pendingEvent=pickEvent();
-    document.getElementById('advanceBtn').textContent="▶ Advance Tick";render();return;}
+    document.getElementById('advanceBtn').textContent=t('btn_advance');S.newsMode='event';render();return;}
   resolveTick();
 }
 function randn(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
@@ -612,7 +936,7 @@ function resolveTick(){
     S.cash-= flatten*px*0 ; // mark; we flatten at mid minus a small slippage
     const slip=Math.abs(flatten)*0.25;
     S.cash-=slip; S.inv+=flatten;
-    toast(`⚠ Position limit breached — forced to flatten ${Math.abs(flatten)} lots (slippage ${fmtUSD(slip*LOT)}).`,true);
+    toast(t('breach',Math.abs(flatten),fmtUSD(slip*LOT)),true);
   }
 
   // blotter
@@ -638,23 +962,20 @@ function colorPL(n){return n>0?'up':n<0?'down':'flat';}
 function arrow(n){return n>0?'▲':n<0?'▼':'—';}
 
 function render(){
-  document.getElementById('monthLabel').textContent=S.started?`Tick ${Math.min(S.tick+1,TICKS)}`:"—";
-  document.getElementById('turnLabel').textContent=S.started?`of ${TICKS}`:"Press start";
+  document.getElementById('monthLabel').textContent=S.started?t('tick_n',Math.min(S.tick+1,TICKS)):"—";
+  document.getElementById('turnLabel').textContent=S.started?t('tick_of',TICKS):t('press_start');
 
-  if(S.pendingEvent){const n=S.pendingEvent;
-    document.getElementById('newsBox').innerHTML=
-      `<div class="news"><div class="hl">${n.hl}</div><div class="src">${n.src}</div>
-       <div class="ex"><b>Read the flow:</b> ${n.ex}</div></div>`;}
+  document.getElementById('newsBox').innerHTML=newsHTML();
 
   // book
   const dMid=S.mid-S.lastMid;
-  document.getElementById('mktBody').innerHTML=`
-    <tr><td class="nm">Your Ask<small>where you sell</small></td><td class="px down">$${askPrice().toFixed(2)}</td><td class="chg flat">—</td></tr>
-    <tr><td class="nm">Mid<small>fair price</small></td><td class="px">$${S.mid.toFixed(2)}</td><td class="chg ${dMid>0?'up':dMid<0?'down':'flat'}">${dMid?arrow(dMid)+' '+Math.abs(dMid).toFixed(2):'—'}</td></tr>
-    <tr><td class="nm">Your Bid<small>where you buy</small></td><td class="px up">$${bidPrice().toFixed(2)}</td><td class="chg flat">—</td></tr>
-    <tr><td class="nm">Spread<small>your edge</small></td><td class="px">$${S.width.toFixed(2)}</td><td class="chg flat">${S.skew?('skew '+(S.skew>0?'+':'')+S.skew.toFixed(1)):'centered'}</td></tr>`;
+  document.getElementById('mktBody').innerHTML=
+    '<tr><td class="nm">'+t('row_ask')+'<small>'+t('row_ask_s')+'</small></td><td class="px down">$'+askPrice().toFixed(2)+'</td><td class="chg flat">—</td></tr>'+
+    '<tr><td class="nm">'+t('row_mid')+'<small>'+t('row_mid_s')+'</small></td><td class="px">$'+S.mid.toFixed(2)+'</td><td class="chg '+(dMid>0?'up':dMid<0?'down':'flat')+'">'+(dMid?arrow(dMid)+' '+Math.abs(dMid).toFixed(2):'—')+'</td></tr>'+
+    '<tr><td class="nm">'+t('row_bid')+'<small>'+t('row_bid_s')+'</small></td><td class="px up">$'+bidPrice().toFixed(2)+'</td><td class="chg flat">—</td></tr>'+
+    '<tr><td class="nm">'+t('row_spread')+'<small>'+t('row_spread_s')+'</small></td><td class="px">$'+S.width.toFixed(2)+'</td><td class="chg flat">'+(S.skew?t('skew_lbl',(S.skew>0?'+':'')+S.skew.toFixed(1)):t('centered'))+'</td></tr>';
   const bh=document.getElementById('bookHint');
-  bh.innerHTML = `Mid is the market's fair price; it drifts each tick. You earn the gap between your quotes and the mid — but only on the trades that actually fill.`;
+  bh.innerHTML = t('book_hint');
 
   updateQuotes();
 
@@ -668,33 +989,34 @@ function render(){
   document.getElementById('fillCt').textContent=S.fills;
 
   // inventory
-  document.getElementById('invNum').innerHTML=`${S.inv} <span style="font-size:13px;color:var(--txt-faint)">lots</span>`;
+  document.getElementById('invNum').innerHTML=S.inv+' <span style="font-size:13px;color:var(--txt-faint)">'+t('lots')+'</span>';
   document.getElementById('invNum').className='big-num '+(Math.abs(S.inv)>8?'down':'');
   document.getElementById('invNum').style.fontSize='26px';
   const mark=document.getElementById('invMark');
   const pct=50+Math.max(-50,Math.min(50,S.inv/POS_LIMIT*50));
   mark.style.left=pct+'%';
+  const dir=S.inv>0?t('long'):t('short'), amt=Math.abs(S.inv);
   document.getElementById('invHint').textContent=
-    S.inv===0?'Flat. No price risk — exactly where you want to end.':
-    Math.abs(S.inv)<5?`${S.inv>0?'Long':'Short'} ${Math.abs(S.inv)} lots — modest risk.`:
-    Math.abs(S.inv)<POS_LIMIT?`${S.inv>0?'Long':'Short'} ${Math.abs(S.inv)} lots — skew to reduce before a move hits.`:
-    `${S.inv>0?'Long':'Short'} ${Math.abs(S.inv)} lots — at the limit! Dangerous.`;
+    S.inv===0?t('inv_flat'):
+    amt<5?t('inv_modest',dir,amt):
+    amt<POS_LIMIT?t('inv_reduce',dir,amt):
+    t('inv_limit',dir,amt);
 
   // blotter
   const bb=document.getElementById('blotBox');
   bb.innerHTML=S.blotter.length?S.blotter.map(f=>
-    `<div class="blot"><span><span class="tag ${f.side}">${f.side==='buy'?'Bought':'Sold'}</span> 1 lot</span><span>@ $${f.px.toFixed(2)} <span style="color:var(--txt-faint)">t${f.tick}</span></span></div>`
-  ).join(''):'<div class="hint">No fills yet.</div>';
+    '<div class="blot"><span><span class="tag '+f.side+'">'+(f.side==='buy'?t('bought'):t('sold'))+'</span> '+t('one_lot')+'</span><span>@ $'+f.px.toFixed(2)+' <span style="color:var(--txt-faint)">t'+f.tick+'</span></span></div>'
+  ).join(''):'<div class="hint">'+t('no_fills')+'</div>';
 
   // recap
   const rp=document.getElementById('recapPanel'), rb=document.getElementById('recapBox');
   if(S.recap){const r=S.recap;
     let h=`<div style="font-size:11.5px;color:var(--txt-dim);line-height:1.7">`;
-    h+=`<b style="color:var(--green)">Fills:</b> ${r.fills.length?r.fills.map(f=>f.side==='buy'?'bought':'sold').join(', '):'none — your quotes were too wide for the flow'}<br>`;
-    h+=`<b style="color:var(--green)">Spread earned:</b> <span class="up">${fmtUSD(r.tickSpread)}</span><br>`;
-    h+=`<b style="color:var(--green)">Price move:</b> ${r.move>=0?'+':''}$${r.move.toFixed(2)} → inventory P&L <span class="${colorPL(r.invPLswing)}">${fmtUSD(r.invPLswing)}</span></div>`;
-    if(r.ev.toxic && S.adverse>0) h+=`<div class="hint" style="margin-top:8px;color:var(--neg)">Adverse selection: informed flow filled you just before the move. Wider/skewed quotes protect against this.</div>`;
-    else if(Math.abs(r.endInv)>8) h+=`<div class="hint" style="margin-top:8px">Inventory is piling up — skew your quotes to push it back toward flat.</div>`;
+    h+='<b style="color:var(--green)">'+t('r_fills')+'</b> '+(r.fills.length?r.fills.map(f=>f.side==='buy'?t('r_bought'):t('r_sold')).join('、'):t('r_none'))+'<br>';
+    h+='<b style="color:var(--green)">'+t('r_spread')+'</b> <span class="up">'+fmtUSD(r.tickSpread)+'</span><br>';
+    h+='<b style="color:var(--green)">'+t('r_move')+'</b> '+(r.move>=0?'+':'')+'$'+r.move.toFixed(2)+' → '+t('r_invpl')+' <span class="'+colorPL(r.invPLswing)+'">'+fmtUSD(r.invPLswing)+'</span></div>';
+    if(r.ev.toxic && S.adverse>0) h+='<div class="hint" style="margin-top:8px;color:var(--neg)">'+t('r_adverse')+'</div>';
+    else if(Math.abs(r.endInv)>8) h+='<div class="hint" style="margin-top:8px">'+t('r_piling')+'</div>';
     rb.innerHTML=h; rp.style.display='block';
   } else rp.style.display='none';
 }
@@ -716,55 +1038,82 @@ function endGame(){
   pts-=S.adverse*5;
   pts=Math.max(0,Math.min(100,Math.round(pts)));
   const grade=pts>=85?'A':pts>=70?'B':pts>=55?'C':pts>=40?'D':'F';
-  const invScore=S.maxAbsInv<6?'Tight':S.maxAbsInv<POS_LIMIT?'Loose':'Out of control';
+  const invScore=S.maxAbsInv<6?t('d_tight'):S.maxAbsInv<POS_LIMIT?t('d_loose'):t('d_ooc');
   const dbg=[
-    ['Total P&L', fmtUSD(eq), eq>=0?'up':'down'],
-    ['Spread captured', fmtUSD(spreadCap)+` (${S.fills} fills)`, spreadCap>0?'up':'flat'],
-    ['Inventory P&L', fmtUSD(invPL), invPL>=0?'up':'down'],
-    ['Inventory control', `${invScore} — peak ${S.maxAbsInv} lots`, S.maxAbsInv<6?'up':S.maxAbsInv<POS_LIMIT?'flat':'down'],
-    ['Limit breaches', S.breaches===0?'None — clean':`${S.breaches} forced flatten(s)`, S.breaches===0?'up':'down'],
-    ['Adverse selection', S.adverse===0?'Dodged it':`Picked off ${S.adverse}×`, S.adverse===0?'up':'down'],
+    [t('d_total'), fmtUSD(eq), eq>=0?'up':'down'],
+    [t('d_spread'), fmtUSD(spreadCap)+t('d_fills',S.fills), spreadCap>0?'up':'flat'],
+    [t('d_invpl'), fmtUSD(invPL), invPL>=0?'up':'down'],
+    [t('d_control'), t('d_peak',invScore,S.maxAbsInv), S.maxAbsInv<6?'up':S.maxAbsInv<POS_LIMIT?'flat':'down'],
+    [t('d_breach'), S.breaches===0?t('d_clean'):t('d_flattens',S.breaches), S.breaches===0?'up':'down'],
+    [t('d_adverse'), S.adverse===0?t('d_dodged'):t('d_picked',S.adverse), S.adverse===0?'up':'down'],
   ];
   const coaching=coach(eq,spreadCap,invPL,S);
   document.getElementById('modalInner').innerHTML=`
-    <h2>Session Debrief <span class="grade" style="background:${grade==='F'||grade==='D'?'var(--neg)':grade==='A'?'var(--green)':'var(--teal)'}">${grade}</span></h2>
+    <h2>${t('d_title')} <span class="grade" style="background:${grade==='F'||grade==='D'?'var(--neg)':grade==='A'?'var(--green)':'var(--teal)'}">${grade}</span></h2>
     <div class="score ${eq>=0?'up':'down'}">${pts}<span style="font-size:18px;color:var(--txt-dim)">/100</span></div>
     ${dbg.map(d=>`<div class="debrief-row"><span class="lbl">${d[0]}</span><span class="rating ${d[2]}">${d[1]}</span></div>`).join('')}
     <div style="margin-top:16px;padding:14px;background:var(--panel2);border-radius:8px;border-left:3px solid var(--green)">
-      <div style="font-family:var(--disp);color:var(--green);font-size:14px;margin-bottom:6px">Desk notes</div>
+      <div style="font-family:var(--disp);color:var(--green);font-size:14px;margin-bottom:6px">${t('d_notes')}</div>
       <div style="color:var(--txt-dim);font-size:12px;line-height:1.65">${coaching}</div>
     </div>
-    <button class="big-btn" style="margin-top:18px" onclick="restart()">↺ Make Markets Again</button>`;
+    <button class="big-btn" style="margin-top:18px" onclick="restart()">${t('d_again')}</button>`;
   document.getElementById('modalBg').classList.add('show');
 }
 function coach(eq,sc,ip,s){
   const n=[];
-  if(eq>300) n.push("Strong session — you harvested spread and kept inventory under control.");
-  else if(eq<0) n.push("You finished red. Usually that means inventory losses swamped the spread you earned.");
-  if(ip<-100) n.push("Inventory P&L was your problem: you held positions into adverse moves. Skew harder to get back to flat before price runs.");
-  if(s.maxAbsInv>POS_LIMIT-1) n.push("You let inventory run to the limit. One sharp move there can erase a whole session — skew sooner, not later.");
-  if(s.adverse>0) n.push(`You got picked off ${s.adverse}× by informed flow. When surveillance flags a sweep or forced seller, widen or skew away from the toxic side.`);
-  if(sc<60) n.push("Low spread capture — your quotes may have been too wide. In calm, liquid ticks, tighten up to win more flow.");
-  if(n.length===0) n.push("Disciplined two-sided market making. Next: tighten in calm ticks to lift volume without taking on inventory risk.");
-  return n.join(" ");
+  if(eq>300) n.push(t('c_strong'));
+  else if(eq<0) n.push(t('c_red'));
+  if(ip<-100) n.push(t('c_invpl'));
+  if(s.maxAbsInv>POS_LIMIT-1) n.push(t('c_limit'));
+  if(s.adverse>0) n.push(t('c_adverse',s.adverse));
+  if(sc<60) n.push(t('c_lowcap'));
+  if(n.length===0) n.push(t('c_ok'));
+  return n.join(' ');
 }
 function restart(){
   document.getElementById('modalBg').classList.remove('show');
   S=freshState();
-  document.getElementById('advanceBtn').textContent="▶ Start Session";
+  document.getElementById('advanceBtn').textContent=t('btn_start');
   document.getElementById('widthSlider').value=1.6; document.getElementById('skewSlider').value=0;
-  document.getElementById('newsBox').innerHTML=
-    `<div class="news"><div class="hl">Fresh session. Quotes reset.</div><div class="src">Evolta Trading Floor</div>
-     <div class="ex">Set your spread &amp; skew, then press <b>Start Session</b>.</div></div>`;
+  S.newsMode='reset';
   render();
 }
 function startGame(){
   document.getElementById('academy').classList.add('hidden');
   document.getElementById('game').classList.remove('hidden');
   document.getElementById('clock').style.display='block';
-  S=freshState(); render(); window.scrollTo({top:0,behavior:'smooth'});
+  S=freshState(); document.getElementById('advanceBtn').textContent=t('btn_start'); render(); window.scrollTo({top:0,behavior:'smooth'});
 }
-renderAcademy();
+/* ================= LANGUAGE ================= */
+function applyLang(){
+  document.documentElement.lang=LANG==='zh'?'zh-CN':'en';
+  document.body.classList.toggle('lang-zh',LANG==='zh');
+  document.title=t('doc_title');
+  const tog=document.getElementById('langToggle');
+  tog.textContent=t('lang_other');
+  tog.setAttribute('aria-label',t('lang_aria'));
+
+  document.getElementById('brandSub').innerHTML=t('brand_sub');
+  document.getElementById('backAll').textContent=t('back_all');
+  document.getElementById('glossBox').innerHTML=t('gloss');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{el.title=t(el.dataset.i18nTitle)});
+
+  if(S){
+    document.getElementById('advanceBtn').textContent=S.started?t('btn_advance'):t('btn_start');
+    render();
+  }else{
+    document.getElementById('turnLabel').textContent=t('press_start');
+  }
+  renderAcademy();
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG=LANG==='en'?'zh':'en';
+  try{localStorage.setItem('evolta_lang',LANG)}catch(e){}
+  applyLang();
+});
+
+applyLang();
 </script>
 </body>
 </html>

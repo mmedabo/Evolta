@@ -463,6 +463,7 @@ const MAXDIST = Math.sqrt(DIM_KEYS.length*100*100);
 /* ============ LANGUAGE ============ */
 function setLang(l){
   lang = l;
+  try{ localStorage.setItem('evolta_lang', l); }catch(e){}
   document.body.classList.toggle('zh', l==='zh');
   document.getElementById('lang-en').classList.toggle('active', l==='en');
   document.getElementById('lang-zh').classList.toggle('active', l==='zh');
@@ -641,7 +642,13 @@ function closeCitiesModal(){ document.getElementById('cities-modal').classList.r
 function closeCitiesOutside(e){ if(e.target===document.getElementById('cities-modal')) closeCitiesModal(); }
 
 /* ============ INIT ============ */
-renderIntroText();
+/* Honour ?lang=, then the site-wide choice made on the Evolta landing page. */
+(function(){
+  const q = new URLSearchParams(location.search).get('lang');
+  let l = (q === 'en' || q === 'zh') ? q : null;
+  if(!l){ try{ l = localStorage.getItem('evolta_lang'); }catch(e){} }
+  setLang(l === 'zh' ? 'zh' : 'en');
+})();
 </script>
 </body>
 </html>

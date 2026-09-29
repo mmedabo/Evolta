@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Ledger — Corporate Finance Academy | Evolta</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f3efe7;
+    --panel:#faf8f4;
+    --panel2:#f1ece2;
+    --line:#e3dccf;
+    --line2:#d3c9b6;
+    --indigo:#3a49a0;
+    --indigo-lt:#5c6bc0;
+    --green:#0b8a5f;
+    --amber:#c07c1e;
+    --neg:#b23b2e;
+    --pos:#0b8a5f;
+    --txt:#26303f;
+    --txt-dim:#5b6675;
+    --txt-faint:#94A0AE;
+    --mono:'IBM Plex Mono',monospace;
+    --sans:'Inter',-apple-system,sans-serif;
+    --disp:'Fraunces',serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:
+      radial-gradient(ellipse at 8% -5%, #f7f1e2 0%, transparent 45%),
+      radial-gradient(ellipse at 95% 2%, #eef1e9 0%, transparent 40%),
+      var(--bg);
+    color:var(--txt);font-family:var(--sans);font-size:13.5px;line-height:1.55;
+    min-height:100vh;padding:0 0 70px;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+  header{border-bottom:1px solid var(--line);padding:28px 0 18px;margin-bottom:20px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .brand h1{font-family:var(--disp);font-weight:500;font-size:40px;line-height:.95;letter-spacing:-.02em;color:var(--indigo)}
+  .brand h1 .amp{color:var(--amber);font-style:italic}
+  .brand .sub{color:var(--txt-dim);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;margin-top:8px;font-family:var(--mono)}
+  .brand .evolta{color:var(--green);font-weight:600}
+  .back-btn{font-family:var(--mono);font-size:10.5px;color:var(--txt-dim);text-decoration:none;border:1px solid var(--line2);border-radius:8px;padding:8px 13px;transition:.15s;white-space:nowrap}
+  .back-btn:hover{border-color:var(--indigo);color:var(--indigo)}
+
+  /* progress ledger */
+  .voyage{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 22px 14px;margin-bottom:18px;box-shadow:0 1px 2px rgba(38,48,63,.05)}
+  .voyage-track{position:relative;height:56px}
+  .voyage-line{position:absolute;left:2%;right:2%;top:18px;height:3px;background:var(--line2);border-radius:2px}
+  .voyage-fill{position:absolute;left:2%;top:18px;height:3px;background:linear-gradient(90deg,var(--indigo),var(--amber));border-radius:2px;transition:width .6s ease}
+  .waypoint{position:absolute;top:10px;transform:translateX(-50%);text-align:center;cursor:pointer}
+  .waypoint .dot{width:18px;height:18px;border-radius:50%;background:var(--panel);border:2px solid var(--line2);margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--txt-faint);transition:.2s}
+  .waypoint.done .dot{background:var(--indigo);border-color:var(--indigo);color:#fff}
+  .waypoint .wp-label{font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;color:var(--txt-faint);margin-top:6px;text-transform:uppercase;white-space:nowrap}
+  .waypoint.done .wp-label{color:var(--indigo)}
+  .ship{position:absolute;top:-8px;font-size:19px;transform:translateX(-50%);transition:left .6s ease}
+  .voyage-caption{font-family:var(--mono);font-size:10px;color:var(--txt-faint);letter-spacing:.1em;text-transform:uppercase;margin-top:10px;text-align:center}
+
+  .chnav{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px}
+  .chnav button{font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--line2);border-radius:9px;
+    padding:9px 12px;color:var(--txt-dim);cursor:pointer;transition:.15s}
+  .chnav button:hover{border-color:var(--indigo);color:var(--indigo)}
+  .chnav button.active{background:var(--indigo);border-color:var(--indigo);color:#fff}
+  .chnav button .tick{color:var(--pos);margin-left:5px}
+  .chnav button.active .tick{color:#8fe6b7}
+
+  .grid{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:18px;box-shadow:0 1px 2px rgba(38,48,63,.04)}
+  .panel h2{font-family:var(--mono);font-weight:500;font-size:11px;color:var(--txt-faint);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .panel h2 .dot{width:5px;height:5px;border-radius:50%;background:var(--amber)}
+  .panel h3.big{font-family:var(--disp);font-size:26px;font-weight:500;color:var(--indigo);margin-bottom:10px;line-height:1.15}
+  .panel p{margin-bottom:10px}
+  .panel p.dim{color:var(--txt-dim)}
+  .mentor{display:flex;gap:12px;background:var(--panel2);border:1px solid var(--line);
+    border-left:3px solid var(--amber);border-radius:10px;padding:13px 15px;margin:14px 0}
+  .mentor .avatar{font-size:22px;line-height:1}
+  .mentor .who{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:3px}
+  .mentor p{margin:0;font-size:13px}
+
+  .factrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+  .fact{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:center}
+  .fact .v{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--indigo)}
+  .fact .k{font-size:10.5px;color:var(--txt-dim);margin-top:3px}
+
+  table.dtable{width:100%;border-collapse:collapse;margin:10px 0}
+  .dtable th{text-align:left;color:var(--txt-faint);font-weight:500;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;border-bottom:1px solid var(--line);font-family:var(--mono)}
+  .dtable td{padding:8px;border-bottom:1px solid var(--line);font-size:12.5px;vertical-align:top}
+  .dtable td.mono{font-family:var(--mono)}
+  .dtable tr:last-child td{border-bottom:none}
+  .dtable td.r,.dtable th.r{text-align:right}
+  .dtable tr.tot td{border-top:2px solid var(--indigo);font-weight:600}
+  .up{color:var(--pos)}.down{color:var(--neg)}
+
+  .formula{font-family:var(--mono);font-size:12.5px;background:var(--panel2);border:1px solid var(--line);
+    border-radius:9px;padding:12px 14px;margin:10px 0;white-space:pre-line;overflow-x:auto}
+  .formula b{color:var(--amber);font-weight:500}
+  .formula .lbl{color:var(--txt-faint)}
+
+  .game-zone{border:1px dashed var(--line2);border-radius:12px;padding:16px 18px;margin-top:16px;background:linear-gradient(180deg,#fdfcfa,#f5f1e9)}
+  .game-zone h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:10px}
+  .btn{font-family:var(--mono);font-size:12px;background:var(--indigo);color:#fff;border:none;border-radius:9px;padding:10px 16px;cursor:pointer;transition:.15s}
+  .btn:hover{background:var(--indigo-lt)}
+  .btn.alt{background:var(--panel);color:var(--indigo);border:1px solid var(--line2)}
+  .btn.alt:hover{border-color:var(--indigo)}
+  .btn.amber{background:var(--amber)}
+  .btn.amber:hover{background:#d99433}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.small{font-size:11px;padding:7px 11px}
+
+  .opt{display:block;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:11px 14px;margin:6px 0;cursor:pointer;font-size:13px;font-family:var(--sans);color:var(--txt);transition:.12s}
+  .opt:hover{border-color:var(--indigo)}
+  .opt.right{background:#e2f3ea;border-color:var(--pos)}
+  .opt.wrong{background:#fbeae7;border-color:var(--neg)}
+  .opt:disabled{cursor:default}
+  .qhead{font-weight:600;color:var(--indigo);margin:10px 0 4px}
+  .qmath{font-family:var(--mono);font-size:12px;background:var(--panel2);border-radius:8px;padding:10px 12px;margin-top:8px;color:var(--txt-dim);white-space:pre-line;display:none}
+  .qmath.show{display:block}
+  .score-line{font-family:var(--mono);font-size:11.5px;color:var(--txt-faint)}
+  .feedback{font-size:12.5px;margin-top:10px;padding:10px 13px;border-radius:9px;display:none}
+  .feedback.show{display:block}
+  .feedback.good{background:#e2f3ea;color:var(--pos)}
+  .feedback.bad{background:#fbeae7;color:var(--neg)}
+
+  .chip{display:inline-block;font-family:var(--mono);font-size:11.5px;background:var(--panel);
+    border:1px solid var(--line2);border-radius:8px;padding:8px 12px;margin:4px 4px 0 0;cursor:pointer;transition:.12s;user-select:none}
+  .chip:hover{border-color:var(--indigo);color:var(--indigo)}
+  .chip.used{opacity:.28;pointer-events:none}
+  .slotrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:7px;margin:10px 0}
+  .slot{min-height:52px;border:1.5px dashed var(--line2);border-radius:9px;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;font-family:var(--mono);font-size:10.5px;color:var(--txt-faint);padding:7px;text-align:center}
+  .slot .sk{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:3px}
+  .slot.filled{border-style:solid;border-color:var(--indigo);color:var(--indigo);background:#eef0fa}
+  .slot.bad{border-color:var(--neg);color:var(--neg);background:#fbeae7}
+
+  .ctl{margin:10px 0}
+  .ctl label{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-dim);display:flex;justify-content:space-between;gap:10px}
+  .ctl label b{color:var(--indigo);font-weight:500}
+  input[type=range]{width:100%;accent-color:var(--indigo);margin-top:4px}
+
+  /* diverging bars */
+  .dbar{margin:12px 0}
+  .dbar-row{display:grid;grid-template-columns:118px 1fr 1fr 78px;align-items:center;gap:0;padding:3px 0}
+  .dbar-row .nm{font-size:12px;font-weight:600;color:var(--indigo);text-align:right;padding-right:10px}
+  .dbar-row .lft{display:flex;justify-content:flex-end;border-right:2px solid var(--line2)}
+  .dbar-row .rgt{display:flex;justify-content:flex-start}
+  .dbar-row .b{height:13px;border-radius:3px}
+  .dbar-row .b.pos{background:var(--green);border-radius:0 4px 4px 0}
+  .dbar-row .b.neg{background:var(--neg);border-radius:4px 0 0 4px}
+  .dbar-row .val{font-family:var(--mono);font-size:11px;padding-left:9px;white-space:nowrap}
+  .dbar-head{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:6px;display:flex;justify-content:space-between}
+
+  /* svg charts */
+  .chartbox{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;margin:12px 0;overflow-x:auto}
+  .chartbox svg{display:block;width:100%;min-width:420px;height:auto}
+  .chart-cap{font-size:11px;color:var(--txt-dim);margin-top:6px}
+  .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .legend span{font-family:var(--mono);font-size:10.5px;color:var(--txt-dim);display:flex;align-items:center;gap:6px}
+  .legend i{width:14px;height:3px;border-radius:2px;display:inline-block}
+
+  /* clickable diagram */
+  .diagram{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px;margin:12px 0;overflow-x:auto}
+  .diagram svg{display:block;width:100%;min-width:520px;height:auto}
+  .flownode{cursor:pointer}
+  .flownode circle{transition:.15s}
+  .flownode:hover circle{fill:var(--amber)}
+  .flow-detail{background:#eef0fa;border:1px solid var(--line2);border-radius:10px;padding:13px 15px;margin:10px 0;display:none;font-size:12.5px}
+  .flow-detail.show{display:block}
+  .flow-detail b{color:var(--indigo)}
+
+  /* sidebar */
+  .badge-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .badge{border:1px solid var(--line);border-radius:10px;padding:9px;text-align:center;background:var(--panel2);opacity:.42;transition:.3s}
+  .badge.earned{opacity:1;border-color:var(--green);background:#e9f4ee}
+  .badge .bico{font-size:20px}
+  .badge .bnm{font-family:var(--mono);font-size:9px;letter-spacing:.04em;text-transform:uppercase;color:var(--txt-dim);margin-top:4px}
+  .badge.earned .bnm{color:var(--green)}
+  .gloss details{border-bottom:1px solid var(--line);padding:7px 2px}
+  .gloss details:last-child{border-bottom:none}
+  .gloss summary{cursor:pointer;font-family:var(--mono);font-size:11px;color:var(--indigo);list-style:none;display:flex;justify-content:space-between;gap:8px}
+  .gloss summary::after{content:"+";color:var(--txt-faint)}
+  .gloss details[open] summary::after{content:"–"}
+  .gloss .gdef{font-size:11.5px;color:var(--txt-dim);padding:5px 0 3px}
+  .gloss .locked{color:var(--txt-faint);font-family:var(--mono);font-size:10.5px;padding:7px 2px;border-bottom:1px solid var(--line)}
+  .fcard{font-family:var(--mono);font-size:10.5px;color:var(--txt-dim);line-height:1.7}
+  .fcard b{color:var(--indigo);font-weight:500;display:block;margin-top:8px;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase}
+  .fcard b:first-child{margin-top:0}
+
+  .cert{border:3px double var(--indigo);border-radius:12px;padding:26px 22px;text-align:center;background:linear-gradient(180deg,#fdfcfa,#eef0fa);margin-top:14px}
+  .cert .c-ttl{font-family:var(--disp);font-size:25px;color:var(--indigo)}
+  .cert .c-name{font-family:var(--disp);font-size:31px;color:var(--amber);margin:12px 0 4px;font-style:italic}
+  .cert .c-sub{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--txt-dim);margin:6px 0}
+  .cert .c-badges{font-size:20px;letter-spacing:6px;margin:12px 0}
+  .cert input{font-family:var(--mono);font-size:12px;border:1px solid var(--line2);border-radius:8px;padding:8px 10px;background:var(--panel);color:var(--txt);outline:none;text-align:center}
+  .locknote{font-family:var(--mono);font-size:11px;color:var(--txt-faint);background:var(--panel2);border-radius:9px;padding:11px 13px;margin-top:12px}
+
+  .chapter{display:none}
+  .chapter.active{display:block}
+  .kbd{font-family:var(--mono);background:var(--panel2);border:1px solid var(--line2);border-radius:5px;padding:1px 6px;font-size:11px}
+  .tag{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+    background:#eef0fa;color:var(--indigo);border-radius:5px;padding:2px 7px;margin-right:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <h1>The <span class="amp">Ledger</span></h1>
+    <div class="sub">Corporate Finance Academy · From balance sheet to cost of capital · Part of <span class="evolta">Evolta</span></div>
+  </div>
+  <div><a class="back-btn" href="index.html">← Back to Evolta</a></div>
+</header>
+
+<div class="voyage">
+  <div class="voyage-track" id="voyageTrack">
+    <div class="voyage-line"></div>
+    <div class="voyage-fill" id="voyageFill" style="width:0%"></div>
+    <div class="ship" id="shipIcon" style="left:2%">🧮</div>
+  </div>
+  <div class="voyage-caption" id="voyageCaption">Junior analyst → CFO's chair · 0 / 10 badges earned</div>
+</div>
+
+<div class="chnav" id="chnav"></div>
+
+<div class="grid">
+<main>
+
+<!-- ============ 1 · THE FIRM ============ -->
+<section class="chapter" id="firm">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 1 · The Firm</h2>
+    <h3 class="big">What, how and why — the two questions a CFO ever asks</h3>
+    <div class="mentor"><div class="avatar">🎓</div><div>
+      <div class="who">Mira · CFO-in-residence, your mentor</div>
+      <p>Welcome to the finance floor. Strip away the jargon and corporate finance is one job: <b>be a good financial manager</b>. That job has exactly two questions — <i>what should we invest in?</i> and <i>how do we pay for it?</i> Everything in this course hangs off those two hooks. Spend money well, raise money cheaply, and don't lie to yourself about risk.</p>
+    </div></div>
+    <div class="factrow">
+      <div class="fact"><div class="v">Investment</div><div class="k">decisions that <b>spend</b> money</div></div>
+      <div class="fact"><div class="v">Financing</div><div class="k">decisions that <b>raise</b> money</div></div>
+      <div class="fact"><div class="v">Real assets</div><div class="k">what the firm owns and operates</div></div>
+      <div class="fact"><div class="v">Financial assets</div><div class="k">claims investors hold on those</div></div>
+    </div>
+    <p><b>Think like a CFO.</b> When you are <span class="tag">spending</span> ask: invest or divest? tangible or intangible? and <i>what is your cost of capital?</i> When you are <span class="tag">raising</span> ask: internal or external? debt or equity? short-term or long-term?</p>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>The circuit of cash</h2>
+    <p class="dim">Click each numbered flow. This single loop is the whole subject in one picture.</p>
+    <div class="diagram">
+      <svg viewBox="0 0 700 250" role="img" aria-label="Cash flows between financial markets, the financial manager and the firm's operations">
+        <rect width="700" height="250" fill="none"/>
+        <rect x="25" y="55" width="175" height="140" rx="8" fill="#dfe6d9" stroke="#c3cfba"/>
+        <rect x="280" y="55" width="150" height="140" rx="8" fill="#3a49a0"/>
+        <rect x="505" y="55" width="175" height="140" rx="8" fill="#dfe6d9" stroke="#c3cfba"/>
+        <text x="112" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="#26303f" font-family="Inter,sans-serif">Firm's operations</text>
+        <text x="112" y="134" text-anchor="middle" font-size="11" fill="#5b6675" font-family="Inter,sans-serif">(a bundle of real assets)</text>
+        <text x="355" y="118" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff" font-family="Inter,sans-serif">Financial</text>
+        <text x="355" y="136" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff" font-family="Inter,sans-serif">manager</text>
+        <text x="592" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="#26303f" font-family="Inter,sans-serif">Financial markets</text>
+        <text x="592" y="134" text-anchor="middle" font-size="11" fill="#5b6675" font-family="Inter,sans-serif">(investors hold claims)</text>
+        <defs>
+          <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 z" fill="#26303f"/>
+          </marker>
+        </defs>
+        <g stroke="#26303f" stroke-width="2.2" fill="none" marker-end="url(#ar)">
+          <path d="M503,88 L436,88"/>
+          <path d="M278,88 L206,88"/>
+          <path d="M206,168 L276,168"/>
+          <path d="M455,150 L455,105 L437,105"/>
+          <path d="M434,168 L503,168"/>
+        </g>
+        <path d="M455,168 L455,150" stroke="#26303f" stroke-width="2.2" fill="none"/>
+        <g class="flownode" id="fn1"><circle cx="470" cy="72" r="13" fill="#c07c1e"/><text x="470" y="77" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff" font-family="IBM Plex Mono,monospace">1</text></g>
+        <g class="flownode" id="fn2"><circle cx="242" cy="72" r="13" fill="#c07c1e"/><text x="242" y="77" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff" font-family="IBM Plex Mono,monospace">2</text></g>
+        <g class="flownode" id="fn3"><circle cx="242" cy="192" r="13" fill="#c07c1e"/><text x="242" y="197" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff" font-family="IBM Plex Mono,monospace">3</text></g>
+        <g class="flownode" id="fn4"><circle cx="480" cy="128" r="14" fill="#c07c1e"/><text x="480" y="133" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#fff" font-family="IBM Plex Mono,monospace">4a</text></g>
+        <g class="flownode" id="fn5"><circle cx="470" cy="192" r="14" fill="#c07c1e"/><text x="470" y="197" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#fff" font-family="IBM Plex Mono,monospace">4b</text></g>
+        <text x="350" y="228" text-anchor="middle" font-size="10.5" fill="#94a0ae" font-family="IBM Plex Mono,monospace">Cash raised → invested → generated → reinvested or returned</text>
+      </svg>
+    </div>
+    <div class="flow-detail" id="flowDetail"></div>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>Which wrapper? Forms of business</h2>
+    <table class="dtable">
+      <tr><th style="width:150px">Form</th><th>What it means for liability, tax and control</th></tr>
+      <tr><td class="mono">Corporation</td><td>A business organised as a <b>separate legal entity owned by shareholders</b>. Its defining feature is <b>limited liability</b>: shareholders cannot be held liable for the corporation's debts. Can be public (shares traded) or private.</td></tr>
+      <tr><td class="mono">Partnership</td><td>The partners <b>are</b> the business: they are accountable for all company debts and legal responsibilities. The compensation is a <b>tax advantage</b> — the partnership pays no income tax; partners simply pay personal income tax on their share of profits.</td></tr>
+      <tr><td class="mono">LLP / LLC</td><td>A hybrid. <b>General partners</b> manage the business and carry unlimited personal liability; <b>limited partners</b> are liable only for the money they invested and take no part in management.</td></tr>
+      <tr><td class="mono">PC / PLLC</td><td>Professional corporation. The business has limited liability, but the professionals inside it <b>can still be sued personally</b> — for malpractice, for example.</td></tr>
+    </table>
+    <p class="dim">The choice is a trade-off: limited liability and easy access to outside capital on one side, tax simplicity and control on the other. Size, capital needs and liability exposure decide it.</p>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>Whose interests? The goal, and the problem</h2>
+    <p><b>The goal: maximise market value.</b> But shareholders are not identical — some want cash now, some want wealth later. Does that wreck the objective? <b>No</b>, as long as the financial market works. Meet the Ant (saver) and the Grasshopper (spender): a well-functioning capital market lets each convert value across time however they like, so both agree the firm should simply <b>make the pie as big as possible</b>.</p>
+    <div class="ctl">
+      <label>The friend's business pays, one year from now <b id="agPayLbl">$121,000</b></label>
+      <input type="range" id="agPay" min="95" max="140" step="1" value="121">
+    </div>
+    <div class="ctl">
+      <label>Capital market interest rate <b id="agRLbl">10%</b></label>
+      <input type="range" id="agR" min="0" max="25" step="1" value="10">
+    </div>
+    <div class="formula" id="agOut"></div>
+
+    <p style="margin-top:14px"><b>The agency problem.</b> Shareholders want market value maximised — but managers run the firm. That is the <b>separation of ownership and control</b>: shareholders are <i>principals</i>, managers are <i>agents</i>, and their interests can drift apart. Two consequences you will meet all term: <b>incentives matter</b> (compensation must be designed so managers' decisions aren't distorted), and <b>some inefficiency is unavoidable</b> because managers always know more than investors do.</p>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>The opportunity cost of capital</h2>
+    <p>F&amp;H Corp's CFO defends heavy investment in a declining business: <i>"we are confident of returns around 8% on investment. That's a far better return than F&amp;H earns on its cash holdings"</i> — which sit in near risk-free government securities yielding 4%.</p>
+    <p><b>Is 8% better than 4%? Not necessarily.</b> The cost of capital is not what your <i>own</i> cash currently earns. It is what investors could earn <b>elsewhere in the market on an investment of the same risk</b>. A risky 8% encabulator project must be judged against the return available on comparable-risk securities — which may be well above 8%. The 4% T-bill rate is only the right hurdle for a <i>risk-free</i> project.</p>
+    <div class="formula"><span class="lbl">The rule you will use all course:</span>
+Discount rate = expected return investors can get on
+               <b>equally risky</b> alternatives in the capital market.</div>
+
+    <div class="game-zone">
+      <h4>🏛️ Challenge 1 · Spend or Raise?</h4>
+      <p class="dim">Ten decisions announced by real corporations. For each: is it an <b>investment</b> decision (spending money on assets) or a <b>financing</b> decision (raising money / paying investors)? Then three concept questions. Score 9+ of 13 for the badge.</p>
+      <div id="firmGame"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 · THE REPORTS ============ -->
+<section class="chapter" id="reports">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 2 · The Reports</h2>
+    <h3 class="big">Three statements, one story about cash</h3>
+    <div class="mentor"><div class="avatar">🎓</div><div>
+      <div class="who">Mira</div>
+      <p>Before you value anything, you must read what the firm already did. The <b>balance sheet</b> is a photograph — what we own and who has a claim on it, on one day. The <b>income statement</b> is a film of profit over a year. The <b>cash-flow statement</b> is the film of <i>cash</i> — and cash is the thing that cannot be argued with.</p>
+    </div></div>
+
+    <h2 style="margin-top:6px"><span class="dot"></span>The three activities</h2>
+    <table class="dtable">
+      <tr><th style="width:130px">Activity</th><th>What it covers</th><th style="width:150px">Cash usually…</th></tr>
+      <tr><td class="mono">Financing</td><td>Sale of <b>financial assets</b>: issuing bonds and stock; repayment of interest and dividends.</td><td class="mono up">flows in</td></tr>
+      <tr><td class="mono">Investing</td><td>Purchase of <b>real assets</b>: machines, real estate, mergers and acquisitions. Also called <b>capital budgeting</b> or <b>CAPEX</b> decisions.</td><td class="mono down">flows out</td></tr>
+      <tr><td class="mono">Operating</td><td>Production, sales, delivery: net income, depreciation, marketing expense, salaries — the "daily" business of the firm.</td><td class="mono">varies</td></tr>
+    </table>
+    <p class="dim">A real statement of cash flows just adds the three up, adjusts for FX, and reconciles opening to closing cash. Nothing more mysterious than that:</p>
+    <table class="dtable">
+      <tr><th>Statement of cash flows ($ thousands)</th><th class="r">Year 2020</th><th class="r">Year 2021</th></tr>
+      <tr><td>Net cash generated from (used in) operating activities</td><td class="mono r">555,868</td><td class="mono r">208,649</td></tr>
+      <tr><td>Net cash used in investing activities</td><td class="mono r down">(886,912)</td><td class="mono r down">(3,767,273)</td></tr>
+      <tr><td>Net cash generated from financing activities</td><td class="mono r up">3,733,132</td><td class="mono r up">7,401,589</td></tr>
+      <tr><td>Effect of foreign exchange rate changes</td><td class="mono r">80,727</td><td class="mono r">(58,218)</td></tr>
+      <tr class="tot"><td>Net increase in cash and equivalents</td><td class="mono r">3,482,815</td><td class="mono r">3,784,747</td></tr>
+    </table>
+    <p class="dim">Read it as a sentence: this company <b>burned</b> cash on investment, and <b>funded</b> it by raising far more from investors than its operations produced. That is the signature of a fast-growing firm — and a fragile one if markets close.</p>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>The balance sheet (Home Depot, fiscal 2017, $ millions)</h2>
+    <table class="dtable">
+      <tr><th>Assets</th><th class="r">2017</th><th>Liabilities &amp; shareholders' equity</th><th class="r">2017</th></tr>
+      <tr><td>Cash and marketable securities</td><td class="mono r">3,595</td><td>Debt due for repayment</td><td class="mono r">2,761</td></tr>
+      <tr><td>Receivables</td><td class="mono r">1,952</td><td>Accounts payable</td><td class="mono r">7,244</td></tr>
+      <tr><td>Inventories</td><td class="mono r">12,748</td><td>Other current liabilities</td><td class="mono r">6,189</td></tr>
+      <tr><td>Other current assets</td><td class="mono r">638</td><td><b>Total current liabilities</b></td><td class="mono r">16,194</td></tr>
+      <tr><td><b>Total current assets</b></td><td class="mono r">18,933</td><td>Long-term debt</td><td class="mono r">24,267</td></tr>
+      <tr><td>Net tangible fixed assets</td><td class="mono r">22,075</td><td>Other long-term liabilities</td><td class="mono r">2,614</td></tr>
+      <tr><td>Intangible asset (goodwill)</td><td class="mono r">2,275</td><td><b>Total liabilities</b></td><td class="mono r">43,075</td></tr>
+      <tr><td>Other assets</td><td class="mono r">1,246</td><td>Common stock &amp; paid-in capital / retained earnings / treasury stock</td><td class="mono r">10,281 / 39,935 / −48,762</td></tr>
+      <tr class="tot"><td><b>Total assets</b></td><td class="mono r">44,529</td><td><b>Total liabilities + equity</b> (equity = 1,454)</td><td class="mono r">44,529</td></tr>
+    </table>
+    <p><b>Notice the equity line: only $1,454 million.</b> Home Depot bought back so much of its own stock (treasury stock −$48,762m) that book equity is nearly wiped out. Remember that number — in Chapter 3 it makes ROE and the debt ratios look spectacular and terrifying at the same time. <b>Book equity is an accounting residue, not a market value.</b></p>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>The income statement — walking down to net income</h2>
+    <div id="isWalk"></div>
+    <p class="dim">Two lines matter more than the rest. <b>EBIT</b> ($14,755m) is what the assets earned before anyone argues about financing — it belongs to debt and equity together. <b>Net income</b> ($8,630m) is what is left for shareholders after the lenders and the tax authority are paid.</p>
+
+    <div class="game-zone">
+      <h4>📑 Challenge 2 · Sort the Cash</h4>
+      <p class="dim">Twelve transactions. Drop each into <b>Operating</b>, <b>Investing</b> or <b>Financing</b>. 9+ correct earns the badge.</p>
+      <div id="reportsGame"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 · VALUE CREATED ============ -->
+<section class="chapter" id="value">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 3 · Value Created</h2>
+    <h3 class="big">Did we actually make our investors richer?</h3>
+    <div class="mentor"><div class="avatar">🎓</div><div>
+      <div class="who">Mira</div>
+      <p>Profit is not performance. A giant firm earning $1bn on $100bn of capital has destroyed value; a small one earning $10m on $30m has created it. The only honest question is whether the return beat <b>the cost of the capital tied up</b>. Everything on this page is one version of that question.</p>
+    </div></div>
+
+    <p class="dim">Here is the map of every ratio in this course. Click a box to jump to the chapter that covers it.</p>
+    <div class="diagram">
+      <svg viewBox="0 0 700 300" role="img" aria-label="Organisation chart of financial ratios linking to shareholder value">
+        <g id="rmapTop" style="cursor:pointer">
+          <rect x="235" y="12" width="230" height="62" rx="7" fill="#f0e2c4" stroke="#c07c1e" stroke-width="2"/>
+          <text x="350" y="33" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#26303f" font-family="Inter,sans-serif">Shareholder value</text>
+          <text x="350" y="50" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">How much value has been generated?</text>
+          <text x="350" y="65" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Market value added · Market-to-book</text>
+        </g>
+        <g id="rmapInv" style="cursor:pointer">
+          <rect x="35" y="112" width="270" height="58" rx="7" fill="#3a49a0"/>
+          <text x="170" y="133" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#fff" font-family="Inter,sans-serif">Investment — how profitable?</text>
+          <text x="170" y="152" text-anchor="middle" font-size="10.5" fill="#dfe3f5" font-family="Inter,sans-serif">EVA · returns on capital, assets, equity</text>
+        </g>
+        <g id="rmapFin" style="cursor:pointer">
+          <rect x="395" y="112" width="270" height="58" rx="7" fill="#3a49a0"/>
+          <text x="530" y="133" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#fff" font-family="Inter,sans-serif">Financing — how fast can we grow?</text>
+          <text x="530" y="152" text-anchor="middle" font-size="10.5" fill="#dfe3f5" font-family="Inter,sans-serif">Sustainable growth rate</text>
+        </g>
+        <g id="rmapEff" style="cursor:pointer">
+          <rect x="20" y="215" width="150" height="62" rx="7" fill="#cfe0d6" stroke="#0b8a5f"/>
+          <text x="95" y="237" text-anchor="middle" font-size="11" font-weight="bold" fill="#26303f" font-family="Inter,sans-serif">Efficient assets?</text>
+          <text x="95" y="255" text-anchor="middle" font-size="10" fill="#5b6675" font-family="Inter,sans-serif">Turnover ratios</text>
+        </g>
+        <g id="rmapMar" style="cursor:pointer">
+          <rect x="185" y="215" width="150" height="62" rx="7" fill="#cfe0d6" stroke="#0b8a5f"/>
+          <text x="260" y="237" text-anchor="middle" font-size="11" font-weight="bold" fill="#26303f" font-family="Inter,sans-serif">Profits from sales?</text>
+          <text x="260" y="255" text-anchor="middle" font-size="10" fill="#5b6675" font-family="Inter,sans-serif">Operating profit margin</text>
+        </g>
+        <g id="rmapLev" style="cursor:pointer">
+          <rect x="360" y="215" width="150" height="62" rx="7" fill="#cfe0d6" stroke="#0b8a5f"/>
+          <text x="435" y="237" text-anchor="middle" font-size="11" font-weight="bold" fill="#26303f" font-family="Inter,sans-serif">Prudent leverage?</text>
+          <text x="435" y="255" text-anchor="middle" font-size="10" fill="#5b6675" font-family="Inter,sans-serif">Debt &amp; coverage ratios</text>
+        </g>
+        <g id="rmapLiq" style="cursor:pointer">
+          <rect x="525" y="215" width="155" height="62" rx="7" fill="#cfe0d6" stroke="#0b8a5f"/>
+          <text x="602" y="237" text-anchor="middle" font-size="11" font-weight="bold" fill="#26303f" font-family="Inter,sans-serif">Enough liquidity?</text>
+          <text x="602" y="255" text-anchor="middle" font-size="10" fill="#5b6675" font-family="Inter,sans-serif">Current, quick, cash</text>
+        </g>
+        <g stroke="#94a0ae" stroke-width="1.8" fill="none" marker-end="url(#ar)">
+          <path d="M215,110 L300,78"/><path d="M485,110 L400,78"/>
+          <path d="M95,213 L140,174"/><path d="M255,213 L215,174"/>
+          <path d="M440,213 L490,174"/><path d="M600,213 L560,174"/>
+        </g>
+      </svg>
+    </div>
+
+    <h2 style="margin-top:6px"><span class="dot"></span>Market measures</h2>
+    <p><b>Market capitalisation</b> is the total market value of equity. Home Depot at the close of fiscal 2017: 1,170 million shares × $204.92 = <b>$239,756 million</b>.</p>
+    <div class="formula"><span class="lbl">Market value added (MVA) — value handed to equity holders by operating and investing</span>
+MVA = market cap − book equity = 239,756 − 1,454 = <b>$238,302 m</b>
+
+<span class="lbl">Market-to-book ratio — how many dollars of market value per dollar of book</span>
+M/B = 239,756 ÷ 1,454 = <b>164.9</b></div>
+    <p class="dim">An alternative MVA definition uses the whole firm: market value of debt <i>plus</i> equity, minus the book value of total capital. And note how the buyback-shrunken book equity inflates that 164.9 — a warning that ratios built on book values can be almost meaningless.</p>
+    <div class="dbar" id="mvaChart"></div>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>Economic value added — profit after <i>all</i> costs</h2>
+    <p>Ordinary profit deducts operating costs. It forgets the most expensive input of all: <b>the capital itself</b>. EVA (also called <b>residual income</b>) fixes that.</p>
+    <div class="formula">EVA = after-tax interest + net income − (cost of capital × capital)
+    = <b>NOPAT</b> − cost of capital × capital
+
+<span class="lbl">Home Depot, fiscal 2017 (tax rate 35%):</span>
+after-tax interest = (1 − 0.35) × 1,057 = 687
+NOPAT             = 687 + 8,630        = 9,317
+total capitalisation = LT debt 22,349 + equity 4,333 = 26,682   <span class="lbl">(start of year)</span>
+cost of capital   = 8.2% × 26,682      = 2,188
+<b>EVA               = 9,317 − 2,188      = $7,129 m</b></div>
+    <p><b>Return on capital</b> says the same thing as a rate: ROC = NOPAT ÷ total capital = 9,317 ÷ 26,682 = <b>34.9%</b>. Which lets you rewrite EVA as a spread:</p>
+    <div class="formula">EVA = (ROC − cost of capital) × total capital
+    = (0.349 − 0.082) × 26,682 = <b>$7,129 m</b>
+
+<span class="lbl">If ROC &gt; WACC, EVA is positive — the firm earned ~27% more than shareholders demanded.</span></div>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>EVA lab</h2>
+    <p class="dim">Drag the three levers. Watch how a perfectly profitable-looking firm destroys value the moment its cost of capital rises above its return.</p>
+    <div class="ctl"><label>NOPAT (after-tax interest + net income) <b id="evaNLbl">$9,317 m</b></label>
+      <input type="range" id="evaN" min="500" max="15000" step="100" value="9317"></div>
+    <div class="ctl"><label>Total long-term capital <b id="evaCLbl">$26,682 m</b></label>
+      <input type="range" id="evaC" min="5000" max="120000" step="500" value="26682"></div>
+    <div class="ctl"><label>After-tax WACC <b id="evaWLbl">8.2%</b></label>
+      <input type="range" id="evaW" min="20" max="160" step="1" value="82"></div>
+    <div class="formula" id="evaOut"></div>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>Accounting rates of return — and their traps</h2>
+    <div class="formula">ROE = net income ÷ equity            = 8,630 ÷ 4,333  = <b>199.2%</b>
+ROA = (after-tax interest + NI) ÷ total assets = 9,317 ÷ 42,966 = <b>21.7%</b></div>
+    <p><b>Why ROE is the least trustworthy of the three.</b> It is measured against <i>book equity</i>, so a firm can inflate it almost at will by borrowing and buying back shares — exactly what makes Home Depot's 199% meaningless as a measure of skill. ROA and ROC put debt and equity investors on the same footing and are far harder to game.</p>
+    <p><b>Three problems that apply to EVA and every accounting return:</b></p>
+    <table class="dtable">
+      <tr><td class="mono" style="width:34px">1</td><td>They are built on <b>book (balance-sheet) values</b>. Home Depot's decades of marketing spend built a brand that appears nowhere in the assets.</td></tr>
+      <tr><td class="mono">2</td><td>It is impossible to capture every asset or judge how fast it depreciates. Microsoft's cumulative investment in Windows is not on the balance sheet and cannot be measured exactly.</td></tr>
+      <tr><td class="mono">3</td><td>The balance sheet does not show <b>current market values</b>. Older assets may be grossly undervalued at today's prices.</td></tr>
+    </table>
+
+    <div class="game-zone">
+      <h4>💎 Challenge 3 · The Value Audit</h4>
+      <p class="dim">Six judgements a CFO has to make about performance measures. 5+ for the badge.</p>
+      <div id="valueGame"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4 · DU PONT ============ -->
+<section class="chapter" id="dupont">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 4 · The Du Pont Lens</h2>
+    <h3 class="big">Where does a return actually come from?</h3>
+    <div class="mentor"><div class="avatar">🎓</div><div>
+      <div class="who">Mira</div>
+      <p>Two firms both earn 21% on assets. One sells cheap things very fast; the other sells expensive things slowly. Same result, completely different business — and completely different things can go wrong. The Du Pont decomposition is how you tell them apart in ten seconds.</p>
+    </div></div>
+
+    <h2 style="margin-top:6px"><span class="dot"></span>Efficiency: how hard are the assets working?</h2>
+    <div class="formula"><span class="lbl">Asset turnover — sales generated per dollar of assets ("sales-to-assets")</span>
+asset turnover = sales ÷ total assets at start of year = 100,978 ÷ 42,966 = <b>2.35</b>
+   <span class="lbl">or, using the average of start and end assets:</span>
+                = 100,978 ÷ [(44,529 + 42,966)/2]        = <b>2.31</b></div>
+    <p class="dim">Use the average whenever assets moved a lot during the year — a mid-point avoids flattering a firm that grew its balance sheet late in the period. Be consistent, and say which you used.</p>
+    <div class="formula"><span class="lbl">Inventory — how many times the shelves emptied, and how many days of stock sit there</span>
+inventory turnover = COGS ÷ inventory at start = 66,548 ÷ 12,549 = <b>5.3 ×</b>
+inventory period   = 12,549 ÷ (66,548/365)                       = <b>69 days</b>
+
+<span class="lbl">Receivables — how fast customers pay, and the average wait</span>
+receivables turnover = sales ÷ receivables at start = 100,978 ÷ 2,029 = <b>49.8 ×</b>
+collection period    = 2,029 ÷ (100,978/365)                         = <b>7.3 days</b></div>
+    <p class="dim">Turnover and period are the same fact told two ways: <span class="kbd">period ≈ 365 ÷ turnover</span>. Home Depot collects in a week because most customers pay at the till — a supplier selling on 60-day terms would look completely different, and neither is "better" outside its industry.</p>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>Profitability: how much sticks per dollar of sales?</h2>
+    <div class="formula">profit margin           = net income ÷ sales                    = 8,630 ÷ 100,978 = <b>8.55%</b>
+operating profit margin = (after-tax interest + NI) ÷ sales      = 9,317 ÷ 100,978 = <b>9.23%</b></div>
+    <p><b>Prefer the operating profit margin.</b> Plain profit margin subtracts interest, so it <i>punishes a firm merely for financing itself with debt</i> — two identical businesses would score differently purely because of their capital structure. Adding back after-tax interest measures the business, not the balance sheet.</p>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>The Du Pont formula</h2>
+    <div class="formula">ROA = (after-tax interest + net income) ÷ assets
+    = <b>sales/assets</b> × <b>(after-tax interest + net income)/sales</b>
+    = asset turnover × operating profit margin
+    = 2.35 × 9.23% = <b>21.7%</b></div>
+    <p>Every firm would love a high ROA, and competition stops them. The two levers trade off against each other: <b>fast-food chains have high asset turnover and thin margins; classy hotels have low turnover and fat margins</b>. Move along the curve — but you rarely move the curve itself.</p>
+
+    <h2 style="margin-top:14px"><span class="dot"></span>Du Pont explorer</h2>
+    <p class="dim">Move the sliders. The dot is your firm; the curves are constant-ROA contours. Notice you can reach 20% ROA from opposite corners of the map.</p>
+    <div class="ctl"><label>Asset turnover <b id="dpTLbl">2.35 ×</b></label>
+      <input type="range" id="dpT" min="10" max="330" step="1" value="235"></div>
+    <div class="ctl"><label>Operating profit margin <b id="dpMLbl">9.2%</b></label>
+      <input type="range" id="dpM" min="5" max="330" step="1" value="92"></div>
+    <div class="chartbox"><svg id="dpChart" viewBox="0 0 560 340" role="img" aria-label="Asset turnover versus operating profit margin, with constant return-on-assets contours"></svg></div>
+    <div class="legend">
+      <span><i style="background:#94a0ae"></i>constant-ROA contours (5%, 10%, 20%)</span>
+      <span><i style="background:#c07c1e"></i>your firm</span>
+      <span><i style="background:#3a49a0"></i>real industries</span>
+    </div>
+    <div class="formula" id="dpOut"></div>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>The merger trap</h2>
+    <p>Firms often buy a supplier hoping to <i>capture the supplier's profit as well as their own</i>. The margin duly rises — and, unless the buyer has genuine skill in running the new business, the extra assets drag turnover down by exactly as much:</p>
+    <table class="dtable">
+      <tr><th>Company</th><th class="r">Sales</th><th class="r">Profits</th><th class="r">Assets</th><th class="r">Turnover</th><th class="r">Margin</th><th class="r">ROA</th></tr>
+      <tr><td>Admiral Motors</td><td class="mono r">$20</td><td class="mono r">$4</td><td class="mono r">$40</td><td class="mono r">0.50</td><td class="mono r">20%</td><td class="mono r">10%</td></tr>
+      <tr><td>Diana Corporation</td><td class="mono r">8</td><td class="mono r">2</td><td class="mono r">20</td><td class="mono r">0.40</td><td class="mono r">25%</td><td class="mono r">10%</td></tr>
+      <tr class="tot"><td>Diana Motors (merged)</td><td class="mono r">20</td><td class="mono r">6</td><td class="mono r">60</td><td class="mono r down">0.33</td><td class="mono r up">30%</td><td class="mono r">10%</td></tr>
+    </table>
+    <p class="dim">Margin 20% → 30% looks like a triumph. Turnover 0.50 → 0.33 quietly cancels it. <b>ROA is unchanged at 10%.</b> Vertical integration moves profit between line items; it does not, by itself, create value.</p>
+
+    <div class="game-zone">
+      <h4>🔍 Challenge 4 · Ratio Detective</h4>
+      <p class="dim">Six diagnoses from the numbers alone. 5+ for the badge.</p>
+      <div id="dupontGame"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5 · LEVERAGE, LIQUIDITY & GROWTH ============ -->
+<section class="chapter" id="leverage">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 5 · Leverage, Liquidity &amp; Growth</h2>
+    <h3 class="big">Can they pay next decade's debts — and next month's bills?</h3>
+    <div class="mentor"><div class="avatar">🎓</div><div>
+      <div class="who">Mira</div>
+      <p>Profitability tells you whether a business deserves to exist. Leverage and liquidity tell you whether it will survive long enough to find out. And growth ratios tell you how fast it can expand before it has to come back to the market with its hat out.</p>
+    </div></div>
+
+    <h2 style="margin-top:6px"><span class="dot"></span>Leverage: how much of the firm belongs to lenders?</h2>
+    <div class="formula">long-term debt ratio        = LT debt ÷ (LT debt + equity) = 24,267 ÷ 25,721 = <b>94%</b>
+long-term debt–equity ratio = LT debt ÷ equity            = 24,267 ÷ 1,454  = <b>16.69</b>
+total debt ratio            = total liabilities ÷ total assets = 43,075 ÷ 44,529 = <b>97%</b>
+total debt–equity ratio     = total liabilities ÷ equity   = 43,075 ÷ 1,454  = <b>29.6</b></div>
+    <p class="dim">Use the <b>total</b> versions when a firm is a regular short-term borrower. And treat these particular numbers with care: they are extreme only because buybacks gutted <i>book</i> equity. On market values Home Depot is conservatively financed. Some firms genuinely do run this hot on purpose — companies taken private in a <b>leveraged buyout (LBO)</b> typically issue enormous amounts of debt.</p>
+    <div class="formula">interest coverage (times-interest-earned) = EBIT ÷ interest = 14,755 ÷ 1,057 = <b>14.0 ×</b>
+cash coverage = (EBIT + depreciation) ÷ interest = (14,755 + 1,811) ÷ 1,057 = <b>15.7 ×</b></div>
+    <p class="dim">Coverage ratios ask the question a lender actually cares about: how many times over could this year's earnings pay this year's interest? Adding depreciation back gets closer to the cash available. Fourteen times over is comfortable — which is why book leverage ratios of "94%" should never be read on their own.</p>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>Leverage and ROE: the extended Du Pont</h2>
+    <p>Borrowing does two opposite things to shareholders: interest payments <b>reduce</b> net income, but there are <b>fewer</b> equity holders to share what remains. Which effect wins? Split ROE into four:</p>
+    <div class="formula">ROE = <b>assets/equity</b> × <b>sales/assets</b> × <b>(a-t interest + NI)/sales</b> × <b>NI/(a-t interest + NI)</b>
+       ↑ leverage ratio   ↑ asset turnover   ↑ operating margin        ↑ "debt burden"</div>
+    <p>The middle two multiply to <b>ROA — unaffected by the financing mix</b>. The outer two both depend on leverage and pull in opposite directions: the leverage ratio rises with debt, the debt burden term falls. <b>The net effect on ROE is ambiguous</b>, which is precisely why ROE is a poor scoreboard and why Modigliani and Miller (Chapter 8) become necessary.</p>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>Growth: how fast can we expand on our own money?</h2>
+    <p>If net assets are proportional to sales, then growing sales requires assets in proportion:</p>
+    <div class="formula">additional net assets required = growth rate × initial net assets
+required external financing    = additional net assets required − reinvested earnings
+
+<span class="lbl">internal growth rate — the fastest you can grow raising no outside money at all</span>
+internal g = reinvested earnings ÷ net assets
+           = plowback ratio × return on equity × (equity ÷ net assets)
+
+<span class="lbl">sustainable growth rate — the fastest you can grow without raising leverage</span>
+sustainable g = <b>plowback ratio × ROE</b></div>
+    <p class="dim">So a firm can grow faster without outside capital if it ① ploughs back a high share of earnings, ② earns a high ROE, and ③ carries a low debt-to-asset ratio. In practice both rates are slightly circular — ROE itself depends on the growth rate — so you solve for the pair that leaves leverage unchanged.</p>
+    <div class="ctl"><label>Plowback ratio (share of earnings retained) <b id="grPLbl">60%</b></label>
+      <input type="range" id="grP" min="0" max="100" step="5" value="60"></div>
+    <div class="ctl"><label>Return on equity <b id="grRLbl">15%</b></label>
+      <input type="range" id="grR" min="0" max="40" step="1" value="15"></div>
+    <div class="ctl"><label>Equity ÷ net assets (1 = no debt) <b id="grELbl">0.70</b></label>
+      <input type="range" id="grE" min="10" max="100" step="5" value="70"></div>
+    <div class="formula" id="grOut"></div>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>Liquidity: can we pay this month?</h2>
+    <p><b>Net working capital</b> = current assets − current liabilities = 18,933 − 16,194 = <b>$2,739 m</b>, which is 6.2% of total assets.</p>
+    <div class="formula">current ratio = current assets ÷ current liabilities        = 18,933 ÷ 16,194 = <b>1.17</b>
+quick (acid-test) = (cash + securities + receivables) ÷ CL = 5,547 ÷ 16,194  = <b>0.34</b>
+cash ratio    = (cash + marketable securities) ÷ CL         = 3,595 ÷ 16,194  = <b>0.22</b></div>
+    <p class="dim">The ladder strips out progressively less liquid assets. The gap between 1.17 and 0.34 is inventory: Home Depot's ability to pay depends on selling 69 days of timber and paint.</p>
+    <p><b>Two health warnings.</b> ① Changes in the current ratio mislead: borrow a large sum from the bank and park it in marketable securities, and both current assets and current liabilities rise — net working capital is unchanged but the ratio moves. (Hence the practice of netting short-term investments against short-term debt.) ② The cash ratio ignores <b>reserve borrowing power</b> — a firm's ability to borrow on short notice, which is real liquidity even though no ratio shows it.</p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>Reading ratios like an analyst</h2>
+    <p>Home Depot's own history tells a story in three acts: <b>1999–2007</b>, a steady decline in the ability to generate sales from assets, largely offset for a while by a rising profit margin; <b>2008</b>, a sharp fall in margin and a collapse in ROA; <b>2009–2017</b>, both turnover and margin rising every single year.</p>
+    <table class="dtable">
+      <tr><th>Fiscal 2017</th><th class="r">Home Depot</th><th class="r">Lowe's</th><th>What it says</th></tr>
+      <tr><td>Asset turnover</td><td class="mono r">2.35</td><td class="mono r">1.99</td><td rowspan="2">Higher turnover <i>and</i> higher margin → a clearly higher ROA.</td></tr>
+      <tr><td>Operating profit margin</td><td class="mono r">9.23%</td><td class="mono r">5.63%</td></tr>
+      <tr><td>Return on assets</td><td class="mono r up">21.7%</td><td class="mono r">11.2%</td><td>Roughly double the return on the same kind of asset base.</td></tr>
+      <tr><td>Total debt ratio</td><td class="mono r">0.97</td><td class="mono r">0.83</td><td rowspan="2">Higher book leverage, yet <b>better</b> interest cover — profitability pays for the debt.</td></tr>
+      <tr><td>Times-interest-earned</td><td class="mono r">14.0</td><td class="mono r">9.7</td></tr>
+      <tr><td>Quick ratio</td><td class="mono r">0.34</td><td class="mono r">0.05</td><td>More liquid assets on hand.</td></tr>
+    </table>
+    <p class="dim">And the golden rule: <b>every ratio must be read against industry norms.</b> Median asset turnover runs about 1.96 in retail but 0.26 in oil and 0.28 in utilities; median market-to-book is 3.55 for beer and liquor but 1.17 for steel. A "bad" number in one industry is an excellent one in another.</p>
+
+    <div class="game-zone">
+      <h4>⚖️ Challenge 5 · Build the Ratio</h4>
+      <p class="dim">Match each ratio to its formula: tap a formula chip, and it drops into the next empty slot. Get all six right, then answer three diagnosis questions.</p>
+      <div class="slotrow" id="ratSlots"></div>
+      <div id="ratChips"></div>
+      <div style="margin-top:10px"><button class="btn alt" id="ratReset">Reset</button></div>
+      <div class="feedback" id="ratFb"></div>
+      <div id="leverageGame" style="margin-top:12px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6 · MARKET EFFICIENCY ============ -->
+<section class="chapter" id="markets">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 6 · Efficient Markets</h2>
+    <h3 class="big">What is already in the price?</h3>
+    <div class="mentor"><div class="avatar">🎓</div><div>
+      <div class="who">Mira</div>
+      <p>When the price of a car moves, it tells you something about supply and demand. Financial prices do the same job — but the "supply and demand" is information itself. The efficient market hypothesis is just a claim about <b>which</b> information has already been absorbed by the price you can see on the screen. That determines what a CFO can and cannot get away with.</p>
+    </div></div>
+
+    <table class="dtable">
+      <tr><th style="width:130px">Form</th><th>Prices already incorporate…</th><th>Therefore…</th></tr>
+      <tr><td class="mono">Weak</td><td>all <b>historical</b> information (past prices and returns)</td><td>prices follow <b>random walks</b>; chart patterns cannot be traded profitably</td></tr>
+      <tr><td class="mono">Semistrong</td><td>all <b>public</b> information</td><td>prices react <b>immediately</b> to news; you cannot profit from reading an announcement</td></tr>
+      <tr><td class="mono">Strong</td><td>all <b>public and private</b> information</td><td><b>no one</b> consistently beats the market — not even the insiders and the professionals</td></tr>
+    </table>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>Weak form: the analyst versus the coin</h2>
+    <p>Two analysts forecast Microsoft, Marks &amp; Spencer, Philips and Rio Tinto. Analyst 1 has every scrap of historical price data. Analyst 2 tosses a coin. Who wins? Plot each stock's return on day <i>t</i> against its return on day <i>t</i>+1 and you get a shapeless cloud — the correlations are <b>−0.037, −0.020, +0.004, +0.010</b>. Effectively zero.</p>
+    <p><b>Why patterns self-destruct.</b> Suppose everyone knew Microsoft would be $80 next month while it trades at $40 today. Nobody would sell at $40. The price would jump to (nearly) $80 <i>now</i>. The moment a cycle becomes apparent to investors, their own trading destroys it. Predictable patterns are self-erasing — which is exactly why the leftover price path looks random.</p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>Semistrong form: measuring the reaction</h2>
+    <div class="formula">expected return  = α + β × market return        <span class="lbl">(from an asset-pricing model such as CAPM)</span>
+<b>abnormal return  = actual return − expected return</b>   <span class="lbl">the event-specific price change</span></div>
+    <p class="dim">Cumulative abnormal returns for 8,668 US takeover targets, 1975–2016. The target's price jumps on the announcement — and then nothing.</p>
+    <div class="chartbox"><svg id="evChart" viewBox="0 0 560 260" role="img" aria-label="Cumulative abnormal return of takeover targets around the announcement date"></svg></div>
+    <p>Two lessons live in that chart. <b>The jump is enormous and instantaneous</b> — about +25% on the day after announcement. And <b>the line is flat afterwards</b>: by the time you read the news, the opportunity is gone. (The gentle drift <i>before</i> day zero is the uncomfortable part — some information leaks.)</p>
+    <p><b>How long do you really have?</b> Trump announced "reciprocal tariffs" at about 4:20 p.m. EST on 2 April 2025. Suppose you were standing next to him. E-mini S&amp;P 500 futures spiked, then collapsed roughly 3% within <b>minutes</b> of the boards being shown. The window between hearing news and it being in the price is measured in seconds, not days.</p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>Strong form: can the professionals beat it?</h2>
+    <p>Most studies find that mutual funds earn <b>less</b> than their benchmark portfolios after expenses, and roughly <b>match</b> them before expenses. Diversified equity funds underperformed the Wilshire 5000 in about <b>60% of the years</b> from 1971 to 2017. And you cannot solve it by picking the smart ones: a top-quartile fund in one year has <b>no more than an average chance</b> of being top-quartile the next.</p>
+    <div class="factrow">
+      <div class="fact"><div class="v">≈ 0</div><div class="k">day-to-day return correlation</div></div>
+      <div class="fact"><div class="v">~25%</div><div class="k">target jump, in one day</div></div>
+      <div class="fact"><div class="v">~60%</div><div class="k">of years funds underperform</div></div>
+      <div class="fact"><div class="v">~0</div><div class="k">persistence in fund rankings</div></div>
+    </div>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>Where the hypothesis cracks: bubbles</h2>
+    <p>Efficiency is supported by mounting evidence — and it still fails from time to time. The strongest challenge is the observation of <b>bubbles</b>.</p>
+    <table class="dtable">
+      <tr><td class="mono" style="width:150px">Dot-com, 1995–2000</td><td>The NASDAQ composite rose <b>800%</b> to its March 2000 peak, then fell <b>78%</b> by October 2002 — giving up every gain of the bubble.</td></tr>
+      <tr><td class="mono">Japan, 1986–1991</td><td>By 2005, land prices in the six major Japanese cities had slumped to just <b>13% of their peak</b>. The Nikkei took over three decades to revisit its 1989 high.</td></tr>
+    </table>
+    <p class="dim">Neither episode looks like a market calmly discounting information. Which raises the question Chapter 7 answers: if prices are set by people, and people are not always rational, what happens then?</p>
+
+    <div class="game-zone">
+      <h4>📈 Challenge 6 · Which Form Is Being Tested?</h4>
+      <p class="dim">Eight findings from the evidence. Which form of efficiency does each one test — or contradict? 6+ for the badge.</p>
+      <div id="marketsGame"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7 · THE HUMAN FACTOR ============ -->
+<section class="chapter" id="minds">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 7 · The Human Factor</h2>
+    <h3 class="big">Four questions about your own head</h3>
+    <div class="mentor"><div class="avatar">🎓</div><div>
+      <div class="who">Mira</div>
+      <p>Why do bubbles happen? One answer is that prices are set by people, and <b>people are not 100% rational 100% of the time</b>. Behavioural finance is the intersection of psychology and finance: it studies decisions made by <b>boundedly rational</b> investors. Before I show you the theory, let me run the experiment on you. Answer honestly and quickly — no arithmetic.</p>
+    </div></div>
+
+    <div class="game-zone">
+      <h4>🧠 Challenge 7 · The Experiment</h4>
+      <div id="mindsExp"></div>
+    </div>
+
+    <div id="mindsTheory" style="display:none">
+      <h2 style="margin-top:20px"><span class="dot"></span>The fourfold pattern of risk attitudes</h2>
+      <table class="dtable">
+        <tr><th></th><th>Gains</th><th>Losses</th></tr>
+        <tr><td class="mono">High probability<br><span style="color:var(--txt-faint)">the certainty effect</span></td><td><b>Risk averse</b><br><span class="dim" style="font-size:11.5px">take the sure $899 rather than a 90% shot at $1,000 — fear of disappointment</span></td><td><b>Risk seeking</b><br><span class="dim" style="font-size:11.5px">gamble on the 90% chance of losing $1,000 rather than accept a certain $899 loss — hope to avoid the loss</span></td></tr>
+        <tr><td class="mono">Low probability<br><span style="color:var(--txt-faint)">the possibility effect</span></td><td><b>Risk seeking</b><br><span class="dim" style="font-size:11.5px">take the 1% shot at $1,000 over a sure $11 — hope of a large gain. This is the lottery ticket.</span></td><td><b>Risk averse</b><br><span class="dim" style="font-size:11.5px">pay the certain $11 to avoid a 1% chance of losing $1,000 — fear of a large loss. This is insurance.</span></td></tr>
+      </table>
+      <p>Note what just happened. Each pair of questions had <b>the same expected value structure</b>, and merely flipping gains into losses flipped your preference. A purely rational agent with a stable utility function cannot do that. Two effects drive it: at <b>high probabilities</b> people over-weight certainty; at <b>low probabilities</b> they over-weight mere possibility.</p>
+
+      <h2 style="margin-top:18px"><span class="dot"></span>Prospect theory</h2>
+      <p class="dim">The value function that fits this behaviour: defined over <b>changes</b> from a reference point rather than final wealth, concave for gains, convex for losses — and markedly <b>steeper on the loss side</b>.</p>
+      <div class="chartbox"><svg viewBox="0 0 520 300" role="img" aria-label="Prospect theory value function: S-shaped, steeper for losses than gains">
+        <line x1="40" y1="150" x2="490" y2="150" stroke="#94a0ae" stroke-width="1.4"/>
+        <line x1="265" y1="18" x2="265" y2="285" stroke="#94a0ae" stroke-width="1.4"/>
+        <path d="M45,268 C120,262 210,232 265,150 C320,68 400,44 485,38" fill="none" stroke="#3a49a0" stroke-width="2.6"/>
+        <line x1="180" y1="150" x2="180" y2="245" stroke="#c07c1e" stroke-width="1.4" stroke-dasharray="4 3"/>
+        <line x1="180" y1="245" x2="265" y2="245" stroke="#c07c1e" stroke-width="1.4" stroke-dasharray="4 3"/>
+        <line x1="350" y1="150" x2="350" y2="98" stroke="#c07c1e" stroke-width="1.4" stroke-dasharray="4 3"/>
+        <line x1="350" y1="98" x2="265" y2="98" stroke="#c07c1e" stroke-width="1.4" stroke-dasharray="4 3"/>
+        <circle cx="180" cy="245" r="4.5" fill="#c07c1e"/><circle cx="350" cy="98" r="4.5" fill="#c07c1e"/>
+        <text x="470" y="142" text-anchor="end" font-size="11" fill="#5b6675" font-family="Inter,sans-serif">Gain →</text>
+        <text x="55" y="142" font-size="11" fill="#5b6675" font-family="Inter,sans-serif">← Loss</text>
+        <text x="272" y="30" font-size="11" fill="#5b6675" font-family="Inter,sans-serif">Value</text>
+        <text x="150" y="265" text-anchor="middle" font-size="10.5" fill="#c07c1e" font-family="IBM Plex Mono,monospace">−$50</text>
+        <text x="368" y="88" font-size="10.5" fill="#c07c1e" font-family="IBM Plex Mono,monospace">+$50</text>
+        <text x="80" y="205" font-size="10.5" fill="#b23b2e" font-family="Inter,sans-serif">losing $50 hurts…</text>
+        <text x="360" y="130" font-size="10.5" fill="#0b8a5f" font-family="Inter,sans-serif">…about twice as much as</text>
+        <text x="360" y="145" font-size="10.5" fill="#0b8a5f" font-family="Inter,sans-serif">winning $50 pleases</text>
+      </svg></div>
+      <p><b>Three consequences you will meet on a real desk.</b> ① <b>Loss aversion</b>: the pain of a loss is roughly twice the pleasure of an equal gain, so people hold losing positions far too long to avoid "realising" them. ② <b>Reference dependence</b>: whether an outcome feels like a gain or a loss depends on an arbitrary anchor — your purchase price, last year's budget, the analyst consensus. ③ <b>Framing</b>: describe the same cash flows as a gain rather than an avoided loss and the decision changes. Every one of these can move prices away from value, and none of them appears in the efficient-market story.</p>
+
+      <div class="game-zone">
+        <h4>🧠 Confirm the pattern</h4>
+        <p class="dim">Three questions on what you just experienced. 2+ locks in the badge.</p>
+        <div id="mindsGame"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8 · MODIGLIANI–MILLER ============ -->
+<section class="chapter" id="mm">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 8 · Modigliani–Miller</h2>
+    <h3 class="big">You cannot make a pie bigger by slicing it differently</h3>
+    <div class="mentor"><div class="avatar">🎓</div><div>
+      <div class="who">Mira</div>
+      <p>This is the result that made corporate finance a science instead of a set of opinions. Two firms, identical operations, different capital structures. Everyone's instinct says the clever one is worth more. Modigliani and Miller proved that in a perfect market it cannot be — and the <i>way</i> they proved it, by showing investors can do at home whatever the firm does on the balance sheet, is the template for half of modern finance.</p>
+    </div></div>
+
+    <h2 style="margin-top:6px"><span class="dot"></span>The arbitrage: four strategies</h2>
+    <p>Firm <b>U</b> is unlevered, so E<sub>U</sub> = V<sub>U</sub>. Firm <b>L</b> is levered, so E<sub>L</sub> = V<sub>L</sub> − D<sub>L</sub>. Both generate the same operating profits. Buy 1% of each and compare.</p>
+    <table class="dtable">
+      <tr><th>Strategy</th><th>Dollar investment</th><th>Dollar return</th></tr>
+      <tr><td><span class="tag">less risky</span>1 · Buy 1% of the unlevered firm U</td><td class="mono">0.01 V<sub>U</sub></td><td class="mono">0.01 × Profits</td></tr>
+      <tr><td><span class="tag">less risky</span>2 · Buy 1% of <b>both</b> the debt and equity of L</td><td class="mono">0.01(D<sub>L</sub> + E<sub>L</sub>) = 0.01 V<sub>L</sub></td><td class="mono">0.01 × Interest + 0.01 × (Profits − Interest)<br>= 0.01 × Profits</td></tr>
+      <tr><td><span class="tag">more risky</span>3 · Buy 1% of the equity of L only</td><td class="mono">0.01 E<sub>L</sub> = 0.01(V<sub>L</sub> − D<sub>L</sub>)</td><td class="mono">0.01 × (Profits − Interest)</td></tr>
+      <tr><td><span class="tag">more risky</span>4 · Borrow 0.01D<sub>L</sub> yourself, buy 1% of U</td><td class="mono">0.01(V<sub>U</sub> − D<sub>L</sub>)</td><td class="mono">0.01 × (Profits − Interest)</td></tr>
+    </table>
+    <p><b>Strategies 1 and 2 give an identical return, so they must cost the same: V<sub>U</sub> = V<sub>L</sub>.</b> Strategies 3 and 4 also give identical returns, so again V<sub>U</sub> = V<sub>L</sub>. If the two firms ever traded at different prices you could buy one, short the other, and pocket the difference for zero risk. Investors would do exactly that until the gap closed.</p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>The same proof without any hand-waving about risk</h2>
+    <p class="dim">Let firm L have a random cash flow <i>R</i> and a debt repayment obligation <i>D</i>, and set the risk-free rate to zero so the discount factor is 1. Debt holders are paid first and capped; equity holders get whatever is left over.</p>
+    <div class="chartbox"><svg viewBox="0 0 520 200" role="img" aria-label="Payoff diagrams: debt holders receive the minimum of R and D; equity holders receive the maximum of zero and R minus D">
+      <g stroke="#94a0ae" stroke-width="1.4" fill="none">
+        <path d="M35,170 L235,170"/><path d="M35,170 L35,25"/>
+        <path d="M285,170 L485,170"/><path d="M285,170 L285,25"/>
+      </g>
+      <path d="M35,170 L135,80 L235,80" fill="none" stroke="#3a49a0" stroke-width="3"/>
+      <path d="M35,170 L135,170" fill="none" stroke="#0b8a5f" stroke-width="0"/>
+      <path d="M285,170 L385,170 L485,72" fill="none" stroke="#0b8a5f" stroke-width="3"/>
+      <line x1="135" y1="170" x2="135" y2="80" stroke="#c07c1e" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <line x1="385" y1="170" x2="385" y2="60" stroke="#c07c1e" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <text x="135" y="186" text-anchor="middle" font-size="11" fill="#c07c1e" font-family="IBM Plex Mono,monospace">D</text>
+      <text x="385" y="186" text-anchor="middle" font-size="11" fill="#c07c1e" font-family="IBM Plex Mono,monospace">D</text>
+      <text x="235" y="186" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Income R →</text>
+      <text x="485" y="186" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Income R →</text>
+      <text x="40" y="20" font-size="11" fill="#3a49a0" font-family="Inter,sans-serif" font-weight="bold">Debt holders: min(R, D)</text>
+      <text x="290" y="20" font-size="11" fill="#0b8a5f" font-family="Inter,sans-serif" font-weight="bold">Equity holders: max(0, R − D)</text>
+      <text x="185" y="72" font-size="10" fill="#3a49a0" font-family="IBM Plex Mono,monospace">capped</text>
+      <text x="415" y="105" font-size="10" fill="#0b8a5f" font-family="IBM Plex Mono,monospace">the residual</text>
+    </svg></div>
+    <div class="formula">V<sub>D</sub> + V<sub>E</sub> = E[min(R, D)] + E[max(0, R − D)] = <b>E[R]</b>
+
+<span class="lbl">…which does not contain D at all. And note: risk neutrality was never required.</span></div>
+    <p>Because min(R,D) + max(0, R−D) = R for <i>every</i> outcome, the two claims always add back up to the whole cash flow. Debt and equity are just two ways of cutting one random variable in half.</p>
+
+    <div class="formula" style="border-left:3px solid var(--indigo)"><b>MM Proposition 1</b>
+The market value of any firm is <b>independent of its capital structure</b>.
+
+<span class="lbl">Because: as long as investors can borrow or lend on their own account on the
+same terms as the firm, they can "undo" the effect of any change the firm makes.</span></div>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>The case of Macbeth Spot Removers</h2>
+    <p>Macbeth has no leverage, pays out all operating income, and faces no taxes. It has <b>1,000 shares at $10</b> = $10,000 of equity, and expects income of $1,500 a year in perpetuity — though that income is not certain. The board is considering issuing <b>$5,000 of debt at 10%</b> and using the proceeds to repurchase 500 shares.</p>
+    <div class="ctl"><label>Operating income this year <b id="mbOILbl">$1,500</b></label>
+      <input type="range" id="mbOI" min="0" max="2500" step="50" value="1500"></div>
+    <div class="chartbox"><svg id="mbChart" viewBox="0 0 560 300" role="img" aria-label="Earnings per share versus operating income under all-equity and 50 percent debt financing"></svg></div>
+    <div class="legend">
+      <span><i style="background:#3a49a0"></i>All equity</span>
+      <span><i style="background:#c07c1e"></i>Equal debt and equity</span>
+      <span><i style="background:#94a0ae"></i>break-even at $1,000</span>
+    </div>
+    <table class="dtable" id="mbTable"></table>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>The argument — and the flaw</h2>
+    <p>Supporters of the repurchase say: <i>"If income exceeds $1,000, leverage increases the return to equity holders. If it is below $1,000, leverage reduces it. Since we expect income above the $1,000 break-even, we can best help shareholders by going ahead with the $5,000 debt issue."</i> Expected EPS does rise from <b>$1.50 to $2.00</b>. So what is wrong?</p>
+    <p><b>Shareholders can borrow on their own account.</b> Suppose an investor puts up $10 of their own money, borrows a further $10 at the same 10%, and buys <b>two</b> unlevered Macbeth shares:</p>
+    <table class="dtable">
+      <tr><th>Operating income</th><th class="r">$500</th><th class="r">$1,000</th><th class="r">$1,500</th><th class="r">$2,000</th></tr>
+      <tr><td>Earnings on two shares</td><td class="mono r">$1</td><td class="mono r">$2</td><td class="mono r">$3</td><td class="mono r">$4</td></tr>
+      <tr><td>Less interest at 10%</td><td class="mono r">1</td><td class="mono r">1</td><td class="mono r">1</td><td class="mono r">1</td></tr>
+      <tr><td>Net earnings on investment</td><td class="mono r">0</td><td class="mono r">1</td><td class="mono r">2</td><td class="mono r">3</td></tr>
+      <tr class="tot"><td>Return on the $10 invested</td><td class="mono r">0%</td><td class="mono r">10%</td><td class="mono r">20%</td><td class="mono r">30%</td></tr>
+    </table>
+    <p><b>That is exactly the payoff of one share in the levered company</b> — 0/10/20/30%. If investors can manufacture leverage themselves at the same rate, they will not pay a premium for a firm that does it for them. So the share price stays at <b>$10</b> either way, and the firm's total value is unchanged. <b>Homemade leverage is the whole argument.</b></p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>Proposition 2: what leverage <i>does</i> change</h2>
+    <div class="formula">r<sub>A</sub> = expected operating income ÷ market value of all securities
+   = (D/(D+E)) r<sub>D</sub> + (E/(D+E)) r<sub>E</sub>          <span class="lbl">a weighted average — unchanged by leverage</span>
+
+<b>r<sub>E</sub> = r<sub>A</sub> + (r<sub>A</sub> − r<sub>D</sub>) × D/E</b>              <span class="lbl">MM Proposition 2</span></div>
+    <p><b>Proposition 2:</b> the expected return on the common stock of a levered firm <b>increases in proportion to the debt–equity ratio</b>, measured in market values; and the rate of increase depends on the <b>spread</b> between the expected return on a portfolio of all the firm's securities and the expected return on the debt.</p>
+    <div class="formula"><span class="lbl">Macbeth before borrowing:</span>
+r<sub>A</sub> = r<sub>E</sub> = 1,500 ÷ 10,000 = <b>15%</b>
+
+<span class="lbl">Macbeth after borrowing $5,000 at 10%:</span>
+r<sub>E</sub> = 0.15 + (0.15 − 0.10) × 5,000/5,000 = <b>20%</b></div>
+    <p><b>Is that 20% a free lunch? No — it is compensation for risk.</b> Watch what a $1,000 fall in operating income does:</p>
+    <table class="dtable">
+      <tr><th>If operating income falls from $1,500 to $500</th><th class="r">EPS change</th><th class="r">Return change</th></tr>
+      <tr><td>No debt</td><td class="mono r">$1.50 → $0.50 = <b>−$1.00</b></td><td class="mono r">15% → 5% = <b>−10 pts</b></td></tr>
+      <tr><td>50% debt</td><td class="mono r down">$2.00 → $0 = <b>−$2.00</b></td><td class="mono r down">20% → 0% = <b>−20 pts</b></td></tr>
+    </table>
+    <p class="dim">Leverage doubles the sensitivity of shareholder returns to business fortunes. Higher expected return, proportionally higher risk, <b>same value</b>. Shareholders are indifferent.</p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>Watch out for hidden leverage</h2>
+    <p>Debt does not always announce itself. Reeby Sports is considering a carbon-fibre Bocce shoe: $500,000 of up-front marketing plus $500,000 of equipment, with a company cost of capital of 10%.</p>
+    <table class="dtable">
+      <tr><th>Bocce shoe proposal ($000s)</th><th class="r">0</th><th class="r">1</th><th class="r">2</th><th class="r">3</th><th class="r">4</th><th class="r">5</th></tr>
+      <tr><td>Marketing</td><td class="mono r">−500</td><td class="mono r">+260</td><td class="mono r">+260</td><td class="mono r">+260</td><td class="mono r">+260</td><td class="mono r">+260</td></tr>
+      <tr><td>Equipment</td><td class="mono r">−500</td><td class="mono r"></td><td class="mono r"></td><td class="mono r"></td><td class="mono r"></td><td class="mono r"></td></tr>
+      <tr class="tot"><td>Total — <b>NPV at 10% = −$14k, IRR = 9.4%</b></td><td class="mono r">−1,000</td><td class="mono r">+260</td><td class="mono r">+260</td><td class="mono r">+260</td><td class="mono r">+260</td><td class="mono r">+260</td></tr>
+    </table>
+    <p>The CEO calls to cancel the equipment order. The salesperson, anxious to keep the sale, offers: buy now, <b>pay later</b> — five fixed payments of $122,000 a year instead of $500,000 today.</p>
+    <table class="dtable">
+      <tr><th>Revised proposal ($000s)</th><th class="r">0</th><th class="r">1</th><th class="r">2</th><th class="r">3</th><th class="r">4</th><th class="r">5</th></tr>
+      <tr><td>Marketing</td><td class="mono r">−500</td><td class="mono r">+260</td><td class="mono r">+260</td><td class="mono r">+260</td><td class="mono r">+260</td><td class="mono r">+260</td></tr>
+      <tr><td>Equipment (payments)</td><td class="mono r">0</td><td class="mono r">−122</td><td class="mono r">−122</td><td class="mono r">−122</td><td class="mono r">−122</td><td class="mono r">−122</td></tr>
+      <tr class="tot"><td>Total — <b>NPV at 10% = +$23k, IRR = 11.8%</b></td><td class="mono r">−500</td><td class="mono r">+138</td><td class="mono r">+138</td><td class="mono r">+138</td><td class="mono r">+138</td><td class="mono r">+138</td></tr>
+    </table>
+    <p><b>A rejected project became profitable without a single operating number changing. Is the deal acceptable now?</b> <span style="color:var(--neg);font-weight:600">Still no.</span> The mistake is the <b>discount rate</b>. Those five $122,000 payments are not risky project cash flows — they are <b>debt service</b>, a fixed contractual obligation. Discounting them at the project's 10% risky rate understates what they really cost. Value the loan separately at Reeby's actual borrowing rate: at 5%, the payments are worth 122 × 4.33 = <b>$528k</b> in present value for $500k of equipment. That $28k of hidden financing cost more than wipes out the apparent $23k gain, and the project is negative-NPV again — exactly as it was before.</p>
+    <div class="formula"><span class="lbl">The rule</span>
+Never let a financing side-deal rescue an investment decision.
+Value the <b>project</b> at the project's cost of capital.
+Value the <b>loan</b> at the borrowing rate. Then add.</div>
+    <p><b>Hidden leverage is everywhere:</b> long-term leases, long-term contracts with suppliers, pension liabilities, and liabilities for employees' post-retirement health care. Each is a stream of fixed obligations that behaves exactly like debt — and each will flatter a project or a balance sheet if you forget to treat it as such.</p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>So why does corporate finance exist at all?</h2>
+    <p>MM says firm value is determined on the <b>left-hand side of the balance sheet</b> by real assets — not by the proportions of debt and equity issued to buy them. If that is literally true, financing decisions are irrelevant and this course could stop here. It does not stop here, because <b>MM's assumptions are what break in reality</b>: no taxes (Chapter 10 kills that one), no costs of financial distress, no information asymmetry, no agency conflicts, and investors who borrow on exactly the firm's terms. <b>MM is not a description of the world — it is a checklist of the only things that can possibly make financing matter.</b></p>
+
+    <div class="game-zone">
+      <h4>🥧 Challenge 8 · Slice the Pie</h4>
+      <p class="dim">Seven judgements on capital structure. 5+ for the badge.</p>
+      <div id="mmGame"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9 · COST OF CAPITAL ============ -->
+<section class="chapter" id="capital">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 9 · Cost of Capital</h2>
+    <h3 class="big">The hurdle rate — and where beta comes from</h3>
+    <div class="mentor"><div class="avatar">🎓</div><div>
+      <div class="who">Mira</div>
+      <p>Back in Chapter 1 we said the discount rate is the return investors could earn elsewhere at the same risk. Now we have to actually produce a number. That means two jobs: measure what the firm's <b>existing</b> investors demand, and be honest about when that number does <b>not</b> apply to the project in front of you.</p>
+    </div></div>
+
+    <div class="formula" style="border-left:3px solid var(--indigo)"><b>Company cost of capital</b> = the expected return on a portfolio of <i>all</i> the
+company’s outstanding debt and equity securities.
+
+It is the opportunity cost of capital for an investment in <b>all</b> of the firm’s assets,
+and therefore the right discount rate for the firm’s <b>average-risk</b> projects — and
+<b>only</b> those. It is the wrong rate the moment a project is more or less risky
+than the existing business.</div>
+
+    <h2 style="margin-top:16px"><span class="dot"></span>Weighting it up</h2>
+    <table class="dtable">
+      <tr><th>Market values</th><th class="r"></th><th></th><th class="r"></th><th></th></tr>
+      <tr><td>Asset value</td><td class="mono r">$100</td><td>Debt (D)</td><td class="mono r">$33.3</td><td class="mono">at r<sub>D</sub> = 7.25%</td></tr>
+      <tr><td></td><td class="mono r"></td><td>Equity (E)</td><td class="mono r">$66.7</td><td class="mono">at r<sub>E</sub> = 15.5%</td></tr>
+      <tr class="tot"><td>Asset value</td><td class="mono r">$100</td><td>Firm value (V)</td><td class="mono r">$100</td><td></td></tr>
+    </table>
+    <div class="formula">r<sub>A</sub> = (D/V) r<sub>D</sub> + (E/V) r<sub>E</sub> = ⅓ × 7.25% + ⅔ × 15.5% = <b>12.75%</b>
+
+<span class="lbl">In a tax-free world this weighted average IS the cost of capital — the WACC.</span></div>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>Estimating the cost of equity</h2>
+    <p>The cost of debt is usually easy — look at the yield. Equity has no promised return, so we need a model. The <b>capital asset pricing model</b>:</p>
+    <div class="formula">r<sub>E</sub> − r<sub>f</sub> = β (r<sub>M</sub> − r<sub>f</sub>)        <span class="lbl">everything hinges on estimating β</span></div>
+    <p>Beta is the slope of a regression of the stock's returns on the market's. Two things to keep your eye on: the <b>standard error</b> (how much the estimate could be off) and <b>R²</b> (how much of the stock's total risk is market-driven at all).</p>
+    <table class="dtable">
+      <tr><th>Stock</th><th class="r">β (2008–12)</th><th class="r">std err</th><th class="r">R²</th><th class="r">β (2013–17)</th><th class="r">std err</th><th class="r">R²</th></tr>
+      <tr><td>U.S. Steel</td><td class="mono r">2.50</td><td class="mono r">0.28</td><td class="mono r">0.56</td><td class="mono r">3.01</td><td class="mono r">0.93</td><td class="mono r">0.15</td></tr>
+      <tr><td>Microsoft</td><td class="mono r">0.97</td><td class="mono r">0.12</td><td class="mono r">0.53</td><td class="mono r">1.00</td><td class="mono r">0.26</td><td class="mono r">0.20</td></tr>
+      <tr><td>Consolidated Edison</td><td class="mono r">0.21</td><td class="mono r">0.10</td><td class="mono r">0.08</td><td class="mono r">0.11</td><td class="mono r">0.23</td><td class="mono r">0.00</td></tr>
+    </table>
+    <p class="dim">The ranking is stable and intuitive — a cyclical steelmaker at the top, a regulated utility at the bottom. But look at U.S. Steel's 2013–17 estimate: 3.01 with a standard error of 0.93, so the true beta is plausibly anywhere from about 1.2 to 4.8. <b>Never treat a single regression beta as a fact.</b> Industry averages are usually more reliable than one company's.</p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>Leverage and the cost of equity</h2>
+    <p class="dim">Toggle between MM's clean case and reality. In both, the flat line is what matters: the return on the <b>package</b> of debt and equity does not move.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">
+      <button class="btn small" id="levModeA">Textbook: risk-free debt</button>
+      <button class="btn small alt" id="levModeB">Reality: risky debt</button>
+    </div>
+    <div class="chartbox"><svg id="levChart" viewBox="0 0 560 290" role="img" aria-label="Expected returns on equity, debt and assets as the debt-equity ratio rises"></svg></div>
+    <div class="legend">
+      <span><i style="background:#3a49a0"></i>r<sub>E</sub> equity</span>
+      <span><i style="background:#0b8a5f"></i>r<sub>A</sub> assets</span>
+      <span><i style="background:#c07c1e"></i>r<sub>D</sub> debt</span>
+    </div>
+    <p id="levNote" class="dim"></p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>How risky are the assets themselves?</h2>
+    <div class="formula">asset beta: β<sub>A</sub> = β<sub>D</sub>(D/V) + β<sub>E</sub>(E/V)</div>
+    <p>Equity beta mixes <b>business risk</b> with <b>financial risk</b>. Strip the leverage out and you get the beta of the underlying business — the number you actually need when you are valuing a project or a differently-financed comparable. Two things drive it:</p>
+    <table class="dtable">
+      <tr><td class="mono" style="width:140px">Cyclicality</td><td>Firms whose revenues and earnings depend strongly on the state of the business cycle tend to be <b>high-beta</b> firms. Steel and luxury goods swing with the economy; water utilities do not.</td></tr>
+      <tr><td class="mono">Operating leverage</td><td>Firms with a higher ratio of <b>fixed costs</b> to asset value have higher asset betas. Fixed costs do not shrink in a recession, so all of the revenue variation lands on the residual.</td></tr>
+    </table>
+    <p class="dim">The derivation is worth seeing once. Start from the identity PV(asset) = PV(revenue) − PV(fixed cost) − PV(variable cost). The beta of PV(revenue) is the weighted average of its parts:</p>
+    <div class="formula">β<sub>revenue</sub> = β<sub>fixed</sub>·PV(fixed)/PV(rev) + β<sub>variable</sub>·PV(var)/PV(rev) + β<sub>asset</sub>·PV(asset)/PV(rev)
+
+<span class="lbl">β of a fixed cost ≈ 0 (it is a certainty, like debt); β of variable costs ≈ β of revenue.
+Rearranging:</span>
+
+<b>β<sub>asset</sub> = β<sub>revenue</sub> × [ 1 + PV(fixed cost) / PV(asset) ]</b></div>
+    <p>So for a given cyclicality of revenue, <b>asset beta is proportional to the ratio of the present value of fixed costs to the present value of the project</b>. A business with heavy fixed costs is riskier even if its sales are no more cyclical than anyone else's.</p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>Beta lab</h2>
+    <div class="ctl"><label>Equity beta β<sub>E</sub> <b id="bkELbl">1.20</b></label>
+      <input type="range" id="bkE" min="10" max="300" step="5" value="120"></div>
+    <div class="ctl"><label>Debt ratio D/V <b id="bkDLbl">40%</b></label>
+      <input type="range" id="bkD" min="0" max="80" step="5" value="40"></div>
+    <div class="ctl"><label>Debt beta β<sub>D</sub> <b id="bkBDLbl">0.15</b></label>
+      <input type="range" id="bkBD" min="0" max="60" step="5" value="15"></div>
+    <div class="ctl"><label>PV(fixed costs) ÷ PV(asset) <b id="bkFLbl">0.5</b></label>
+      <input type="range" id="bkF" min="0" max="200" step="10" value="50"></div>
+    <div class="formula" id="bkOut"></div>
+
+    <div class="game-zone">
+      <h4>📐 Challenge 9 · Estimate It</h4>
+      <p class="dim">Six calls on risk and discount rates. 5+ for the badge.</p>
+      <div id="capitalGame"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 · WACC IN PRACTICE ============ -->
+<section class="chapter" id="wacc">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 10 · WACC in Practice</h2>
+    <h3 class="big">The government's slice, and the number you use on Monday</h3>
+    <div class="mentor"><div class="avatar">🎓</div><div>
+      <div class="who">Mira</div>
+      <p>MM said slicing the pie cannot change its size. They forgot there is a third person at the table: <b>the tax authority</b>. Interest is deductible; dividends are not. That single asymmetry is why capital structure matters at all — and why the WACC you discount with has a <b>(1 − T<sub>c</sub>)</b> in it.</p>
+    </div></div>
+
+    <h2 style="margin-top:6px"><span class="dot"></span>The tax shield</h2>
+    <p>Firm U has no debt. Firm L borrowed $1,000 at r<sub>D</sub> = 8%. Corporate tax T<sub>c</sub> = 21%. Same EBIT, different total pie:</p>
+    <table class="dtable">
+      <tr><th></th><th class="r">Firm U</th><th class="r">Firm L</th></tr>
+      <tr><td>Earnings before interest and taxes</td><td class="mono r">$1,000</td><td class="mono r">$1,000</td></tr>
+      <tr><td>Interest paid to bondholders</td><td class="mono r">0</td><td class="mono r">80</td></tr>
+      <tr><td>Pretax income</td><td class="mono r">1,000</td><td class="mono r">920</td></tr>
+      <tr><td>Tax at 21%</td><td class="mono r">210</td><td class="mono r">193</td></tr>
+      <tr><td>Net income to stockholders</td><td class="mono r">790</td><td class="mono r">727</td></tr>
+      <tr class="tot"><td>Total income to bondholders <b>and</b> stockholders</td><td class="mono r">$790</td><td class="mono r up">$807</td></tr>
+      <tr><td>Interest tax shield (0.21 × interest)</td><td class="mono r">$0</td><td class="mono r up">$17</td></tr>
+    </table>
+    <p><b>$17 that would have gone to the government goes to investors instead.</b> Assume the debt is fixed and permanent, and that the shield carries the same risk as the interest payments that generate it. Then it is a perpetuity of T<sub>c</sub>·r<sub>D</sub>·D discounted at r<sub>D</sub>:</p>
+    <div class="formula">PV(tax shield) = (T<sub>c</sub> × r<sub>D</sub> × D) ÷ r<sub>D</sub> = <b>T<sub>c</sub> D</b>
+
+<span class="lbl">The tax-adjusted MM Proposition 1:</span>
+<b>Value of firm = value if all-equity-financed + PV(tax shield)</b></div>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>After-tax WACC</h2>
+    <div class="formula">after-tax WACC = r<sub>D</sub>(1 − T<sub>c</sub>) (D/V) + r<sub>E</sub> (E/V)</div>
+    <p class="dim">Think of it as the expected rate of return on a portfolio of all the firm's outstanding securities, with the tax subsidy on the debt leg netted off. Many firms set a <b>single company-wide WACC</b> and update it only when risk or interest rates move materially — a common reference point that keeps divisions from arguing their way into favourable discount rates.</p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>So why isn't every firm 100% debt?</h2>
+    <p>Taken literally, the tax shield says: borrow everything. Three escape routes explain why nobody does.</p>
+    <table class="dtable">
+      <tr><td class="mono" style="width:150px">Deductibility limits</td><td>The amount of interest a firm may deduct is capped by law in many jurisdictions.</td></tr>
+      <tr><td class="mono">Personal taxes</td><td>Interest is taxed in the investor's hands at T<sub>p</sub> (top US rate 37% in 2018), while equity income is taxed at T<sub>pE</sub> (top rate 20% on dividends and capital gains — and effectively less, because capital gains tax can be <b>deferred</b> until the shares are sold). Investors therefore demand a higher pre-tax return on debt, clawing back part of the corporate shield.</td></tr>
+      <tr><td class="mono">Financial distress</td><td>Firms that borrow heavily incur the costs of financial distress — and investors know it, and price it.</td></tr>
+    </table>
+    <div class="formula"><span class="lbl">Interest is taxed once (personally); equity income is taxed twice (corporate, then personally):</span>
+$1 of interest reaches the investor as    (1 − T<sub>p</sub>)
+$1 of equity income reaches them as       (1 − T<sub>pE</sub>)(1 − T<sub>c</sub>)
+
+<span class="lbl">so the relative tax advantage of debt over equity is</span>
+        <b>(1 − T<sub>p</sub>) ÷ [(1 − T<sub>pE</sub>)(1 − T<sub>c</sub>)]</b>
+<span class="lbl">above 1 → debt is favoured; equal to 1 → the advantage vanishes entirely.</span></div>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>The trade-off theory</h2>
+    <p><b>Financial distress</b> occurs when promises to creditors are broken, or honoured with difficulty. Investors know levered firms may fall into it, and they worry about it in advance — which shows up in today's price.</p>
+    <div class="formula">Value = value if all-equity-financed + PV(tax shield) − <b>PV(costs of financial distress)</b></div>
+    <div class="chartbox"><svg viewBox="0 0 520 250" role="img" aria-label="Firm value rises with the tax shield then falls as distress costs bite, giving an optimal debt ratio">
+      <line x1="55" y1="205" x2="490" y2="205" stroke="#94a0ae" stroke-width="1.4"/>
+      <line x1="55" y1="205" x2="55" y2="25" stroke="#94a0ae" stroke-width="1.4"/>
+      <line x1="55" y1="150" x2="490" y2="150" stroke="#94a0ae" stroke-width="1.2" stroke-dasharray="5 4"/>
+      <path d="M55,150 C160,112 250,88 320,84 C380,81 430,96 485,124" fill="none" stroke="#0b8a5f" stroke-width="3"/>
+      <line x1="320" y1="84" x2="320" y2="205" stroke="#c07c1e" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <text x="320" y="222" text-anchor="middle" font-size="10.5" fill="#c07c1e" font-family="Inter,sans-serif">optimal debt ratio</text>
+      <text x="62" y="145" font-size="10" fill="#5b6675" font-family="Inter,sans-serif">value if all-equity-financed</text>
+      <text x="150" y="105" font-size="10.5" fill="#0b8a5f" font-family="Inter,sans-serif">+ PV tax shield</text>
+      <text x="395" y="100" font-size="10.5" fill="#b23b2e" font-family="Inter,sans-serif">− PV distress costs</text>
+      <text x="270" y="240" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Debt ratio →</text>
+      <text transform="translate(20,115) rotate(-90)" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Market value</text>
+    </svg></div>
+
+    <h2 style="margin-top:14px"><span class="dot"></span>Sangria Corporation — the full worked example</h2>
+    <p>Market values: assets $1,250m, debt $500m at r<sub>D</sub> = 6%, equity $750m at r<sub>E</sub> = 12.5%. Consistently profitable, marginal tax rate 21%. So D/V = 0.4 and E/V = 0.6.</p>
+    <div class="formula">WACC = 0.06 × (1 − 0.21) × 0.4 + 0.125 × 0.6 = <b>9.4%</b>
+
+<span class="lbl">The perpetual crusher: invest $12.5m for pretax cash flow of $1.487m a year forever, average risk.</span>
+after-tax cash flow C = 1.487 × (1 − 0.21) = $1.175m
+NPV = −12.5 + 1.175 ÷ 0.094 = <b>0</b>      <span class="lbl">— barely acceptable</span></div>
+    <p><b>Cross-check it from the equity side.</b> Set the project up as a mini-firm with the same D/E as Sangria: assets 12.5, debt 5.0, equity 7.5.</p>
+    <div class="formula">expected equity income = C − r<sub>D</sub>(1 − T<sub>c</sub>)D = 1.175 − 0.06 × 0.79 × 5 = <b>0.938</b>
+expected equity return = 0.938 ÷ 7.5 = <b>12.5%</b>   <span class="lbl">— exactly Sangria’s cost of equity. Consistent.</span></div>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>How to misuse WACC</h2>
+    <p class="dim">A manager campaigning for a pet project argues:</p>
+    <div class="formula" style="border-left:3px solid var(--neg)"><i>"Aha! My firm has a good credit rating. It could borrow, say, 90% of the project’s
+cost if it likes. That means D/V = 0.9 and E/V = 0.1. My firm’s borrowing rate is 8%,
+the required return on equity is 15%, the tax rate is 21%. Therefore</i>
+
+    WACC = 0.08 × (1 − 0.21) × 0.9 + 0.15 × 0.1 = 0.072
+
+<i>When I discount at that rate, my project looks great."</i></div>
+    <div id="waccMistakes"></div>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>The two assumptions behind every WACC</h2>
+    <table class="dtable">
+      <tr><td class="mono" style="width:34px">1</td><td>The project's <b>business risk is the same</b> as the firm's other assets — and remains so for the life of the project.</td></tr>
+      <tr><td class="mono">2</td><td>Throughout its life, the project supports <b>the same fraction of debt to value</b> as the firm's overall capital structure.</td></tr>
+    </table>
+    <p>When assumption 2 fails — say Sangria's crusher supports only 20% debt versus 40% for the firm — you cannot just plug the new weights into the old formula, because r<sub>E</sub> is not a constant. You must <b>unlever and relever</b>.</p>
+
+    <h2 style="margin-top:14px"><span class="dot"></span>WACC lab · unlever and relever</h2>
+    <p class="dim">Set a target debt ratio for the project and watch the three steps recompute. Notice the WACC barely moves — and the cost of equity moves a lot.</p>
+    <div class="ctl"><label>Cost of debt r<sub>D</sub> <b id="wcDLbl">6.0%</b></label>
+      <input type="range" id="wcD" min="20" max="120" step="1" value="60"></div>
+    <div class="ctl"><label>Cost of equity r<sub>E</sub> at the current 40% debt ratio <b id="wcELbl">12.5%</b></label>
+      <input type="range" id="wcE" min="60" max="250" step="1" value="125"></div>
+    <div class="ctl"><label>Marginal corporate tax rate T<sub>c</sub> <b id="wcTLbl">21%</b></label>
+      <input type="range" id="wcT" min="0" max="45" step="1" value="21"></div>
+    <div class="ctl"><label>Target debt ratio for the project D/V <b id="wcNLbl">20%</b></label>
+      <input type="range" id="wcN" min="0" max="70" step="5" value="20"></div>
+    <div class="formula" id="wcOut"></div>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>Four questions people always ask</h2>
+    <table class="dtable">
+      <tr><td class="mono" style="width:210px">More than two sources of financing?</td><td>Add a term for each. The weight of every element is proportional to its <b>market value</b>.</td></tr>
+      <tr><td class="mono">What about short-term debt?</td><td>Normally <b>leave it out</b> — WACC is built on long-term capital. (If a firm is a permanent short-term borrower, include it and be consistent.)</td></tr>
+      <tr><td class="mono">Company or industry WACC?</td><td>An <b>industry</b> WACC is more useful when you are dealing with conglomerates diversified across unrelated industries — the company average describes no actual business.</td></tr>
+      <tr><td class="mono">Which tax rate?</td><td>The formula calls for the <b>marginal</b> tax rate — the rate on the next dollar of interest deducted — not the average effective rate on the tax return.</td></tr>
+    </table>
+
+    <div class="game-zone">
+      <h4>🎓 Challenge 10 · The Final Exam</h4>
+      <p class="dim">Eight questions drawing on the whole course. 6+ earns your CFO Pass.</p>
+      <div id="waccGame"></div>
+    </div>
+
+    <div id="certZone"></div>
+  </div>
+</section>
+
+<!-- MORE-CHAPTERS -->
+
+</main>
+
+<aside>
+  <div class="panel">
+    <h2><span class="dot"></span>Badges</h2>
+    <div class="badge-grid" id="badgeGrid"></div>
+  </div>
+  <div class="panel">
+    <h2><span class="dot"></span>Formula card</h2>
+    <div class="fcard">
+      <b>Value</b>MVA = mkt cap − book equity<br>EVA = NOPAT − WACC × capital<br>ROC = NOPAT ÷ total capital
+      <b>Du Pont</b>ROA = turnover × op. margin<br>ROE = lev. × turn. × margin × debt burden
+      <b>Growth</b>sustainable g = plowback × ROE
+      <b>MM</b>V<sub>L</sub> = V<sub>U</sub><br>r<sub>E</sub> = r<sub>A</sub> + (r<sub>A</sub> − r<sub>D</sub>)·D/E
+      <b>Capital</b>β<sub>A</sub> = β<sub>D</sub>(D/V) + β<sub>E</sub>(E/V)<br>r<sub>E</sub> = r<sub>f</sub> + β(r<sub>M</sub> − r<sub>f</sub>)
+      <b>WACC</b>r<sub>D</sub>(1−T<sub>c</sub>)D/V + r<sub>E</sub>E/V<br>PV(tax shield) = T<sub>c</sub>D
+    </div>
+  </div>
+  <div class="panel">
+    <h2><span class="dot"></span>Glossary</h2>
+    <p class="dim" style="font-size:11.5px">Terms unlock as you open each chapter.</p>
+    <div class="gloss" id="glossary"></div>
+  </div>
+</aside>
+</div>
+</div>
+
+<script>
+/* ================= STATE ================= */
+const LS_KEY='evoltaCorpFin';
+let S={visited:{},badges:{},name:''};
+try{const raw=localStorage.getItem(LS_KEY);if(raw)S={...S,...JSON.parse(raw)}}catch(e){}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(S))}catch(e){}}
+
+const CHAPTERS=[
+  {id:'firm',nav:'1 · Firm',wp:'Firm',badge:{ico:'🏛️',nm:'Charter Holder'}},
+  {id:'reports',nav:'2 · Reports',wp:'Reports',badge:{ico:'📑',nm:'Statement Reader'}},
+  {id:'value',nav:'3 · Value',wp:'Value',badge:{ico:'💎',nm:'Value Auditor'}},
+  {id:'dupont',nav:'4 · Du Pont',wp:'Du Pont',badge:{ico:'🔍',nm:'Ratio Detective'}},
+  {id:'leverage',nav:'5 · Leverage',wp:'Leverage',badge:{ico:'⚖️',nm:'Balance Keeper'}},
+  {id:'markets',nav:'6 · Markets',wp:'Markets',badge:{ico:'📈',nm:'Market Realist'}},
+  {id:'minds',nav:'7 · Minds',wp:'Minds',badge:{ico:'🧠',nm:'Bias Spotter'}},
+  {id:'mm',nav:'8 · MM',wp:'MM',badge:{ico:'🥧',nm:'Pie Slicer'}},
+  {id:'capital',nav:'9 · Capital',wp:'Beta',badge:{ico:'📐',nm:'Beta Estimator'}},
+  {id:'wacc',nav:'10 · WACC',wp:'WACC',badge:{ico:'🎓',nm:'CFO Pass'}},
+];
+const NCH=CHAPTERS.length;
+
+const GLOSSARY={
+  firm:[
+    ['Real vs financial assets','Real assets are what the firm operates (plant, brands, people). Financial assets are the claims on them (shares, bonds) that investors hold.'],
+    ['Capital budgeting / CAPEX','The investment decision — committing cash to real assets.'],
+    ['Limited liability','Shareholders of a corporation cannot be held liable for its debts; the most they can lose is what they invested.'],
+    ['Agency problem','Managers (agents) may not act in the interests of shareholders (principals) — the cost of separating ownership from control.'],
+    ['Opportunity cost of capital','The expected return investors could earn on an equally risky alternative. The correct discount rate — never the firm\'s own cash yield.'],
+  ],
+  reports:[
+    ['Operating activities','The daily business: net income, depreciation, salaries, marketing.'],
+    ['Investing activities','Buying (or selling) real assets — equipment, property, whole companies.'],
+    ['Financing activities','Raising or returning money: issuing stock and bonds, paying interest and dividends.'],
+    ['EBIT','Earnings before interest and taxes — what the assets earned before financing is decided.'],
+    ['Treasury stock','Shares the company has bought back. It is subtracted from book equity, which is why buybacks can shrink equity toward (or below) zero.'],
+  ],
+  value:[
+    ['Market value added (MVA)','Market capitalisation minus book equity — the value created for equity holders.'],
+    ['Market-to-book ratio','Market value ÷ book value. High means the market sees assets worth far more than their accounting cost.'],
+    ['NOPAT','Net operating profit after tax = after-tax interest + net income. The profit available to all investors.'],
+    ['EVA / residual income','Profit after deducting a charge for the capital employed: NOPAT − WACC × capital.'],
+    ['ROC','Return on capital = NOPAT ÷ total long-term capital. EVA is positive exactly when ROC exceeds WACC.'],
+  ],
+  dupont:[
+    ['Asset turnover','Sales ÷ total assets — how hard each dollar of assets is working.'],
+    ['Inventory period','Days of output sitting in inventory ≈ 365 ÷ inventory turnover.'],
+    ['Collection period','Average days customers take to pay. Receivables are a loan to your customers.'],
+    ['Operating profit margin','(after-tax interest + net income) ÷ sales. Preferred to plain profit margin because it does not penalise debt financing.'],
+    ['Du Pont formula','ROA = asset turnover × operating profit margin. Two routes to the same return.'],
+  ],
+  leverage:[
+    ['Total debt ratio','Total liabilities ÷ total assets. Use the total (not long-term) version for habitual short-term borrowers.'],
+    ['Interest coverage','EBIT ÷ interest — how many times over this year’s earnings could pay this year’s interest.'],
+    ['Net working capital','Current assets − current liabilities. The cushion between short-term obligations and the assets that can meet them.'],
+    ['Reserve borrowing power','The ability to borrow at short notice. Real liquidity that no ratio captures.'],
+    ['Sustainable growth rate','Plowback ratio × ROE — the fastest growth possible without increasing leverage.'],
+  ],
+  markets:[
+    ['Weak-form efficiency','Prices embed all historical information, so they follow random walks.'],
+    ['Semistrong efficiency','Prices embed all public information and react to news immediately.'],
+    ['Strong-form efficiency','Prices embed public AND private information — nobody consistently beats the market.'],
+    ['Abnormal return','Actual return − expected return (from CAPM). The event-specific price change.'],
+    ['Bubble','A sustained departure of price from value. The strongest challenge to the efficient market hypothesis.'],
+  ],
+  minds:[
+    ['Bounded rationality','People are not 100% rational 100% of the time — the premise of behavioural finance.'],
+    ['Certainty effect','At high probabilities people over-weight certainty: risk averse for gains, risk seeking for losses.'],
+    ['Possibility effect','At low probabilities people over-weight mere possibility: lottery tickets and insurance.'],
+    ['Loss aversion','Losses hurt roughly twice as much as equal gains please — hence losing positions get held too long.'],
+    ['Reference dependence','Outcomes are judged as gains or losses relative to an arbitrary anchor, not as final wealth.'],
+  ],
+  mm:[
+    ['MM Proposition 1','The market value of any firm is independent of its capital structure.'],
+    ['MM Proposition 2','r_E = r_A + (r_A − r_D)·D/E — the cost of equity rises in proportion to the debt–equity ratio.'],
+    ['Homemade leverage','Investors borrowing on their own account to replicate corporate leverage. The engine of the MM proof.'],
+    ['Hidden leverage','Fixed obligations that behave like debt: leases, supplier contracts, pensions, post-retirement healthcare.'],
+    ['Financial risk','The extra sensitivity of shareholder returns created by leverage — the price paid for a higher expected r_E.'],
+  ],
+  capital:[
+    ['Company cost of capital','Expected return on a portfolio of all the firm’s securities. Correct only for average-risk projects.'],
+    ['CAPM','r_E = r_f + β(r_M − r_f). The standard route to a cost of equity.'],
+    ['Asset beta','β_A = β_D(D/V) + β_E(E/V). Equity beta with the financial risk stripped out.'],
+    ['Operating leverage','High fixed costs relative to asset value raise the asset beta: β_asset = β_revenue × [1 + PV(fixed)/PV(asset)].'],
+    ['R²','Share of a stock’s total risk explained by market movements. Low R² means beta explains very little.'],
+  ],
+  wacc:[
+    ['Interest tax shield','Tax saved because interest is deductible: T_c × interest. PV = T_c·D for permanent debt.'],
+    ['After-tax WACC','r_D(1 − T_c)(D/V) + r_E(E/V) — the discount rate for average-risk projects.'],
+    ['Trade-off theory','Value = all-equity value + PV(tax shield) − PV(distress costs). Gives an interior optimal debt ratio.'],
+    ['Unlever / relever','Strip leverage out of r_E to get the opportunity cost r, then rebuild it at the project’s debt ratio.'],
+    ['Marginal tax rate','The rate on the next dollar of deduction — the one the WACC formula calls for.'],
+  ],
+};
+
+/* ================= NAV & PROGRESS ================= */
+const chnav=document.getElementById('chnav');
+CHAPTERS.forEach(c=>{
+  const b=document.createElement('button');
+  b.id='nav-'+c.id;
+  b.innerHTML=c.nav+'<span class="tick" style="display:none">✓</span>';
+  b.onclick=()=>showChapter(c.id);
+  chnav.appendChild(b);
+});
+function showChapter(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  document.querySelectorAll('.chapter').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.chnav button').forEach(x=>x.classList.remove('active'));
+  const nb=document.getElementById('nav-'+id); if(nb)nb.classList.add('active');
+  if(!S.visited[id]){S.visited[id]=true;save();renderGlossary()}
+  if(id==='wacc'&&typeof renderCert==='function')renderCert();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function badgeCount(){return CHAPTERS.filter(c=>S.badges[c.id]).length}
+function renderProgress(){
+  const track=document.getElementById('voyageTrack');
+  track.querySelectorAll('.waypoint').forEach(el=>el.remove());
+  CHAPTERS.forEach((c,i)=>{
+    const x=2+(96*(i+1)/NCH);
+    const wp=document.createElement('div');
+    wp.className='waypoint'+(S.badges[c.id]?' done':'');
+    wp.style.left=x+'%';
+    wp.innerHTML='<div class="dot">'+(S.badges[c.id]?'✓':(i+1))+'</div><div class="wp-label">'+c.wp+'</div>';
+    wp.onclick=()=>showChapter(c.id);
+    track.appendChild(wp);
+  });
+  const n=badgeCount(), pct=2+96*n/NCH;
+  document.getElementById('voyageFill').style.width=(pct-2)+'%';
+  document.getElementById('shipIcon').style.left=pct+'%';
+  document.getElementById('voyageCaption').textContent=
+    n===NCH?'Course complete — CFO Pass earned. 🎓'
+    :'Junior analyst → CFO’s chair · '+n+' / '+NCH+' badges earned';
+  CHAPTERS.forEach(c=>{
+    const t=document.querySelector('#nav-'+c.id+' .tick');
+    if(t)t.style.display=S.badges[c.id]?'inline':'none';
+  });
+  const bg=document.getElementById('badgeGrid');bg.innerHTML='';
+  CHAPTERS.forEach(c=>{
+    bg.innerHTML+='<div class="badge'+(S.badges[c.id]?' earned':'')+'"><div class="bico">'+c.badge.ico+'</div><div class="bnm">'+c.badge.nm+'</div></div>';
+  });
+}
+function earnBadge(id){
+  if(S.badges[id])return;
+  S.badges[id]=true;save();renderProgress();
+  if(typeof renderCert==='function')renderCert();
+}
+function renderGlossary(){
+  const g=document.getElementById('glossary');g.innerHTML='';
+  CHAPTERS.forEach((c,i)=>{
+    const terms=GLOSSARY[c.id]||[];
+    if(!terms.length)return;
+    if(S.visited[c.id]){
+      terms.forEach(([k,v])=>{g.innerHTML+='<details><summary>'+k+'</summary><div class="gdef">'+v+'</div></details>'});
+    }else{
+      g.innerHTML+='<div class="locked">🔒 '+terms.length+' terms — open Chapter '+(i+1)+'</div>';
+    }
+  });
+}
+
+/* ================= GENERIC QUIZ ENGINE ================= */
+function runQuiz(containerId,questions,opts){
+  const o=Object.assign({pass:questions.length,badge:null,passMsg:'Badge earned.',failMsg:'Have another go.',shuffle:true},opts||{});
+  let idx=0,score=0;
+  const z=document.getElementById(containerId);
+  if(!z)return;
+  function render(){
+    if(idx>=questions.length){
+      const pass=score>=o.pass;
+      z.innerHTML='<div class="feedback show '+(pass?'good':'bad')+'">'+
+        (pass?'<b>'+score+'/'+questions.length+' — '+o.passMsg+'</b>':score+'/'+questions.length+'. '+o.failMsg)+
+        '</div><button class="btn alt" style="margin-top:8px" id="'+containerId+'Again">Try again</button>';
+      document.getElementById(containerId+'Again').onclick=()=>{idx=0;score=0;render()};
+      if(pass&&o.badge)earnBadge(o.badge);
+      return;
+    }
+    const item=questions[idx];
+    z.innerHTML='<div class="score-line">Question '+(idx+1)+' / '+questions.length+' · Score '+score+'</div>'+
+      '<div class="qhead">'+item.q+'</div>';
+    let order=item.a.map((t,i)=>i);
+    if(o.shuffle&&!item.fixed)order=order.sort(()=>Math.random()-.5);
+    const btns=[];
+    order.forEach(oi=>{
+      const b=document.createElement('button');
+      b.className='opt';b.innerHTML=item.a[oi];b.dataset.oi=oi;
+      btns.push(b);
+      b.onclick=()=>{
+        btns.forEach(x=>x.disabled=true);
+        const ok=(oi===item.c); if(ok)score++;
+        b.classList.add(ok?'right':'wrong');
+        if(!ok){const cb=btns.find(x=>+x.dataset.oi===item.c);if(cb)cb.classList.add('right')}
+        const ex=document.createElement('div');ex.className='qmath show';ex.textContent=item.x;z.appendChild(ex);
+        const nx=document.createElement('button');nx.className='btn';nx.style.marginTop='10px';
+        nx.textContent=idx===questions.length-1?'See result':'Next →';
+        nx.onclick=()=>{idx++;render()};z.appendChild(nx);
+      };
+      z.appendChild(b);
+    });
+  }
+  render();
+}
+function fmt(x){return x.toLocaleString('en-US',{maximumFractionDigits:0})}
+
+/* ================= CH 1 · THE FIRM ================= */
+const FLOWS={
+  fn1:['(1) Cash raised by selling financial assets to investors','The financing decision. The manager sells claims — shares, bonds, bank loans — and investors hand over cash. Nothing has been produced yet; the firm has simply promised a share of the future.'],
+  fn2:['(2) Cash invested in the firm’s operations to buy real assets','The investment decision, also called capital budgeting or CAPEX. Cash turns into factories, stores, software, acquisitions — assets that are supposed to earn more than they cost.'],
+  fn3:['(3) Cash generated by the firm’s operations','The pay-off. If the real assets work, they throw off cash. This is the number every valuation in this course ultimately discounts.'],
+  fn4:['(4a) Cash reinvested','The manager ploughs generated cash back into the business instead of paying it out. Cheap financing — but only justified if the projects clear the opportunity cost of capital.'],
+  fn5:['(4b) Cash returned to investors','Dividends, buybacks, interest and principal. If the firm has no project worth more than investors’ alternatives, handing the cash back <b>is</b> the value-maximising decision.'],
+};
+Object.keys(FLOWS).forEach(k=>{
+  const n=document.getElementById(k);
+  if(!n)return;
+  n.onclick=()=>{
+    const d=document.getElementById('flowDetail');
+    d.className='flow-detail show';
+    d.innerHTML='<b>'+FLOWS[k][0]+'</b><br>'+FLOWS[k][1];
+  };
+});
+function updAG(){
+  const pay=+document.getElementById('agPay').value*1000;
+  const r=+document.getElementById('agR').value/100;
+  const pv=pay/(1+r);
+  document.getElementById('agPayLbl').textContent='$'+fmt(pay);
+  document.getElementById('agRLbl').textContent=(r*100).toFixed(0)+'%';
+  const better=pv>100000;
+  document.getElementById('agOut').innerHTML=
+    'Invest $100,000 today → receive $'+fmt(pay)+' next year\n'+
+    'Present value = '+fmt(pay)+' ÷ (1 + '+(r*100).toFixed(0)+'%) = <b>$'+fmt(Math.round(pv))+'</b>\n\n'+
+    '<span class="lbl">The Ant  (wants money later):</span> takes '+(better?'the project — $'+fmt(pay)+' beats $'+fmt(Math.round(100000*(1+r)))+' from the bank.':'the bank — $'+fmt(Math.round(100000*(1+r)))+' beats $'+fmt(pay)+'.')+'\n'+
+    '<span class="lbl">The Grasshopper (wants money now):</span> '+(better
+      ?'invests too, then borrows against the payout and consumes <b>$'+fmt(Math.round(pv))+'</b> today — more than the $100,000 he started with.'
+      :'refuses — borrowing against it would give only $'+fmt(Math.round(pv))+' today, less than $100,000.')+'\n\n'+
+    (better?'✓ Both agree, despite opposite tastes. Maximise value; let the market handle timing.'
+          :'✗ Both refuse. Negative NPV is bad news for savers and spenders alike.');
+}
+document.getElementById('agPay').oninput=updAG;
+document.getElementById('agR').oninput=updAG;
+updAG();
+
+runQuiz('firmGame',[
+  {q:'<b>ExxonMobil</b> proceeds with development of a huge offshore oil discovery in Guyana.',a:['Investment decision','Financing decision'],c:0,fixed:true,x:'Spending cash on a real asset — textbook capital budgeting.'},
+  {q:'<b>Ahold Delhaize</b> announces a €1 billion share repurchase programme.',a:['Investment decision','Financing decision'],c:1,fixed:true,x:'Returning cash to investors changes the financing mix, not the assets.'},
+  {q:'<b>Facebook</b> acquires Two Big Ears, a British virtual-reality audio company.',a:['Investment decision','Financing decision'],c:0,fixed:true,x:'An acquisition is an investment — buying real (and intangible) assets.'},
+  {q:'<b>Lenovo</b> issues $850 million of 5-year dollar bonds.',a:['Investment decision','Financing decision'],c:1,fixed:true,x:'Selling a financial asset to raise cash.'},
+  {q:'<b>GlaxoSmithKline</b> spends $3.6 billion on research and development for new drugs.',a:['Investment decision','Financing decision'],c:0,fixed:true,x:'R&D is investment in intangible assets — it just never reaches the balance sheet.'},
+  {q:'<b>Procter &amp; Gamble</b> buys back $4.6 billion of stock and pays a $7.2 billion dividend.',a:['Investment decision','Financing decision'],c:1,fixed:true,x:'Pure payout — a financing decision.'},
+  {q:'<b>Tesla</b> starts battery cell production at its new Gigafactory in Nevada.',a:['Investment decision','Financing decision'],c:0,fixed:true,x:'Committing capital to productive capacity.'},
+  {q:'<b>Vale</b> lines up a 5-year revolving credit facility to borrow up to $2 billion.',a:['Investment decision','Financing decision'],c:1,fixed:true,x:'Arranging a source of funds, even before drawing on it.'},
+  {q:'<b>Fiat Chrysler</b> spins off its Ferrari luxury car unit.',a:['Investment decision (a divestment)','Financing decision'],c:0,fixed:true,x:'Divesting is the investment decision run in reverse — changing which real assets you hold.'},
+  {q:'<b>McDonald’s</b> issues C$1 billion of Canadian dollar bonds.',a:['Investment decision','Financing decision'],c:1,fixed:true,x:'Raising debt — and choosing its currency, which is also a risk decision.'},
+  {q:'Which feature most sharply distinguishes a corporation from a partnership?',
+   a:['Limited liability — shareholders are not liable for corporate debts','Corporations pay no income tax','Partnerships cannot borrow money','Only corporations can own real assets'],c:0,
+   x:'Limited liability is the corporation’s defining feature. It is the partnership that escapes entity-level income tax — partners pay personal tax on their share of profits.'},
+  {q:'A CEO builds a personal empire of low-return acquisitions. What is this an example of?',
+   a:['The agency problem — separation of ownership and control','Limited liability','The opportunity cost of capital','Weak-form market efficiency'],c:0,
+   x:'Managers (agents) pursuing goals shareholders (principals) would not choose. Fixes are incentive design and monitoring — never perfect, because managers know more than investors do.'},
+  {q:'F&amp;H can earn 8% in a declining encabulator business, or 4% risk-free on T-bills. Is 8% good enough?',
+   a:['You cannot tell — you must compare with the return on equally risky securities','Yes, 8% beats 4%','No, only risk-free rates count','Yes, because the firm already owns the business'],c:0,
+   x:'The opportunity cost of capital is the return available elsewhere at the SAME risk. For a risky project, the right hurdle may well exceed 8% — the 4% cash yield is irrelevant.'},
+],{pass:9,badge:'firm',passMsg:'Badge earned: Charter Holder. Mira: "Good. Now let’s read what the firm actually did."',
+   failMsg:'Investment = money going into assets. Financing = money moving between the firm and its investors.'});
+
+/* ================= CH 2 · THE REPORTS ================= */
+(function incomeWalk(){
+  const rows=[
+    ['Net sales',100978,'ind0','The top line — what customers paid.'],
+    ['− Cost of goods sold',66548,'neg','What the goods themselves cost.'],
+    ['− Selling, general &amp; administrative',17864,'neg','Running the stores and the head office.'],
+    ['− Depreciation',1811,'neg','A non-cash charge — which is why it gets added back in cash-flow analysis.'],
+    ['= EBIT',14755,'sub','<b>Earnings before interest and taxes.</b> What the assets earned, before deciding who financed them.'],
+    ['− Interest expense',1057,'neg','The lenders’ slice.'],
+    ['= Taxable income',13698,'sub','Note interest is deducted <i>before</i> tax — the seed of the tax shield in Chapter 10.'],
+    ['− Taxes',5068,'neg','The government’s slice.'],
+    ['= Net income',8630,'tot','What belongs to shareholders: paid out as $4,212 m dividends, $4,418 m retained.'],
+  ];
+  const max=100978;
+  const z=document.getElementById('isWalk');
+  if(!z)return;
+  z.innerHTML='<table class="dtable"><tr><th>Income statement, fiscal 2017</th><th class="r">$ m</th><th style="width:38%">Share of sales</th></tr>'+
+    rows.map(r=>{
+      const w=Math.max(1.5,(r[1]/max)*100);
+      const col=r[2]==='neg'?'#b23b2e':(r[2]==='tot'?'#0b8a5f':'#3a49a0');
+      const cls=r[2]==='tot'?' class="tot"':'';
+      return '<tr'+cls+'><td>'+r[0]+'<div style="font-size:11px;color:var(--txt-dim);margin-top:2px">'+r[3]+'</div></td>'+
+        '<td class="mono r">'+fmt(r[1])+'</td>'+
+        '<td><div style="height:11px;border-radius:3px;width:'+w+'%;background:'+col+'"></div></td></tr>';
+    }).join('')+'</table>';
+})();
+
+runQuiz('reportsGame',[
+  {q:'Paying salaries to store staff',a:['Operating','Investing','Financing'],c:0,fixed:true,x:'The daily business of the firm.'},
+  {q:'Buying a new distribution warehouse',a:['Operating','Investing','Financing'],c:1,fixed:true,x:'Purchase of a real asset — CAPEX.'},
+  {q:'Issuing $850 million of 5-year bonds',a:['Operating','Investing','Financing'],c:2,fixed:true,x:'Selling a financial asset to raise cash.'},
+  {q:'Depreciation charged on existing equipment',a:['Operating','Investing','Financing'],c:0,fixed:true,x:'A non-cash operating charge, added back when moving from net income to operating cash flow.'},
+  {q:'Paying a quarterly dividend to shareholders',a:['Operating','Investing','Financing'],c:2,fixed:true,x:'Cash returned to investors — flow (4b) in the circuit.'},
+  {q:'Acquiring a competitor for cash',a:['Operating','Investing','Financing'],c:1,fixed:true,x:'M&A is investing: you are buying a bundle of real assets.'},
+  {q:'Spending on a national advertising campaign',a:['Operating','Investing','Financing'],c:0,fixed:true,x:'Accounted for as an operating expense — even though economically it builds a brand asset. That mismatch is exactly why book-based returns mislead.'},
+  {q:'Repaying the principal on a bank loan',a:['Operating','Investing','Financing'],c:2,fixed:true,x:'Retiring a claim held by investors.'},
+  {q:'Selling an old factory the firm no longer needs',a:['Operating','Investing','Financing'],c:1,fixed:true,x:'Investing, with the sign reversed — a cash inflow from disposing of a real asset.'},
+  {q:'Collecting cash from customers who owed you money',a:['Operating','Investing','Financing'],c:0,fixed:true,x:'A change in receivables — working capital, and therefore operating.'},
+  {q:'Buying back the company’s own shares',a:['Operating','Investing','Financing'],c:2,fixed:true,x:'Financing. It also shrinks book equity via treasury stock — remember Home Depot’s $1,454 m.'},
+  {q:'Paying interest to bondholders',a:['Operating','Investing','Financing'],c:2,fixed:true,x:'Payments to the providers of capital. (Presentation rules vary in practice, but conceptually this is financing.)'},
+],{pass:9,badge:'reports',passMsg:'Badge earned: Statement Reader. Mira: "Now let’s find out whether any of it created value."',
+   failMsg:'Ask: is cash moving through the daily business (operating), in or out of real assets (investing), or between the firm and its investors (financing)?'});
+
+/* ================= CH 3 · VALUE CREATED ================= */
+[['rmapTop','value'],['rmapInv','value'],['rmapFin','leverage'],['rmapEff','dupont'],
+ ['rmapMar','dupont'],['rmapLev','leverage'],['rmapLiq','leverage']].forEach(([nid,target])=>{
+  const n=document.getElementById(nid);
+  if(n)n.onclick=()=>showChapter(target);
+});
+
+(function mvaChart(){
+  const data=[['Apple',782164,7.15],['Microsoft',461134,5.84],['Johnson &amp; Johnson',277722,3.38],
+    ['Walmart',209010,3.41],['Coca-Cola',202102,8.59],['Freeport-McMoRan',-5781,0.85],
+    ['CBS',-16858,0.65],['AIG',-30134,0.64],['Conoco',-53141,0.47],['Bank of America',-65878,0.80]];
+  const max=Math.max(...data.map(d=>Math.abs(d[1])));
+  const z=document.getElementById('mvaChart');
+  if(!z)return;
+  z.innerHTML='<div class="dbar-head"><span>Market value added, Sept 2017 ($ m)</span><span>value destroyed ← | → value created</span></div>'+
+    data.map(d=>{
+      const w=(Math.abs(d[1])/max)*100;
+      const pos=d[1]>=0;
+      return '<div class="dbar-row"><div class="nm">'+d[0]+'</div>'+
+        '<div class="lft">'+(pos?'':'<div class="b neg" style="width:'+w+'%"></div>')+'</div>'+
+        '<div class="rgt">'+(pos?'<div class="b pos" style="width:'+w+'%"></div>':'')+'</div>'+
+        '<div class="val" style="color:'+(pos?'var(--pos)':'var(--neg)')+'">'+(pos?'+':'−')+fmt(Math.abs(d[1])/1000)+'bn</div></div>';
+    }).join('')+
+    '<div class="chart-cap">Market-to-book ratios run 3.4–8.6 for the value creators and <b>below 1.0</b> for every destroyer — a market-to-book under one says the market values the assets at less than the accountants paid for them.</div>';
+})();
+
+function updEVA(){
+  const nopat=+document.getElementById('evaN').value;
+  const cap=+document.getElementById('evaC').value;
+  const w=+document.getElementById('evaW').value/1000;
+  const roc=nopat/cap, charge=w*cap, eva=nopat-charge;
+  document.getElementById('evaNLbl').textContent='$'+fmt(nopat)+' m';
+  document.getElementById('evaCLbl').textContent='$'+fmt(cap)+' m';
+  document.getElementById('evaWLbl').textContent=(w*100).toFixed(1)+'%';
+  document.getElementById('evaOut').innerHTML=
+    'ROC          = '+fmt(nopat)+' ÷ '+fmt(cap)+' = <b>'+(roc*100).toFixed(1)+'%</b>\n'+
+    'Capital charge = '+(w*100).toFixed(1)+'% × '+fmt(cap)+' = '+fmt(Math.round(charge))+'\n'+
+    'EVA          = '+fmt(nopat)+' − '+fmt(Math.round(charge))+' = <b>'+(eva>=0?'+':'−')+'$'+fmt(Math.abs(Math.round(eva)))+' m</b>\n'+
+    'Spread       = ROC − WACC = '+((roc-w)*100).toFixed(1)+' pts\n\n'+
+    (eva>=0?'✓ Value created. The firm earned more than the capital markets demanded for this much risk.'
+           :'✗ Value destroyed. Profitable on the income statement, poorer for shareholders. Shrink the capital base or raise the return.');
+}
+document.getElementById('evaN').oninput=updEVA;
+document.getElementById('evaC').oninput=updEVA;
+document.getElementById('evaW').oninput=updEVA;
+updEVA();
+
+runQuiz('valueGame',[
+  {q:'A firm reports record net income of $2bn on $40bn of capital, with a WACC of 9%. Verdict?',
+   a:['Value destroyed — EVA = 2 − 0.09×40 = −$1.6bn','Value created, profits are positive','Cannot say without the share price','Value created — ROC is 5%'],c:0,
+   x:'ROC = 5% against a 9% cost of capital. Record profit, negative EVA. This is exactly why we deduct a capital charge.'},
+  {q:'Why is Home Depot’s ROE of 199.2% not evidence of extraordinary skill?',
+   a:['Huge buybacks shrank book equity to $1,454 m, so the denominator is nearly empty','Net income was overstated','ROE ignores taxes','ROE uses market values, which are volatile'],c:0,
+   x:'ROE is sensitive to repurchases and leverage: borrow, buy back shares, and ROE rises with no operational improvement. ROC and ROA are far harder to game.'},
+  {q:'Which measure puts debt and equity investors on the same footing?',
+   a:['ROC = NOPAT ÷ total long-term capital','ROE = net income ÷ equity','Profit margin','Market-to-book ratio'],c:0,
+   x:'ROC (and ROA) use NOPAT — after-tax interest plus net income — over the whole capital base, so the financing mix does not distort them.'},
+  {q:'A company’s market-to-book ratio is 0.47. What is the market saying?',
+   a:['The assets are worth less than the accountants paid for them','The company is cheap and must be a bargain','Book equity is negative','The firm pays no dividends'],c:0,
+   x:'Below 1.0 means the market expects the business to earn less than its cost of capital on the assets it holds — the signature of a value destroyer (see Conoco, AIG, Bank of America).'},
+  {q:'Which is NOT one of the three problems with EVA and accounting returns?',
+   a:['They are impossible to compute for public companies','They rest on book values','They omit assets like brands and software','Book values ignore current market prices'],c:0,
+   x:'They are easy to compute — that is part of the danger. The genuine problems are book-value bias, unrecorded intangibles, and stale asset values.'},
+  {q:'EVA = (ROC − cost of capital) × capital. What does this form make obvious?',
+   a:['Value is created only when the return beats the hurdle rate, then scaled by size','That bigger firms always create more value','That capital should be minimised','That WACC is irrelevant'],c:0,
+   x:'A positive spread on a small base creates little; a small negative spread on a huge base destroys a lot. Both the rate and the size matter.'},
+],{pass:5,badge:'value',passMsg:'Badge earned: Value Auditor. Mira: "Next: where does the return actually come from?"',
+   failMsg:'Anchor on one idea: profit is only performance after you charge rent on the capital employed.'});
+
+/* ================= CH 4 · DU PONT ================= */
+const DP={x0:62,x1:540,y0:22,y1:292,tmax:3.5,mmax:35};
+function dpX(t){return DP.x0+(t/DP.tmax)*(DP.x1-DP.x0)}
+function dpY(m){return DP.y1-(m/DP.mmax)*(DP.y1-DP.y0)}
+function isoPath(roa){
+  const pts=[];
+  for(let t=roa/DP.mmax;t<=DP.tmax;t+=0.02){
+    const m=roa/t;
+    if(m<=DP.mmax&&m>=0)pts.push(dpX(t).toFixed(1)+','+dpY(m).toFixed(1));
+  }
+  return pts.length?'M'+pts.join(' L'):'';
+}
+const DP_INDUSTRIES=[['Beverages',0.45,25.5],['Retail stores',2.0,4.0],['Mining',0.25,1.3],
+  ['Utilities',0.28,8.6],['Chemicals',0.80,5.2],['Food',0.98,6.3],['Clothing',1.37,5.9]];
+function drawDuPont(){
+  const t=+document.getElementById('dpT').value/100;
+  const m=+document.getElementById('dpM').value/10;
+  const roa=t*m;
+  document.getElementById('dpTLbl').textContent=t.toFixed(2)+' ×';
+  document.getElementById('dpMLbl').textContent=m.toFixed(1)+'%';
+  let s='';
+  // grid + axes
+  for(let g=0;g<=35;g+=5){s+='<line x1="'+DP.x0+'" y1="'+dpY(g)+'" x2="'+DP.x1+'" y2="'+dpY(g)+'" stroke="#e3dccf" stroke-width="1"/>'+
+    '<text x="'+(DP.x0-8)+'" y="'+(dpY(g)+4)+'" text-anchor="end" font-size="9.5" fill="#94a0ae" font-family="IBM Plex Mono,monospace">'+g+'%</text>'}
+  for(let g=0;g<=3.5;g+=0.5){s+='<line x1="'+dpX(g)+'" y1="'+DP.y0+'" x2="'+dpX(g)+'" y2="'+DP.y1+'" stroke="#e3dccf" stroke-width="1"/>'+
+    '<text x="'+dpX(g)+'" y="'+(DP.y1+16)+'" text-anchor="middle" font-size="9.5" fill="#94a0ae" font-family="IBM Plex Mono,monospace">'+g.toFixed(1)+'</text>'}
+  [5,10,20].forEach(r=>{
+    s+='<path d="'+isoPath(r)+'" fill="none" stroke="#94a0ae" stroke-width="1.4" stroke-dasharray="4 4"/>';
+    const tt=Math.min(DP.tmax-0.35,Math.max(0.6,r/6));
+    s+='<text x="'+(dpX(tt)+6)+'" y="'+(dpY(r/tt)-6)+'" font-size="9.5" fill="#7c8794" font-family="IBM Plex Mono,monospace">ROA '+r+'%</text>';
+  });
+  DP_INDUSTRIES.forEach(d=>{
+    s+='<circle cx="'+dpX(d[1])+'" cy="'+dpY(d[2])+'" r="4" fill="none" stroke="#3a49a0" stroke-width="1.8"/>'+
+       '<text x="'+(dpX(d[1])+8)+'" y="'+(dpY(d[2])+3.5)+'" font-size="9.5" fill="#3a49a0" font-family="Inter,sans-serif">'+d[0]+'</text>';
+  });
+  const cx=dpX(Math.min(t,DP.tmax)),cy=dpY(Math.min(m,DP.mmax));
+  s+='<circle cx="'+cx+'" cy="'+cy+'" r="8" fill="#c07c1e" stroke="#faf8f4" stroke-width="2"/>';
+  s+='<text x="'+(cx)+'" y="'+(cy-14)+'" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#c07c1e" font-family="IBM Plex Mono,monospace">ROA '+roa.toFixed(1)+'%</text>';
+  s+='<text x="'+((DP.x0+DP.x1)/2)+'" y="330" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Asset turnover (sales ÷ assets)</text>';
+  s+='<text transform="translate(14,'+((DP.y0+DP.y1)/2)+') rotate(-90)" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Operating profit margin</text>';
+  document.getElementById('dpChart').innerHTML=s;
+  let verdict;
+  if(t>=1.6&&m<8)verdict='High-turnover, thin-margin — the supermarket / big-box model. Vulnerable to anything that slows the tills.';
+  else if(t<0.8&&m>=14)verdict='Low-turnover, fat-margin — the luxury hotel / branded-goods model. Vulnerable to price competition.';
+  else if(roa>=20)verdict='Both levers pulled hard. Rare, and competition will attack it.';
+  else verdict='A middle-of-the-road profile — improve either lever and ROA moves proportionally.';
+  document.getElementById('dpOut').innerHTML=
+    'ROA = asset turnover × operating profit margin\n'+
+    '    = '+t.toFixed(2)+' × '+m.toFixed(1)+'% = <b>'+roa.toFixed(1)+'%</b>\n\n'+
+    '<span class="lbl">Profile:</span> '+verdict;
+}
+document.getElementById('dpT').oninput=drawDuPont;
+document.getElementById('dpM').oninput=drawDuPont;
+drawDuPont();
+
+runQuiz('dupontGame',[
+  {q:'A retailer’s ROA falls from 21% to 15%. Turnover held at 2.3. What happened?',
+   a:['The operating profit margin collapsed — from ~9.1% to ~6.5%','Assets grew','Interest expense rose','Its ROE must also have fallen'],c:0,
+   x:'ROA = turnover × margin. With turnover fixed, the whole fall must come from margin: 15 ÷ 2.3 ≈ 6.5%. Exactly what happened to Home Depot in 2008.'},
+  {q:'Admiral Motors buys its supplier Diana. Margin rises 20% → 30%, ROA stays 10%. Why?',
+   a:['Asset turnover fell 0.50 → 0.33, exactly offsetting the margin gain','Diana was unprofitable','The tax rate changed','Sales doubled'],c:0,
+   x:'Merging brings in the supplier’s profit AND the supplier’s assets. Unless you run the acquired business better than its previous owners, ROA does not move.'},
+  {q:'Why is operating profit margin usually preferred to plain profit margin?',
+   a:['It adds back after-tax interest, so it does not punish a firm for using debt','It is bigger','It excludes taxes','It uses market values'],c:0,
+   x:'Plain profit margin is net income ÷ sales — interest already deducted. Two identical businesses with different capital structures would score differently, which measures financing, not operations.'},
+  {q:'Inventory turnover is 5.3×. What is the inventory period, roughly?',
+   a:['About 69 days','About 5 days','About 53 days','About 365 days'],c:0,
+   x:'period ≈ 365 ÷ turnover = 365 ÷ 5.3 ≈ 69 days. Turnover and period are the same fact in different clothes.'},
+  {q:'A firm’s collection period jumps from 7 to 45 days while sales are flat. The most likely reading?',
+   a:['Credit management has loosened or customers are struggling — cash is being lent to them','Sales are booming','The firm has become more efficient','Inventory is too high'],c:0,
+   x:'Receivables ARE a loan to your customers. A lengthening collection period ties up cash and is an early warning of either lax credit policy or customer distress.'},
+  {q:'Median asset turnover is 1.96 in retail and 0.26 in oil. What does that tell you?',
+   a:['Ratios are only meaningful against industry norms','Retailers are better managed','Oil firms are inefficient','Turnover is a useless ratio'],c:0,
+   x:'Capital intensity differs enormously by industry. Compare a firm with its own history and its own sector — never across unrelated industries.'},
+],{pass:5,badge:'dupont',passMsg:'Badge earned: Ratio Detective. Mira: "Now check they can survive the winter."',
+   failMsg:'Keep returning to ROA = turnover × margin, and ask which lever moved.'});
+
+/* ================= CH 5 · LEVERAGE, LIQUIDITY & GROWTH ================= */
+function updGrowth(){
+  const p=+document.getElementById('grP').value/100;
+  const roe=+document.getElementById('grR').value/100;
+  const eq=+document.getElementById('grE').value/100;
+  document.getElementById('grPLbl').textContent=(p*100).toFixed(0)+'%';
+  document.getElementById('grRLbl').textContent=(roe*100).toFixed(0)+'%';
+  document.getElementById('grELbl').textContent=eq.toFixed(2);
+  const sus=p*roe, int_=p*roe*eq;
+  document.getElementById('grOut').innerHTML=
+    'sustainable growth = plowback × ROE = '+(p*100).toFixed(0)+'% × '+(roe*100).toFixed(0)+'% = <b>'+(sus*100).toFixed(1)+'% a year</b>\n'+
+    '   <span class="lbl">the fastest you can grow without increasing leverage</span>\n\n'+
+    'internal growth    = plowback × ROE × equity/net assets = <b>'+(int_*100).toFixed(1)+'% a year</b>\n'+
+    '   <span class="lbl">the fastest you can grow raising no outside money at all</span>\n\n'+
+    'To grow at 20% instead you would need external financing of roughly\n'+
+    '   (20% − '+(int_*100).toFixed(1)+'%) × net assets each year.';
+}
+['grP','grR','grE'].forEach(id=>{document.getElementById(id).oninput=updGrowth});
+updGrowth();
+
+const RATIOS=[
+  {k:'Asset turnover',v:'sales ÷ total assets'},
+  {k:'Inventory turnover',v:'COGS ÷ inventory'},
+  {k:'Interest coverage',v:'EBIT ÷ interest'},
+  {k:'Total debt ratio',v:'total liabilities ÷ total assets'},
+  {k:'Quick ratio',v:'(cash + securities + receivables) ÷ current liabilities'},
+  {k:'Sustainable growth',v:'plowback ratio × ROE'},
+];
+let ratPlaced=[];
+function buildRatioGame(){
+  const slots=document.getElementById('ratSlots'),chips=document.getElementById('ratChips');
+  if(!slots)return;
+  slots.innerHTML='';chips.innerHTML='';ratPlaced=[];
+  document.getElementById('ratFb').className='feedback';
+  document.getElementById('leverageGame').innerHTML='';
+  RATIOS.forEach(r=>{
+    const sl=document.createElement('div');sl.className='slot';
+    sl.innerHTML='<span class="sk">'+r.k+'</span><span class="sv">— tap a formula —</span>';
+    slots.appendChild(sl);
+  });
+  const order=[...RATIOS.keys()].sort(()=>Math.random()-.5);
+  order.forEach(i=>{
+    const c=document.createElement('span');c.className='chip';c.textContent=RATIOS[i].v;
+    c.onclick=()=>{
+      if(c.classList.contains('used'))return;
+      const pos=ratPlaced.length;
+      ratPlaced.push(i);c.classList.add('used');
+      const sl=slots.children[pos];
+      sl.querySelector('.sv').textContent=RATIOS[i].v;
+      sl.className='slot '+(i===pos?'filled':'bad');
+      if(ratPlaced.length===RATIOS.length)checkRatios();
+    };
+    chips.appendChild(c);
+  });
+}
+function checkRatios(){
+  const ok=ratPlaced.every((v,i)=>v===i);
+  const fb=document.getElementById('ratFb');
+  if(ok){
+    fb.className='feedback show good';
+    fb.innerHTML='✓ All six matched. Three diagnosis questions and the badge is yours:';
+    runQuiz('leverageGame',[
+      {q:'Home Depot’s total debt ratio is 97% yet its interest cover is 14×. How can both be true?',
+       a:['Book equity was gutted by buybacks; earnings — and market value — are strong','The debt is mispriced','Interest rates are zero','One of the numbers must be wrong'],c:0,
+       x:'The ratio uses BOOK equity of $1,454 m, which treasury stock of −$48,762 m nearly erased. Coverage uses earnings, which are real. Always sanity-check book leverage against coverage and market values.'},
+      {q:'A firm borrows a large sum and parks it in marketable securities. What happens?',
+       a:['Net working capital is unchanged but the current ratio moves','Both NWC and the current ratio are unchanged','The quick ratio must fall','Leverage falls'],c:0,
+       x:'Current assets and current liabilities both rise by the same amount: the difference (NWC) is unchanged, but the ratio shifts toward 1. This is why analysts often net short-term investments against short-term debt.'},
+      {q:'ROE = leverage × turnover × operating margin × debt burden. Why is leverage’s effect on ROE ambiguous?',
+       a:['More debt raises the leverage ratio but lowers the debt-burden term','Because ROA also rises','Because taxes cancel it','It is not ambiguous — ROE always rises'],c:0,
+       x:'The two middle terms are ROA, untouched by financing. The outer two move in opposite directions, so ROE can go either way — a big reason ROE is a poor scoreboard, and the doorway to Modigliani–Miller.'},
+    ],{pass:2,badge:'leverage',passMsg:'Badge earned: Balance Keeper. Mira: "Now we leave accounting and start on markets."',
+       failMsg:'Re-read the coverage ratios and the extended Du Pont formula, then try again.'});
+  }else{
+    fb.className='feedback show bad';
+    fb.innerHTML='Not quite — some formulas landed in the wrong slot. Hit <b>Reset</b> and work down the list in order.';
+  }
+}
+document.getElementById('ratReset').onclick=buildRatioGame;
+buildRatioGame();
+
+/* ================= CH 6 · MARKET EFFICIENCY ================= */
+(function eventStudy(){
+  const el=document.getElementById('evChart');
+  if(!el)return;
+  const x0=58,x1=540,y0=20,y1=210,lo=95,hi=130;
+  const X=d=>x0+((d+10)/30)*(x1-x0);
+  const Y=v=>y1-((v-lo)/(hi-lo))*(y1-y0);
+  const pts=[];
+  for(let d=-10;d<=19;d++){
+    let v;
+    if(d<-3)v=100+(d+10)*0.35;
+    else if(d<0)v=102.5+(d+3)*1.1;
+    else if(d===0)v=112;
+    else v=125.6+(d-1)*0.02;
+    pts.push([d,v]);
+  }
+  let s='';
+  for(let v=95;v<=130;v+=5){
+    s+='<line x1="'+x0+'" y1="'+Y(v)+'" x2="'+x1+'" y2="'+Y(v)+'" stroke="#e3dccf"/>'+
+       '<text x="'+(x0-8)+'" y="'+(Y(v)+4)+'" text-anchor="end" font-size="9.5" fill="#94a0ae" font-family="IBM Plex Mono,monospace">'+v+'</text>';
+  }
+  for(let d=-9;d<=19;d+=4){
+    s+='<text x="'+X(d)+'" y="'+(y1+16)+'" text-anchor="middle" font-size="9.5" fill="#94a0ae" font-family="IBM Plex Mono,monospace">'+d+'</text>';
+  }
+  s+='<line x1="'+X(0)+'" y1="'+y0+'" x2="'+X(0)+'" y2="'+y1+'" stroke="#26303f" stroke-width="1.4"/>';
+  s+='<text x="'+(X(0)+6)+'" y="'+(y0+12)+'" font-size="10" fill="#26303f" font-family="Inter,sans-serif">announcement</text>';
+  s+='<polyline points="'+pts.map(p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' ')+'" fill="none" stroke="#b23b2e" stroke-width="2.8"/>';
+  s+='<text x="'+(X(6))+'" y="'+(Y(125.6)-12)+'" font-size="10.5" fill="#b23b2e" font-family="Inter,sans-serif">…and then nothing happens</text>';
+  s+='<text x="'+((x0+x1)/2)+'" y="248" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Day relative to announcement</text>';
+  s+='<text transform="translate(14,115) rotate(-90)" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Cumulative abnormal return, %</text>';
+  el.innerHTML=s;
+})();
+
+runQuiz('marketsGame',[
+  {q:'Daily return correlations for four large stocks are −0.037, −0.020, +0.004 and +0.010.',
+   a:['Supports weak-form efficiency','Contradicts weak-form efficiency','Supports strong-form efficiency','Says nothing about efficiency'],c:0,
+   x:'Essentially zero autocorrelation means yesterday tells you nothing about tomorrow — prices behave like random walks, which is precisely the weak form.'},
+  {q:'Takeover targets jump ~25% the day after announcement, then show no unusual movement.',
+   a:['Supports semistrong efficiency','Contradicts semistrong efficiency','Supports weak-form efficiency only','Proves insider trading'],c:0,
+   x:'Public news is absorbed immediately and completely. A flat line after the event means no money is left on the table for people who read the press release.'},
+  {q:'Diversified equity funds underperform the market in about 60% of years and rankings do not persist.',
+   a:['Supports strong-form efficiency','Contradicts strong-form efficiency','Supports weak-form efficiency','Proves funds are badly managed'],c:0,
+   x:'If professionals with research budgets and private access cannot consistently beat the index, it is hard to argue that any information is left unexploited.'},
+  {q:'A trader notices prices always rise on the first Monday of the month and starts buying on Fridays.',
+   a:['The pattern will self-destruct as others trade it away','The pattern will strengthen','This proves markets are inefficient forever','Nothing will happen'],c:0,
+   x:'As soon as a cycle becomes apparent, investors eliminate it by their own trading — the arbitrage destroys the opportunity that created it.'},
+  {q:'NASDAQ rises 800% to March 2000, then falls 78% by October 2002.',
+   a:['A bubble — the strongest challenge to market efficiency','Confirms semistrong efficiency','Confirms weak-form efficiency','A normal business cycle'],c:0,
+   x:'Bubbles are the leading evidence against efficiency, and the reason behavioural finance exists as a field.'},
+  {q:'E-mini S&amp;P futures moved ~3% within minutes of a live tariff announcement. The lesson?',
+   a:['The window between news and price is seconds — semistrong efficiency in action','You can profit easily from televised news','Futures markets are inefficient','Only insiders can trade news'],c:0,
+   x:'Absorbing public information is not instantaneous in theory but is close enough in practice that a human reading a headline is already too late.'},
+  {q:'A CFO believes the market has "undervalued" the firm and delays a share issue for two years.',
+   a:['Under semistrong efficiency the price already reflects all public information, so this is a bet, not a plan',
+      'This is always correct — managers know best','It only matters in weak-form markets','Share prices cannot be wrong'],c:0,
+   x:'Managers may hold genuine private information, but timing the market on public information conflicts with semistrong efficiency. Treat it as a speculative position and say so out loud.'},
+  {q:'Cumulative abnormal returns drift gently UPWARD in the days BEFORE announcement. What does that hint at?',
+   a:['Some information leaks before the public announcement','The model is wrong','Markets are weak-form inefficient','Targets are always overvalued'],c:0,
+   x:'The pre-event drift is the awkward part of the picture, and one of the reasons strong-form efficiency is the hardest version to defend.'},
+],{pass:6,badge:'markets',passMsg:'Badge earned: Market Realist. Mira: "Now for the part of the market that is made of people."',
+   failMsg:'Sort by the information set: past prices → weak; public news → semistrong; everything including private → strong.'});
+
+/* ================= CH 7 · THE HUMAN FACTOR ================= */
+const MIND_Q=[
+  {q:'Which would you prefer?',a:['A 90% chance to win $1,000 (10% chance of nothing)','Win $899 for sure'],
+   typical:1,label:'High probability · GAINS'},
+  {q:'And now — which would you prefer?',a:['A 90% chance to lose $1,000 (10% chance of losing nothing)','Lose $899 for sure'],
+   typical:0,label:'High probability · LOSSES'},
+  {q:'Which would you prefer?',a:['A 1% chance to win $1,000 (99% chance of nothing)','Win $11 for sure'],
+   typical:0,label:'Low probability · GAINS'},
+  {q:'Last one — which would you prefer?',a:['A 1% chance to lose $1,000 (99% chance of losing nothing)','Lose $11 for sure'],
+   typical:1,label:'Low probability · LOSSES'},
+];
+let mindIdx=0,mindAns=[];
+function renderMind(){
+  const z=document.getElementById('mindsExp');
+  if(!z)return;
+  if(mindIdx>=MIND_Q.length){
+    const rows=MIND_Q.map((item,i)=>{
+      const match=mindAns[i]===item.typical;
+      const chose=mindAns[i]===0?'the gamble':'the sure thing';
+      const attitude=mindAns[i]===0?'risk-seeking':'risk-averse';
+      return '<tr><td class="mono">'+item.label+'</td><td>you chose <b>'+chose+'</b> → '+attitude+'</td>'+
+        '<td class="mono '+(match?'up':'down')+'">'+(match?'typical':'atypical')+'</td></tr>';
+    }).join('');
+    const n=MIND_Q.filter((it,i)=>mindAns[i]===it.typical).length;
+    z.innerHTML='<div class="feedback show '+(n>=3?'good':'bad')+'"><b>You matched the classic pattern on '+n+' of 4 questions.</b> '+
+      (n>=3?'You are gloriously, predictably human — and so is everyone pricing assets.':'Unusual! Either you computed expected values, or your reference point differs. Both are worth knowing about yourself.')+
+      '</div><table class="dtable"><tr><th>Condition</th><th>Your choice</th><th>vs. most people</th></tr>'+rows+'</table>'+
+      '<p class="dim" style="margin-top:8px">Note that every gamble has an expected value of ±$900 versus a sure ±$899 (high probability) and ±$10 versus a sure ±$11 (low probability) — the choices are almost perfectly balanced. What flipped your preference was <b>framing</b>, not arithmetic.</p>'+
+      '<button class="btn alt small" id="mindAgain">Run it again</button>';
+    document.getElementById('mindAgain').onclick=()=>{mindIdx=0;mindAns=[];renderMind()};
+    document.getElementById('mindsTheory').style.display='block';
+    return;
+  }
+  const item=MIND_Q[mindIdx];
+  z.innerHTML='<div class="score-line">Question '+(mindIdx+1)+' / 4 · answer instinctively</div><div class="qhead">'+item.q+'</div>';
+  item.a.forEach((t,i)=>{
+    const b=document.createElement('button');b.className='opt';b.textContent=t;
+    b.onclick=()=>{mindAns[mindIdx]=i;mindIdx++;renderMind()};
+    z.appendChild(b);
+  });
+}
+renderMind();
+
+runQuiz('mindsGame',[
+  {q:'At HIGH probability, the classic pattern is…',
+   a:['Risk averse for gains, risk seeking for losses','Risk seeking for gains, risk averse for losses','Risk averse for both','Risk neutral for both'],c:0,
+   x:'The certainty effect: people over-weight certainty, so they lock in a near-certain gain and gamble to escape a near-certain loss.'},
+  {q:'At LOW probability, the classic pattern is…',
+   a:['Risk seeking for gains, risk averse for losses — lottery tickets and insurance','Risk averse for gains, risk seeking for losses','Risk neutral','The same as at high probability'],c:0,
+   x:'The possibility effect: a tiny chance of a big gain is over-weighted (you buy the ticket), and so is a tiny chance of a big loss (you buy the insurance).'},
+  {q:'Prospect theory’s value function is steeper on the loss side. The main consequence?',
+   a:['Loss aversion — the pain of a loss outweighs the pleasure of an equal gain, so losers get held too long',
+      'Investors always prefer risk','Gains are valued more highly than losses','Prices always revert to the mean'],c:0,
+   x:'Losing $50 hurts roughly twice as much as gaining $50 pleases. Combined with reference dependence, it explains the disposition effect: sell winners, cling to losers.'},
+],{pass:2,badge:'minds',passMsg:'Badge earned: Bias Spotter. Mira: "Right. Back to hard theory — and the most famous result in the subject."',
+   failMsg:'Re-read the fourfold table: high probability flips one way, low probability the other.'});
+
+/* ================= CH 8 · MODIGLIANI–MILLER ================= */
+function drawMacbeth(){
+  const oi=+document.getElementById('mbOI').value;
+  document.getElementById('mbOILbl').textContent='$'+fmt(oi);
+  const x0=60,x1=530,y0=22,y1=248,oimax=2500,epsmax=4;
+  const X=v=>x0+(v/oimax)*(x1-x0);
+  const Y=v=>y1-(v/epsmax)*(y1-y0);
+  const epsU=v=>v/1000;
+  const epsL=v=>Math.max(0,(v-500)/500);
+  let s='';
+  for(let e=0;e<=4;e++){s+='<line x1="'+x0+'" y1="'+Y(e)+'" x2="'+x1+'" y2="'+Y(e)+'" stroke="#e3dccf"/>'+
+    '<text x="'+(x0-8)+'" y="'+(Y(e)+4)+'" text-anchor="end" font-size="9.5" fill="#94a0ae" font-family="IBM Plex Mono,monospace">$'+e+'</text>'}
+  for(let v=0;v<=2500;v+=500){s+='<line x1="'+X(v)+'" y1="'+y0+'" x2="'+X(v)+'" y2="'+y1+'" stroke="#e3dccf"/>'+
+    '<text x="'+X(v)+'" y="'+(y1+16)+'" text-anchor="middle" font-size="9.5" fill="#94a0ae" font-family="IBM Plex Mono,monospace">'+fmt(v)+'</text>'}
+  s+='<line x1="'+X(1000)+'" y1="'+y0+'" x2="'+X(1000)+'" y2="'+y1+'" stroke="#94a0ae" stroke-width="1.4" stroke-dasharray="5 4"/>';
+  s+='<text x="'+(X(1000)+6)+'" y="'+(y0+12)+'" font-size="10" fill="#5b6675" font-family="Inter,sans-serif">break-even $1,000</text>';
+  s+='<line x1="'+X(0)+'" y1="'+Y(0)+'" x2="'+X(2500)+'" y2="'+Y(2.5)+'" stroke="#3a49a0" stroke-width="2.8"/>';
+  s+='<polyline points="'+X(0)+','+Y(0)+' '+X(500)+','+Y(0)+' '+X(2500)+','+Y(4)+'" fill="none" stroke="#c07c1e" stroke-width="2.8"/>';
+  s+='<text x="'+(X(2280))+'" y="'+(Y(2.3))+'" font-size="10.5" fill="#3a49a0" font-family="Inter,sans-serif">All equity</text>';
+  s+='<text x="'+(X(1950))+'" y="'+(Y(3.5))+'" font-size="10.5" fill="#c07c1e" font-family="Inter,sans-serif">50% debt</text>';
+  s+='<circle cx="'+X(oi)+'" cy="'+Y(epsU(oi))+'" r="6" fill="#3a49a0" stroke="#faf8f4" stroke-width="2"/>';
+  s+='<circle cx="'+X(oi)+'" cy="'+Y(epsL(oi))+'" r="6" fill="#c07c1e" stroke="#faf8f4" stroke-width="2"/>';
+  s+='<text x="'+((x0+x1)/2)+'" y="286" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Operating income, dollars</text>';
+  s+='<text transform="translate(14,135) rotate(-90)" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Earnings per share</text>';
+  document.getElementById('mbChart').innerHTML=s;
+
+  const eU=epsU(oi), eL=epsL(oi), interest=500;
+  const eq=Math.max(0,oi-interest);
+  document.getElementById('mbTable').innerHTML=
+    '<tr><th>At operating income $'+fmt(oi)+'</th><th class="r">All equity<br>1,000 shares</th><th class="r">Equal debt &amp; equity<br>500 shares, $5,000 debt</th></tr>'+
+    '<tr><td>Interest at 10%</td><td class="mono r">$0</td><td class="mono r">$'+fmt(interest)+'</td></tr>'+
+    '<tr><td>Earnings to equity</td><td class="mono r">$'+fmt(oi)+'</td><td class="mono r">$'+fmt(eq)+'</td></tr>'+
+    '<tr><td>Earnings per share</td><td class="mono r">$'+eU.toFixed(2)+'</td><td class="mono r">$'+eL.toFixed(2)+'</td></tr>'+
+    '<tr class="tot"><td>Return on shares</td><td class="mono r">'+(eU*10).toFixed(0)+'%</td>'+
+    '<td class="mono r '+(eL>eU?'up':(eL<eU?'down':''))+'">'+(eL*10).toFixed(0)+'%</td></tr>'+
+    '<tr><td colspan="3" style="font-size:11.5px;color:var(--txt-dim)">'+
+      (oi>1000?'Above the break-even, leverage <b>magnifies</b> the return — which is why the plan looks attractive.'
+       :oi<1000?'Below the break-even, leverage <b>destroys</b> the return — the same magnification, running the other way.'
+       :'Exactly at the break-even: leverage changes nothing. This is the crossing point of the two lines.')+
+      ' The expected EPS rises from $1.50 to $2.00, but so does the risk — and an investor who borrows $10 to buy two unlevered shares gets the identical payoff. Hence <b>the share price stays $10</b>.</td></tr>';
+}
+document.getElementById('mbOI').oninput=drawMacbeth;
+drawMacbeth();
+
+runQuiz('mmGame',[
+  {q:'Strategies 1 and 2 produce identical returns (0.01 × Profits). What follows?',
+   a:['They must cost the same, so V<sub>U</sub> = V<sub>L</sub>','The levered firm is worth more','The unlevered firm is worth more','Nothing — risk differs'],c:0,
+   x:'Two investments with identical payoffs in every state must have the same price, or a riskless arbitrage exists. That is MM Proposition 1 in one line.'},
+  {q:'Macbeth’s expected EPS rises from $1.50 to $2.00 after the buyback. Should the share price rise?',
+   a:['No — investors can replicate the leverage themselves, so they will not pay a premium','Yes, by 33%','Yes, but only if income exceeds $1,000','No, because EPS is irrelevant'],c:0,
+   x:'Borrow $10, add $10 of your own, buy two unlevered shares: you get 0/10/20/30% — exactly the levered share’s payoff. Homemade leverage caps what the firm can charge for doing it for you.'},
+  {q:'Under MM Proposition 2, what happens to r<sub>E</sub> as D/E rises?',
+   a:['It rises in proportion to D/E, at a rate set by the spread (r<sub>A</sub> − r<sub>D</sub>)','It falls','It stays constant','It rises then falls'],c:0,
+   x:'r<sub>E</sub> = r<sub>A</sub> + (r<sub>A</sub> − r<sub>D</sub>)·D/E. Macbeth: 0.15 + (0.15 − 0.10)×1 = 20%. r<sub>A</sub> itself never moves.'},
+  {q:'Macbeth’s equity return rises from 15% to 20%. Are shareholders better off?',
+   a:['No — a $1,000 drop in income now costs 20 points of return instead of 10','Yes, 5 points of free return','Yes, if income is above $1,000','Only if the debt is risk-free'],c:0,
+   x:'The extra expected return is exactly compensation for doubled sensitivity to operating fortunes. Higher return, higher risk, same value.'},
+  {q:'V<sub>D</sub> + V<sub>E</sub> = E[min(R,D)] + E[max(0,R−D)] = E[R]. What is the point?',
+   a:['The two claims always sum to the whole cash flow, so their total value cannot depend on D','Debt is risk-free','Equity is an option','Risk neutrality is required'],c:0,
+   x:'min(R,D) + max(0,R−D) = R in every state, so the sum of the values is E[R] — with no D in it. And notably, risk neutrality is NOT required for the identity.'},
+  {q:'A supplier offers "free" financing that turns a −$14k NPV project into +$23k. What went wrong?',
+   a:['The fixed payments are debt service and were discounted at the risky project rate','Nothing — the deal is now good','The IRR calculation was wrong','The marketing cash flows changed'],c:0,
+   x:'Contractual payments are near-certain and must be valued at the borrowing rate, not the project’s 10%. Value the project and the loan separately, then add. The apparent gain is hidden leverage.'},
+  {q:'If MM Proposition 1 holds, why does corporate finance matter at all?',
+   a:['Because MM’s assumptions fail: taxes, distress costs, asymmetric information, agency conflicts','It does not matter','Because investors cannot borrow','Because EPS matters to the market'],c:0,
+   x:'MM is a checklist of the only things that can make financing matter. Chapter 10 attacks the first and biggest of them — taxes.'},
+],{pass:5,badge:'mm',passMsg:'Badge earned: Pie Slicer. Mira: "Now let’s price the slices."',
+   failMsg:'One idea decides most of these: whatever the firm does to its capital structure, investors can undo at home.'});
+
+/* ================= CH 9 · COST OF CAPITAL ================= */
+let levMode='A';
+function drawLev(){
+  const el=document.getElementById('levChart');
+  if(!el)return;
+  const x0=58,x1=536,y0=20,y1=232,rmax=25,demax=2;
+  const X=v=>x0+(v/demax)*(x1-x0);
+  const Y=v=>y1-(v/rmax)*(y1-y0);
+  const rA=12.75;
+  const rD=de=>levMode==='A'?7.25:7.25+1.4*Math.pow(de,1.35)/2.6;
+  const rE=de=>rA+(rA-rD(de))*de;
+  let s='';
+  for(let r=0;r<=25;r+=5){s+='<line x1="'+x0+'" y1="'+Y(r)+'" x2="'+x1+'" y2="'+Y(r)+'" stroke="#e3dccf"/>'+
+    '<text x="'+(x0-8)+'" y="'+(Y(r)+4)+'" text-anchor="end" font-size="9.5" fill="#94a0ae" font-family="IBM Plex Mono,monospace">'+r+'</text>'}
+  for(let d=0;d<=2;d+=0.5){s+='<line x1="'+X(d)+'" y1="'+y0+'" x2="'+X(d)+'" y2="'+y1+'" stroke="#e3dccf"/>'+
+    '<text x="'+X(d)+'" y="'+(y1+16)+'" text-anchor="middle" font-size="9.5" fill="#94a0ae" font-family="IBM Plex Mono,monospace">'+d.toFixed(1)+'</text>'}
+  const pE=[],pD=[];
+  for(let d=0;d<=2.001;d+=0.05){pE.push(X(d).toFixed(1)+','+Y(rE(d)).toFixed(1));pD.push(X(d).toFixed(1)+','+Y(rD(d)).toFixed(1))}
+  s+='<line x1="'+X(0)+'" y1="'+Y(rA)+'" x2="'+X(2)+'" y2="'+Y(rA)+'" stroke="#0b8a5f" stroke-width="2.8"/>';
+  s+='<polyline points="'+pE.join(' ')+'" fill="none" stroke="#3a49a0" stroke-width="2.8"/>';
+  s+='<polyline points="'+pD.join(' ')+'" fill="none" stroke="#c07c1e" stroke-width="2.8"/>';
+  s+='<text x="'+(X(1.35))+'" y="'+(Y(rE(1.35))-9)+'" font-size="10.5" fill="#3a49a0" font-family="Inter,sans-serif">r'+'ₑ'+' = expected return on equity</text>';
+  s+='<text x="'+(X(1.05))+'" y="'+(Y(rA)-9)+'" font-size="10.5" fill="#0b8a5f" font-family="Inter,sans-serif">r'+'ₐ'+' = expected return on assets (flat)</text>';
+  s+='<text x="'+(X(1.05))+'" y="'+(Y(rD(1.05))+18)+'" font-size="10.5" fill="#c07c1e" font-family="Inter,sans-serif">r'+'ᴅ'+' = expected return on debt</text>';
+  s+='<text x="'+((x0+x1)/2)+'" y="272" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Debt–equity ratio, D/E</text>';
+  s+='<text transform="translate(14,126) rotate(-90)" text-anchor="middle" font-size="10.5" fill="#5b6675" font-family="Inter,sans-serif">Rates of return, %</text>';
+  el.innerHTML=s;
+  document.getElementById('levNote').innerHTML=levMode==='A'
+    ? '<b>Textbook case.</b> If debt stays risk-free, r<sub>D</sub> is flat and MM Proposition 2 makes r<sub>E</sub> rise in a perfectly straight line with D/E. The return on the whole package of debt and equity never moves.'
+    : '<b>Reality.</b> As leverage climbs, the debt itself becomes risky, so lenders demand more. Debtholders now absorb some of the business risk, which means r<sub>E</sub> rises <b>more slowly</b> — it bends over. Proposition 2 still holds where it counts: <b>r<sub>A</sub> is unchanged</b>.';
+  document.getElementById('levModeA').className='btn small'+(levMode==='A'?'':' alt');
+  document.getElementById('levModeB').className='btn small'+(levMode==='B'?'':' alt');
+}
+document.getElementById('levModeA').onclick=()=>{levMode='A';drawLev()};
+document.getElementById('levModeB').onclick=()=>{levMode='B';drawLev()};
+drawLev();
+
+function updBeta(){
+  const bE=+document.getElementById('bkE').value/100;
+  const dv=+document.getElementById('bkD').value/100;
+  const bD=+document.getElementById('bkBD').value/100;
+  const f=+document.getElementById('bkF').value/100;
+  document.getElementById('bkELbl').textContent=bE.toFixed(2);
+  document.getElementById('bkDLbl').textContent=(dv*100).toFixed(0)+'%';
+  document.getElementById('bkBDLbl').textContent=bD.toFixed(2);
+  document.getElementById('bkFLbl').textContent=f.toFixed(1);
+  const bA=bD*dv+bE*(1-dv);
+  const rf=4,mrp=7;
+  const rE=rf+bE*mrp, rD=rf+bD*mrp, rA=rf+bA*mrp;
+  const bRev=bA/(1+f);
+  document.getElementById('bkOut').innerHTML=
+    '<span class="lbl">Unlevering — stripping financial risk out of the equity beta</span>\n'+
+    'β_A = β_D(D/V) + β_E(E/V) = '+bD.toFixed(2)+'×'+dv.toFixed(2)+' + '+bE.toFixed(2)+'×'+(1-dv).toFixed(2)+' = <b>'+bA.toFixed(2)+'</b>\n\n'+
+    '<span class="lbl">CAPM at r_f = 4%, market risk premium 7%</span>\n'+
+    'r_E = 4% + '+bE.toFixed(2)+'×7% = '+rE.toFixed(1)+'%   r_D = '+rD.toFixed(1)+'%   r_A = <b>'+rA.toFixed(1)+'%</b>\n\n'+
+    '<span class="lbl">Operating leverage — backing out the cyclicality of the revenue itself</span>\n'+
+    'β_asset = β_revenue × [1 + PV(fixed)/PV(asset)]\n'+
+    'so β_revenue = '+bA.toFixed(2)+' ÷ (1 + '+f.toFixed(1)+') = <b>'+bRev.toFixed(2)+'</b>\n'+
+    (f>0.9?'\n⚠ Heavy fixed costs: most of this firm’s asset beta comes from its cost structure, not from cyclical demand.'
+          :'\nLow fixed costs: the asset beta is close to the underlying cyclicality of revenue.');
+}
+['bkE','bkD','bkBD','bkF'].forEach(id=>{document.getElementById(id).oninput=updBeta});
+updBeta();
+
+runQuiz('capitalGame',[
+  {q:'A firm with a 12.75% company cost of capital evaluates a much safer project. Which rate?',
+   a:['A lower, project-specific rate reflecting the project’s own risk','12.75% — it is the company hurdle','The risk-free rate','The cost of debt'],c:0,
+   x:'The company cost of capital is right only for average-risk projects. Risk belongs to the project, not to the firm that happens to own it.'},
+  {q:'U.S. Steel’s 2013–17 beta is 3.01 with a standard error of 0.93. What do you conclude?',
+   a:['The estimate is very imprecise — an industry average would be more reliable','Beta is exactly 3.01','Beta is unstable so CAPM is useless','R² must be high'],c:0,
+   x:'Two standard errors puts the true beta roughly between 1.2 and 4.8. Single-company regression betas are noisy; averaging across comparable firms cuts the noise.'},
+  {q:'Con Edison’s R² is close to zero. What does that mean?',
+   a:['Almost none of its share-price variation is explained by market movements','The stock does not move','Beta is negative','The regression is wrong'],c:0,
+   x:'R² is the share of total risk that is market risk. A regulated utility’s fortunes hardly track the business cycle — which is exactly why its beta is near zero.'},
+  {q:'Two firms have identical businesses, but one is 60% debt-financed. Which betas differ?',
+   a:['Equity betas differ; asset betas are the same','Asset betas differ','Both are identical','Neither can be measured'],c:0,
+   x:'β_E mixes business risk with financial risk. Unlever with β_A = β_D(D/V) + β_E(E/V) and the two firms match — that is how you use a comparable with a different capital structure.'},
+  {q:'β_asset = β_revenue × [1 + PV(fixed cost)/PV(asset)]. Two airlines, same cyclicality, one leases more of its fleet on fixed terms. Which has the higher asset beta?',
+   a:['The one with more fixed costs','The one with more variable costs','They are identical','Impossible to say'],c:0,
+   x:'Fixed costs behave like debt inside the operations: they do not shrink in a downturn, so all revenue variation hits the residual. That is operating leverage.'},
+  {q:'As leverage rises in the real world, why does r<sub>E</sub> rise more slowly than the textbook line?',
+   a:['The debt becomes risky and absorbs some business risk, so lenders demand more instead','Because r<sub>A</sub> falls','Because taxes intervene','It does not — the line is always straight'],c:0,
+   x:'Risky debt takes over part of the risk that equity used to carry. r<sub>D</sub> rises, r<sub>E</sub> bends over — and r<sub>A</sub>, the return on the whole package, still does not move.'},
+],{pass:5,badge:'capital',passMsg:'Badge earned: Beta Estimator. Mira: "One chapter left — and it is the one you will use on Monday."',
+   failMsg:'Two anchors: risk belongs to the project, and equity beta must be unlevered before you can compare firms.'});
+
+/* ================= CH 10 · WACC IN PRACTICE ================= */
+const WMIST=[
+  {t:'Using a 90% debt ratio when the firm is not 90% debt-financed',bad:true,
+   why:'✔ Mistake 1. The weighted-average formula works only for projects that are <b>carbon copies of the firm</b>. WACC uses the firm’s actual capital structure, not the debt a project could theoretically support.'},
+  {t:'Leaving the cost of equity at 15% while pushing leverage to 90%',bad:true,
+   why:'✔ Mistake 2. You cannot raise the debt ratio without creating financial risk for stockholders — r<sub>E</sub> would climb far above 15%. Even if the firm really did lever up, its cost of capital would <b>not</b> fall to 7.2%.'},
+  {t:'Multiplying the cost of debt by (1 − T<sub>c</sub>)',bad:false,
+   why:'✘ Correct. Interest is tax-deductible, so the after-tax cost of debt is r<sub>D</sub>(1 − T<sub>c</sub>). This part of the arithmetic is fine.'},
+  {t:'Weighting the two costs by D/V and E/V',bad:false,
+   why:'✘ Correct in form. The weights should be market-value based, which is exactly what the formula asks for. The problem is which weights he picked, not that he used weights.'},
+  {t:'Choosing a discount rate that makes the pet project look good',bad:true,
+   why:'✔ Mistake 3 — the real one. The discount rate is dictated by the <b>risk of the project</b> and set before you see the answer. Reverse-engineering a hurdle rate to justify a decision is how firms destroy value politely.'},
+];
+(function waccMistakeGame(){
+  const z=document.getElementById('waccMistakes');
+  if(!z)return;
+  let picked=new Set(),graded=false;
+  function render(){
+    z.innerHTML='<p class="dim"><b>How many mistakes does he make?</b> Tap every line you think is wrong, then grade it.</p>'+
+      WMIST.map((m,i)=>'<button class="opt" id="wm'+i+'">'+(picked.has(i)?'⚑ ':'▢ ')+m.t+
+        (graded?'<div class="qmath show">'+m.why+'</div>':'')+'</button>').join('')+
+      '<div style="margin-top:8px"><button class="btn" id="wmGrade"'+(graded?' disabled':'')+'>Grade my answer</button> '+
+      '<button class="btn alt" id="wmReset">Reset</button></div>'+
+      (graded?'<div class="feedback show '+(gradeOK()?'good':'bad')+'">'+gradeMsg()+'</div>':'');
+    WMIST.forEach((m,i)=>{
+      const b=document.getElementById('wm'+i);
+      if(graded){b.classList.add(picked.has(i)===m.bad?'right':'wrong');b.disabled=true}
+      else b.onclick=()=>{picked.has(i)?picked.delete(i):picked.add(i);render()};
+    });
+    if(!graded)document.getElementById('wmGrade').onclick=()=>{graded=true;render()};
+    document.getElementById('wmReset').onclick=()=>{picked=new Set();graded=false;render()};
+  }
+  function hits(){return WMIST.filter((m,i)=>m.bad&&picked.has(i)).length}
+  function falsePos(){return WMIST.filter((m,i)=>!m.bad&&picked.has(i)).length}
+  function gradeOK(){return hits()===3&&falsePos()===0}
+  function gradeMsg(){
+    return gradeOK()
+      ? '<b>All three mistakes found, no false alarms.</b> The core lesson: WACC describes the firm as it is financed, and any change in leverage changes the cost of equity too.'
+      : 'You found '+hits()+' of 3 real mistakes'+(falsePos()?' and flagged '+falsePos()+' correct step'+(falsePos()>1?'s':''):'')+'. Read the explanations above — the arithmetic was never the problem.';
+  }
+  render();
+})();
+
+function updWACC(){
+  const rD=+document.getElementById('wcD').value/1000;
+  const rE=+document.getElementById('wcE').value/1000;
+  const tc=+document.getElementById('wcT').value/100;
+  const dv2=+document.getElementById('wcN').value/100;
+  const dv1=0.40, ev1=0.60;
+  document.getElementById('wcDLbl').textContent=(rD*100).toFixed(1)+'%';
+  document.getElementById('wcELbl').textContent=(rE*100).toFixed(1)+'%';
+  document.getElementById('wcTLbl').textContent=(tc*100).toFixed(0)+'%';
+  document.getElementById('wcNLbl').textContent=(dv2*100).toFixed(0)+'%';
+  const wacc1=rD*(1-tc)*dv1+rE*ev1;
+  const r=rD*dv1+rE*ev1;                       // step 1 · unlever
+  const de2=dv2===1?99:dv2/(1-dv2);
+  const rE2=r+(r-rD)*de2;                      // step 2 · relever
+  const wacc2=rD*(1-tc)*dv2+rE2*(1-dv2);       // step 3
+  document.getElementById('wcOut').innerHTML=
+    '<span class="lbl">Where we are now (D/V = 40%)</span>\n'+
+    'after-tax WACC = '+(rD*100).toFixed(1)+'%×(1−'+(tc*100).toFixed(0)+'%)×0.40 + '+(rE*100).toFixed(1)+'%×0.60 = <b>'+(wacc1*100).toFixed(1)+'%</b>\n\n'+
+    '<span class="lbl">Step 1 · unlever — the opportunity cost of capital at zero debt</span>\n'+
+    'r = r_D(D/V) + r_E(E/V) = '+(rD*100).toFixed(1)+'%×0.40 + '+(rE*100).toFixed(1)+'%×0.60 = <b>'+(r*100).toFixed(1)+'%</b>\n\n'+
+    '<span class="lbl">Step 2 · relever — the cost of equity at the new D/E of '+de2.toFixed(2)+'</span>\n'+
+    'r_E = r + (r − r_D)·D/E = '+(r*100).toFixed(1)+'% + ('+(r*100).toFixed(1)+'% − '+(rD*100).toFixed(1)+'%)×'+de2.toFixed(2)+' = <b>'+(rE2*100).toFixed(1)+'%</b>\n\n'+
+    '<span class="lbl">Step 3 · recompute WACC at the new weights</span>\n'+
+    'WACC = '+(rD*100).toFixed(1)+'%×(1−'+(tc*100).toFixed(0)+'%)×'+dv2.toFixed(2)+' + '+(rE2*100).toFixed(1)+'%×'+(1-dv2).toFixed(2)+' = <b>'+(wacc2*100).toFixed(1)+'%</b>\n\n'+
+    'Cost of equity moved '+((rE2-rE)*100>=0?'+':'')+((rE2-rE)*100).toFixed(1)+' pts, but WACC moved only '+((wacc2-wacc1)*100>=0?'+':'')+((wacc2-wacc1)*100).toFixed(1)+' pts.\n'+
+    (tc===0?'With no taxes, WACC would be flat at r — leverage would be irrelevant, exactly as MM said.'
+           :'The whole slope of WACC against leverage comes from the tax shield on debt.');
+}
+['wcD','wcE','wcT','wcN'].forEach(id=>{document.getElementById(id).oninput=updWACC});
+updWACC();
+
+runQuiz('waccGame',[
+  {q:'Firm L borrows $1,000 at 8% with T<sub>c</sub> = 21%. What is the annual interest tax shield?',
+   a:['$17 — 21% of the $80 interest','$80','$210','$193'],c:0,
+   x:'0.21 × 80 = $16.8 ≈ $17. Total income to all investors rises from $790 to $807 — the difference comes straight out of the government’s slice.'},
+  {q:'With permanent debt of $500m and T<sub>c</sub> = 21%, what is PV(tax shield)?',
+   a:['$105m — T<sub>c</sub> × D','$500m','$21m','It depends on r<sub>D</sub>'],c:0,
+   x:'A perpetuity of T<sub>c</sub>·r<sub>D</sub>·D discounted at r<sub>D</sub> collapses to T<sub>c</sub>D = 0.21 × 500 = $105m. Note r<sub>D</sub> cancels entirely.'},
+  {q:'Sangria: r<sub>D</sub> 6%, r<sub>E</sub> 12.5%, D/V 0.4, T<sub>c</sub> 21%. After-tax WACC?',
+   a:['9.4%','9.9%','10.4%','7.5%'],c:0,
+   x:'0.06 × 0.79 × 0.4 + 0.125 × 0.6 = 0.019 + 0.075 = 0.094. (9.9% is the pre-tax opportunity cost r — used only as the first step of unlevering.)'},
+  {q:'The crusher project supports only 20% debt instead of 40%. What must you do?',
+   a:['Unlever to r, relever r<sub>E</sub> at the new D/E, then recompute WACC','Just plug 20% into the old formula','Use the risk-free rate','Nothing — WACC is a company-wide number'],c:0,
+   x:'r_E is not a constant. Step 1: r = 9.9%. Step 2: r_E = 9.9% + (9.9% − 6%)×0.25 = 10.9%. Step 3: WACC = 6%×0.79×0.2 + 10.9%×0.8 = 9.7%.'},
+  {q:'If the tax shield is so valuable, why isn’t every firm 100% debt-financed?',
+   a:['Deductibility limits, personal taxes, and the costs of financial distress','Because MM forbids it','Because lenders refuse','Because equity is cheaper'],c:0,
+   x:'The trade-off theory: value = all-equity value + PV(tax shield) − PV(distress costs). The optimum is where the second derivative of that trade-off turns.'},
+  {q:'Why does the relative tax advantage of debt use (1 − T<sub>p</sub>) ÷ [(1 − T<sub>pE</sub>)(1 − T<sub>c</sub>)]?',
+   a:['Interest is taxed once, in the investor’s hands; equity income is taxed at both corporate and personal level',
+      'Because debt is riskier','Because dividends are illegal','Because capital gains are untaxed'],c:0,
+   x:'If the ratio equals 1 the corporate shield is exactly cancelled by the investor’s higher personal tax on interest — and the capital-structure advantage disappears.'},
+  {q:'Which tax rate belongs in the WACC formula?',
+   a:['The marginal rate — on the next dollar of interest deducted','The average effective rate','Last year’s cash tax rate','The statutory rate of the parent country only'],c:0,
+   x:'The shield is created by the next dollar of deduction, so the marginal rate is what values it.'},
+  {q:'A conglomerate spans mining and software. Which discount rate for a new software project?',
+   a:['An industry WACC for software, not the company average','The company WACC','The mining division’s WACC','The risk-free rate'],c:0,
+   x:'The company average describes no actual business it operates. Where divisions differ in risk, an industry WACC is the more honest hurdle — the same principle as Chapter 9’s "risk belongs to the project".'},
+],{pass:6,badge:'wacc',passMsg:'CFO Pass earned. Mira: "You can now argue about a discount rate and be right. Go carefully."',
+   failMsg:'Work back through the Sangria numbers and the three-step relevering — they carry most of these.'});
+
+/* ================= CERTIFICATE ================= */
+function renderCert(){
+  const z=document.getElementById('certZone');
+  if(!z)return;
+  if(badgeCount()===NCH){
+    const name=S.name||'';
+    z.innerHTML='<div class="cert"><div class="c-sub">Evolta · The Ledger</div>'+
+      '<div class="c-ttl">CFO Pass — Corporate Financing &amp; Risk</div>'+
+      '<div class="c-name">'+(name?name:'____________')+'</div>'+
+      '<div class="c-sub">has completed all ten chapters · '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+'</div>'+
+      '<div class="c-badges">'+CHAPTERS.map(c=>c.badge.ico).join(' ')+'</div>'+
+      '<div style="margin-top:6px"><input type="text" id="certName" placeholder="Type your name" value="'+name.replace(/"/g,'&quot;')+'"> '+
+      '<button class="btn alt" id="certSign">Sign it</button></div></div>';
+    document.getElementById('certSign').onclick=()=>{
+      S.name=document.getElementById('certName').value;save();renderCert();
+    };
+  }else{
+    z.innerHTML='<div class="locknote" style="margin-top:14px">🔒 The CFO Pass unlocks when all ten badges are earned ('+badgeCount()+'/'+NCH+' so far).</div>';
+  }
+}
+renderCert();
+
+/* MORE-SCRIPT */
+
+/* ================= BOOT ================= */
+renderProgress();
+renderGlossary();
+showChapter('firm');
+</script>
+</body>
+</html>

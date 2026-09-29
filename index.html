@@ -18,7 +18,10 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            /* CJK glyphs fall through to the platform's system Chinese face,
+               which keeps the page webfont-free on both languages. */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue',
+                         'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
             line-height: 1.6;
             color: #1a1a1a;
             background: #ffffff;
@@ -62,6 +65,65 @@
             background-position: center;
             background-repeat: no-repeat;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .lang-toggle {
+            font-family: inherit;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: #1a1a1a;
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 999px;
+            padding: 8px 18px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .lang-toggle:hover {
+            background: #1a1a1a;
+            border-color: #1a1a1a;
+            color: #fff;
+        }
+
+        /* Chinese runs shorter and denser than English — these small
+           adjustments keep the uppercase-tracked labels legible. */
+        .lang-zh .tagline {
+            letter-spacing: 6px;
+            font-size: 22px;
+        }
+
+        .lang-zh .coming-soon,
+        .lang-zh .submit-btn,
+        .lang-zh .lang-toggle {
+            letter-spacing: 1px;
+            font-size: 13px;
+        }
+
+        .lang-zh .section-title,
+        .lang-zh .philosophy h2,
+        .lang-zh .contributors h2 {
+            letter-spacing: 4px;
+        }
+
+        .lang-zh .contributor-role,
+        .lang-zh .contributor-projects-title {
+            letter-spacing: 1px;
+        }
+
+        .lang-zh .hero-description,
+        .lang-zh .philosophy-text {
+            line-height: 1.9;
         }
 
         /* Hero Section */
@@ -137,6 +199,7 @@
         }
 
         .product-card {
+            position: relative;
             padding: 50px 40px;
             border: 1px solid rgba(0, 0, 0, 0.08);
             border-radius: 2px;
@@ -148,6 +211,27 @@
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
             border-color: rgba(0, 0, 0, 0.12);
+        }
+
+        .lang-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: #fff;
+            color: #1a1a1a;
+            white-space: nowrap;
+        }
+
+        /* English-only sits back; bilingual is the thing worth spotting */
+        .lang-badge.en-only {
+            color: #aaa;
+            background: transparent;
         }
 
         .product-icon {
@@ -620,11 +704,12 @@
 <body>
     <!-- Header -->
     <header>
-        <div class="container">
+        <div class="container header-inner">
             <div class="logo">
                 <div class="logo-icon"></div>
                 Evolta
             </div>
+            <button class="lang-toggle" id="langToggle" type="button">中文</button>
         </div>
     </header>
 
@@ -632,8 +717,8 @@
     <section class="hero">
         <div class="hero-content">
             <h1>Evolta</h1>
-            <p class="tagline">learn, play, evolve</p>
-            <p class="hero-description">
+            <p class="tagline" data-i18n="tagline">learn, play, evolve</p>
+            <p class="hero-description" data-i18n="hero_desc">
                 AI-powered software products that support learning, skill development,
                 and performance improvement through interactive educational games,
                 simulations, and training tools for everyone.
@@ -644,98 +729,145 @@
     <!-- Products Section -->
     <section class="products">
         <div class="container">
-            <div class="section-title">Free Products</div>
-            <p class="products-tagline">learning is a right, not a privilege</p>
+            <div class="section-title" data-i18n="products_title">Free Products</div>
+            <p class="products-tagline" data-i18n="products_tagline">learning is a right, not a privilege</p>
             <div class="products-grid">
                 <!-- Mathematics -->
                 <div class="product-card">
+                    <span class="lang-badge">EN / 中文</span>
                     <div class="product-icon">∑</div>
-                    <h3 class="product-title">Mathematics</h3>
+                    <h3 class="product-title" data-i18n="prod_math_title">Mathematics</h3>
                     <ul class="product-features">
-                        <li>Math games</li>
-                        <li>Quick math</li>
-                        <li>Brain teasers</li>
-                        <li>Estimation practice</li>
+                        <li data-i18n="prod_math_f1">Math games</li>
+                        <li data-i18n="prod_math_f2">Quick math</li>
+                        <li data-i18n="prod_math_f3">Brain teasers</li>
+                        <li data-i18n="prod_math_f4">Estimation practice</li>
                     </ul>
-                    <a class="coming-soon" href="MathLab.html" target="_blank" rel="noopener noreferrer">Try It Out</a>
+                    <a class="coming-soon" href="MathLab.html" target="_blank" rel="noopener noreferrer" data-i18n="btn_try">Try It Out</a>
+                </div>
+
+                <!-- Shape Quest -->
+                <div class="product-card">
+                    <span class="lang-badge">EN / 中文</span>
+                    <div class="product-icon">△</div>
+                    <h3 class="product-title" data-i18n="prod_shapes_title">Shape Quest</h3>
+                    <ul class="product-features">
+                        <li data-i18n="prod_shapes_f1">Four hands-on geometry games</li>
+                        <li data-i18n="prod_shapes_f2">Shapes, symmetry, area &amp; angles</li>
+                        <li data-i18n="prod_shapes_f3">Drag and tap — built for touch</li>
+                        <li data-i18n="prod_shapes_f4">Stars, sounds and confetti</li>
+                    </ul>
+                    <a class="coming-soon" href="ShapeQuest.html" target="_blank" rel="noopener noreferrer" data-i18n="btn_try">Try It Out</a>
                 </div>
 
                 <!-- Philosophy -->
                 <div class="product-card">
+                    <span class="lang-badge">EN / 中文</span>
                     <div class="product-icon">φ</div>
-                    <h3 class="product-title">Aporia</h3>
+                    <h3 class="product-title" data-i18n="prod_aporia_title">Aporia</h3>
                     <ul class="product-features">
-                        <li>Philosophy personality quiz</li>
-                        <li>Discover your school of thought</li>
-                        <li>Match with great philosophers</li>
-                        <li>Bilingual (EN / 中文)</li>
+                        <li data-i18n="prod_aporia_f1">Philosophy personality quiz</li>
+                        <li data-i18n="prod_aporia_f2">Discover your school of thought</li>
+                        <li data-i18n="prod_aporia_f3">Match with great philosophers</li>
                     </ul>
-                    <a class="coming-soon" href="Aporia.html" target="_blank" rel="noopener noreferrer">Try It Out</a>
+                    <a class="coming-soon" href="Aporia.html" target="_blank" rel="noopener noreferrer" data-i18n="btn_try">Try It Out</a>
                 </div>
 
                 <!-- Atlas -->
                 <div class="product-card">
+                    <span class="lang-badge">EN / 中文</span>
                     <div class="product-icon">🌍</div>
-                    <h3 class="product-title">Atlas</h3>
+                    <h3 class="product-title" data-i18n="prod_atlas_title">Atlas</h3>
                     <ul class="product-features">
-                        <li>Which global city suits you?</li>
-                        <li>10 questions, 16 cities</li>
-                        <li>Matched across 6 lifestyle dimensions</li>
-                        <li>Bilingual (EN / 中文)</li>
+                        <li data-i18n="prod_atlas_f1">Which global city suits you?</li>
+                        <li data-i18n="prod_atlas_f2">10 questions, 16 cities</li>
+                        <li data-i18n="prod_atlas_f3">Matched across 6 lifestyle dimensions</li>
                     </ul>
-                    <a class="coming-soon" href="Atlas.html" target="_blank" rel="noopener noreferrer">Try It Out</a>
+                    <a class="coming-soon" href="Atlas.html" target="_blank" rel="noopener noreferrer" data-i18n="btn_try">Try It Out</a>
                 </div>
 
                 <!-- FlipChess -->
                 <div class="product-card">
+                    <span class="lang-badge en-only">EN</span>
                     <div class="product-icon">⚑</div>
-                    <h3 class="product-title">Reversi</h3>
+                    <h3 class="product-title" data-i18n="prod_reversi_title">Reversi</h3>
                     <ul class="product-features">
-                        <li>Classic flip chess game</li>
-                        <li>AI opponent with 3 difficulty levels</li>
-                        <li>Interactive tutorial</li>
-                        <li>Strategic positional play</li>
+                        <li data-i18n="prod_reversi_f1">Classic flip chess game</li>
+                        <li data-i18n="prod_reversi_f2">AI opponent with 3 difficulty levels</li>
+                        <li data-i18n="prod_reversi_f3">Interactive tutorial</li>
+                        <li data-i18n="prod_reversi_f4">Strategic positional play</li>
                     </ul>
-                    <a class="coming-soon" href="FlipChess.html" target="_blank" rel="noopener noreferrer">Try It Out</a>
+                    <a class="coming-soon" href="FlipChess.html" target="_blank" rel="noopener noreferrer" data-i18n="btn_try">Try It Out</a>
                 </div>
 
                 <!-- Trading -->
                 <div class="product-card">
+                    <span class="lang-badge">EN / 中文</span>
                     <div class="product-icon">⇄</div>
-                    <h3 class="product-title">Trading</h3>
+                    <h3 class="product-title" data-i18n="prod_trading_title">Trading</h3>
                     <ul class="product-features">
-                        <li>Hedging simulations</li>
-                        <li>Market making</li>
-                        <li>Stock trading with news</li>
-                        <li>Indicator education</li>
+                        <li data-i18n="prod_trading_f1">Hedging simulations</li>
+                        <li data-i18n="prod_trading_f2">Market making</li>
+                        <li data-i18n="prod_trading_f3">Stock trading with news</li>
+                        <li data-i18n="prod_trading_f4">Indicator education</li>
                     </ul>
-                    <a class="coming-soon" href="TradingGamePortal.html" target="_blank" rel="noopener noreferrer">Try It Out</a>
+                    <a class="coming-soon" href="TradingGamePortal.html" target="_blank" rel="noopener noreferrer" data-i18n="btn_try">Try It Out</a>
+                </div>
+
+                <!-- Corporate Finance -->
+                <div class="product-card">
+                    <span class="lang-badge en-only">EN</span>
+                    <div class="product-icon">🧮</div>
+                    <h3 class="product-title" data-i18n="prod_ledger_title">The Ledger</h3>
+                    <ul class="product-features">
+                        <li data-i18n="prod_ledger_f1">Corporate finance, 10 chapters</li>
+                        <li data-i18n="prod_ledger_f2">Statements, ratios &amp; Du Pont</li>
+                        <li data-i18n="prod_ledger_f3">Market efficiency &amp; Modigliani–Miller</li>
+                        <li data-i18n="prod_ledger_f4">Cost of capital and WACC labs</li>
+                    </ul>
+                    <a class="coming-soon" href="corporate-finance.html" target="_blank" rel="noopener noreferrer" data-i18n="btn_try">Try It Out</a>
+                </div>
+
+                <!-- LNG Academy -->
+                <div class="product-card">
+                    <span class="lang-badge en-only">EN</span>
+                    <div class="product-icon">🚢</div>
+                    <h3 class="product-title" data-i18n="prod_lng_title">LNG Academy</h3>
+                    <ul class="product-features">
+                        <li data-i18n="prod_lng_f1">Junior trader onboarding voyage</li>
+                        <li data-i18n="prod_lng_f2">8 chapters: physical chain to derivatives</li>
+                        <li data-i18n="prod_lng_f3">Mini-games, badges & a mentor</li>
+                        <li data-i18n="prod_lng_f4">Capstone: First Cargo simulator</li>
+                    </ul>
+                    <a class="coming-soon" href="lng-academy.html" target="_blank" rel="noopener noreferrer" data-i18n="btn_try">Try It Out</a>
                 </div>
 
                 <!-- Physics -->
                 <div class="product-card">
+                    <span class="lang-badge">EN / 中文</span>
                     <div class="product-icon">⚛</div>
-                    <h3 class="product-title">Collision</h3>
+                    <h3 class="product-title" data-i18n="prod_collision_title">Collision</h3>
                     <ul class="product-features">
-                        <li>Momentum & energy problems</li>
-                        <li>Elastic & inelastic collisions</li>
-                        <li>Predict, then watch it play out</li>
-                        <li>Adjustable difficulty</li>
+                        <li data-i18n="prod_collision_f1">Momentum & energy problems</li>
+                        <li data-i18n="prod_collision_f2">Elastic & inelastic collisions</li>
+                        <li data-i18n="prod_collision_f3">Predict, then watch it play out</li>
+                        <li data-i18n="prod_collision_f4">Adjustable difficulty</li>
                     </ul>
-                    <a class="coming-soon" href="Collision.html" target="_blank" rel="noopener noreferrer">Try It Out</a>
+                    <a class="coming-soon" href="Collision.html" target="_blank" rel="noopener noreferrer" data-i18n="btn_try">Try It Out</a>
                 </div>
 
                 <!-- StatLab -->
                 <div class="product-card">
+                    <span class="lang-badge en-only">EN</span>
                     <div class="product-icon">σ</div>
-                    <h3 class="product-title">StatLab</h3>
+                    <h3 class="product-title" data-i18n="prod_statlab_title">StatLab</h3>
                     <ul class="product-features">
-                        <li>AI Fundamentals: mean, median, mode</li>
-                        <li>Interactive variance & std. dev. labs</li>
-                        <li>HintBot for step-by-step help</li>
-                        <li>7 levels plus a Boss Round</li>
+                        <li data-i18n="prod_statlab_f1">AI Fundamentals: mean, median, mode</li>
+                        <li data-i18n="prod_statlab_f2">Interactive variance & std. dev. labs</li>
+                        <li data-i18n="prod_statlab_f3">HintBot for step-by-step help</li>
+                        <li data-i18n="prod_statlab_f4">7 levels plus a Boss Round</li>
                     </ul>
-                    <a class="coming-soon" href="StatLab.html" target="_blank" rel="noopener noreferrer">Try It Out</a>
+                    <a class="coming-soon" href="StatLab.html" target="_blank" rel="noopener noreferrer" data-i18n="btn_try">Try It Out</a>
                 </div>
 
                 <!-- AI Career Match -->
@@ -757,11 +889,11 @@
     <!-- Philosophy Section -->
     <section class="philosophy">
         <div class="philosophy-content">
-            <h2>Our Philosophy</h2>
-            <p class="philosophy-text">
+            <h2 data-i18n="philosophy_title">Our Philosophy</h2>
+            <p class="philosophy-text" data-i18n="philosophy_p1">
                 Never in history has knowledge been so easy to access. The only wall stopping you is your desire to learn. We help you break that wall and evolve with a smile.
             </p>
-            <p class="philosophy-text" style="margin-top: 32px;">
+            <p class="philosophy-text" style="margin-top: 32px;" data-i18n="philosophy_p2">
                 We believe learning is a right, not a privilege. That is why all games and simulations on Evolta are free and accessible to everyone, regardless of background.
             </p>
         </div>
@@ -770,47 +902,50 @@
     <!-- Contributors Section -->
     <section class="contributors">
         <div class="contributors-content">
-            <h2>Contributors</h2>
-            <p class="contributors-intro">Meet the people building fun tools for learning.</p>
+            <h2 data-i18n="contributors_title">Contributors</h2>
+            <p class="contributors-intro" data-i18n="contributors_intro">Meet the people building fun tools for learning.</p>
 
             <div class="contributors-grid">
                 <article class="contributor-card">
                     <h3 class="contributor-name">Xinran Liu</h3>
-                    <p class="contributor-role">Founder</p>
-                    <p class="contributor-projects-title">Project</p>
+                    <p class="contributor-role" data-i18n="role_founder">Founder</p>
+                    <p class="contributor-projects-title" data-i18n="projects_label">Project</p>
                     <ul class="contributor-projects">
-                        <li class="linked"><a href="power-trading.html" target="_blank" rel="noopener noreferrer">Power Trading Game</a></li>
-                        <li class="linked"><a href="sweet-spread.html" target="_blank" rel="noopener noreferrer">Sweet Spread Game</a></li>
-                        <li class="linked"><a href="HedgingGame.html" target="_blank" rel="noopener noreferrer">Portfolio Hedging Game</a></li>
-                        <li class="linked"><a href="MarketMaking.html" target="_blank" rel="noopener noreferrer">Market Making Game</a></li>
-                        <li class="linked"><a href="MathLab.html" target="_blank" rel="noopener noreferrer">Quick Math Game</a></li>
-                        <li class="linked"><a href="Aporia.html" target="_blank" rel="noopener noreferrer">Aporia Psycology Test</a></li>
-                        <li class="linked"><a href="Atlas.html" target="_blank" rel="noopener noreferrer">Atlas City Match</a></li>
+                        <li class="linked"><a href="power-trading.html" target="_blank" rel="noopener noreferrer" data-i18n="proj_power">Power Trading Game</a></li>
+                        <li class="linked"><a href="sweet-spread.html" target="_blank" rel="noopener noreferrer" data-i18n="proj_sweet">Sweet Spread Game</a></li>
+                        <li class="linked"><a href="HedgingGame.html" target="_blank" rel="noopener noreferrer" data-i18n="proj_hedge">Portfolio Hedging Game</a></li>
+                        <li class="linked"><a href="MarketMaking.html" target="_blank" rel="noopener noreferrer" data-i18n="proj_mm">Market Making Game</a></li>
+                        <li class="linked"><a href="MathLab.html" target="_blank" rel="noopener noreferrer" data-i18n="proj_math">Quick Math Game</a></li>
+                        <li class="linked"><a href="Aporia.html" target="_blank" rel="noopener noreferrer" data-i18n="proj_aporia">Aporia Psycology Test</a></li>
+                        <li class="linked"><a href="Atlas.html" target="_blank" rel="noopener noreferrer" data-i18n="proj_atlas">Atlas City Match</a></li>
+                        <li class="linked"><a href="lng-academy.html" target="_blank" rel="noopener noreferrer" data-i18n="proj_lng">LNG Trading Academy</a></li>
+                        <li class="linked"><a href="lng-first-cargo.html" target="_blank" rel="noopener noreferrer" data-i18n="proj_cargo">First Cargo Simulator</a></li>
+                        <li class="linked"><a href="corporate-finance.html" target="_blank" rel="noopener noreferrer" data-i18n="proj_ledger">The Ledger — Corporate Finance</a></li>
                     </ul>
                 </article>
 
                 <article class="contributor-card">
                     <h3 class="contributor-name">Bangyuan Zhu</h3>
-                    <p class="contributor-role">Contributor</p>
-                    <p class="contributor-projects-title">Project</p>
+                    <p class="contributor-role" data-i18n="role_contributor">Contributor</p>
+                    <p class="contributor-projects-title" data-i18n="projects_label">Project</p>
                     <ul class="contributor-projects">
-                        <li class="linked"><a href="FlipChess.html" target="_blank" rel="noopener noreferrer">Reversi Flip Chess Game</a></li>
+                        <li class="linked"><a href="FlipChess.html" target="_blank" rel="noopener noreferrer" data-i18n="proj_reversi">Reversi Flip Chess Game</a></li>
                     </ul>
                 </article>
 
                 <article class="contributor-card">
                     <h3 class="contributor-name">Qingyi He</h3>
-                    <p class="contributor-role">Contributor</p>
-                    <p class="contributor-projects-title">Project</p>
+                    <p class="contributor-role" data-i18n="role_contributor">Contributor</p>
+                    <p class="contributor-projects-title" data-i18n="projects_label">Project</p>
                     <ul class="contributor-projects">
-                        <li class="linked"><a href="Collision.html" target="_blank" rel="noopener noreferrer">Collision Physics Game</a></li>
+                        <li class="linked"><a href="Collision.html" target="_blank" rel="noopener noreferrer" data-i18n="proj_collision">Collision Physics Game</a></li>
                     </ul>
                 </article>
 
                 <article class="contributor-card">
                     <h3 class="contributor-name">Madhav Medaboina</h3>
-                    <p class="contributor-role">Contributor</p>
-                    <p class="contributor-projects-title">Project</p>
+                    <p class="contributor-role" data-i18n="role_contributor">Contributor</p>
+                    <p class="contributor-projects-title" data-i18n="projects_label">Project</p>
                     <ul class="contributor-projects">
                         <li class="linked"><a href="StatLab.html" target="_blank" rel="noopener noreferrer">StatLab — AI Fundamentals</a></li>
                         <li class="linked"><a href="CareerMatch.html" target="_blank" rel="noopener noreferrer">AI Career Match — Career Paths</a></li>
@@ -818,11 +953,11 @@
                 </article>
 
                 <article class="contributor-card">
-                    <h3 class="contributor-name">It could be you</h3>
-                    <p class="contributor-role">Future Contributor</p>
-                    <p class="contributor-projects-title">Project</p>
+                    <h3 class="contributor-name" data-i18n="contrib_you">It could be you</h3>
+                    <p class="contributor-role" data-i18n="role_future">Future Contributor</p>
+                    <p class="contributor-projects-title" data-i18n="projects_label">Project</p>
                     <ul class="contributor-projects">
-                        <li>Join us to build the next learning game</li>
+                        <li data-i18n="proj_join">Join us to build the next learning game</li>
                     </ul>
                 </article>
             </div>
@@ -832,66 +967,357 @@
     <!-- Contact Section -->
     <section class="contact" id="contact">
         <div class="contact-content">
-            <h2>Get in Touch</h2>
-            <p class="contact-info">
+            <h2 data-i18n="contact_title">Get in Touch</h2>
+            <p class="contact-info" id="contactBlurb">
                 Interested in learning more about Evolta?<br>
                 We'd love to hear from you.
             </p>
 
             <form class="contact-form" id="contactForm">
                 <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" required placeholder="Your name">
+                    <label for="name" data-i18n="form_name">Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Your name" data-i18n-placeholder="form_name_ph">
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                    <label for="email" data-i18n="form_email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="your.email@example.com" data-i18n-placeholder="form_email_ph">
                 </div>
 
                 <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" required placeholder="Tell us what you're interested in..."></textarea>
+                    <label for="message" data-i18n="form_message">Message</label>
+                    <textarea id="message" name="message" required placeholder="Tell us what you're interested in..." data-i18n-placeholder="form_message_ph"></textarea>
                 </div>
 
-                <button type="submit" class="submit-btn">Send Message</button>
+                <button type="submit" class="submit-btn" data-i18n="form_send">Send Message</button>
             </form>
 
             <p class="contact-info" style="margin-top: 40px; font-size: 16px;">
-                Or email us directly at <a href="mailto:hello@evolta.ai" class="contact-email" style="font-size: 18px; margin-top: 0;">hello@evolta.ai</a>
+                <span data-i18n="contact_or">Or email us directly at</span> <a href="mailto:hello@evolta.ai" class="contact-email" style="font-size: 18px; margin-top: 0;">hello@evolta.ai</a>
             </p>
             <div style="margin-top: 24px;">
-                <a class="coming-soon" href="mailto:hello@evolta.ai?subject=Subscribe%20to%20Evolta%20Updates&body=Hi%20Evolta%20team%2C%0A%0APlease%20add%20me%20to%20the%20mailing%20list%20for%20updates.%0A%0AName%3A%20%0AEmail%3A%20%0A%0AThanks!">
+                <a class="coming-soon" href="mailto:hello@evolta.ai?subject=Subscribe%20to%20Evolta%20Updates&body=Hi%20Evolta%20team%2C%0A%0APlease%20add%20me%20to%20the%20mailing%20list%20for%20updates.%0A%0AName%3A%20%0AEmail%3A%20%0A%0AThanks!" data-i18n="btn_mailing">
                     Join Mailing List
                 </a>
             </div>
         </div>
     </section>
 
+    <!-- Footer -->
+    <footer>
+        <div class="container" data-i18n="footer">
+            © 2026 Evolta. All rights reserved.
+        </div>
+    </footer>
+
     <script>
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
+        // ============================================================
+        //  i18n — same shape as the per-game files, sharing the
+        //  `evolta_lang` key so a choice made here carries into any
+        //  game opened from this page.
+        // ============================================================
+        const I18N = {
+            en: {
+                doc_title:        'Evolta - Learn, Play, Evolve',
+                lang_other:       '中文',
+                lang_aria:        'Switch to Chinese',
+
+                tagline:          'learn, play, evolve',
+                hero_desc:        'AI-powered software products that support learning, skill development, and performance improvement through interactive educational games, simulations, and training tools for everyone.',
+
+                products_title:   'Free Products',
+                products_tagline: 'learning is a right, not a privilege',
+                btn_try:          'Try It Out',
+
+                prod_math_title:  'Mathematics',
+                prod_math_f1:     'Math games',
+                prod_math_f2:     'Quick math',
+                prod_math_f3:     'Brain teasers',
+                prod_math_f4:     'Estimation practice',
+
+                prod_shapes_title:'Shape Quest',
+                prod_shapes_f1:   'Four hands-on geometry games',
+                prod_shapes_f2:   'Shapes, symmetry, area & angles',
+                prod_shapes_f3:   'Drag and tap — built for touch',
+                prod_shapes_f4:   'Stars, sounds and confetti',
+
+                prod_aporia_title:'Aporia',
+                prod_aporia_f1:   'Philosophy personality quiz',
+                prod_aporia_f2:   'Discover your school of thought',
+                prod_aporia_f3:   'Match with great philosophers',
+
+                prod_atlas_title: 'Atlas',
+                prod_atlas_f1:    'Which global city suits you?',
+                prod_atlas_f2:    '10 questions, 16 cities',
+                prod_atlas_f3:    'Matched across 6 lifestyle dimensions',
+
+                prod_reversi_title:'Reversi',
+                prod_reversi_f1:  'Classic flip chess game',
+                prod_reversi_f2:  'AI opponent with 3 difficulty levels',
+                prod_reversi_f3:  'Interactive tutorial',
+                prod_reversi_f4:  'Strategic positional play',
+
+                prod_trading_title:'Trading',
+                prod_trading_f1:  'Hedging simulations',
+                prod_trading_f2:  'Market making',
+                prod_trading_f3:  'Stock trading with news',
+                prod_trading_f4:  'Indicator education',
+
+                prod_ledger_title:'The Ledger',
+                prod_ledger_f1:   'Corporate finance, 10 chapters',
+                prod_ledger_f2:   'Statements, ratios & Du Pont',
+                prod_ledger_f3:   'Market efficiency & Modigliani–Miller',
+                prod_ledger_f4:   'Cost of capital and WACC labs',
+
+                prod_lng_title:   'LNG Academy',
+                prod_lng_f1:      'Junior trader onboarding voyage',
+                prod_lng_f2:      '8 chapters: physical chain to derivatives',
+                prod_lng_f3:      'Mini-games, badges & a mentor',
+                prod_lng_f4:      'Capstone: First Cargo simulator',
+
+                prod_collision_title:'Collision',
+                prod_collision_f1:'Momentum & energy problems',
+                prod_collision_f2:'Elastic & inelastic collisions',
+                prod_collision_f3:'Predict, then watch it play out',
+                prod_collision_f4:'Adjustable difficulty',
+
+                prod_statlab_title:'StatLab',
+                prod_statlab_f1:  'AI Fundamentals: mean, median, mode',
+                prod_statlab_f2:  'Interactive variance & std. dev. labs',
+                prod_statlab_f3:  'HintBot for step-by-step help',
+                prod_statlab_f4:  '7 levels plus a Boss Round',
+
+                philosophy_title: 'Our Philosophy',
+                philosophy_p1:    'Never in history has knowledge been so easy to access. The only wall stopping you is your desire to learn. We help you break that wall and evolve with a smile.',
+                philosophy_p2:    'We believe learning is a right, not a privilege. That is why all games and simulations on Evolta are free and accessible to everyone, regardless of background.',
+
+                contributors_title:'Contributors',
+                contributors_intro:'Meet the people building fun tools for learning.',
+                role_founder:     'Founder',
+                role_contributor: 'Contributor',
+                role_future:      'Future Contributor',
+                projects_label:   'Project',
+                contrib_you:      'It could be you',
+                proj_join:        'Join us to build the next learning game',
+
+                proj_power:       'Power Trading Game',
+                proj_sweet:       'Sweet Spread Game',
+                proj_hedge:       'Portfolio Hedging Game',
+                proj_mm:          'Market Making Game',
+                proj_math:        'Quick Math Game',
+                proj_aporia:      'Aporia Psycology Test',
+                proj_atlas:       'Atlas City Match',
+                proj_lng:         'LNG Trading Academy',
+                proj_cargo:       'First Cargo Simulator',
+                proj_ledger:      'The Ledger — Corporate Finance',
+                proj_reversi:     'Reversi Flip Chess Game',
+                proj_collision:   'Collision Physics Game',
+                proj_statlab:     'StatLab — AI Fundamentals',
+
+                contact_title:    'Get in Touch',
+                contact_blurb1:   'Interested in learning more about Evolta?',
+                contact_blurb2:   "We'd love to hear from you.",
+                form_name:        'Name',
+                form_name_ph:     'Your name',
+                form_email:       'Email',
+                form_email_ph:    'your.email@example.com',
+                form_message:     'Message',
+                form_message_ph:  "Tell us what you're interested in...",
+                form_send:        'Send Message',
+                contact_or:       'Or email us directly at',
+                btn_mailing:      'Join Mailing List',
+
+                mail_subject:     n => `Evolta Inquiry from ${n}`,
+                mail_body:        (n,e,m) => `Name: ${n}\nEmail: ${e}\n\nMessage:\n${m}`,
+
+                footer:           '© 2026 Evolta. All rights reserved.'
+            },
+
+            zh: {
+                doc_title:        'Evolta — 学习 · 探索 · 进化',
+                lang_other:       'EN',
+                lang_aria:        '切换到英文',
+
+                tagline:          '学习 · 探索 · 进化',
+                hero_desc:        'Evolta 用 AI 驱动的软件产品支持学习、技能养成与能力提升——通过互动式教育游戏、模拟器和训练工具，让每个人都能用得上。',
+
+                products_title:   '免费产品',
+                products_tagline: '学习是权利，而非特权',
+                btn_try:          '立即体验',
+
+                prod_math_title:  '数学',
+                prod_math_f1:     '数学小游戏',
+                prod_math_f2:     '速算挑战',
+                prod_math_f3:     '思维谜题',
+                prod_math_f4:     '估算训练',
+
+                prod_shapes_title:'几何大冒险',
+                prod_shapes_f1:   '四个动手玩的几何游戏',
+                prod_shapes_f2:   '图形、对称、面积与角度',
+                prod_shapes_f3:   '拖一拖、点一点，专为触屏设计',
+                prod_shapes_f4:   '星星、音效和彩纸屑',
+
+                prod_aporia_title:'Aporia 哲学',
+                prod_aporia_f1:   '哲学性格测试',
+                prod_aporia_f2:   '找到属于你的思想流派',
+                prod_aporia_f3:   '与历史上的哲学家配对',
+
+                prod_atlas_title: 'Atlas 城市',
+                prod_atlas_f1:    '哪座城市最适合你？',
+                prod_atlas_f2:    '10 道题，16 座城市',
+                prod_atlas_f3:    '从 6 个生活维度匹配',
+
+                prod_reversi_title:'黑白棋',
+                prod_reversi_f1:  '经典翻转棋',
+                prod_reversi_f2:  'AI 对手，三档难度',
+                prod_reversi_f3:  '交互式教程',
+                prod_reversi_f4:  '讲究布局的策略对弈',
+
+                prod_trading_title:'交易',
+                prod_trading_f1:  '对冲模拟',
+                prod_trading_f2:  '做市交易',
+                prod_trading_f3:  '结合新闻的股票交易',
+                prod_trading_f4:  '技术指标入门',
+
+                prod_ledger_title:'The Ledger 公司金融',
+                prod_ledger_f1:   '公司金融，共 10 章',
+                prod_ledger_f2:   '三大报表、财务比率与杜邦分析',
+                prod_ledger_f3:   '市场有效性与 MM 定理',
+                prod_ledger_f4:   '资本成本与 WACC 实验',
+
+                prod_lng_title:   'LNG 学院',
+                prod_lng_f1:      '初级交易员的入职航程',
+                prod_lng_f2:      '8 章：从实货链条到衍生品',
+                prod_lng_f3:      '小游戏、徽章与导师陪跑',
+                prod_lng_f4:      '结业项目：首船货模拟器',
+
+                prod_collision_title:'碰撞实验室',
+                prod_collision_f1:'动量与能量题目',
+                prod_collision_f2:'弹性碰撞与非弹性碰撞',
+                prod_collision_f3:'先预测，再看它真实演化',
+                prod_collision_f4:'难度可调',
+
+                prod_statlab_title:'StatLab 统计',
+                prod_statlab_f1:  'AI 基础：平均数、中位数、众数',
+                prod_statlab_f2:  '方差与标准差互动实验',
+                prod_statlab_f3:  'HintBot 逐步提示',
+                prod_statlab_f4:  '7 个关卡外加 Boss 关',
+
+                philosophy_title: '我们的理念',
+                philosophy_p1:    '知识从未像今天这样触手可及。唯一挡在你面前的，只有你想学的那份意愿。我们帮你推倒这堵墙，笑着成长。',
+                philosophy_p2:    '我们相信学习是权利，而非特权。因此 Evolta 上的所有游戏与模拟都完全免费，无论出身背景，人人可用。',
+
+                contributors_title:'贡献者',
+                contributors_intro:'认识一下，把学习做成乐趣的这群人。',
+                role_founder:     '创始人',
+                role_contributor: '贡献者',
+                role_future:      '未来的贡献者',
+                projects_label:   '项目',
+                contrib_you:      '也许就是你',
+                proj_join:        '加入我们，一起做下一个学习游戏',
+
+                proj_power:       '电力交易游戏',
+                proj_sweet:       '价差交易游戏',
+                proj_hedge:       '投资组合对冲游戏',
+                proj_mm:          '做市商游戏',
+                proj_math:        '速算游戏',
+                proj_aporia:      'Aporia 哲学测试',
+                proj_atlas:       'Atlas 城市匹配',
+                proj_lng:         'LNG 交易学院',
+                proj_cargo:       '首船货模拟器',
+                proj_ledger:      'The Ledger — 公司金融',
+                proj_reversi:     '黑白棋对弈游戏',
+                proj_collision:   '碰撞物理游戏',
+                proj_statlab:     'StatLab — AI 基础',
+
+                contact_title:    '联系我们',
+                contact_blurb1:   '想进一步了解 Evolta？',
+                contact_blurb2:   '我们很想听听你的想法。',
+                form_name:        '姓名',
+                form_name_ph:     '你的名字',
+                form_email:       '邮箱',
+                form_email_ph:    'your.email@example.com',
+                form_message:     '留言',
+                form_message_ph:  '告诉我们你对什么感兴趣……',
+                form_send:        '发送留言',
+                contact_or:       '也可以直接发邮件至',
+                btn_mailing:      '订阅更新',
+
+                mail_subject:     n => `Evolta 咨询 — 来自 ${n}`,
+                mail_body:        (n,e,m) => `姓名：${n}\n邮箱：${e}\n\n留言：\n${m}`,
+
+                footer:           '© 2026 Evolta. 保留所有权利。'
+            }
+        };
+
+        let LANG = (function () {
+            const q = new URLSearchParams(location.search).get('lang');
+            if (q && I18N[q]) return q;
+            const saved = localStorage.getItem('evolta_lang');
+            if (saved && I18N[saved]) return saved;
+            // First visit: follow the browser's stated preference.
+            return (navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+        })();
+
+        function t(key, ...args) {
+            const v = I18N[LANG][key] !== undefined ? I18N[LANG][key] : I18N.en[key];
+            return typeof v === 'function' ? v(...args) : v;
+        }
+
+        const langToggle = document.getElementById('langToggle');
+
+        function applyLang() {
+            // Persist on every resolve, not just on toggle, so a language picked
+            // up from ?lang= or the browser locale also reaches the games.
+            localStorage.setItem('evolta_lang', LANG);
+
+            document.documentElement.lang = LANG === 'zh' ? 'zh-CN' : 'en';
+            document.body.classList.toggle('lang-zh', LANG === 'zh');
+            document.title = t('doc_title');
+
+            langToggle.textContent = t('lang_other');
+            langToggle.setAttribute('aria-label', t('lang_aria'));
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                el.textContent = t(el.dataset.i18n);
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                el.placeholder = t(el.dataset.i18nPlaceholder);
+            });
+
+            // Two lines separated by a <br>, so it needs markup rather than text.
+            document.getElementById('contactBlurb').innerHTML =
+                `${t('contact_blurb1')}<br>${t('contact_blurb2')}`;
+
+            // Stamp the choice onto every internal link, so a game opens in the
+            // language picked here even when localStorage is unavailable.
+            document.querySelectorAll('a[href$=".html"], a[href*=".html?"]').forEach(a => {
+                const href = a.getAttribute('href').split('?')[0];
+                if (!href.endsWith('.html')) return;
+                a.setAttribute('href', href + '?lang=' + LANG);
+            });
+        }
+
+        langToggle.addEventListener('click', () => {
+            LANG = LANG === 'en' ? 'zh' : 'en';
+            localStorage.setItem('evolta_lang', LANG);
+            applyLang();
+        });
+
+        applyLang();
+
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const message = document.getElementById('message').value;
 
-            const subject = encodeURIComponent('Evolta Inquiry from ' + name);
-            const body = encodeURIComponent(
-                'Name: ' + name + '\n' +
-                'Email: ' + email + '\n\n' +
-                'Message:\n' + message
-            );
+            const subject = encodeURIComponent(t('mail_subject', name));
+            const body = encodeURIComponent(t('mail_body', name, email, message));
 
             window.location.href = 'mailto:hello@evolta.ai?subject=' + subject + '&body=' + body;
         });
     </script>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            © 2026 Evolta. All rights reserved.
-        </div>
-    </footer>
 </body>
 </html>

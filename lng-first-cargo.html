@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Cargo Simulator — LNG Capstone | Evolta</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eef4f8;--panel:#ffffff;--panel2:#f2f7fa;--line:#dde8ef;--line2:#cbdce7;
+    --navy:#12354f;--navy-lt:#2c5a7c;--teal:#0f7d8c;--teal-lt:#3aa7b5;
+    --flame:#d9622b;--flame-lt:#e98a58;--pos:#1a7a4c;--neg:#c0392b;
+    --txt:#1c2f3d;--txt-dim:#546b7c;--txt-faint:#8ba0ae;
+    /* CJK falls through per-glyph; Latin keeps the original faces */
+    --mono:'IBM Plex Mono','Noto Sans SC',monospace;
+    --sans:'Inter','Noto Sans SC',-apple-system,sans-serif;
+    --disp:'Fraunces','Noto Sans SC',serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:
+      radial-gradient(ellipse at 10% -5%, #ddeef7 0%, transparent 45%),
+      radial-gradient(ellipse at 95% 3%, #e8f2ee 0%, transparent 40%),
+      var(--bg);
+    color:var(--txt);font-family:var(--sans);font-size:13px;line-height:1.5;
+    min-height:100vh;padding:0 0 60px;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  header{border-bottom:1px solid var(--line);padding:26px 0 16px;margin-bottom:18px;display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap}
+  .brand h1{font-family:var(--disp);font-weight:500;font-size:34px;line-height:.95;letter-spacing:-.02em;color:var(--navy)}
+  .brand h1 .amp{color:var(--flame);font-style:italic}
+  .brand .sub{color:var(--txt-dim);font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-top:7px;font-family:var(--mono)}
+  .brand .evolta{color:var(--teal);font-weight:600}
+  .topbar{display:flex;align-items:center;gap:12px}
+  .back-btn,.lang-btn{font-family:var(--mono);font-size:10.5px;color:var(--txt-dim);text-decoration:none;border:1px solid var(--line2);border-radius:8px;padding:8px 13px;transition:.15s;white-space:nowrap;background:var(--panel);cursor:pointer}
+  .back-btn:hover,.lang-btn:hover{border-color:var(--teal);color:var(--teal)}
+  .clock{text-align:right}
+  .clock .wk{font-family:var(--disp);font-size:26px;color:var(--flame);font-weight:500}
+  .clock .cap{color:var(--txt-faint);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-family:var(--mono)}
+
+  .statusbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 14px}
+  .stat .k{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-faint)}
+  .stat .v{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--navy);margin-top:2px}
+  .stat .v.up{color:var(--pos)}.stat .v.down{color:var(--neg)}.stat .v.fl{color:var(--flame)}
+
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start}
+  @media(max-width:920px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px;box-shadow:0 1px 2px rgba(18,53,79,.04)}
+  .panel h2{font-family:var(--mono);font-weight:500;font-size:10.5px;color:var(--txt-faint);letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .panel h2 .dot{width:5px;height:5px;border-radius:50%;background:var(--flame)}
+
+  table.mkt{width:100%;border-collapse:collapse}
+  .mkt th{text-align:left;color:var(--txt-faint);font-weight:500;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:4px 6px;border-bottom:1px solid var(--line);font-family:var(--mono)}
+  .mkt td{padding:8px 6px;border-bottom:1px solid var(--line);font-size:12.5px}
+  .mkt tr:last-child td{border-bottom:none}
+  .mkt .nm{font-weight:600;color:var(--navy)}
+  .mkt .nm small{display:block;font-weight:400;color:var(--txt-faint);font-size:9.5px}
+  .mkt .px{font-family:var(--mono);font-weight:600;font-size:14px;text-align:right}
+  .mkt .chg{font-family:var(--mono);font-size:11px;text-align:right}
+  .up{color:var(--pos)}.down{color:var(--neg)}.flat{color:var(--txt-faint)}
+  .spark{width:110px;height:26px}
+  .spark polyline{fill:none;stroke:var(--teal);stroke-width:1.6}
+
+  .news{max-height:230px;overflow-y:auto}
+  .news-item{border-left:3px solid var(--line2);padding:7px 10px;margin-bottom:8px;background:var(--panel2);border-radius:0 8px 8px 0}
+  .news-item.hot{border-left-color:var(--flame)}
+  .news-item .nw{font-family:var(--mono);font-size:9px;color:var(--txt-faint);letter-spacing:.1em;text-transform:uppercase}
+  .news-item p{font-size:12px;margin-top:2px}
+
+  .mentor{display:flex;gap:10px;background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--flame);border-radius:10px;padding:11px 13px;margin-bottom:0}
+  .mentor .avatar{font-size:20px;line-height:1}
+  .mentor .who{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--flame);margin-bottom:2px}
+  .mentor p{font-size:12px;margin:0}
+
+  .btn{font-family:var(--mono);font-size:12px;background:var(--navy);color:#fff;border:none;border-radius:9px;padding:10px 16px;cursor:pointer;transition:.15s}
+  .btn:hover{background:var(--navy-lt)}
+  .btn.flame{background:var(--flame)}.btn.flame:hover{background:var(--flame-lt)}
+  .btn.alt{background:var(--panel);color:var(--navy);border:1px solid var(--line2)}
+  .btn.alt:hover{border-color:var(--teal);color:var(--teal)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.small{font-size:11px;padding:7px 11px}
+  .advance{width:100%;font-size:14px;padding:13px;margin-top:4px}
+
+  .dest-row{display:flex;gap:8px;margin:8px 0}
+  .dest-btn{flex:1;background:var(--panel2);border:1.5px solid var(--line2);border-radius:10px;padding:10px;cursor:pointer;text-align:left;transition:.13s;font-family:var(--sans)}
+  .dest-btn:hover{border-color:var(--teal)}
+  .dest-btn.sel{border-color:var(--flame);background:#fdf0e8}
+  .dest-btn:disabled{opacity:.5;cursor:not-allowed}
+  .dest-btn .dn{font-weight:600;font-size:12px;color:var(--navy)}
+  .dest-btn .dd{font-family:var(--mono);font-size:10px;color:var(--txt-dim);margin-top:2px}
+
+  .hedgectl{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin:7px 0}
+  .hedgectl .hl{font-family:var(--mono);font-size:11px;color:var(--navy)}
+  .hedgectl .hl small{display:block;color:var(--txt-faint);font-size:9.5px}
+  .hedgectl .hbtns{display:flex;gap:6px;align-items:center}
+  .hedgectl .pos{font-family:var(--mono);font-size:12px;min-width:48px;text-align:center}
+
+  .note{font-family:var(--mono);font-size:10.5px;color:var(--txt-faint);background:var(--panel2);border-radius:8px;padding:9px 11px;margin-top:8px}
+  .pnl-table{width:100%;border-collapse:collapse;margin:8px 0}
+  .pnl-table td{padding:7px 6px;border-bottom:1px solid var(--line);font-size:12.5px}
+  .pnl-table td.r{text-align:right;font-family:var(--mono)}
+  .pnl-table tr.total td{border-top:2px solid var(--navy);border-bottom:none;font-weight:600;font-size:14px}
+
+  /* end screen */
+  .overlay{position:fixed;inset:0;background:rgba(18,53,79,.45);display:none;align-items:flex-start;justify-content:center;z-index:50;overflow-y:auto;padding:40px 16px}
+  .overlay.show{display:flex}
+  .endcard{background:var(--panel);border-radius:16px;max-width:640px;width:100%;padding:28px 30px;box-shadow:0 20px 60px rgba(18,53,79,.35)}
+  .endcard h2{font-family:var(--disp);font-size:30px;color:var(--navy);margin-bottom:4px}
+  .grade{font-family:var(--disp);font-size:64px;color:var(--flame);line-height:1}
+  .debrief{background:var(--panel2);border-radius:10px;padding:13px 15px;margin:12px 0;font-size:12.5px}
+  .debrief li{margin:5px 0 5px 18px}
+
+  /* Chinese sits badly under the wide uppercase tracking */
+  .lang-zh .brand .sub,.lang-zh .clock .cap,.lang-zh .panel h2,
+  .lang-zh .stat .k,.lang-zh .mkt th,.lang-zh .news-item .nw,
+  .lang-zh .mentor .who{letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <h1 id="brandTitle">First Cargo <span class="amp">Simulator</span></h1>
+    <div class="sub" id="brandSub"></div>
+  </div>
+  <div class="topbar">
+    <a class="back-btn" id="backBtn" href="lng-academy.html">← Back to Academy</a>
+    <button class="lang-btn" id="langToggle" type="button">中文</button>
+    <div class="clock"><div class="wk" id="wkLbl">Week 1</div><div class="cap" id="wkCap"></div></div>
+  </div>
+</header>
+
+<div class="statusbar">
+  <div class="stat"><div class="k" data-i18n="st_basis">Cost basis (locked wk 1)</div><div class="v" id="stBasis">—</div></div>
+  <div class="stat"><div class="k" data-i18n="st_dest">Destination</div><div class="v fl" id="stDest">Open</div></div>
+  <div class="stat"><div class="k" data-i18n="st_hedge">Hedge ratio</div><div class="v" id="stHedge">0%</div></div>
+  <div class="stat"><div class="k" data-i18n="st_pnl">Mark-to-market P&L</div><div class="v" id="stPnl">$0.0M</div></div>
+</div>
+
+<div class="grid">
+<main>
+  <div class="panel">
+    <h2><span class="dot"></span><span data-i18n="pn_market">Market screen</span></h2>
+    <table class="mkt">
+      <tr>
+        <th data-i18n="th_contract">Contract</th>
+        <th class="r" style="text-align:right" data-i18n="th_price">Price</th>
+        <th class="r" style="text-align:right" data-i18n="th_chg">Wk chg</th>
+        <th data-i18n="th_hist">12-wk history</th>
+      </tr>
+      <tbody id="mktBody"></tbody>
+    </table>
+    <div class="note" id="mktNote"></div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="dot"></span><span id="decHead"></span></h2>
+    <p style="font-size:12px;color:var(--txt-dim);margin-bottom:4px" id="decDest"></p>
+    <div class="dest-row">
+      <button class="dest-btn" id="destAsia"></button>
+      <button class="dest-btn" id="destEur"></button>
+    </div>
+    <p style="font-size:12px;color:var(--txt-dim);margin:8px 0 2px" id="decPaper"></p>
+    <div class="hedgectl">
+      <div class="hl"><span data-i18n="jkm_fut">JKM futures</span><small id="jkmAvg"></small></div>
+      <div class="hbtns">
+        <button class="btn small alt" id="jkmBuy"></button>
+        <span class="pos" id="jkmPos">0</span>
+        <button class="btn small" id="jkmSell"></button>
+      </div>
+    </div>
+    <div class="hedgectl">
+      <div class="hl"><span data-i18n="ttf_fut">TTF futures</span><small id="ttfAvg"></small></div>
+      <div class="hbtns">
+        <button class="btn small alt" id="ttfBuy"></button>
+        <span class="pos" id="ttfPos">0</span>
+        <button class="btn small" id="ttfSell"></button>
+      </div>
+    </div>
+    <button class="btn flame advance" id="advanceBtn"></button>
+  </div>
+
+  <div class="panel">
+    <h2><span class="dot"></span><span data-i18n="pn_pnl">P&amp;L mark</span></h2>
+    <table class="pnl-table" id="pnlTable"></table>
+  </div>
+</main>
+
+<aside>
+  <div class="panel">
+    <h2><span class="dot"></span><span data-i18n="pn_mentor">Mika · desk mentor</span></h2>
+    <div class="mentor"><div class="avatar">🧭</div><div>
+      <div class="who">Mika</div>
+      <p id="mentorMsg"></p>
+    </div></div>
+  </div>
+  <div class="panel">
+    <h2><span class="dot"></span><span data-i18n="pn_news">News wire</span></h2>
+    <div class="news" id="newsFeed"></div>
+  </div>
+</aside>
+</div>
+</div>
+
+<!-- End screen -->
+<div class="overlay" id="endOverlay">
+  <div class="endcard">
+    <h2 data-i18n="end_title">Voyage complete</h2>
+    <div style="display:flex;align-items:center;gap:24px;margin:10px 0">
+      <div class="grade" id="endGrade">—</div>
+      <div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--txt-faint);letter-spacing:.1em;text-transform:uppercase" data-i18n="end_final">Final P&amp;L</div>
+        <div style="font-family:var(--disp);font-size:34px" id="endPnl">—</div>
+      </div>
+    </div>
+    <table class="pnl-table" id="endTable"></table>
+    <div class="debrief"><b style="color:var(--flame)" data-i18n="end_debrief">Mika's debrief</b><ul id="endNotes"></ul></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a href="lng-academy.html"><button class="btn flame" id="endBadgeBtn"></button></a>
+      <button class="btn alt" id="endAgainBtn" onclick="location.reload()"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= i18n ================= */
+const I18N={
+en:{
+  doc_title:'First Cargo Simulator — LNG Capstone | Evolta',
+  lang_other:'中文', lang_aria:'Switch to Chinese',
+  brand_title:'First Cargo <span class="amp">Simulator</span>',
+  brand_sub:'Capstone · Evolta Aurora · 3.7 TBtu FOB Sabine Pass · Part of <span class="evolta">Evolta</span> LNG Academy',
+  back:'← Back to Academy',
+  wk_lbl:w=>'Week '+w,
+  wk_cap:'of 12 · nominate by wk 8',
+
+  st_basis:'Cost basis (locked wk 1)',
+  st_dest:'Destination',
+  st_hedge:'Hedge ratio',
+  st_pnl:'Mark-to-market P&L',
+  dest_open:w=>'Open (wk '+w+' deadline)',
+  dest_asia:'Asia · DES',
+  dest_europe:'Europe · DES',
+
+  pn_market:'Market screen',
+  pn_pnl:'P&L mark',
+  pn_mentor:'Mika · desk mentor',
+  pn_news:'News wire',
+  th_contract:'Contract', th_price:'Price', th_chg:'Wk chg', th_hist:'12-wk history',
+  mkt_note:b=>'Freight shown as all-in $/MMBtu for the <i>Aurora</i>\'s voyage. Your basis: 1.15 × HH(wk 1) + $'+b+' liquefaction fee — locked, it\'s sunk.',
+
+  mk_hh:'Henry Hub', mk_hh_s:'US feedgas · NYMEX',
+  mk_jkm:'JKM', mk_jkm_s:'NE Asia spot · $/MMBtu',
+  mk_ttf:'TTF ($)', mk_ttf_s:'Europe · converted',
+  mk_frA:'Freight → Asia', mk_frA_s:'all-in, $/MMBtu',
+  mk_frE:'Freight → Europe', mk_frE_s:'all-in, $/MMBtu',
+
+  dec_head:w=>'Decisions — Week '+w,
+  dec_dest:'<b style="color:var(--navy)">1 · Destination.</b> Committing locks today\'s freight for that route. Uncommitted by end of week 8 → forced nomination at a $0.30/MMBtu penalty.',
+  dec_paper:'<b style="color:var(--navy)">2 · Paper.</b> Sell futures to lock a sale price (1 clip = 10% of cargo = 0.37M MMBtu). Buy back any time. Max 100% hedged.',
+  commit_asia:'🌏 Commit Asia',
+  commit_eur:'🇪🇺 Commit Europe',
+  commit_sub:(m,f)=>'netback margin $'+m+'/MMBtu · locks freight $'+f,
+
+  jkm_fut:'JKM futures', ttf_fut:'TTF futures',
+  no_pos:'no position',
+  short_at:(n,p)=>'short '+n+' clips @ avg $'+p,
+  btn_buy:'＋ buy', btn_sell:'sell −',
+  adv_next:w=>'Advance to week '+w+' →',
+  adv_settle:'⚓ Deliver the cargo & settle',
+
+  pnl_phys_c:d=>'Physical mark (committed '+d+')',
+  pnl_phys_o:'Physical mark (best netback, uncommitted)',
+  pnl_paper:'Paper mark (open positions + banked)',
+  pnl_total:'Total mark',
+
+  news_week:w=>'Week '+w,
+  nom_forced:'FORCED NOMINATION',
+  nom_normal:'DESTINATION NOMINATED',
+  nom_body:(dest,fr,forced)=>'The Aurora will discharge in '+
+    (dest==='asia'?'Northeast Asia (sells vs JKM)':'Northwest Europe (sells vs TTF)')+
+    '. Freight locked at $'+fr+'/MMBtu'+(forced?' plus a $0.30 late-nomination penalty. Mika is not smiling.':'.'),
+  quiet_h:'QUIET TAPE',
+  quiet_p:'No fresh headlines. The market drifts on positioning and weather models.',
+  boot_h:'YOU OWN THE AURORA',
+  boot_p:b=>'3.7 TBtu loaded FOB Sabine Pass at a basis of $'+b+'/MMBtu (1.15 × HH + $2.50 fee). Twelve weeks to delivery. Make it count.',
+
+  ev0_h:'TYPHOON WARNING — TOKYO BAY', ev0_p:'Category-4 system forces port closures across Japan; utilities scramble for prompt cargoes.',
+  ev1_h:'PANAMA CANAL RATIONS SLOTS', ev1_p:'Drought cuts daily transits; LNG carriers face two-week queues. Freight to Asia reprices.',
+  ev2_h:'EU STORAGE HITS 95%', ev2_p:'European tanks are nearly full ahead of schedule. Buyers step back; TTF slides.',
+  ev3_h:'COLD SNAP FORECAST — NORTH ASIA', ev3_p:'Models show a Siberian air mass reaching Seoul and Tokyo within a fortnight.',
+  ev4_h:'US EXPORT PLANT TRIPS OFFLINE', ev4_p:'A Gulf Coast liquefaction train goes down for weeks. Less supply for everyone — and cheaper gas at home.',
+  ev5_h:'NORWEGIAN MAINTENANCE ENDS', ev5_p:'North Sea pipeline flows return to normal, easing European supply anxiety.',
+  ev6_h:'JAPAN APPROVES REACTOR RESTARTS', ev6_p:'Two nuclear units cleared to return this winter — that is LNG demand destruction.',
+  ev7_h:'CHARTER MARKET TIGHTENS', ev7_p:'Winter chartering rush: spot LNG carriers command a premium on every route.',
+  ev8_h:'MILD WEATHER BOTH BASINS', ev8_p:'Forecasts revise warmer for two weeks across Europe and North Asia. Length everywhere.',
+  ev9_h:'CHINESE BUYERS RESELL', ev9_p:'Soft industrial demand has Chinese importers offering cargoes back into the spot market.',
+
+  m_boot:'Week one. You own 3.7 TBtu loading at Sabine Pass. Right now you are 100% exposed to where prices go. First decisions of your career — take your time, but not twelve weeks of it.',
+  m_delivery:'Delivery week. Whatever the tape does now, you own the result. Press settle when you\'re ready.',
+  m_deadline:'Nomination deadline is the end of week 8. Miss it and ops chooses for you — at a penalty. Compare the two netbacks and commit.',
+  m_naked:'You are still 100% unhedged. If JKM or TTF drops $2, that\'s $7.4M gone. Sell a few clips against your likely destination — you can always buy them back.',
+  m_basis:d=>'Careful: you\'re committed to '+(d==='asia'?'Asia (JKM exposure)':'Europe (TTF exposure)')+' but holding paper on the other index. That\'s a basis position — is it deliberate?',
+  m_sensible:'Sensible book: committed, majority hedged on the right index. Now you\'re trading around the edges instead of praying.',
+  m_partial:(hr,idx)=>'Committed but only '+hr+'% hedged. The margin you see in the P&L panel is yours to LOCK — every unsold clip is a bet that '+idx+' goes higher.',
+  m_open_hedged:hr=>hr+'% hedged with destination open — reasonable. Keep the paper split roughly matching where you think the cargo lands, or you\'re accumulating basis risk.',
+  m_watch:'Watch the JKM–TTF spread and both freight legs. Your cargo goes wherever the netback is best — and paper lets you lock prices before you commit the ship.',
+  m_forced:'You sat on your hands past week 8, so ops nominated for you — with a penalty. Optionality has value, but only until the deadline.',
+  m_committed:idx=>'Committed. Your physical exposure is now '+idx+' — if you hedge, hedge THAT index, or you\'re trading the basis.',
+
+  end_title:'Voyage complete',
+  end_final:'Final P&L',
+  end_debrief:'Mika\'s debrief',
+  end_badge:'Collect your badge at the Academy →',
+  end_again:'Sail it again',
+  end_phys:'Physical cargo',
+  end_paper:'Paper (hedges, incl. banked buybacks)',
+  end_total:'Total voyage P&L',
+  n_phys:(idx,px,fr,pen,b,res)=>'Physical: sold vs '+idx+' at $'+px+', freight $'+fr+(pen?' (+$0.30 penalty)':'')+', basis $'+b+' → '+res+'.',
+  n_paper:(res,good)=>'Paper: '+res+(good?' — your hedges earned their keep.':' — hedges cost money this time. That\'s fine: they were insurance, not a bet.'),
+  n_early:'You were ≥50% hedged by week 6. That\'s desk discipline — the grade reflects it.',
+  n_naked:w=>'You ran completely naked for '+w+' weeks mid-voyage. It worked out or it didn\'t — but on a real desk, risk would have called before I did.',
+  n_penalty:c=>'The forced nomination cost you '+c+'. Deadlines are P&L.',
+  n_wrongidx:'You finished with paper on the index you did NOT deliver against — a basis position. Know when you\'re doing that on purpose.',
+  n_gradeA:'A-grade voyage. When you\'re consistently boring like this, they give you a bigger book.',
+  n_gradeF:'Negative P&L. Every trader has one of these — the good ones have it in a simulator.'
+},
+
+zh:{
+  doc_title:'首船货模拟器 — LNG 结业项目 | Evolta',
+  lang_other:'EN', lang_aria:'切换到英文',
+  brand_title:'首船货 <span class="amp">模拟器</span>',
+  brand_sub:'结业项目 · Evolta Aurora 号 · 3.7 TBtu FOB 萨宾帕斯 · <span class="evolta">Evolta</span> LNG 学院',
+  back:'← 返回学院',
+  wk_lbl:w=>'第 '+w+' 周',
+  wk_cap:'共 12 周 · 第 8 周前须指定目的港',
+
+  st_basis:'成本基准（第 1 周锁定）',
+  st_dest:'目的港',
+  st_hedge:'对冲比例',
+  st_pnl:'盯市盈亏',
+  dest_open:w=>'未定（第 '+w+' 周截止）',
+  dest_asia:'亚洲 · DES 到岸',
+  dest_europe:'欧洲 · DES 到岸',
+
+  pn_market:'行情屏',
+  pn_pnl:'盈亏估值',
+  pn_mentor:'Mika · 交易台导师',
+  pn_news:'新闻快讯',
+  th_contract:'合约', th_price:'价格', th_chg:'周涨跌', th_hist:'12 周走势',
+  mkt_note:b=>'运费按 <i>Aurora</i> 号本航次的全包价（$/MMBtu）列示。你的成本基准：1.15 × 第 1 周 HH + $'+b+' 液化费——已锁定，属于沉没成本。',
+
+  mk_hh:'亨利港 HH', mk_hh_s:'美国原料气 · NYMEX',
+  mk_jkm:'JKM', mk_jkm_s:'东北亚现货 · $/MMBtu',
+  mk_ttf:'TTF（美元）', mk_ttf_s:'欧洲 · 已折算',
+  mk_frA:'运费 → 亚洲', mk_frA_s:'全包价, $/MMBtu',
+  mk_frE:'运费 → 欧洲', mk_frE_s:'全包价, $/MMBtu',
+
+  dec_head:w=>'本周决策 — 第 '+w+' 周',
+  dec_dest:'<b style="color:var(--navy)">1 · 目的港。</b>一旦确定，该航线今天的运费即被锁定。若到第 8 周结束仍未指定，将被强制指定，并承担 $0.30/MMBtu 的罚金。',
+  dec_paper:'<b style="color:var(--navy)">2 · 纸货。</b>卖出期货锁定售价（1 手 = 货量的 10% = 37 万 MMBtu）。随时可以买回平仓，最多对冲 100%。',
+  commit_asia:'🌏 确定发往亚洲',
+  commit_eur:'🇪🇺 确定发往欧洲',
+  commit_sub:(m,f)=>'净回值利润 $'+m+'/MMBtu · 锁定运费 $'+f,
+
+  jkm_fut:'JKM 期货', ttf_fut:'TTF 期货',
+  no_pos:'无持仓',
+  short_at:(n,p)=>'空头 '+n+' 手 @ 均价 $'+p,
+  btn_buy:'＋ 买回', btn_sell:'卖出 −',
+  adv_next:w=>'进入第 '+w+' 周 →',
+  adv_settle:'⚓ 交货并结算',
+
+  pnl_phys_c:d=>'实货估值（已定 '+d+'）',
+  pnl_phys_o:'实货估值（按最优净回值，尚未指定）',
+  pnl_paper:'纸货估值（未平仓 + 已了结）',
+  pnl_total:'合计估值',
+
+  news_week:w=>'第 '+w+' 周',
+  nom_forced:'强制指定目的港',
+  nom_normal:'已指定目的港',
+  nom_body:(dest,fr,forced)=>'Aurora 号将在'+
+    (dest==='asia'?'东北亚卸货（对标 JKM 销售）':'西北欧卸货（对标 TTF 销售）')+
+    '。运费锁定在 $'+fr+'/MMBtu'+(forced?'，另加 $0.30 的逾期指定罚金。Mika 笑不出来。':'。'),
+  quiet_h:'行情平淡',
+  quiet_p:'没有新的头条。市场在持仓结构和天气模型之间小幅漂移。',
+  boot_h:'AURORA 号交到你手上了',
+  boot_p:b=>'3.7 TBtu 已在萨宾帕斯以 FOB 装船，成本基准 $'+b+'/MMBtu（1.15 × HH + $2.50 液化费）。距离交货还有 12 周，好好干。',
+
+  ev0_h:'台风预警 — 东京湾', ev0_p:'四级台风迫使日本多地港口关闭，公用事业公司争抢近月船货。',
+  ev1_h:'巴拿马运河限制通行配额', ev1_p:'干旱削减每日通行量，LNG 船排队长达两周，发往亚洲的运费重新定价。',
+  ev2_h:'欧盟库存达到 95%', ev2_p:'欧洲储气库提前接近注满，买家观望，TTF 下滑。',
+  ev3_h:'寒潮预报 — 北亚', ev3_p:'模型显示西伯利亚冷空气将在两周内抵达首尔和东京。',
+  ev4_h:'美国出口终端非计划停机', ev4_p:'墨西哥湾一条液化生产线停机数周。全球供应减少，而美国国内气价走低。',
+  ev5_h:'挪威检修结束', ev5_p:'北海管道输气恢复正常，欧洲的供应紧张情绪缓解。',
+  ev6_h:'日本批准核电重启', ev6_p:'两台核电机组获准于今冬恢复运行——这意味着 LNG 需求被替代。',
+  ev7_h:'租船市场趋紧', ev7_p:'冬季租船高峰：各航线的现货 LNG 运输船都要溢价。',
+  ev8_h:'两大市场同时转暖', ev8_p:'欧洲与北亚未来两周气温预报双双上调，两边都偏宽松。',
+  ev9_h:'中国买家转售船货', ev9_p:'工业需求疲软，中国进口商把船货重新挂到现货市场上出售。',
+
+  m_boot:'第一周。你手里握着 3.7 TBtu，正在萨宾帕斯装船。此刻你 100% 暴露在价格波动里。这是你职业生涯的第一批决策——可以慢慢想，但别真想满十二周。',
+  m_delivery:'交货周。行情再怎么走，结果都归你。准备好了就按结算。',
+  m_deadline:'指定目的港的截止时间是第 8 周结束。错过了，调度会替你决定——并且要罚钱。比较两边的净回值，然后定下来。',
+  m_naked:'你仍然是 100% 敞口。JKM 或 TTF 只要跌 $2，就是 740 万美元没了。对着你大概率会去的方向先卖几手，反正随时可以买回来。',
+  m_basis:d=>'注意：你已经确定发往'+(d==='asia'?'亚洲（JKM 敞口）':'欧洲（TTF 敞口）')+'，纸货却挂在另一个指数上。这是一个基差头寸——你是有意为之吗？',
+  m_sensible:'这本账做得稳妥：目的港已定，大部分敞口对冲在正确的指数上。接下来是在边际上做交易，而不是靠祈祷。',
+  m_partial:(hr,idx)=>'目的港已定，但只对冲了 '+hr+'%。盈亏面板上那份利润是可以锁住的——每一手没卖出的量，都是在赌 '+idx+' 还会更高。',
+  m_open_hedged:hr=>'对冲了 '+hr+'%，目的港未定——还算合理。纸货的分配大致要贴合你判断的靠港方向，否则就是在积累基差风险。',
+  m_watch:'盯住 JKM–TTF 价差和两条航线的运费。船货去哪里，取决于哪边净回值更高——而纸货让你在船还没定向之前就把价格锁住。',
+  m_forced:'第 8 周你都没动手，调度替你指定了目的港——还带罚金。选择权是有价值的，但只在截止日之前。',
+  m_committed:idx=>'已确定。你的实货敞口现在是 '+idx+'——要对冲就对冲这个指数，否则你做的是基差。',
+
+  end_title:'航次结束',
+  end_final:'最终盈亏',
+  end_debrief:'Mika 的复盘',
+  end_badge:'去学院领取徽章 →',
+  end_again:'再跑一次',
+  end_phys:'实货船货',
+  end_paper:'纸货（对冲，含已了结平仓）',
+  end_total:'航次总盈亏',
+  n_phys:(idx,px,fr,pen,b,res)=>'实货：对标 '+idx+' 以 $'+px+' 售出，运费 $'+fr+(pen?'（含 $0.30 罚金）':'')+'，成本基准 $'+b+' → '+res+'。',
+  n_paper:(res,good)=>'纸货：'+res+(good?'——对冲没白做。':'——这次对冲是亏钱的。这很正常：它是保险，不是下注。'),
+  n_early:'你在第 6 周之前就把对冲做到了 50% 以上。这是交易台该有的纪律，成绩里体现了这一点。',
+  n_naked:w=>'航次中途你有 '+w+' 周完全裸敞口。这次结果或好或坏——但在真实的交易台上，风控会比我先找你谈话。',
+  n_penalty:c=>'被强制指定目的港让你损失了 '+c+'。截止日期就是盈亏。',
+  n_wrongidx:'你最后持有的纸货，挂在并非实际交货的那个指数上——这是一个基差头寸。要清楚自己什么时候是故意这么做的。',
+  n_gradeA:'A 级航次。当你能一直这么"无聊"地稳定盈利时，他们就会给你更大的盘子。',
+  n_gradeF:'盈亏为负。每个交易员都会经历一次——好的交易员是在模拟器里经历的。'
+}
+};
+
+let LANG=(function(){
+  const q=new URLSearchParams(location.search).get('lang');
+  if(q&&I18N[q])return q;
+  let s=null; try{s=localStorage.getItem('evolta_lang')}catch(e){}
+  return (s&&I18N[s])?s:'en';
+})();
+function t(k,...a){const v=I18N[LANG][k]!==undefined?I18N[LANG][k]:I18N.en[k];return typeof v==='function'?v(...a):v}
+
+/* ================= CONSTANTS ================= */
+const VOL=3.7e6;               // MMBtu
+const CLIP=0.37e6;             // 10%
+const LIQFEE=2.50;
+const WEEKS=12;
+const FORCE_WEEK=8;
+const PENALTY=0.30;
+
+/* ================= STATE ================= */
+const G={
+  week:1,
+  px:{hh:3.00,jkm:9.80,ttf:9.20,frA:1.90,frE:0.75},
+  hist:{jkm:[9.80],ttf:[9.20],hh:[3.00],frA:[1.90],frE:[0.75]},
+  chg:{hh:0,jkm:0,ttf:0,frA:0,frE:0},
+  basis:0,
+  dest:null,          // 'asia' | 'europe'
+  lockedFreight:null,
+  penalty:0,
+  jkm:{clips:0,avg:0},   // clips sold (short), avg sale price
+  ttf:{clips:0,avg:0},
+  realizedPaper:0,       // banked P&L from buybacks
+  over:false,
+  hedgedEarly:false,     // ≥50% hedged before week 7
+  nakedWeeks:0,
+  news:[],               // structured, so the feed survives a language switch
+  mentorKey:{k:'m_boot',a:[]},
+  end:null
+};
+G.basis=1.15*G.px.hh+LIQFEE;
+
+/* Deltas only — the headline and body text live in the dictionary. */
+const EVENTS=[
+  {id:0,d:{jkm:+1.30,frA:+0.15},hot:true},
+  {id:1,d:{frA:+0.30,jkm:+0.30},hot:true},
+  {id:2,d:{ttf:-1.00},hot:true},
+  {id:3,d:{jkm:+0.90,ttf:+0.30},hot:true},
+  {id:4,d:{hh:-0.25,jkm:+0.60,ttf:+0.50},hot:true},
+  {id:5,d:{ttf:-0.50},hot:false},
+  {id:6,d:{jkm:-0.80},hot:true},
+  {id:7,d:{frA:+0.25,frE:+0.10},hot:false},
+  {id:8,d:{jkm:-0.70,ttf:-0.60},hot:false},
+  {id:9,d:{jkm:-0.60},hot:false}
+];
+let deck=EVENTS.slice().sort(()=>Math.random()-.5);
+
+/* ================= HELPERS ================= */
+const $=id=>document.getElementById(id);
+function money(x){const m=x/1e6;return (m<0?'−$':'+$')+Math.abs(m).toFixed(1)+'M'}
+function moneyPlain(x){const m=x/1e6;return (m<0?'−$':'$')+Math.abs(m).toFixed(1)+'M'}
+function noise(s){return (Math.random()*2-1)*s}
+function clamp(x,lo){return Math.max(lo,x)}
+function totalClips(){return G.jkm.clips+G.ttf.clips}
+function hedgeRatio(){return totalClips()*10}
+function destLabel(d){return d==='asia'?t('dest_asia'):t('dest_europe')}
+
+function physMark(){
+  if(G.dest==='asia')return (G.px.jkm-G.lockedFreight-G.basis-G.penalty)*VOL;
+  if(G.dest==='europe')return (G.px.ttf-G.lockedFreight-G.basis-G.penalty)*VOL;
+  const a=G.px.jkm-G.px.frA-G.basis, e=G.px.ttf-G.px.frE-G.basis;
+  return Math.max(a,e)*VOL;
+}
+function paperMark(){
+  const j=G.jkm.clips*(G.jkm.avg-G.px.jkm)*CLIP;
+  const t2=G.ttf.clips*(G.ttf.avg-G.px.ttf)*CLIP;
+  return j+t2+G.realizedPaper;
+}
+function totalMark(){return physMark()+paperMark()}
+
+/* ================= RENDER ================= */
+function spark(arr){
+  const w=110,h=26,min=Math.min(...arr),max=Math.max(...arr),rng=(max-min)||1;
+  const pts=arr.map((v,i)=>((i/(Math.max(arr.length-1,1)))*w).toFixed(1)+','+(h-3-((v-min)/rng)*(h-6)).toFixed(1)).join(' ');
+  return '<svg class="spark" viewBox="0 0 '+w+' '+h+'"><polyline points="'+pts+'"/></svg>';
+}
+function chgCell(x){
+  if(Math.abs(x)<0.005)return '<span class="flat">—</span>';
+  return '<span class="'+(x>0?'up':'down')+'">'+(x>0?'+':'−')+Math.abs(x).toFixed(2)+'</span>';
+}
+function render(){
+  $('wkLbl').textContent=t('wk_lbl',G.week);
+  $('stBasis').textContent='$'+G.basis.toFixed(2)+'/MMBtu';
+  $('stDest').textContent=G.dest===null?t('dest_open',FORCE_WEEK):destLabel(G.dest)+(G.penalty?' ⚠':'');
+  $('stHedge').textContent=hedgeRatio()+'%';
+  const mtm=totalMark();
+  const pnlEl=$('stPnl');pnlEl.textContent=money(mtm);pnlEl.className='v '+(mtm>=0?'up':'down');
+
+  $('decHead').textContent=t('dec_head',G.week);
+  $('mktNote').innerHTML=t('mkt_note',LIQFEE.toFixed(2));
+
+  const rows=[['hh'],['jkm'],['ttf'],['frA'],['frE']];
+  $('mktBody').innerHTML=rows.map(([k])=>
+    '<tr><td class="nm">'+t('mk_'+k)+'<small>'+t('mk_'+k+'_s')+'</small></td>'+
+    '<td class="px">'+G.px[k].toFixed(2)+'</td>'+
+    '<td class="chg">'+chgCell(G.chg[k])+'</td>'+
+    '<td>'+spark(G.hist[k])+'</td></tr>').join('');
+
+  const a=G.px.jkm-G.px.frA-G.basis, e=G.px.ttf-G.px.frE-G.basis;
+  const dA=$('destAsia'),dE=$('destEur');
+  dA.innerHTML='<div class="dn">'+t('commit_asia')+'</div><div class="dd">'+t('commit_sub',a.toFixed(2),G.px.frA.toFixed(2))+'</div>';
+  dE.innerHTML='<div class="dn">'+t('commit_eur')+'</div><div class="dd">'+t('commit_sub',e.toFixed(2),G.px.frE.toFixed(2))+'</div>';
+  dA.disabled=dE.disabled=(G.dest!==null||G.over);
+  dA.classList.toggle('sel',G.dest==='asia');
+  dE.classList.toggle('sel',G.dest==='europe');
+
+  $('jkmPos').textContent=G.jkm.clips===0?'0':('−'+G.jkm.clips*10+'%');
+  $('ttfPos').textContent=G.ttf.clips===0?'0':('−'+G.ttf.clips*10+'%');
+  $('jkmAvg').textContent=G.jkm.clips?t('short_at',G.jkm.clips,G.jkm.avg.toFixed(2)):t('no_pos');
+  $('ttfAvg').textContent=G.ttf.clips?t('short_at',G.ttf.clips,G.ttf.avg.toFixed(2)):t('no_pos');
+  $('jkmBuy').textContent=$('ttfBuy').textContent=t('btn_buy');
+  $('jkmSell').textContent=$('ttfSell').textContent=t('btn_sell');
+  $('jkmSell').disabled=G.over||totalClips()>=10;
+  $('ttfSell').disabled=G.over||totalClips()>=10;
+  $('jkmBuy').disabled=G.over||G.jkm.clips===0;
+  $('ttfBuy').disabled=G.over||G.ttf.clips===0;
+  $('advanceBtn').disabled=G.over;
+  $('advanceBtn').textContent=G.week<WEEKS?t('adv_next',G.week+1):t('adv_settle');
+
+  const rowsP=[
+    [G.dest?t('pnl_phys_c',destLabel(G.dest)):t('pnl_phys_o'),physMark()],
+    [t('pnl_paper'),paperMark()]
+  ];
+  $('pnlTable').innerHTML=rowsP.map(([k,v])=>'<tr><td>'+k+'</td><td class="r '+(v>=0?'up':'down')+'">'+money(v)+'</td></tr>').join('')+
+    '<tr class="total"><td>'+t('pnl_total')+'</td><td class="r '+(mtm>=0?'up':'down')+'">'+money(mtm)+'</td></tr>';
+
+  renderNews();
+  $('mentorMsg').textContent=t(G.mentorKey.k,...G.mentorKey.a);
+}
+
+function renderNews(){
+  $('newsFeed').innerHTML=G.news.map(n=>{
+    let h,p;
+    if(n.kind==='event'){h=t('ev'+n.id+'_h');p=t('ev'+n.id+'_p')}
+    else if(n.kind==='quiet'){h=t('quiet_h');p=t('quiet_p')}
+    else if(n.kind==='boot'){h=t('boot_h');p=t('boot_p',n.basis)}
+    else{h=n.forced?t('nom_forced'):t('nom_normal');p=t('nom_body',n.dest,n.freight,n.forced)}
+    return '<div class="news-item'+(n.hot?' hot':'')+'"><span class="nw">'+t('news_week',n.week)+
+           '</span><p><b>'+h+'</b> — '+p+'</p></div>';
+  }).join('');
+}
+function pushNews(entry){G.news.unshift(Object.assign({week:G.week},entry));renderNews()}
+function mentor(k,...a){G.mentorKey={k,a};$('mentorMsg').textContent=t(k,...a)}
+
+/* ================= ACTIONS ================= */
+function sellClip(k){
+  const b=G[k],px=G.px[k];
+  b.avg=(b.avg*b.clips+px)/(b.clips+1);
+  b.clips++;
+  render();
+}
+function buyClip(k){
+  const b=G[k];
+  if(b.clips<=0)return;
+  G.realizedPaper+=(b.avg-G.px[k])*CLIP;
+  b.clips--;
+  if(b.clips===0)b.avg=0;
+  render();
+}
+$('jkmSell').onclick=()=>sellClip('jkm');
+$('ttfSell').onclick=()=>sellClip('ttf');
+$('jkmBuy').onclick=()=>buyClip('jkm');
+$('ttfBuy').onclick=()=>buyClip('ttf');
+$('destAsia').onclick=()=>commit('asia',false);
+$('destEur').onclick=()=>commit('europe',false);
+
+function commit(dest,forced){
+  if(G.dest!==null)return;
+  G.dest=dest;
+  G.lockedFreight=dest==='asia'?G.px.frA:G.px.frE;
+  if(forced)G.penalty=PENALTY;
+  pushNews({kind:'nom',dest,freight:G.lockedFreight.toFixed(2),forced,hot:forced});
+  if(forced)mentor('m_forced');
+  else mentor('m_committed',dest==='asia'?'JKM':'TTF');
+  render();
+}
+
+/* ================= WEEK ADVANCE ================= */
+$('advanceBtn').onclick=()=>{
+  if(G.over)return;
+  if(G.week>=WEEKS){settle();return}
+
+  if(hedgeRatio()>=50&&G.week<=6)G.hedgedEarly=true;
+  if(hedgeRatio()===0&&G.week>=4)G.nakedWeeks++;
+
+  G.week++;
+  let ev=null;
+  if(G.week>=2&&G.week<=11&&deck.length){ev=deck.pop()}
+  const d=ev?ev.d:{};
+  const move={
+    hh:(d.hh||0)+noise(0.12),
+    jkm:(d.jkm||0)+noise(0.28),
+    ttf:(d.ttf||0)+noise(0.24),
+    frA:(d.frA||0)+noise(0.05),
+    frE:(d.frE||0)+noise(0.03)
+  };
+  for(const k of ['hh','jkm','ttf','frA','frE']){
+    const floor={hh:1.5,jkm:4,ttf:3.5,frA:0.8,frE:0.4}[k];
+    const nv=clamp(G.px[k]+move[k],floor);
+    G.chg[k]=nv-G.px[k];G.px[k]=nv;G.hist[k].push(nv);
+  }
+  if(ev)pushNews({kind:'event',id:ev.id,hot:ev.hot});
+  else if(G.week<=WEEKS)pushNews({kind:'quiet',hot:false});
+
+  if(G.week===FORCE_WEEK+1&&G.dest===null){
+    const a=G.px.jkm-G.px.frA, e=G.px.ttf-G.px.frE;
+    commit(a>=e?'asia':'europe',true);
+  }
+  coach();
+  render();
+};
+
+function coach(){
+  const hr=hedgeRatio();
+  if(G.week>=WEEKS){mentor('m_delivery');return}
+  if(G.dest===null&&G.week>=FORCE_WEEK-1){mentor('m_deadline');return}
+  if(hr===0&&G.week>=3){mentor('m_naked');return}
+  if(G.dest!==null){
+    const wrong=G.dest==='asia'?G.ttf.clips:G.jkm.clips;
+    if(wrong>0){mentor('m_basis',G.dest);return}
+    if(hr>=50){mentor('m_sensible');return}
+    mentor('m_partial',hr,G.dest==='asia'?'JKM':'TTF');return;
+  }
+  if(hr>0){mentor('m_open_hedged',hr);return}
+  mentor('m_watch');
+}
+
+/* ================= SETTLE ================= */
+function settle(){
+  G.over=true;
+  const destPx=G.dest==='asia'?G.px.jkm:G.px.ttf;
+  const phys=(destPx-G.lockedFreight-G.basis-G.penalty)*VOL;
+  const openPaper=G.jkm.clips*(G.jkm.avg-G.px.jkm)*CLIP+G.ttf.clips*(G.ttf.avg-G.px.ttf)*CLIP;
+  const paper=openPaper+G.realizedPaper;
+  const total=phys+paper;
+
+  let grade='F';
+  if(total>=9e6)grade='A';else if(total>=6e6)grade='B';else if(total>=3e6)grade='C';else if(total>=0)grade='D';
+
+  G.end={
+    grade,total,phys,paper,destPx,
+    wrongIdx:(G.dest==='asia'?G.ttf.clips:G.jkm.clips)
+  };
+  renderEnd();
+  $('endOverlay').classList.add('show');
+
+  try{
+    localStorage.setItem('evoltaLngCapstone',JSON.stringify({
+      completed:true,grade,pnl:total,pnlLabel:money(total),
+      date:new Date().toLocaleDateString(LANG==='zh'?'zh-CN':'en-GB',{day:'numeric',month:'short',year:'numeric'})
+    }));
+  }catch(e){}
+  render();
+}
+
+function renderEnd(){
+  const E=G.end; if(!E)return;
+  const notes=[];
+  notes.push(t('n_phys',G.dest==='asia'?'JKM':'TTF',E.destPx.toFixed(2),
+    G.lockedFreight.toFixed(2),!!G.penalty,G.basis.toFixed(2),money(E.phys)));
+  notes.push(t('n_paper',money(E.paper),E.paper>=0));
+  if(G.hedgedEarly)notes.push(t('n_early'));
+  if(G.nakedWeeks>=4)notes.push(t('n_naked',G.nakedWeeks));
+  if(G.penalty)notes.push(t('n_penalty',moneyPlain(PENALTY*VOL)));
+  if(E.wrongIdx>0)notes.push(t('n_wrongidx'));
+  if(E.grade==='A')notes.push(t('n_gradeA'));
+  if(E.grade==='F')notes.push(t('n_gradeF'));
+
+  $('endGrade').textContent=E.grade;
+  $('endPnl').textContent=money(E.total);
+  $('endPnl').style.color=E.total>=0?'var(--pos)':'var(--neg)';
+  $('endTable').innerHTML=
+    '<tr><td>'+t('end_phys')+'</td><td class="r '+(E.phys>=0?'up':'down')+'">'+money(E.phys)+'</td></tr>'+
+    '<tr><td>'+t('end_paper')+'</td><td class="r '+(E.paper>=0?'up':'down')+'">'+money(E.paper)+'</td></tr>'+
+    '<tr class="total"><td>'+t('end_total')+'</td><td class="r '+(E.total>=0?'up':'down')+'">'+money(E.total)+'</td></tr>';
+  $('endNotes').innerHTML=notes.map(n=>'<li>'+n+'</li>').join('');
+}
+
+/* ================= LANGUAGE ================= */
+function applyLang(){
+  document.documentElement.lang=LANG==='zh'?'zh-CN':'en';
+  document.body.classList.toggle('lang-zh',LANG==='zh');
+  document.title=t('doc_title');
+  const tog=$('langToggle');
+  tog.textContent=t('lang_other');
+  tog.setAttribute('aria-label',t('lang_aria'));
+  $('brandTitle').innerHTML=t('brand_title');
+  $('brandSub').innerHTML=t('brand_sub');
+  $('backBtn').textContent=t('back');
+  $('wkCap').textContent=t('wk_cap');
+  $('decDest').innerHTML=t('dec_dest');
+  $('decPaper').innerHTML=t('dec_paper');
+  $('endBadgeBtn').textContent=t('end_badge');
+  $('endAgainBtn').textContent=t('end_again');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});
+  render();
+  renderEnd();
+}
+$('langToggle').addEventListener('click',()=>{
+  LANG=LANG==='en'?'zh':'en';
+  try{localStorage.setItem('evolta_lang',LANG)}catch(e){}
+  applyLang();
+});
+
+/* ================= BOOT ================= */
+G.news.push({kind:'boot',week:1,basis:G.basis.toFixed(2),hot:true});
+applyLang();
+</script>
+</body>
+</html>

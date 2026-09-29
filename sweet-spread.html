@@ -6,7 +6,7 @@
 <title>Sweet Spread — Sugar Trading Simulation | Evolta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#f4f7f5;
@@ -239,14 +239,15 @@
   <header>
     <div class="brand">
       <h1>Sweet <span class="amp">&</span> Spread</h1>
-      <div class="sub">Sugar Trading Simulation · <span class="evolta">Evolta — learn · play · evolve</span></div>
+      <div class="sub" id="brandSub"></div>
     </div>
     <div class="topbar">
       <div class="clock" id="clock" style="display:none">
         <div class="month" id="monthLabel">—</div>
-        <div class="turn" id="turnLabel">Press start</div>
+        <div class="turn" id="turnLabel"></div>
       </div>
-      <a class="back-btn" href="TradingGamePortal.html">‹ All games</a>
+      <button class="back-btn" id="langToggle" type="button" style="cursor:pointer;margin-right:8px">中文</button>
+      <a class="back-btn" id="backAll" href="TradingGamePortal.html">‹ All games</a>
     </div>
   </header>
 
@@ -256,9 +257,9 @@
       <div class="acad-steps" id="acadSteps"></div>
       <div id="lessonContent"></div>
       <div class="acad-nav">
-        <button class="ghost-btn" id="backBtn" onclick="acadBack()">‹ Back</button>
+        <button class="ghost-btn" id="backBtn" onclick="acadBack()" data-i18n="nav_back">‹ Back</button>
         <div class="right">
-          <button class="ghost-btn" id="skipBtn" onclick="startGame()">Skip to trading ›</button>
+          <button class="ghost-btn" id="skipBtn" onclick="startGame()" data-i18n="nav_skip">Skip to trading ›</button>
           <button class="big-btn" id="nextBtn" onclick="acadNext()" style="width:auto;padding:11px 26px">Next ›</button>
         </div>
       </div>
@@ -269,27 +270,21 @@
     <!-- LEFT COLUMN -->
     <div>
       <div class="panel" id="newsPanel">
-        <h2><span class="dot"></span>Market Wire</h2>
-        <div id="newsBox">
-          <div class="news">
-            <div class="hl">Welcome to the desk.</div>
-            <div class="src">Evolta Trading Floor</div>
-            <div class="ex">You're a sugar trader at a commodity house. Over 12 months you'll trade raw &amp; white sugar futures, lock the refining arbitrage, hedge FX and freight, and survive margin calls. Press <b>Start Season</b> to take the first news tick. Hover any <span class="tip" title="Like this — definitions appear on hover.">underlined term</span> for a definition.</div>
-          </div>
-        </div>
+        <h2><span class="dot"></span><span data-i18n="pn_wire">Market Wire</span></h2>
+        <div id="newsBox"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Market Board</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_board">Market Board</span></h2>
         <table class="mkt">
-          <thead><tr><th>Instrument</th><th style="text-align:right">Price</th><th style="text-align:right">Δ mo</th></tr></thead>
+          <thead><tr><th data-i18n="th_instrument">Instrument</th><th style="text-align:right" data-i18n="th_price">Price</th><th style="text-align:right" data-i18n="th_chg">Δ mo</th></tr></thead>
           <tbody id="mktBody"></tbody>
         </table>
         <div class="hint" id="arbHint"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Trade Desk</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_desk">Trade Desk</span></h2>
         <div class="act-grid" id="tradeGrid"></div>
         <div style="margin-top:14px">
           <button class="big-btn" id="advanceBtn" onclick="startOrAdvance()">▶ Start Season</button>
@@ -300,42 +295,35 @@
     <!-- RIGHT COLUMN -->
     <div>
       <div class="panel">
-        <h2><span class="dot"></span>P&amp;L</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_pnl">P&amp;L</span></h2>
         <div class="big-num" id="equityNum">$10.00M</div>
-        <div class="stat"><span class="k">Realised P&amp;L</span><span class="v" id="realisedPL">$0</span></div>
-        <div class="stat"><span class="k">Open P&amp;L</span><span class="v" id="openPL">$0</span></div>
-        <div class="stat"><span class="k">Cash</span><span class="v" id="cashVal">$10.00M</span></div>
-        <div class="stat"><span class="k">Margin used</span><span class="v" id="marginVal">$0</span></div>
+        <div class="stat"><span class="k" data-i18n="k_realised">Realised P&amp;L</span><span class="v" id="realisedPL">$0</span></div>
+        <div class="stat"><span class="k" data-i18n="k_open">Open P&amp;L</span><span class="v" id="openPL">$0</span></div>
+        <div class="stat"><span class="k" data-i18n="k_cash">Cash</span><span class="v" id="cashVal">$10.00M</span></div>
+        <div class="stat"><span class="k" data-i18n="k_margin">Margin used</span><span class="v" id="marginVal">$0</span></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Risk</h2>
-        <div class="stat"><span class="k tip" title="Net long minus short exposure across all positions, in USD notional.">Net exposure</span><span class="v" id="netExp">$0</span></div>
+        <h2><span class="dot"></span><span data-i18n="pn_risk">Risk</span></h2>
+        <div class="stat"><span class="k tip" data-i18n="k_netexp" data-i18n-title="tip_netexp">Net exposure</span><span class="v" id="netExp">$0</span></div>
         <div class="meter"><span id="riskBar" style="width:0%;background:var(--green)"></span></div>
-        <div class="hint" id="riskHint">Flat. No risk on the book.</div>
+        <div class="hint" id="riskHint"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Open Positions</h2>
-        <div id="posBox"><div class="hint">No open positions.</div></div>
+        <h2><span class="dot"></span><span data-i18n="pn_pos">Open Positions</span></h2>
+        <div id="posBox"></div>
       </div>
 
       <div class="panel" id="recapPanel" style="display:none">
-        <h2><span class="dot"></span>This Month's P&amp;L — Why</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_recap">This Month's P&amp;L — Why</span></h2>
         <div id="recapBox"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Glossary</h2>
-        <div style="font-size:11px;color:var(--txt-dim);line-height:1.7">
-          <b style="color:var(--green)">No.11</b> raw sugar, world market, ¢/lb · 112,000 lb/lot<br>
-          <b style="color:var(--green)">No.5</b> white refined sugar, London, $/tonne · 50t/lot<br>
-          <b style="color:var(--green)">White premium</b> No.5 − No.11(conv). Refining margin.<br>
-          <b style="color:var(--green)">Refining toll</b> ~$70/t to process raw into white (energy, labour, loss).<br>
-          <b style="color:var(--green)">Conversion yield</b> ~92% — you need ~1.09 t raw per 1 t white.<br>
-          <b style="color:var(--green)">Ethanol parity</b> price where Brazil mills are indifferent between making sugar or ethanol.
-        </div>
-        <div style="margin-top:12px"><button class="ghost-btn" onclick="openAcademy()" style="width:100%">↺ Replay the Academy</button></div>
+        <h2><span class="dot"></span><span data-i18n="pn_gloss">Glossary</span></h2>
+        <div style="font-size:11px;color:var(--txt-dim);line-height:1.7" id="glossBox"></div>
+        <div style="margin-top:12px"><button class="ghost-btn" onclick="openAcademy()" style="width:100%" data-i18n="replay_acad">↺ Replay the Academy</button></div>
       </div>
     </div>
   </div>
@@ -349,13 +337,424 @@
 
 <script>
 /* ============ CONSTANTS ============ */
+
+/* ================= i18n ================= */
+const I18N={
+en:{
+  doc_title:'Sweet Spread — Sugar Trading | Evolta',
+  lang_other:'中文', lang_aria:'Switch to Chinese',
+  brand_sub:'Sugar Trading Simulation · <span class="evolta">Evolta — learn · play · evolve</span>',
+  back_all:'‹ All games', press_start:'Press start',
+  month_of:(m,n)=>'Month '+m+' of '+n,
+  months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+
+  nav_back:'‹ Back', nav_skip:'Skip to trading ›', nav_next:'Next ›', nav_enter:'Enter the trading floor →',
+
+  pn_wire:'Market Wire', pn_board:'Market Board', pn_desk:'Trade Desk',
+  pn_pnl:'P&L', pn_risk:'Risk', pn_pos:'Open Positions',
+  pn_recap:"This Month's P&L — Why", pn_gloss:'Glossary',
+  th_instrument:'Instrument', th_price:'Price',
+  k_realised:'Realised P&L', k_open:'Open P&L', k_cash:'Cash', k_margin:'Margin used',
+  k_netexp:'Net exposure',
+  btn_start:'▶ Start Season', btn_advance:'▶ Advance Month',
+  no_pos:'No open positions.', flat_risk:'Flat. No risk on the book.',
+
+  intro_hl:'Welcome to the desk.', intro_src:'Evolta Trading Floor',
+  intro_ex:'You\'re a sugar trader at a commodity house. Over 12 months you\'ll trade raw &amp; white sugar futures, lock the refining arbitrage, hedge FX and freight, and survive margin calls. Press <b>Start Season</b> to take the first news tick. Hover any <span class="tip" title="Like this — definitions appear on hover.">underlined term</span> for a definition.',
+  tip_netexp:'Net long minus short exposure across all positions, in USD notional.',
+  th_chg:'Δ mo', replay_acad:'↺ Replay the Academy',
+  gloss:'<b style="color:var(--green)">No.11</b> raw sugar, world market, ¢/lb · 112,000 lb/lot<br><b style="color:var(--green)">No.5</b> white refined sugar, London, $/tonne · 50t/lot<br><b style="color:var(--green)">White premium</b> No.5 − No.11(conv). Refining margin.<br><b style="color:var(--green)">Refining toll</b> ~$70/t to process raw into white (energy, labour, loss).<br><b style="color:var(--green)">Conversion yield</b> ~92% — you need ~1.09 t raw per 1 t white.<br><b style="color:var(--green)">Ethanol parity</b> price where Brazil mills are indifferent between making sugar or ethanol.',
+  reset_hl:'New season. Fresh book.',
+  reset_ex:'Press <b>Start Season</b> to take the first news tick.',
+  why_matters:'Why it matters:',
+
+  i_n11:'No.11 Raw', i_n11_s:'¢/lb · world',
+  i_n11_t:'Raw cane sugar, ICE world market, 112,000 lb per lot. Bracket shows the ¢/lb price converted to $/tonne (×22.046).',
+  i_n5:'No.5 White', i_n5_s:'$/t · London', i_n5_t:'Refined white sugar, London, 50 tonnes per lot',
+  i_prem:'White premium', i_prem_s:'No.5 − raw(conv)',
+  i_prem_t:'Headline gap: white price minus raw-equivalent price. NOT the net margin — you still pay toll, freight, financing, and lose ~8% in conversion.',
+  i_toll:'Refining toll', i_toll_s:'energy · labour · loss',
+  i_toll_t:'Cost to process raw into white: energy, labour, and yield loss. Separate from freight. Fixed in this model.',
+  i_fixed:'fixed',
+  i_brl:'BRL/USD', i_brl_s:'real per USD',
+  i_brl_t:'Brazilian real per USD. A lower number = stronger real, which tends bullish for world sugar.',
+  i_freight:'Freight', i_freight_s:'$/t · full leg', i_freight_t:'Cost to ship the cargo. Charged in full to the refining arb.',
+  i_eth:'Ethanol parity', i_eth_s:'¢/lb mill flex',
+  i_eth_t:'Below this, Brazilian mills favour ethanol over sugar — tightens supply',
+
+  arb_math:(w,r,y,toll,fr,fin)=>'White $'+w+' − raw-in $'+r+' (raw ÷ '+y+' yield) − toll $'+toll+' − freight $'+fr+' − financing $'+fin+' = ',
+  arb_good:v=>'+'+v+'/t white</b>. Attractive — consider locking a cargo.',
+  arb_bad:v=>v+'/t white</b>. Underwater — don\'t lock now.',
+  arb_thin:v=>v+'/t white</b>. Thin — the toll and freight eat most of the premium.',
+
+  tc_n11:'No.11 Raw', tc_n11_d:'Directional bet on world raw sugar. 1 lot = 112,000 lb.',
+  tc_n5:'No.5 White', tc_n5_d:'Directional bet on refined whites. 1 lot = 50 t.',
+  tc_lots:'Lots', tc_buy:'Buy / Long', tc_sell:'Sell / Short',
+  tc_arb:'Refining Arb',
+  tc_arb_d1:"Buy raw, refine, sell white. You lock today's ", tc_arb_d2:' per tonne. Settles in ~2 months. Tonnes = raw bought.',
+  tc_arb_net:'net margin',
+  tc_arb_tip:'white price − raw input (grossed up by 92% yield) − $70 toll − full freight − financing carry',
+  tc_tonnes:'Tonnes',
+  tc_lock_un:'Lock — Unhedged', tc_lock_un_t:'Margin floats with the market until you settle — you carry spread risk',
+  tc_lock_h:'Lock — Hedged', tc_lock_h_t:'Locks both futures legs too. Margin secured (−$4/t cost), no weekly MTM swing.',
+  tc_fx:'FX Hedge', tc_fx_d:'Short BRL exposure to neutralise currency risk on Brazilian-origin positions.',
+  tc_notional:'Notional $M', tc_fx_b:'Hedge BRL',
+
+  long:'Long', short:'Short', hedged:'Hedged', unhedged:'Unhedged',
+  btn_close:'Close', btn_settle:'Settle',
+
+  toast_start:'Start the season first.',
+  toast_margin:'Insufficient margin for that size.',
+  toast_margin_cargo:'Insufficient margin for that cargo.',
+  toast_hedged:'Hedged cargo locked — both legs fixed, margin secured.',
+  toast_unhedged:'Unhedged cargo locked — margin floats until settlement.',
+  toast_negative:'You locked a NEGATIVE refining margin.',
+  toast_cargo_pl:v=>v+' on the refining cargo.',
+  toast_mc:'⚠ MARGIN CALL — positions force-liquidated.',
+
+  r_swing:'Open P&L swing', r_moved:'Market moved:', r_impact:'Position impact:',
+  r_none:"No open positions this month — nothing to attribute. The market moved but you weren't exposed.",
+  r_rose:'rose', r_fell:'fell',
+  r_move:(lbl,dir,amt,unit,b,a)=>lbl+' '+dir+' '+amt+unit+' ('+b+unit+'→'+a+unit+')',
+  r_posline:(side,name,amt)=>side+' '+name+': '+amt,
+  r_arb:(amt,fav,driver,per)=>'Unhedged arb: '+amt+' — mainly '+fav+' move in '+driver+' ('+per+'/t to margin).',
+  r_favourable:'a favourable', r_adverse:'an adverse',
+  d_white:'white price', d_raw:'raw cost', d_freight:'freight',
+  r_hedged_flat:'Hedged cargo: MTM flat by design — margin already secured.',
+  m_raw:'Raw No.11', m_white:'White No.5', m_freight:'Freight', m_brl:'BRL',
+
+  risk_flat:'Flat. No risk on the book.',
+  risk_light:v=>'Net leverage '+v+'× — light.',
+  risk_ok:v=>'Net leverage '+v+'× — reasonable.',
+  risk_heavy:v=>'Net leverage '+v+'× — heavy. A spike could margin-call you.',
+
+  news0_hl:'Brazil Centre-South harvest accelerates; cane crush beats estimates', news0_src:'Reuters Commodities',
+  news0_ex:'More cane crushed = more raw sugar supply. Bearish for No.11 raws. Watch ethanol parity: if mills tilt toward sugar, supply grows further.',
+  news1_hl:'Indian government extends sugar export ban into next season', news1_src:'Bloomberg',
+  news1_ex:'India is a top-3 producer. An export ban removes supply from the world market — bullish for No.11, and tightens whites too.',
+  news2_hl:'Dry weather stress flagged across Thai cane belt', news2_src:'S&P Global',
+  news2_ex:'Thailand is a major white-sugar exporter. Drought threatens output — bullish for No.5 whites and the white premium.',
+  news3_hl:'Crude oil rallies 6%; Brazilian ethanol economics improve', news3_src:'ICE Daily',
+  news3_ex:'Higher oil lifts ethanol prices, so mills divert cane to ethanol instead of sugar. Less sugar supply = bullish raws. Ethanol parity rises.',
+  news4_hl:'BRL strengthens sharply on rate-hike surprise', news4_src:'FX Wire',
+  news4_ex:'A stronger Brazilian real raises the USD cost of Brazilian sugar, supporting world prices. It also hurts unhedged USD-short BRL exposure.',
+  news5_hl:'BRL weakens as commodity-currency selloff deepens', news5_src:'FX Wire',
+  news5_ex:'A weaker real makes Brazilian sugar cheaper in USD terms — exporters sell aggressively, pressuring world prices lower.',
+  news6_hl:'Panamax freight rates spike on tonnage shortage', news6_src:'Baltic Exchange',
+  news6_ex:'Higher freight raises delivered cost of physical sugar, squeezing physical margins and widening regional basis.',
+  news7_hl:'Freight eases as vessel availability normalises', news7_src:'Baltic Exchange',
+  news7_ex:'Lower freight improves physical arb economics — cheaper to move cargoes from origin to refinery.',
+  news8_hl:'Refiners report thin white premium; some idle capacity', news8_src:'Platts',
+  news8_ex:'A narrow white premium means refining barely covers cost. If it stays thin, refiners cut runs — eventually bullish whites.',
+  news9_hl:'Strong EU demand pulls whites; refining margins fatten', news9_src:'Platts',
+  news9_ex:'Robust demand for refined sugar widens the white premium — the refining arbitrage becomes attractive.',
+  news10_hl:'Speculative funds cut net-long position in raws', news10_src:'CFTC COT',
+  news10_ex:'Large spec liquidation tends to pressure No.11 lower in the short term regardless of fundamentals.',
+  news11_hl:'Funds rebuild bullish bets as technicals turn up', news11_src:'CFTC COT',
+  news11_ex:'Fresh spec buying can push No.11 higher and trigger short-covering rallies.',
+  news12_hl:'Frost risk emerges in Centre-South Brazil', news12_src:'Weather Desk',
+  news12_ex:'Frost can damage cane and slash yields — sharply bullish for raws if it materialises.',
+  news13_hl:'Bumper monsoon lifts Indian cane outlook', news13_src:'Reuters',
+  news13_ex:'A good monsoon points to a larger Indian crop next season — bearish bias for world prices.',
+
+  l_kick1:'Academy · Lesson 1 of 4',
+  l_kick2:'Academy · Lesson 2 of 4 · how you bet',
+  l_kick3:'Academy · Lesson 3 of 4 · the money machine',
+  l_kick4:'Academy · Lesson 4 of 4 · the thing that ends seasons',
+  l_kick5:'Academy complete',
+
+  a0_ttl:'Two sugars, one spread',
+  a0_lede:'The world trades two kinds of sugar. <b>Raw</b> (ICE "No.11", quoted in ¢/lb) is the unrefined cane sugar. <b>White</b> (London "No.5", quoted in $/tonne) is the refined product on your table. To compare them you convert raw into $/tonne — and the gap between white and raw is the <b>white premium</b>. Drag the white price and watch it.',
+  a0_rawconv:'Raw (converted)', a0_white:'White No.5', a0_prem:'premium', a0_wprice:'White price',
+  a0_p1:'<b>You can bet on each directly.</b> Long raw if you think the world crop tightens; short white if you think refined demand softens.',
+  a0_p2:'<b>Different drivers.</b> Raw moves on Brazilian/Indian harvests and ethanol; white moves on refined demand and refining capacity.',
+  a0_p3:'<b>The premium is the prize.</b> A wide white premium means refining raw into white is lucrative — which is the trade the next lesson is all about.',
+  a0_prem_read:(w,r,pr,note)=>'White $'+w+' − raw $'+r+' (19.5¢ converted) = <b>$'+pr+'/t</b> white premium. '+note,
+  a0_thin:'Thin — refining barely pays.', a0_fat:'Fat — refiners run hard.', a0_healthy:'Healthy refining margin.',
+  a1_flat:'Price unchanged — flat P&L', a1_moved:(d,v)=>'Price '+d+' '+v+'%',
+  a1_read:(side,dir,v,pnl,note)=>'You\'re <b>'+side+'</b>. Price '+dir+' '+v+'% → '+pnl+'. '+note,
+  a1_longs:'long (bought)', a1_shorts:'short (sold)',
+  a1_up:'up', a1_down:'down', a1_flat2:'flat',
+  a1_paid:'Your call paid off.', a1_against:'The move went against you.',
+  a0_lab:'Watch the units',
+  a0_txt:'Raw is ¢/lb, white is $/tonne — convert with ×22.05 before you compare. Mixing the two up is the classic beginner trip-wire.',
+
+  a1_ttl:'Going long, going short',
+  a1_lede:"You don't only make money when prices rise. <b>Long</b> means you buy now and profit if the price goes <b>up</b>. <b>Short</b> means you sell first (borrowing the sugar) and profit if the price goes <b>down</b>, buying it back cheaper later. Pick a side, then drag the price and watch your P&L flip.",
+  a1_entry:'entry', a1_golong:'▲ Go Long (buy)', a1_goshort:'▼ Go Short (sell)', a1_pxmove:'Price move',
+  a1_p1:'<b>Long = bullish.</b> Buy a No.11 raw or No.5 white future; if it rises, you sell higher and pocket the gain.',
+  a1_p2:'<b>Short = bearish.</b> Sell first without owning it; if the price falls, you buy it back cheaper and keep the difference.',
+  a1_p3:'<b>Either direction can profit — or lose.</b> Get the call wrong and a long loses as prices fall, a short loses as they rise.',
+  a1_p4:'<b>You can combine them.</b> Long raw + short white is a bet that the white premium will <i>narrow</i> — a spread trade, not a pure direction.',
+  a1_lab:'Why shorting matters',
+  a1_txt:'When the news is clearly bearish — a bumper harvest, an export glut — a trader who can only buy is stuck watching. <b>Shorting lets you profit from falling prices too</b>, so every headline is an opportunity.',
+
+  a2_ttl:'The refining arbitrage',
+  a2_lede:"Here's the trade physical sugar desks live on: <b>buy raw, refine it into white, sell the white</b>, and lock the margin today. But the white premium isn't free profit — you pay a <b>refining toll</b>, <b>freight</b>, <b>financing</b>, and you lose ~8% in conversion. What's left is the <b>net margin</b>. Drag the prices and watch it.",
+  a2_sold:'White sold', a2_costs:'All costs', a2_net:'Net margin',
+  a2_formula:'raw÷0.92 + $70 toll + freight + financing',
+  a2_wt:'White $/t', a2_rc:'Raw ¢/lb', a2_fr:'Freight $/t',
+  a2_p1:'<b>Net margin = white − raw-in (÷0.92 yield) − $70 toll − freight − financing.</b> Only this is real profit.',
+  a2_p2:"<b>Lock it when it's fat.</b> Above ~$25/t the arb is attractive, near-riskless carry; below zero, refining loses money.",
+  a2_p3:'<b>Hedge it</b> and you fix both legs so the margin is secured until the cargo settles — no swings, small cost.',
+  a2_lab:'Try this',
+  a2_txt:"Push raw up to 26¢ while white stays at $600 — the net margin goes <b>negative</b>. The headline premium still looks positive, but after costs you'd be refining at a loss. <b>Read the net, not the premium.</b>",
+
+  a3_ttl:'Leverage &amp; the margin call',
+  a3_lede:'Futures let you control a big position while posting only a small deposit — your <b>margin</b>. That\'s <b>leverage</b>, and it cuts both ways. If the market moves against you and your losses eat through your deposit, the exchange issues a <b>margin call</b> and force-closes your positions at the worst possible moment. Pick a leverage, then drag the adverse move.',
+  a3_equity:'Your equity', a3_maint:'maintenance', a3_mc:'⚠ MARGIN CALL',
+  a3_lev2:'2× leverage', a3_lev5:'5×', a3_lev10:'10×', a3_vs:'Market vs you',
+  a3_p1:'<b>Higher leverage = thinner cushion.</b> At 10×, a move of just a few percent against you can wipe out your whole deposit.',
+  a3_p2:"<b>The maintenance line is the danger zone.</b> Fall below it and you're force-liquidated — your positions sold at the bottom, locking in the loss.",
+  a3_p3:'<b>Margin calls hit at the worst time</b> — during a spike, when prices are most extreme and you\'d most want to hold on.',
+  a3_p4:'<b>Defence:</b> keep a cash buffer, size positions sensibly, and don\'t run the book at maximum leverage.',
+  a3_lab:'Try this',
+  a3_txt:'Set <b>10×</b> and drag the adverse move — equity collapses past the maintenance line almost immediately. Now try <b>2×</b>: the same move barely dents you. <b>Leverage is the difference between a rough month and a blown account.</b>',
+
+  a4_ttl:"You're ready for the desk",
+  a4_lede:"Three things drive every call you'll make over the next 12 months:",
+  a4_p1:'<b>Directional trades</b> — go long or short raw (No.11) and white (No.5) on supply &amp; demand news.',
+  a4_p2:'<b>The refining arb</b> — lock white − costs as a net margin; hedge it to secure the spread until settlement.',
+  a4_p3:'<b>Risk</b> — trades use leverage, so an oversized book can get <b>margin-called</b> in a spike. Keep some cash buffer.',
+  a4_lab:'Your job for 12 months',
+  a4_txt:'Start with <b>$10M</b>. Read each headline, decide if it\'s bullish or bearish for raw, white, or the arb, and size accordingly. A scored <b>debrief</b> grades you at the end — and you can replay this Academy anytime from the Glossary panel.',
+
+  d_title:'Season Debrief', d_notes:'Desk notes', d_again:'↺ Trade Another Season',
+  d_final:'Final equity', d_diracc:'Directional accuracy', d_arbs:'Refining arbs',
+  d_risk:'Risk discipline', d_mc:'Margin calls',
+  d_final_v:(v,r)=>v+' ('+r+')',
+  d_dir_v:(a,w,l)=>a+'% ('+w+'W / '+l+'L)',
+  d_arb_v:(sc,t,m)=>sc+' — '+t+' taken, '+m+' fat ones missed',
+  d_risk_v:(sc,x)=>sc+' (peak '+x+'x leverage)',
+  d_mc_none:'None — clean book', d_mc_n:n=>n+' forced liquidation(s)',
+  d_disciplined:'Disciplined', d_acceptable:'Acceptable', d_reckless:'Reckless',
+  d_passive:'Passive', d_missed:'Missed opportunities', d_opportunistic:'Opportunistic',
+
+  c_strong:'Strong P&L — you read the supply shocks well.',
+  c_down:'You finished down. Review which news events you faded incorrectly.',
+  c_diracc:'Your directional calls lost more than they won — try sizing into high-conviction news (bans, frost, ethanol shifts) and sitting out noise.',
+  c_noarb:'You never locked a refining arb. When the net margin (after toll, freight, yield loss and financing) clears $25+/t, that is near-riskless carry you left on the table.',
+  c_missed:n=>'You skipped '+n+' attractive refining arb'+(n>1?'s':'')+' — physical traders live on that margin.',
+  c_mc:'Margin calls wiped positions at the worst time. Keep net leverage under ~1.5x and hold cash buffer for volatility.',
+  c_heavy:'You ran a very heavy book. Size discipline matters more than being right.',
+  c_ok:'Balanced, disciplined trading. Next: try pressing harder on conviction trades to lift returns without breaching risk limits.'
+},
+zh:{
+  doc_title:'甜蜜价差 — 食糖交易 | Evolta',
+  lang_other:'EN', lang_aria:'切换到英文',
+  brand_sub:'食糖交易模拟 · <span class="evolta">Evolta — 学习 · 探索 · 进化</span>',
+  back_all:'‹ 全部游戏', press_start:'点击开始',
+  month_of:(m,n)=>'第 '+m+' 个月 / 共 '+n+' 个月',
+  months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+
+  nav_back:'‹ 上一课', nav_skip:'跳过，直接交易 ›', nav_next:'下一课 ›', nav_enter:'进入交易大厅 →',
+
+  pn_wire:'市场快讯', pn_board:'行情板', pn_desk:'交易台',
+  pn_pnl:'盈亏', pn_risk:'风险', pn_pos:'持仓',
+  pn_recap:'本月盈亏拆解', pn_gloss:'术语表',
+  th_instrument:'品种', th_price:'价格',
+  k_realised:'已实现盈亏', k_open:'浮动盈亏', k_cash:'现金', k_margin:'占用保证金',
+  k_netexp:'净敞口',
+  btn_start:'▶ 开始本季', btn_advance:'▶ 推进一个月',
+  no_pos:'暂无持仓。', flat_risk:'空仓，账上没有风险。',
+
+  intro_hl:'欢迎来到交易台。', intro_src:'Evolta 交易大厅',
+  intro_ex:'你是一家大宗商品公司的食糖交易员。接下来 12 个月里，你要交易原糖与白糖期货、锁定精炼套利、对冲汇率和运费，并在追加保证金中活下来。点击<b>开始本季</b>接收第一条新闻。把鼠标停在任何<span class="tip" title="就像这样——把鼠标停上去会显示释义。">带下划线的术语</span>上可以看释义。',
+  tip_netexp:'所有持仓的多头减空头敞口，按美元名义金额计。',
+  th_chg:'月度变动', replay_acad:'↺ 重看教程',
+  gloss:'<b style="color:var(--green)">11 号</b> 原糖，国际市场，美分/磅 · 每手 112,000 磅<br><b style="color:var(--green)">5 号</b> 精炼白糖，伦敦，美元/吨 · 每手 50 吨<br><b style="color:var(--green)">白糖升水</b> 5 号 − 11 号(折算)，即精炼利润空间。<br><b style="color:var(--green)">精炼加工费</b> 约 $70/吨，把原糖加工成白糖（能耗、人工、损耗）。<br><b style="color:var(--green)">转化收率</b> 约 92% —— 每产 1 吨白糖约需 1.09 吨原糖。<br><b style="color:var(--green)">乙醇平价</b> 巴西糖厂在产糖与产乙醇之间无差别的价格水平。',
+  reset_hl:'新的一季，全新的账本。',
+  reset_ex:'点击<b>开始本季</b>，接收第一条新闻。',
+  why_matters:'这条新闻的意义：',
+
+  i_n11:'11 号原糖', i_n11_s:'美分/磅 · 国际',
+  i_n11_t:'原蔗糖，ICE 国际市场，每手 112,000 磅。括号内是把美分/磅换算成美元/吨后的价格（×22.046）。',
+  i_n5:'5 号白糖', i_n5_s:'美元/吨 · 伦敦', i_n5_t:'精炼白糖，伦敦市场，每手 50 吨',
+  i_prem:'白糖升水', i_prem_s:'5号 − 原糖(折算)',
+  i_prem_t:'表面价差：白糖价格减去原糖折算价。这不是净利润——你还要付加工费、运费和资金成本，转化过程中还会损失约 8%。',
+  i_toll:'精炼加工费', i_toll_s:'能耗 · 人工 · 损耗',
+  i_toll_t:'把原糖加工成白糖的成本：能耗、人工与收率损失。与运费分开计算，本模型中固定不变。',
+  i_fixed:'固定',
+  i_brl:'雷亚尔/美元', i_brl_s:'每美元兑雷亚尔',
+  i_brl_t:'每美元兑巴西雷亚尔。数值越低表示雷亚尔越强，通常对国际糖价偏多。',
+  i_freight:'运费', i_freight_s:'美元/吨 · 全程', i_freight_t:'运输该批货的成本，全额计入精炼套利。',
+  i_eth:'乙醇平价', i_eth_s:'美分/磅 · 糖醇切换点',
+  i_eth_t:'低于这个水平，巴西糖厂会优先生产乙醇而非食糖——供应因此收紧',
+
+  arb_math:(w,r,y,toll,fr,fin)=>'白糖 $'+w+' − 原糖投入 $'+r+'（原糖 ÷ '+y+' 收率）− 加工费 $'+toll+' − 运费 $'+fr+' − 资金成本 $'+fin+' = ',
+  arb_good:v=>'+'+v+'/吨白糖</b>。很有吸引力，可以考虑锁一船货。',
+  arb_bad:v=>v+'/吨白糖</b>。已经倒挂，现在不要锁。',
+  arb_thin:v=>v+'/吨白糖</b>。很薄——加工费和运费吃掉了大部分升水。',
+
+  tc_n11:'11 号原糖', tc_n11_d:'对国际原糖做方向性交易。每手 = 112,000 磅。',
+  tc_n5:'5 号白糖', tc_n5_d:'对精炼白糖做方向性交易。每手 = 50 吨。',
+  tc_lots:'手数', tc_buy:'买入 / 做多', tc_sell:'卖出 / 做空',
+  tc_arb:'精炼套利',
+  tc_arb_d1:'买原糖、加工成白糖、卖出白糖，把今天的', tc_arb_d2:'按吨锁定。约 2 个月后交割。吨数按买入的原糖计。',
+  tc_arb_net:'净利润',
+  tc_arb_tip:'白糖价格 − 原糖投入（按 92% 收率折算）− $70 加工费 − 全额运费 − 资金成本',
+  tc_tonnes:'吨数',
+  tc_lock_un:'锁定 — 不对冲', tc_lock_un_t:'在交割之前利润随行情浮动——价差风险由你承担',
+  tc_lock_h:'锁定 — 已对冲', tc_lock_h_t:'同时锁定两条期货腿。利润被固定（成本 −$4/吨），不再有每周的盯市波动。',
+  tc_fx:'汇率对冲', tc_fx_d:'做空雷亚尔敞口，对冲巴西来源头寸的汇率风险。',
+  tc_notional:'名义金额（百万美元）', tc_fx_b:'对冲雷亚尔',
+
+  long:'多头', short:'空头', hedged:'已对冲', unhedged:'未对冲',
+  btn_close:'平仓', btn_settle:'交割',
+
+  toast_start:'请先开始本季。',
+  toast_margin:'保证金不足，做不了这么大的仓位。',
+  toast_margin_cargo:'保证金不足，锁不了这船货。',
+  toast_hedged:'已锁定对冲船货——两条腿都固定，利润已锁死。',
+  toast_unhedged:'已锁定未对冲船货——利润在交割前会浮动。',
+  toast_negative:'你锁定了一个"负"的精炼利润。',
+  toast_cargo_pl:v=>'这船精炼货实现盈亏 '+v+'。',
+  toast_mc:'⚠ 追加保证金通知 — 持仓被强制平仓。',
+
+  r_swing:'浮动盈亏变动', r_moved:'行情变化：', r_impact:'持仓影响：',
+  r_none:'本月没有持仓——没什么可归因的。行情动了，但你没有暴露在里面。',
+  r_rose:'上涨', r_fell:'下跌',
+  r_move:(lbl,dir,amt,unit,b,a)=>lbl+dir+' '+amt+unit+'（'+b+unit+'→'+a+unit+'）',
+  r_posline:(side,name,amt)=>side+' '+name+'：'+amt,
+  r_arb:(amt,fav,driver,per)=>'未对冲套利：'+amt+' —— 主要来自'+driver+fav+'（对利润影响 '+per+'/吨）。',
+  r_favourable:'的有利变动', r_adverse:'的不利变动',
+  d_white:'白糖价格', d_raw:'原糖成本', d_freight:'运费',
+  r_hedged_flat:'已对冲船货：按设计盯市为零——利润早已锁定。',
+  m_raw:'11 号原糖', m_white:'5 号白糖', m_freight:'运费', m_brl:'雷亚尔',
+
+  risk_flat:'空仓，账上没有风险。',
+  risk_light:v=>'净杠杆 '+v+' 倍——很轻。',
+  risk_ok:v=>'净杠杆 '+v+' 倍——还算合理。',
+  risk_heavy:v=>'净杠杆 '+v+' 倍——偏重。一次急剧波动就可能让你被追保。',
+
+  news0_hl:'巴西中南部压榨提速，甘蔗压榨量超预期', news0_src:'路透大宗商品',
+  news0_ex:'压榨的甘蔗越多，原糖供应就越多，对 11 号原糖偏空。注意乙醇平价：如果糖厂转向产糖，供应还会进一步增加。',
+  news1_hl:'印度政府将食糖出口禁令延长至下一榨季', news1_src:'彭博',
+  news1_ex:'印度是全球前三大产糖国。出口禁令等于从国际市场抽走供应——对 11 号原糖偏多，白糖也会跟着收紧。',
+  news2_hl:'泰国甘蔗产区出现旱情压力', news2_src:'标普全球',
+  news2_ex:'泰国是主要的白糖出口国。干旱威胁产量——对 5 号白糖及白糖升水都偏多。',
+  news3_hl:'原油大涨 6%，巴西乙醇经济性改善', news3_src:'ICE 日报',
+  news3_ex:'油价走高抬升乙醇价格，糖厂会把甘蔗转去生产乙醇而不是食糖。糖供应减少，对原糖偏多，乙醇平价随之上移。',
+  news4_hl:'意外加息推动雷亚尔大幅走强', news4_src:'外汇快讯',
+  news4_ex:'雷亚尔走强抬高了巴西糖的美元成本，对国际糖价形成支撑。同时也会让未对冲的做空雷亚尔敞口受损。',
+  news5_hl:'商品货币抛售加剧，雷亚尔走弱', news5_src:'外汇快讯',
+  news5_ex:'雷亚尔走弱让巴西糖以美元计更便宜，出口商会积极抛售，压低国际糖价。',
+  news6_hl:'运力紧张推动巴拿马型船运价飙升', news6_src:'波罗的海交易所',
+  news6_ex:'运费上升抬高了实货食糖的到岸成本，压缩实货利润，也会拉大区域基差。',
+  news7_hl:'船舶供应恢复正常，运费回落', news7_src:'波罗的海交易所',
+  news7_ex:'运费下降改善了实货套利的经济性——从产地运到炼厂更便宜了。',
+  news8_hl:'炼厂反映白糖升水过薄，部分产能闲置', news8_src:'普氏',
+  news8_ex:'白糖升水太窄意味着精炼几乎覆盖不了成本。如果长期如此，炼厂会减产——最终反而利多白糖。',
+  news9_hl:'欧盟需求强劲拉动白糖，精炼利润走阔', news9_src:'普氏',
+  news9_ex:'精炼糖需求旺盛拉大白糖升水——精炼套利变得有利可图。',
+  news10_hl:'投机基金削减原糖净多头', news10_src:'CFTC 持仓报告',
+  news10_ex:'大规模投机平仓往往会在短期内压低 11 号原糖，与基本面关系不大。',
+  news11_hl:'技术面转好，基金重新建立多头', news11_src:'CFTC 持仓报告',
+  news11_ex:'新的投机买盘可能推高 11 号原糖，并引发空头回补行情。',
+  news12_hl:'巴西中南部出现霜冻风险', news12_src:'气象台',
+  news12_ex:'霜冻会损伤甘蔗、大幅削减单产——一旦成真，对原糖强烈利多。',
+  news13_hl:'季风降水充沛，印度甘蔗前景改善', news13_src:'路透',
+  news13_ex:'良好的季风预示着印度下一榨季产量更大——对国际糖价偏空。',
+
+  l_kick1:'教程 · 第 1 课 / 共 4 课',
+  l_kick2:'教程 · 第 2 课 / 共 4 课 · 怎么下注',
+  l_kick3:'教程 · 第 3 课 / 共 4 课 · 赚钱机器',
+  l_kick4:'教程 · 第 4 课 / 共 4 课 · 让一整季归零的东西',
+  l_kick5:'教程完成',
+
+  a0_ttl:'两种糖，一个价差',
+  a0_lede:'全球交易两种食糖。<b>原糖</b>（ICE"11 号"，报价单位美分/磅）是未精炼的蔗糖；<b>白糖</b>（伦敦"5 号"，报价单位美元/吨）是端上餐桌的精炼产品。要把两者放在一起比较，需要先把原糖折算成美元/吨——白糖与原糖之间的差额，就是<b>白糖升水</b>。拖动白糖价格看看它怎么变。',
+  a0_rawconv:'原糖（已折算）', a0_white:'5 号白糖', a0_prem:'升水', a0_wprice:'白糖价格',
+  a0_p1:'<b>两者都可以直接下注。</b>如果你判断全球产量收紧就做多原糖；如果你判断精炼糖需求走弱就做空白糖。',
+  a0_p2:'<b>驱动因素不同。</b>原糖看巴西、印度的收成和乙醇；白糖看精炼糖需求和精炼产能。',
+  a0_p3:'<b>升水才是奖品。</b>白糖升水够宽，说明把原糖加工成白糖很赚钱——下一课讲的就是这笔交易。',
+  a0_prem_read:(w,r,pr,note)=>'白糖 $'+w+' − 原糖 $'+r+'（19.5 美分折算）= <b>$'+pr+'/吨</b>白糖升水。'+note,
+  a0_thin:'偏薄——精炼几乎不赚钱。', a0_fat:'很厚——炼厂会开足马力。', a0_healthy:'精炼利润健康。',
+  a1_flat:'价格没变——盈亏为零', a1_moved:(d,v)=>'价格'+d+' '+v+'%',
+  a1_read:(side,dir,v,pnl,note)=>'你现在是<b>'+side+'</b>。价格'+dir+' '+v+'% → '+pnl+'。'+note,
+  a1_longs:'多头（买入）', a1_shorts:'空头（卖出）',
+  a1_up:'上涨', a1_down:'下跌', a1_flat2:'持平',
+  a1_paid:'你判断对了。', a1_against:'行情朝相反方向走了。',
+  a0_lab:'注意单位',
+  a0_txt:'原糖是美分/磅，白糖是美元/吨——比较前先乘以 22.05 换算。把两者搞混，是新手最经典的绊脚石。',
+
+  a1_ttl:'做多与做空',
+  a1_lede:'不是只有价格上涨才能赚钱。<b>做多</b>是先买入，价格<b>上涨</b>时获利；<b>做空</b>是先卖出（借来的糖），价格<b>下跌</b>后再低价买回，赚取差额。选一个方向，然后拖动价格，看你的盈亏怎么翻转。',
+  a1_entry:'开仓价', a1_golong:'▲ 做多（买入）', a1_goshort:'▼ 做空（卖出）', a1_pxmove:'价格变动',
+  a1_p1:'<b>做多 = 看涨。</b>买入 11 号原糖或 5 号白糖期货；价格上涨后高价卖出，赚取差价。',
+  a1_p2:'<b>做空 = 看跌。</b>先卖出你并不持有的合约；价格下跌后低价买回，差额归你。',
+  a1_p3:'<b>两个方向都可能赚，也都可能亏。</b>判断错了，多头会在下跌中亏损，空头会在上涨中亏损。',
+  a1_p4:'<b>两者还可以组合。</b>多原糖 + 空白糖，就是在赌白糖升水会<i>收窄</i>——这是价差交易，而不是单纯的方向性交易。',
+  a1_lab:'为什么做空很重要',
+  a1_txt:'当新闻明显偏空时——丰收、出口过剩——只会做多的交易员只能干看着。<b>做空让你也能在下跌中获利</b>，这样每一条头条都成了机会。',
+
+  a2_ttl:'精炼套利',
+  a2_lede:'这是实货食糖交易台赖以生存的一笔交易：<b>买入原糖、加工成白糖、卖出白糖</b>，并在今天就把利润锁定。但白糖升水并不是白送的利润——你要付<b>精炼加工费</b>、<b>运费</b>、<b>资金成本</b>，转化过程中还会损失约 8%。剩下的才是<b>净利润</b>。拖动价格看看它怎么变。',
+  a2_sold:'卖出白糖', a2_costs:'全部成本', a2_net:'净利润',
+  a2_formula:'原糖÷0.92 + $70 加工费 + 运费 + 资金成本',
+  a2_wt:'白糖 $/吨', a2_rc:'原糖 美分/磅', a2_fr:'运费 $/吨',
+  a2_p1:'<b>净利润 = 白糖 − 原糖投入（÷0.92 收率）− $70 加工费 − 运费 − 资金成本。</b>只有这部分才是真正的利润。',
+  a2_p2:'<b>利润丰厚时就锁定。</b>高于约 $25/吨时套利很有吸引力，近乎无风险的持有收益；低于零则是在亏钱加工。',
+  a2_p3:'<b>做对冲</b>可以把两条腿都固定住，利润一直锁到交割为止——没有波动，代价很小。',
+  a2_lab:'试试看',
+  a2_txt:'把原糖推到 26 美分，白糖仍然维持在 $600——净利润会变成<b>负数</b>。表面升水看起来还是正的，但扣完成本你其实是在亏本加工。<b>要看净利润，而不是看升水。</b>',
+
+  a3_ttl:'杠杆与追加保证金',
+  a3_lede:'期货让你只交一小笔押金（<b>保证金</b>）就能控制一个大仓位。这就是<b>杠杆</b>，而它是双刃剑。如果行情朝反方向走、亏损吃穿了你的押金，交易所就会发出<b>追加保证金通知</b>，并在最糟糕的时点强行平掉你的持仓。选一个杠杆倍数，然后拖动不利行情。',
+  a3_equity:'你的权益', a3_maint:'维持保证金线', a3_mc:'⚠ 追加保证金',
+  a3_lev2:'2 倍杠杆', a3_lev5:'5 倍', a3_lev10:'10 倍', a3_vs:'行情对你的不利幅度',
+  a3_p1:'<b>杠杆越高，缓冲越薄。</b>在 10 倍杠杆下，只要行情反向走几个百分点，就能把你的押金全部抹掉。',
+  a3_p2:'<b>维持保证金线就是危险区。</b>一旦跌破就会被强制平仓——你的持仓在最低点被卖掉，亏损就此坐实。',
+  a3_p3:'<b>追加保证金总在最糟的时候到来</b>——行情剧烈波动、价格最极端、你最想扛住的那一刻。',
+  a3_p4:'<b>防守办法：</b>留出现金缓冲，合理控制仓位规模，不要把账户跑在最高杠杆上。',
+  a3_lab:'试试看',
+  a3_txt:'把杠杆设成 <b>10 倍</b>再拖动不利行情——权益几乎立刻就跌穿维持线。再试试 <b>2 倍</b>：同样的行情几乎伤不到你。<b>杠杆决定了这只是难熬的一个月，还是账户直接爆掉。</b>',
+
+  a4_ttl:'你已经可以上台交易了',
+  a4_lede:'接下来 12 个月里，你的每一个决定都围绕这三件事：',
+  a4_p1:'<b>方向性交易</b>——根据供需新闻，做多或做空原糖（11 号）与白糖（5 号）。',
+  a4_p2:'<b>精炼套利</b>——把"白糖减去各项成本"作为净利润锁定；做对冲则能把价差一直守到交割。',
+  a4_p3:'<b>风险</b>——交易带杠杆，仓位过大时一次急剧波动就可能被<b>追保</b>。记得留一些现金缓冲。',
+  a4_lab:'接下来 12 个月的任务',
+  a4_txt:'你从 <b>1000 万美元</b>起步。读懂每条头条，判断它对原糖、白糖还是套利偏多还是偏空，并据此决定仓位。结束时会有一份带评分的<b>复盘</b>——教程随时可以从术语表面板重看。',
+
+  d_title:'赛季复盘', d_notes:'交易台点评', d_again:'↺ 再交易一季',
+  d_final:'最终权益', d_diracc:'方向判断准确率', d_arbs:'精炼套利',
+  d_risk:'风险纪律', d_mc:'追保次数',
+  d_final_v:(v,r)=>v+'（'+r+'）',
+  d_dir_v:(a,w,l)=>a+'%（对 '+w+' / 错 '+l+'）',
+  d_arb_v:(sc,t,m)=>sc+' — 锁了 '+t+' 笔，错过 '+m+' 笔好机会',
+  d_risk_v:(sc,x)=>sc+'（峰值杠杆 '+x+' 倍）',
+  d_mc_none:'没有，账本干净', d_mc_n:n=>'被强制平仓 '+n+' 次',
+  d_disciplined:'有纪律', d_acceptable:'尚可接受', d_reckless:'过于冒进',
+  d_passive:'过于保守', d_missed:'错过了机会', d_opportunistic:'把握住了机会',
+
+  c_strong:'盈亏表现强劲——你把供应冲击读得很准。',
+  c_down:'这一季收在亏损。回头看看是哪几条新闻你判断反了。',
+  c_diracc:'你的方向性交易亏多赚少——试着在高确信度的新闻上（出口禁令、霜冻、乙醇切换）加大仓位，其余噪音就不要参与。',
+  c_noarb:'你一次精炼套利都没锁。当净利润（扣掉加工费、运费、收率损失和资金成本之后）超过 $25/吨时，那是近乎无风险的收益，你白白放过了。',
+  c_missed:n=>'你错过了 '+n+' 次有吸引力的精炼套利——实货交易员就是靠这个利润过日子的。',
+  c_mc:'追加保证金在最糟糕的时点抹掉了你的持仓。把净杠杆控制在约 1.5 倍以内，并留出应对波动的现金缓冲。',
+  c_heavy:'你的仓位跑得非常重。控制规模的纪律，比判断正确更重要。',
+  c_ok:'交易均衡、有纪律。下一步：在高确信度的机会上再压得重一些，在不突破风险限额的前提下提升收益。'
+}
+};
+let LANG=(function(){
+  const q=new URLSearchParams(location.search).get('lang');
+  if(q&&I18N[q])return q;
+  let v=null;try{v=localStorage.getItem('evolta_lang')}catch(e){}
+  return (v&&I18N[v])?v:'en';
+})();
+function t(k,...a){const v=I18N[LANG][k]!==undefined?I18N[LANG][k]:I18N.en[k];return typeof v==='function'?v(...a):v}
+function MON(i){return t('months')[i];}
+
 const LB_PER_LOT_11 = 112000;          // No.11 raw: 112,000 lb
 const T_PER_LOT_5   = 50;              // No.5 white: 50 tonnes
 const LB_PER_TONNE  = 2204.62;
 const START_CASH    = 10_000_000;
 const MARGIN_RATE   = 0.10;            // 10% initial margin on notional
 const MAINT_RATE    = 0.07;            // maintenance margin
-const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+/* month labels live in the dictionary; MON(i) resolves them */
 
 /* Refining economics (toll-refining arb), kept close to real desk math:
    - raw->white conversion yield ~92% (need ~1.087 t raw per 1 t white)
@@ -371,7 +770,7 @@ const ARB_MONTHS        = 2;           // cargo settles in ~2 months
 let S = null;
 
 function freshState(){
-  return {
+  return {newsMode:'intro',
     started:false,
     turn:0,                 // 0..11
     cash:START_CASH,
@@ -399,52 +798,37 @@ function freshState(){
 /* ============ NEWS / SCENARIO ENGINE ============ */
 /* Each event: headline, source, explainer, and effect fn mutating drifts */
 const NEWS_POOL = [
-  {hl:"Brazil Centre-South harvest accelerates; cane crush beats estimates",src:"Reuters Commodities",
-   ex:"More cane crushed = more raw sugar supply. Bearish for No.11 raws. Watch ethanol parity: if mills tilt toward sugar, supply grows further.",
-   eff:s=>{s.dN11-=1.4; s.dEth+=0.3;}},
-  {hl:"Indian government extends sugar export ban into next season",src:"Bloomberg",
-   ex:"India is a top-3 producer. An export ban removes supply from the world market — bullish for No.11, and tightens whites too.",
-   eff:s=>{s.dN11+=1.8; s.dN5+=22;}},
-  {hl:"Dry weather stress flagged across Thai cane belt",src:"S&P Global",
-   ex:"Thailand is a major white-sugar exporter. Drought threatens output — bullish for No.5 whites and the white premium.",
-   eff:s=>{s.dN5+=30; s.dN11+=0.6;}},
-  {hl:"Crude oil rallies 6%; Brazilian ethanol economics improve",src:"ICE Daily",
-   ex:"Higher oil lifts ethanol prices, so mills divert cane to ethanol instead of sugar. Less sugar supply = bullish raws. Ethanol parity rises.",
-   eff:s=>{s.dN11+=1.5; s.dEth+=0.9;}},
-  {hl:"BRL strengthens sharply on rate-hike surprise",src:"FX Wire",
-   ex:"A stronger Brazilian real raises the USD cost of Brazilian sugar, supporting world prices. It also hurts unhedged USD-short BRL exposure.",
-   eff:s=>{s.dBRL-=0.25; s.dN11+=1.0;}},
-  {hl:"BRL weakens as commodity-currency selloff deepens",src:"FX Wire",
-   ex:"A weaker real makes Brazilian sugar cheaper in USD terms — exporters sell aggressively, pressuring world prices lower.",
-   eff:s=>{s.dBRL+=0.30; s.dN11-=1.2;}},
-  {hl:"Panamax freight rates spike on tonnage shortage",src:"Baltic Exchange",
-   ex:"Higher freight raises delivered cost of physical sugar, squeezing physical margins and widening regional basis.",
-   eff:s=>{s.dFreight+=14;}},
-  {hl:"Freight eases as vessel availability normalises",src:"Baltic Exchange",
-   ex:"Lower freight improves physical arb economics — cheaper to move cargoes from origin to refinery.",
-   eff:s=>{s.dFreight-=10;}},
-  {hl:"Refiners report thin white premium; some idle capacity",src:"Platts",
-   ex:"A narrow white premium means refining barely covers cost. If it stays thin, refiners cut runs — eventually bullish whites.",
-   eff:s=>{s.dN5-=14;}},
-  {hl:"Strong EU demand pulls whites; refining margins fatten",src:"Platts",
-   ex:"Robust demand for refined sugar widens the white premium — the refining arbitrage becomes attractive.",
-   eff:s=>{s.dN5+=26;}},
-  {hl:"Speculative funds cut net-long position in raws",src:"CFTC COT",
-   ex:"Large spec liquidation tends to pressure No.11 lower in the short term regardless of fundamentals.",
-   eff:s=>{s.dN11-=1.3;}},
-  {hl:"Funds rebuild bullish bets as technicals turn up",src:"CFTC COT",
-   ex:"Fresh spec buying can push No.11 higher and trigger short-covering rallies.",
-   eff:s=>{s.dN11+=1.4;}},
-  {hl:"Frost risk emerges in Centre-South Brazil",src:"Weather Desk",
-   ex:"Frost can damage cane and slash yields — sharply bullish for raws if it materialises.",
-   eff:s=>{s.dN11+=2.0; s.dEth+=0.4;}},
-  {hl:"Bumper monsoon lifts Indian cane outlook",src:"Reuters",
-   ex:"A good monsoon points to a larger Indian crop next season — bearish bias for world prices.",
-   eff:s=>{s.dN11-=1.1; s.dN5-=12;}},
+  {id:0,  eff:s=>{s.dN11-=1.4; s.dEth+=0.3;}},
+  {id:1,  eff:s=>{s.dN11+=1.8; s.dN5+=22;}},
+  {id:2,  eff:s=>{s.dN5+=30; s.dN11+=0.6;}},
+  {id:3,  eff:s=>{s.dN11+=1.5; s.dEth+=0.9;}},
+  {id:4,  eff:s=>{s.dBRL-=0.25; s.dN11+=1.0;}},
+  {id:5,  eff:s=>{s.dBRL+=0.30; s.dN11-=1.2;}},
+  {id:6,  eff:s=>{s.dFreight+=14;}},
+  {id:7,  eff:s=>{s.dFreight-=10;}},
+  {id:8,  eff:s=>{s.dN5-=14;}},
+  {id:9,  eff:s=>{s.dN5+=26;}},
+  {id:10, eff:s=>{s.dN11-=1.3;}},
+  {id:11, eff:s=>{s.dN11+=1.4;}},
+  {id:12, eff:s=>{s.dN11+=2.0; s.dEth+=0.4;}},
+  {id:13, eff:s=>{s.dN11-=1.1; s.dN5-=12;}},
 ];
 
 function pickNews(){
   return NEWS_POOL[Math.floor(Math.random()*NEWS_POOL.length)];
+}
+function newsHTML(){
+  if(S.newsMode==='news'&&S.pendingNews){
+    const n=S.pendingNews;
+    return '<div class="news"><div class="hl">'+t('news'+n.id+'_hl')+'</div><div class="src">'+t('news'+n.id+'_src')+'</div>'+
+           '<div class="ex"><b>'+t('why_matters')+'</b> '+t('news'+n.id+'_ex')+'</div></div>';
+  }
+  if(S.newsMode==='reset'){
+    return '<div class="news"><div class="hl">'+t('reset_hl')+'</div><div class="src">'+t('intro_src')+'</div>'+
+           '<div class="ex">'+t('reset_ex')+'</div></div>';
+  }
+  return '<div class="news"><div class="hl">'+t('intro_hl')+'</div><div class="src">'+t('intro_src')+'</div>'+
+         '<div class="ex">'+t('intro_ex')+'</div></div>';
 }
 
 /* ============ MARKET MOVE ============ */
@@ -528,11 +912,11 @@ function equity(){ return S.cash + totalOpenPL(); }
 
 /* ============ TRADING ============ */
 function trade(key,name,side,lots){
-  if(!S.started){ toast("Start the season first."); return; }
+  if(!S.started){ toast(t('toast_start')); return; }
   lots=Math.max(1,Math.floor(lots||1));
   // check margin
   const addMargin = lotNotional(key)*lots*MARGIN_RATE;
-  if(marginUsed()+addMargin > equity()){ toast("Insufficient margin for that size.",true); return; }
+  if(marginUsed()+addMargin > equity()){ toast(t('toast_margin'),true); return; }
   // see if offsetting an existing opposite position -> realise
   let p = S.pos.find(x=>x.key===key);
   const px = instrPrice(key);
@@ -571,19 +955,19 @@ function trackDirectional(realised){
 /* Refining arb: buy raw + refine + sell white, locking current net margin.
    hedged=true also locks both futures legs, removing weekly MTM swing. */
 function lockArb(tonnes,hedged){
-  if(!S.started){ toast("Start the season first."); return; }
+  if(!S.started){ toast(t('toast_start')); return; }
   tonnes=Math.max(1000,Math.floor(tonnes||1000));
   let netMargin = arbNetMargin();
   // a hedge isn't free: small cost (bid/offer + carry on the paper legs)
   const hedgeCostPerT = hedged ? 4 : 0;
   netMargin -= hedgeCostPerT;
   const addMargin = rawToTonneUSD(S.n11)*tonnes*MARGIN_RATE;
-  if(marginUsed()+addMargin>equity()){ toast("Insufficient margin for that cargo.",true); return; }
+  if(marginUsed()+addMargin>equity()){ toast(t('toast_margin_cargo'),true); return; }
   S.physical.push({tonnes,lockedMargin:netMargin,monthsLeft:ARB_MONTHS,netAtLock:netMargin,hedged:!!hedged});
   S.arbsTaken++;
-  if(hedged) toast("Hedged cargo locked — both legs fixed, margin secured.");
-  else if(netMargin>20) toast("Unhedged cargo locked — margin floats until settlement.");
-  else if(netMargin<0) toast("You locked a NEGATIVE refining margin.",true);
+  if(hedged) toast(t('toast_hedged'));
+  else if(netMargin>20) toast(t('toast_unhedged'));
+  else if(netMargin<0) toast(t('toast_negative'),true);
   render();
 }
 function closePhysical(c){
@@ -592,7 +976,7 @@ function closePhysical(c){
   S.realised+=pl; S.cash+=pl;
   trackDirectional(pl);
   S.physical=S.physical.filter(x=>x!==c);
-  toast((pl>=0?"+":"")+fmtUSD(pl)+" on the refining cargo.");
+  toast(t('toast_cargo_pl',(pl>=0?"+":"")+fmtUSD(pl)));
   render();
 }
 
@@ -601,14 +985,14 @@ function buildRecap(news,before){
   const moves=[];
   const fmtMove=(label,b,a,dp,unit)=>{
     const d=a-b; if(Math.abs(d)<(dp===2?0.005:0.5)) return null;
-    const dir=d>0?'rose':'fell';
-    return `${label} ${dir} ${unit==='¢'?'':''}${Math.abs(d).toFixed(dp)}${unit} (${b.toFixed(dp)}${unit}→${a.toFixed(dp)}${unit})`;
+    const dir=d>0?t('r_rose'):t('r_fell');
+    return t('r_move',label,dir,Math.abs(d).toFixed(dp),unit,b.toFixed(dp),a.toFixed(dp));
   };
   [
-    fmtMove('Raw No.11',before.n11,S.n11,2,'¢'),
-    fmtMove('White No.5',before.n5,S.n5,0,''),
-    fmtMove('Freight',before.freight,S.freight,0,''),
-    fmtMove('BRL',before.brl,S.brl,2,''),
+    fmtMove(t('m_raw'),before.n11,S.n11,2,'¢'),
+    fmtMove(t('m_white'),before.n5,S.n5,0,''),
+    fmtMove(t('m_freight'),before.freight,S.freight,0,''),
+    fmtMove(t('m_brl'),before.brl,S.brl,2,''),
   ].forEach(m=>{ if(m) moves.push(m); });
 
   // per-position P&L attribution
@@ -619,7 +1003,7 @@ function buildRecap(news,before){
     const delta=nowPL-(prev?prev.pl:0);
     if(Math.abs(delta)<1) return;
     const dir=p.side>0?'long':'short';
-    lines.push({txt:`${p.side>0?'Long':'Short'} ${p.name}: ${delta>=0?'+':''}${fmtUSD(delta)}`,delta});
+    lines.push({txt:t('r_posline',p.side>0?t('long'):t('short'),p.name,(delta>=0?'+':'')+fmtUSD(delta)),delta});
   });
 
   // arb cargo attribution — decompose the net-margin move into drivers
@@ -632,21 +1016,21 @@ function buildRecap(news,before){
     const dRaw=-(rawToTonneUSD(S.n11)-rawToTonneUSD(before.n11))/CONV_YIELD; // raw up = margin down
     const dWhite=S.n5-before.n5;
     const dFreight=-(S.freight-before.freight);
-    const drivers=[['white price',dWhite],['raw cost',dRaw],['freight',dFreight]]
+    const drivers=[[t('d_white'),dWhite],[t('d_raw'),dRaw],[t('d_freight'),dFreight]]
       .sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]));
     const top=drivers[0];
-    arbDriver = `Unhedged arb: ${arbDelta>=0?'+':''}${fmtUSD(arbDelta)} — mainly ${top[1]>=0?'a favourable':'an adverse'} move in ${top[0]} (${top[1]>=0?'+':''}$${Math.abs(top[1]).toFixed(0)}/t to margin).`;
+    arbDriver = t('r_arb',(arbDelta>=0?'+':'')+fmtUSD(arbDelta),top[1]>=0?t('r_favourable'):t('r_adverse'),top[0],(top[1]>=0?'+':'-')+'$'+Math.abs(top[1]).toFixed(0));
     if(lines.length===0 && S.pos.length===0){} // arb only
   }
   if(S.physical.some(c=>c.hedged)){
-    arbDriver += (arbDriver?' ':'')+'Hedged cargo: MTM flat by design — margin already secured.';
+    arbDriver += (arbDriver?' ':'')+t('r_hedged_flat');
   }
 
   const totalSwing=totalOpenPL()-before.openPL;
 
   S.recap={
-    month:MONTHS[S.turn],
-    headline:news.hl,
+    month:MON(S.turn),
+    newsId:news.id,
     moves,
     lines:lines.sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta)).map(l=>l.txt),
     arbDriver,
@@ -659,7 +1043,7 @@ function startOrAdvance(){
   if(!S.started){
     S.started=true;
     S.turn=0;
-    S.pendingNews=pickNews();
+    S.pendingNews=pickNews();S.newsMode='news';
     document.getElementById('advanceBtn').textContent="▶ Advance Month";
     render();
     return;
@@ -691,13 +1075,13 @@ function startOrAdvance(){
   if(eq < mm){
     S.marginCalls++;
     forceLiquidate();
-    toast("⚠ MARGIN CALL — positions force-liquidated.",true);
+    toast(t('toast_mc'),true);
   }
   // risk breach tracking (net exp > 1.5x equity)
   const lev = Math.abs(netExposure())/Math.max(1,equity());
   if(lev>S.maxRiskBreach) S.maxRiskBreach=lev;
 
-  S.history.push({m:MONTHS[S.turn],eq:equity()});
+  S.history.push({m:MON(S.turn),eq:equity()});
   S.turn++;
 
   if(S.turn>=12){
@@ -705,7 +1089,7 @@ function startOrAdvance(){
     endGame();
     return;
   }
-  S.pendingNews=pickNews();
+  S.pendingNews=pickNews();S.newsMode='news';
   render();
 }
 
@@ -729,16 +1113,11 @@ function arrow(n){return n>0?'▲':n<0?'▼':'—';}
 
 function render(){
   // clock
-  document.getElementById('monthLabel').textContent = S.started? MONTHS[Math.min(S.turn,11)] : "—";
-  document.getElementById('turnLabel').textContent = S.started? `Month ${S.turn+1} of 12` : "Press start";
+  document.getElementById('monthLabel').textContent = S.started? MON(Math.min(S.turn,11)) : "—";
+  document.getElementById('turnLabel').textContent = S.started? t('month_of',S.turn+1,12) : t('press_start');
 
   // news
-  if(S.pendingNews){
-    const n=S.pendingNews;
-    document.getElementById('newsBox').innerHTML=
-      `<div class="news"><div class="hl">${n.hl}</div><div class="src">${n.src}</div>
-       <div class="ex"><b>Why it matters:</b> ${n.ex}</div></div>`;
-  }
+  document.getElementById('newsBox').innerHTML=newsHTML();
 
   // market board
   const prem=whitePremium();
@@ -747,13 +1126,13 @@ function render(){
   const dPrem=prem-(S.lastPrem??prem), dBrl=S.brl-(S.lastBrl??S.brl);
   const dFreight=S.freight-(S.lastFreight??S.freight), dEth=S.ethanolParity-(S.lastEth??S.ethanolParity);
   const rows=[
-    {nm:'No.11 Raw',sub:'¢/lb · world',px:S.n11.toFixed(2)+'¢ <span style="color:var(--txt-faint);font-size:11px">($'+n11usd.toFixed(0)+'/t)</span>',chg:dN11,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(2),tip:'Raw cane sugar, ICE world market, 112,000 lb per lot. Bracket shows the ¢/lb price converted to $/tonne (×22.046).'},
-    {nm:'No.5 White',sub:'$/t · London',px:'$'+S.n5,chg:dN5,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:'Refined white sugar, London, 50 tonnes per lot'},
-    {nm:'White premium',sub:'No.5 − raw(conv)',px:'$'+prem.toFixed(0)+'/t',chg:dPrem,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:'Headline gap: white price minus raw-equivalent price. NOT the net margin — you still pay toll, freight, financing, and lose ~8% in conversion.'},
-    {nm:'Refining toll',sub:'energy · labour · loss',px:'$'+REFINE_TOLL_PER_T+'/t',chg:0,fmt:()=>'fixed',tip:'Cost to process raw into white: energy, labour, and yield loss. Separate from freight. Fixed in this model.'},
-    {nm:'BRL/USD',sub:'real per USD',px:S.brl.toFixed(2),chg:dBrl,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(2),tip:'Brazilian real per USD. A lower number = stronger real, which tends bullish for world sugar.'},
-    {nm:'Freight',sub:'$/t · full leg',px:'$'+S.freight,chg:dFreight,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:'Cost to ship the cargo. Charged in full to the refining arb.'},
-    {nm:'Ethanol parity',sub:'¢/lb mill flex',px:S.ethanolParity.toFixed(1)+'¢',chg:dEth,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(1),tip:'Below this, Brazilian mills favour ethanol over sugar — tightens supply'},
+    {nm:t('i_n11'),sub:t('i_n11_s'),px:S.n11.toFixed(2)+'¢ <span style="color:var(--txt-faint);font-size:11px">($'+n11usd.toFixed(0)+'/t)</span>',chg:dN11,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(2),tip:t('i_n11_t')},
+    {nm:t('i_n5'),sub:t('i_n5_s'),px:'$'+S.n5,chg:dN5,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:t('i_n5_t')},
+    {nm:t('i_prem'),sub:t('i_prem_s'),px:'$'+prem.toFixed(0)+'/t',chg:dPrem,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:t('i_prem_t')},
+    {nm:t('i_toll'),sub:t('i_toll_s'),px:'$'+REFINE_TOLL_PER_T+'/t',chg:0,fmt:()=>t('i_fixed'),tip:t('i_toll_t')},
+    {nm:t('i_brl'),sub:t('i_brl_s'),px:S.brl.toFixed(2),chg:dBrl,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(2),tip:t('i_brl_t')},
+    {nm:t('i_freight'),sub:t('i_freight_s'),px:'$'+S.freight,chg:dFreight,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:t('i_freight_t')},
+    {nm:t('i_eth'),sub:t('i_eth_s'),px:S.ethanolParity.toFixed(1)+'¢',chg:dEth,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(1),tip:t('i_eth_t')},
   ];
   document.getElementById('mktBody').innerHTML=rows.map(r=>{
     const cls=r.chg>0?'up':r.chg<0?'down':'flat';
@@ -764,30 +1143,30 @@ function render(){
   // arb hint — full realistic breakdown, $ per tonne of white
   const rawIn=rawInputCostPerWhiteT(), fin=financeCostPerT(), net=arbNetMargin();
   const ah=document.getElementById('arbHint');
-  const math=`<span style="color:var(--txt-dim)">White $${S.n5} − raw-in $${rawIn.toFixed(0)} (raw ÷ ${CONV_YIELD} yield) − toll $${REFINE_TOLL_PER_T} − freight $${S.freight} − financing $${fin.toFixed(0)} = </span>`;
-  if(net>25) ah.innerHTML=`${math}<b style="color:var(--green)">+${fmtUSD(net)}/t white</b>. Attractive — consider locking a cargo.`;
-  else if(net<0) ah.innerHTML=`${math}<b style="color:var(--neg)">${fmtUSD(net)}/t white</b>. Underwater — don't lock now.`;
-  else ah.innerHTML=`${math}<b>${fmtUSD(net)}/t white</b>. Thin margin.`;
+  const math='<span style="color:var(--txt-dim)">'+t('arb_math',S.n5,rawIn.toFixed(0),CONV_YIELD,REFINE_TOLL_PER_T,S.freight,fin.toFixed(0))+'</span>';
+  if(net>25) ah.innerHTML=math+'<b style="color:var(--green)">'+t('arb_good',fmtUSD(net))+'.';
+  else if(net<0) ah.innerHTML=math+'<b style="color:var(--neg)">'+t('arb_bad',fmtUSD(net))+'.';
+  else ah.innerHTML=math+'<b>'+t('arb_thin',fmtUSD(net))+'.';
 
   // trade desk
   const tg=document.getElementById('tradeGrid');
   tg.innerHTML=`
-    ${tradeCard('n11','No.11 Raw','Directional bet on world raw sugar. 1 lot = 112,000 lb.')}
-    ${tradeCard('n5','No.5 White','Directional bet on refined whites. 1 lot = 50 t.')}
+    ${tradeCard('n11',t('tc_n11'),t('tc_n11_d'))}
+    ${tradeCard('n5',t('tc_n5'),t('tc_n5_d'))}
     <div class="trade-card">
-      <div class="tt">Refining Arb</div>
-      <div class="td">Buy raw, refine, sell white. You lock today's <span class="tip" title="white price − raw input (grossed up by 92% yield) − $70 toll − full freight − financing carry">net margin</span> per tonne. Settles in ~2 months. Tonnes = raw bought.</div>
-      <div class="qty-row"><label>Tonnes</label><input type="number" id="arbQty" value="5000" min="1000" step="1000"></div>
+      <div class="tt">${t('tc_arb')}</div>
+      <div class="td">${t('tc_arb_d1')}<span class="tip" title="${t('tc_arb_tip')}">${t('tc_arb_net')}</span>${t('tc_arb_d2')}</div>
+      <div class="qty-row"><label>${t('tc_tonnes')}</label><input type="number" id="arbQty" value="5000" min="1000" step="1000"></div>
       <div class="btn-row">
-        <button class="buy" onclick="lockArb(+document.getElementById('arbQty').value,false)" title="Margin floats with the market until you settle — you carry spread risk">Lock — Unhedged</button>
-        <button onclick="lockArb(+document.getElementById('arbQty').value,true)" title="Locks both futures legs too. Margin secured (−$4/t cost), no weekly MTM swing.">Lock — Hedged</button>
+        <button class="buy" onclick="lockArb(+document.getElementById('arbQty').value,false)" title="${t('tc_lock_un_t')}">${t('tc_lock_un')}</button>
+        <button onclick="lockArb(+document.getElementById('arbQty').value,true)" title="${t('tc_lock_h_t')}">${t('tc_lock_h')}</button>
       </div>
     </div>
     <div class="trade-card">
       <div class="tt">FX Hedge</div>
-      <div class="td">Short BRL exposure to neutralise currency risk on Brazilian-origin positions.</div>
-      <div class="qty-row"><label>Notional $M</label><input type="number" id="fxQty" value="2" min="1" step="1"></div>
-      <div class="btn-row"><button onclick="fxHedge(+document.getElementById('fxQty').value)">Hedge BRL</button></div>
+      <div class="td">${t('tc_fx_d')}</div>
+      <div class="qty-row"><label>${t('tc_notional')}</label><input type="number" id="fxQty" value="2" min="1" step="1"></div>
+      <div class="btn-row"><button onclick="fxHedge(+document.getElementById('fxQty').value)">${t('tc_fx_b')}</button></div>
     </div>`;
 
   // sidebar
@@ -807,10 +1186,10 @@ function render(){
   bar.style.width=pct+'%';
   bar.style.background=lev<0.8?'var(--green)':lev<1.5?'var(--blue)':'var(--neg)';
   document.getElementById('riskHint').textContent=
-    lev<0.05?'Flat. No risk on the book.':
-    lev<0.8?`Leverage ${lev.toFixed(2)}x — comfortable.`:
-    lev<1.5?`Leverage ${lev.toFixed(2)}x — getting heavy.`:
-    `Leverage ${lev.toFixed(2)}x — danger zone, margin-call risk.`;
+    lev<0.05?t('risk_flat'):
+    lev<0.8?t('risk_light',lev.toFixed(1)):
+    lev<1.5?t('risk_ok',lev.toFixed(1)):
+    t('risk_heavy',lev.toFixed(1));
 
   // positions
   const pb=document.getElementById('posBox');
@@ -818,43 +1197,43 @@ function render(){
   S.pos.forEach((p,i)=>{
     const pl=posOpenPL(p);
     const unit=p.key==='n11'?p.entryPx.toFixed(2)+'¢':'$'+p.entryPx.toFixed(0);
-    html+=`<div class="pos"><div class="pl"><span><span class="tag ${p.side>0?'long':'short'}">${p.side>0?'Long':'Short'}</span> ${p.name}</span>
+    html+=`<div class="pos"><div class="pl"><span><span class="tag ${p.side>0?'long':'short'}">${p.side>0?t('long'):t('short')}</span> ${p.name}</span>
       <small>${p.lots} lot${p.lots>1?'s':''} @ ${unit}</small></div>
       <div class="pr"><span class="${colorPL(pl)}">${fmtUSD(pl)}</span><br>
-      <button style="padding:2px 6px;font-size:9px;margin-top:3px" onclick="closePos(${i})">Close</button></div></div>`;
+      <button style="padding:2px 6px;font-size:9px;margin-top:3px" onclick="closePos(${i})">${t('btn_close')}</button></div></div>`;
   });
   S.physical.forEach((c,i)=>{
     const pl=physicalPL(c);
     const tag = c.hedged
-      ? `<span class="tag" style="background:rgba(11,94,168,.12);color:var(--blue)">Hedged</span>`
-      : `<span class="tag long">Unhedged</span>`;
+      ? `<span class="tag" style="background:rgba(11,94,168,.12);color:var(--blue)">${t('hedged')}</span>`
+      : `<span class="tag long">${t('unhedged')}</span>`;
     html+=`<div class="pos"><div class="pl"><span>${tag} ${(c.tonnes/1000).toFixed(0)}kt arb</span>
       <small>locked $${c.lockedMargin.toFixed(0)}/t · ${c.monthsLeft}mo left${c.hedged?' · MTM flat':''}</small></div>
       <div class="pr"><span class="${colorPL(pl)}">${c.hedged?'flat':fmtUSD(pl)}</span><br>
-      <button style="padding:2px 6px;font-size:9px;margin-top:3px" onclick="closePhysIdx(${i})">Settle</button></div></div>`;
+      <button style="padding:2px 6px;font-size:9px;margin-top:3px" onclick="closePhysIdx(${i})">${t('btn_settle')}</button></div></div>`;
   });
-  pb.innerHTML=html||'<div class="hint">No open positions.</div>';
+  pb.innerHTML=html||'<div class="hint">'+t('no_pos')+'</div>';
 
   // weekly recap
   const rp=document.getElementById('recapPanel'), rb=document.getElementById('recapBox');
   if(S.recap){
     const r=S.recap;
     const swingCls=colorPL(r.totalSwing);
-    let h=`<div style="margin-bottom:10px"><span style="font-family:var(--mono);font-size:10px;color:var(--txt-faint);text-transform:uppercase;letter-spacing:.1em">Open P&L swing</span><br>
+    let h=`<div style="margin-bottom:10px"><span style="font-family:var(--mono);font-size:10px;color:var(--txt-faint);text-transform:uppercase;letter-spacing:.1em">${t('r_swing')}</span><br>
       <span class="big-num ${swingCls}" style="font-size:24px">${r.totalSwing>=0?'+':''}${fmtUSD(r.totalSwing)}</span></div>`;
     if(r.moves.length){
-      h+=`<div style="font-size:11px;color:var(--txt-dim);margin-bottom:8px;line-height:1.6"><b style="color:var(--green)">Market moved:</b><br>`+
+      h+=`<div style="font-size:11px;color:var(--txt-dim);margin-bottom:8px;line-height:1.6"><b style="color:var(--green)">${t('r_moved')}</b><br>`+
          r.moves.map(m=>'· '+m).join('<br>')+`</div>`;
     }
     if(r.lines.length){
-      h+=`<div style="font-size:11.5px;border-top:1px solid var(--line);padding-top:8px;margin-bottom:6px"><b style="color:var(--green)">Position impact:</b><br>`+
+      h+=`<div style="font-size:11.5px;border-top:1px solid var(--line);padding-top:8px;margin-bottom:6px"><b style="color:var(--green)">${t('r_impact')}</b><br>`+
          r.lines.map(l=>{const pos=l.includes('+');return `<div style="padding:2px 0"><span class="${pos?'up':'down'}">${l}</span></div>`;}).join('')+`</div>`;
     }
     if(r.arbDriver){
       h+=`<div style="font-size:11px;color:var(--txt-dim);border-top:1px solid var(--line);padding-top:8px;line-height:1.6">${r.arbDriver}</div>`;
     }
     if(!r.lines.length && !r.arbDriver){
-      h+=`<div class="hint">No open positions this month — nothing to attribute. The market moved but you weren't exposed.</div>`;
+      h+='<div class="hint">'+t('r_none')+'</div>';
     }
     rb.innerHTML=h;
     rp.style.display='block';
@@ -867,10 +1246,10 @@ function tradeCard(key,name,desc){
   return `<div class="trade-card">
     <div class="tt">${name}</div>
     <div class="td">${desc}</div>
-    <div class="qty-row"><label>Lots</label><input type="number" id="q_${key}" value="5" min="1" step="1"></div>
+    <div class="qty-row"><label>${t('tc_lots')}</label><input type="number" id="q_${key}" value="5" min="1" step="1"></div>
     <div class="btn-row">
-      <button class="buy" onclick="trade('${key}','${name}',1,+document.getElementById('q_${key}').value)">Buy / Long</button>
-      <button class="sell" onclick="trade('${key}','${name}',-1,+document.getElementById('q_${key}').value)">Sell / Short</button>
+      <button class="buy" onclick="trade('${key}','${name}',1,+document.getElementById('q_${key}').value)">${t('tc_buy')}</button>
+      <button class="sell" onclick="trade('${key}','${name}',-1,+document.getElementById('q_${key}').value)">${t('tc_sell')}</button>
     </div></div>`;
 }
 function closePos(i){
@@ -881,7 +1260,7 @@ function closePhysIdx(i){ closePhysical(S.physical[i]); }
 
 /* FX hedge: simplified — reduces net exposure sensitivity, small carry cost */
 function fxHedge(mn){
-  if(!S.started){toast("Start the season first.");return;}
+  if(!S.started){toast(t('toast_start'));return;}
   const cost=mn*1000*2; // small hedge cost
   S.cash-=cost; S.realised-=cost;
   toast(`Hedged $${mn}M BRL exposure (cost ${fmtUSD(cost)}).`);
@@ -905,8 +1284,8 @@ function endGame(){
   // scoring
   const dirTotal=S.directionalRight+S.directionalWrong;
   const dirAcc=dirTotal?Math.round(S.directionalRight/dirTotal*100):0;
-  const riskScore = S.maxRiskBreach<0.8?'Disciplined':S.maxRiskBreach<1.5?'Acceptable':'Reckless';
-  const arbScore = S.arbsTaken===0?'Passive':(S.arbsMissed>S.arbsTaken?'Missed opportunities':'Opportunistic');
+  const riskScore = S.maxRiskBreach<0.8?t('d_disciplined'):S.maxRiskBreach<1.5?t('d_acceptable'):t('d_reckless');
+  const arbScore = S.arbsTaken===0?t('d_passive'):(S.arbsMissed>S.arbsTaken?t('d_missed'):t('d_opportunistic'));
 
   let pts=50;
   pts+=Math.max(-40,Math.min(60,ret*1.2));
@@ -918,47 +1297,45 @@ function endGame(){
   const grade=pts>=85?'A':pts>=70?'B':pts>=55?'C':pts>=40?'D':'F';
 
   const dbg=[
-    ['Final equity', fmtUSD(finalEq)+` (${ret>=0?'+':''}${ret.toFixed(1)}%)`, ret>=0?'up':'down'],
-    ['Directional accuracy', `${dirAcc}% (${S.directionalRight}W / ${S.directionalWrong}L)`, dirAcc>=55?'up':dirAcc>=45?'flat':'down'],
-    ['Refining arbs', `${arbScore} — ${S.arbsTaken} taken, ${S.arbsMissed} fat ones missed`, S.arbsTaken>0?'up':'flat'],
-    ['Risk discipline', `${riskScore} (peak ${S.maxRiskBreach.toFixed(1)}x leverage)`, S.maxRiskBreach<0.8?'up':S.maxRiskBreach<1.5?'flat':'down'],
-    ['Margin calls', S.marginCalls===0?'None — clean book':`${S.marginCalls} forced liquidation(s)`, S.marginCalls===0?'up':'down'],
+    [t('d_final'), t('d_final_v',fmtUSD(finalEq),(ret>=0?'+':'')+ret.toFixed(1)+'%'), ret>=0?'up':'down'],
+    [t('d_diracc'), t('d_dir_v',dirAcc,S.directionalRight,S.directionalWrong), dirAcc>=55?'up':dirAcc>=45?'flat':'down'],
+    [t('d_arbs'), t('d_arb_v',arbScore,S.arbsTaken,S.arbsMissed), S.arbsTaken>0?'up':'flat'],
+    [t('d_risk'), t('d_risk_v',riskScore,S.maxRiskBreach.toFixed(1)), S.maxRiskBreach<0.8?'up':S.maxRiskBreach<1.5?'flat':'down'],
+    [t('d_mc'), S.marginCalls===0?t('d_mc_none'):t('d_mc_n',S.marginCalls), S.marginCalls===0?'up':'down'],
   ];
 
   const coaching = buildCoaching(ret,dirAcc,S);
 
   document.getElementById('modalInner').innerHTML=`
-    <h2>Season Debrief <span class="grade" style="background:${grade==='F'||grade==='D'?'var(--neg)':grade==='A'?'var(--green)':'var(--blue)'}">${grade}</span></h2>
+    <h2>${t('d_title')} <span class="grade" style="background:${grade==='F'||grade==='D'?'var(--neg)':grade==='A'?'var(--green)':'var(--blue)'}">${grade}</span></h2>
     <div class="score ${ret>=0?'up':'down'}">${pts}<span style="font-size:18px;color:var(--txt-dim)">/100</span></div>
     ${dbg.map(d=>`<div class="debrief-row"><span class="lbl">${d[0]}</span><span class="rating ${d[2]}">${d[1]}</span></div>`).join('')}
     <div style="margin-top:16px;padding:14px;background:var(--panel2);border-radius:8px;border-left:3px solid var(--blue)">
-      <div style="font-family:var(--disp);color:var(--green);font-size:14px;margin-bottom:6px">Desk notes</div>
+      <div style="font-family:var(--disp);color:var(--green);font-size:14px;margin-bottom:6px">${t('d_notes')}</div>
       <div style="color:var(--txt-dim);font-size:12px;line-height:1.65">${coaching}</div>
     </div>
-    <button class="big-btn" style="margin-top:18px" onclick="restart()">↺ Trade Another Season</button>`;
+    <button class="big-btn" style="margin-top:18px" onclick="restart()">${t('d_again')}</button>`;
   document.getElementById('modalBg').classList.add('show');
 }
 
 function buildCoaching(ret,dirAcc,s){
   const notes=[];
-  if(ret>15) notes.push("Strong P&L — you read the supply shocks well.");
-  else if(ret<0) notes.push("You finished down. Review which news events you faded incorrectly.");
-  if(dirAcc<45) notes.push("Your directional calls lost more than they won — try sizing into high-conviction news (bans, frost, ethanol shifts) and sitting out noise.");
-  if(s.arbsTaken===0) notes.push("You never locked a refining arb. When the net margin (after toll, freight, yield loss and financing) clears $25+/t, that is near-riskless carry you left on the table.");
-  if(s.arbsMissed>0) notes.push(`You skipped ${s.arbsMissed} attractive refining arb${s.arbsMissed>1?'s':''} — physical traders live on that margin.`);
-  if(s.marginCalls>0) notes.push("Margin calls wiped positions at the worst time. Keep net leverage under ~1.5x and hold cash buffer for volatility.");
-  if(s.maxRiskBreach>1.5) notes.push("You ran a very heavy book. Size discipline matters more than being right.");
-  if(notes.length===0) notes.push("Balanced, disciplined trading. Next: try pressing harder on conviction trades to lift returns without breaching risk limits.");
-  return notes.join(" ");
+  if(ret>15) notes.push(t('c_strong'));
+  else if(ret<0) notes.push(t('c_down'));
+  if(dirAcc<45) notes.push(t('c_diracc'));
+  if(s.arbsTaken===0) notes.push(t('c_noarb'));
+  if(s.arbsMissed>0) notes.push(t('c_missed',s.arbsMissed));
+  if(s.marginCalls>0) notes.push(t('c_mc'));
+  if(s.maxRiskBreach>1.5) notes.push(t('c_heavy'));
+  if(notes.length===0) notes.push(t('c_ok'));
+  return notes.join(' ');
 }
 
 function restart(){
   document.getElementById('modalBg').classList.remove('show');
   S=freshState();
-  document.getElementById('advanceBtn').textContent="▶ Start Season";
-  document.getElementById('newsBox').innerHTML=
-    `<div class="news"><div class="hl">New season. Fresh book.</div><div class="src">Evolta Trading Floor</div>
-     <div class="ex">Press <b>Start Season</b> to take the first news tick.</div></div>`;
+  document.getElementById('advanceBtn').textContent=t('btn_start');
+  S.newsMode='reset';
   render();
 }
 
@@ -976,7 +1353,7 @@ function renderSteps(){
 function renderAcademy(){
   renderSteps(); ACAD[acadStep]();
   document.getElementById('backBtn').style.visibility=acadStep===0?'hidden':'visible';
-  document.getElementById('nextBtn').textContent=acadStep===ACAD.length-1?'Enter the trading floor →':'Next ›';
+  document.getElementById('nextBtn').textContent=acadStep===ACAD.length-1?t('nav_enter'):t('nav_next');
   document.getElementById('skipBtn').style.display=acadStep===ACAD.length-1?'none':'inline-block';
 }
 function acadNext(){ if(acadStep>=ACAD.length-1){startGame();return;} acadStep++;renderAcademy();window.scrollTo({top:0,behavior:'smooth'}); }
@@ -990,36 +1367,36 @@ function openAcademy(){
 
 function sweetL0(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 1 of 4</div>
-    <div class="lesson-title">Two sugars, one spread</div>
-    <p class="lesson-lede">The world trades two kinds of sugar. <b>Raw</b> (ICE "No.11", quoted in ¢/lb) is the unrefined cane sugar. <b>White</b> (London "No.5", quoted in $/tonne) is the refined product on your table. To compare them you convert raw into $/tonne — and the gap between white and raw is the <b>white premium</b>. Drag the white price and watch it.</p>
+    <div class="lesson-kicker">${t('l_kick1')}</div>
+    <div class="lesson-title">${t('a0_ttl')}</div>
+    <p class="lesson-lede">${t('a0_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 250" width="100%">
           <line x1="20" y1="210" x2="340" y2="210" stroke="#d6cdd2" stroke-width="1.5"/>
-          <text x="90" y="22" text-anchor="middle" font-size="10" fill="#5e7068">Raw (converted)</text>
-          <text x="265" y="22" text-anchor="middle" font-size="10" fill="#5e7068">White No.5</text>
+          <text x="90" y="22" text-anchor="middle" font-size="10" fill="#5e7068">${t('a0_rawconv')}</text>
+          <text x="265" y="22" text-anchor="middle" font-size="10" fill="#5e7068">${t('a0_white')}</text>
           <rect x="55" y="120" width="70" height="90" rx="3" fill="#8e3b8f" opacity="0.55"/>
           <text id="rawL0" x="90" y="112" text-anchor="middle" font-size="11" fill="#8e3b8f" font-weight="600">$430/t</text>
           <rect id="whiteBar0" class="bar-anim" x="230" y="70" width="70" height="140" rx="3" fill="#c2185b" opacity="0.8"/>
           <text id="whiteL0" x="265" y="62" text-anchor="middle" font-size="11" fill="#c2185b" font-weight="600">$600/t</text>
           <line id="premLine0" class="bar-anim" x1="125" y1="120" x2="230" y2="70" stroke="#1a7a4c" stroke-width="1.5" stroke-dasharray="3 3"/>
-          <text id="premL0" x="180" y="160" text-anchor="middle" font-size="11" fill="#1a7a4c" font-weight="600">premium</text>
+          <text id="premL0" x="180" y="160" text-anchor="middle" font-size="11" fill="#1a7a4c" font-weight="600">${t('a0_prem')}</text>
         </svg>
         <div class="viz-controls">
-          <div class="ctrl-row"><label>White price</label><input type="range" min="480" max="780" value="600" id="wp0" oninput="updatePremium(+this.value)"></div>
+          <div class="ctrl-row"><label>${t('a0_wprice')}</label><input type="range" min="480" max="780" value="600" id="wp0" oninput="updatePremium(+this.value)"></div>
           <div class="read-out" id="premRead0"></div>
         </div>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>You can bet on each directly.</b> Long raw if you think the world crop tightens; short white if you think refined demand softens.</li>
-          <li><b>Different drivers.</b> Raw moves on Brazilian/Indian harvests and ethanol; white moves on refined demand and refining capacity.</li>
-          <li><b>The premium is the prize.</b> A wide white premium means refining raw into white is lucrative — which is the trade the next lesson is all about.</li>
+          <li>${t('a0_p1')}</li>
+          <li>${t('a0_p2')}</li>
+          <li>${t('a0_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">Watch the units</div>
-          <div class="txt">Raw is ¢/lb, white is $/tonne — convert with ×22.05 before you compare. Mixing the two up is the classic beginner trip-wire.</div>
+          <div class="lab">${t('a0_lab')}</div>
+          <div class="txt">${t('a0_txt')}</div>
         </div>
       </div>
     </div>`;
@@ -1034,20 +1411,20 @@ function updatePremium(w){
   document.getElementById('whiteL0').setAttribute('y',base-wh-6);
   document.getElementById('whiteL0').textContent='$'+w+'/t';
   const pl=document.getElementById('premLine0'); pl.setAttribute('y2',base-wh);
-  document.getElementById('premRead0').innerHTML=`White $${w} − raw $${rawT.toFixed(0)} (19.5¢ converted) = <b>$${prem.toFixed(0)}/t</b> white premium. ${prem<120?'Thin — refining barely pays.':prem>200?'Fat — refiners run hard.':'Healthy refining margin.'}`;
+  document.getElementById('premRead0').innerHTML=t('a0_prem_read',w,rawT.toFixed(0),prem.toFixed(0),prem<120?t('a0_thin'):prem>200?t('a0_fat'):t('a0_healthy'));
 }
 
 let dirPos='long';
 function sweetDir(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 2 of 4 · how you bet</div>
-    <div class="lesson-title">Going long, going short</div>
-    <p class="lesson-lede">You don't only make money when prices rise. <b>Long</b> means you buy now and profit if the price goes <b>up</b>. <b>Short</b> means you sell first (borrowing the sugar) and profit if the price goes <b>down</b>, buying it back cheaper later. Pick a side, then drag the price and watch your P&amp;L flip.</p>
+    <div class="lesson-kicker">${t('l_kick2')}</div>
+    <div class="lesson-title">${t('a1_ttl')}</div>
+    <p class="lesson-lede">${t('a1_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 240" width="100%">
           <line x1="40" y1="120" x2="320" y2="120" stroke="#d6cdd2" stroke-width="1.5"/>
-          <text x="46" y="116" font-size="9" fill="#94a59d">entry</text>
+          <text x="46" y="116" font-size="9" fill="#94a59d">${t('a1_entry')}</text>
           <line x1="180" y1="30" x2="180" y2="210" stroke="#e7dde2" stroke-width="1" stroke-dasharray="3 3"/>
           <rect id="dirBar" class="bar-anim" x="150" y="120" width="60" height="0" rx="3" fill="#1a7a4c" opacity="0.85"/>
           <text id="dirPnl" x="180" y="120" text-anchor="middle" font-size="15" font-weight="700" fill="#5e7068">$0</text>
@@ -1055,23 +1432,23 @@ function sweetDir(){
         </svg>
         <div class="viz-controls">
           <div class="chip-row">
-            <div class="chip" id="chipLong" onclick="setDir('long')">▲ Go Long (buy)</div>
-            <div class="chip" id="chipShort" onclick="setDir('short')">▼ Go Short (sell)</div>
+            <div class="chip" id="chipLong" onclick="setDir('long')">${t('a1_golong')}</div>
+            <div class="chip" id="chipShort" onclick="setDir('short')">${t('a1_goshort')}</div>
           </div>
-          <div class="ctrl-row"><label>Price move</label><input type="range" min="-20" max="20" value="0" id="dirMove" oninput="updateDir()"></div>
+          <div class="ctrl-row"><label>${t('a1_pxmove')}</label><input type="range" min="-20" max="20" value="0" id="dirMove" oninput="updateDir()"></div>
           <div class="read-out" id="dirRead"></div>
         </div>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Long = bullish.</b> Buy a No.11 raw or No.5 white future; if it rises, you sell higher and pocket the gain.</li>
-          <li><b>Short = bearish.</b> Sell first without owning it; if the price falls, you buy it back cheaper and keep the difference.</li>
-          <li><b>Either direction can profit — or lose.</b> Get the call wrong and a long loses as prices fall, a short loses as they rise.</li>
-          <li><b>You can combine them.</b> Long raw + short white is a bet that the white premium will <i>narrow</i> — a spread trade, not a pure direction.</li>
+          <li>${t('a1_p1')}</li>
+          <li>${t('a1_p2')}</li>
+          <li>${t('a1_p3')}</li>
+          <li>${t('a1_p4')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">Why shorting matters</div>
-          <div class="txt">When the news is clearly bearish — a bumper harvest, an export glut — a trader who can only buy is stuck watching. <b>Shorting lets you profit from falling prices too</b>, so every headline is an opportunity.</div>
+          <div class="lab">${t('a1_lab')}</div>
+          <div class="txt">${t('a1_txt')}</div>
         </div>
       </div>
     </div>`;
@@ -1096,21 +1473,21 @@ function updateDir(){
   pe.textContent=(dollars>=0?'+$':'-$')+Math.abs(dollars).toLocaleString();
   pe.setAttribute('y', pnlPct>=0?base-h-6:base+h+18);
   pe.setAttribute('fill', pnlPct>0?'#1a7a4c':pnlPct<0?'#c0392b':'#5e7068');
-  document.getElementById('dirNote').textContent = mv===0?'Price unchanged — flat P&L':`Price ${mv>0?'rose':'fell'} ${Math.abs(mv)}%`;
-  document.getElementById('dirRead').innerHTML=`You're <b>${dirPos==='long'?'long (bought)':'short (sold)'}</b>. Price ${mv>0?'up':mv<0?'down':'flat'} ${Math.abs(mv)}% → <b style="color:${pnlPct>0?'var(--pos)':pnlPct<0?'var(--neg)':'var(--txt-dim)'}">${pnlPct>=0?'+':''}${pnlPct}%</b>. ${ (dirPos==='short'&&mv<0)||(dirPos==='long'&&mv>0) ? 'Your call paid off.' : mv===0?'':'The move went against you.'}`;
+  document.getElementById('dirNote').textContent = mv===0?t('a1_flat'):t('a1_moved',mv>0?t('r_rose'):t('r_fell'),Math.abs(mv));
+  document.getElementById('dirRead').innerHTML=t('a1_read',dirPos==='long'?t('a1_longs'):t('a1_shorts'),mv>0?t('a1_up'):mv<0?t('a1_down'):t('a1_flat2'),Math.abs(mv),'<b style="color:'+(pnlPct>0?'var(--pos)':pnlPct<0?'var(--neg)':'var(--txt-dim)')+'">'+(pnlPct>=0?'+':'')+pnlPct+'%</b>',((dirPos==='short'&&mv<0)||(dirPos==='long'&&mv>0))?t('a1_paid'):mv===0?'':t('a1_against'));
 }
 
 function sweetL1(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 3 of 4 · the money machine</div>
-    <div class="lesson-title">The refining arbitrage</div>
-    <p class="lesson-lede">Here's the trade physical sugar desks live on: <b>buy raw, refine it into white, sell the white</b>, and lock the margin today. But the white premium isn't free profit — you pay a <b>refining toll</b>, <b>freight</b>, <b>financing</b>, and you lose ~8% in conversion. What's left is the <b>net margin</b>. Drag the prices and watch it.</p>
+    <div class="lesson-kicker">${t('l_kick3')}</div>
+    <div class="lesson-title">${t('a2_ttl')}</div>
+    <p class="lesson-lede">${t('a2_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 250" width="100%">
-          <text x="60"  y="20" text-anchor="middle" font-size="10" fill="#5e7068">White sold</text>
-          <text x="180" y="20" text-anchor="middle" font-size="10" fill="#5e7068">All costs</text>
-          <text x="300" y="20" text-anchor="middle" font-size="10" fill="#5e7068">Net margin</text>
+          <text x="60"  y="20" text-anchor="middle" font-size="10" fill="#5e7068">${t('a2_sold')}</text>
+          <text x="180" y="20" text-anchor="middle" font-size="10" fill="#5e7068">${t('a2_costs')}</text>
+          <text x="300" y="20" text-anchor="middle" font-size="10" fill="#5e7068">${t('a2_net')}</text>
           <line x1="20" y1="215" x2="340" y2="215" stroke="#d6cdd2" stroke-width="1.5"/>
           <rect id="barWhite" class="bar-anim" x="32" y="60" width="56" height="155" fill="#c2185b" opacity="0.8" rx="3"/>
           <rect id="barCost"  class="bar-anim" x="152" y="80" width="56" height="135" fill="#8e3b8f" opacity="0.6" rx="3"/>
@@ -1118,24 +1495,24 @@ function sweetL1(){
           <text id="lblWhite" x="60"  y="55"  text-anchor="middle" font-size="11" fill="#c2185b" font-weight="600">$600</text>
           <text id="lblCost"  x="180" y="75"  text-anchor="middle" font-size="11" fill="#8e3b8f" font-weight="600">$581</text>
           <text id="lblNet"   x="300" y="175" text-anchor="middle" font-size="13" fill="#1a7a4c" font-weight="600">$19</text>
-          <text x="180" y="234" text-anchor="middle" font-size="9" fill="#94a59d">raw÷0.92 + $70 toll + freight + financing</text>
+          <text x="180" y="234" text-anchor="middle" font-size="9" fill="#94a59d">${t('a2_formula')}</text>
         </svg>
         <div class="viz-controls">
-          <div class="ctrl-row"><label>White $/t</label><input type="range" min="480" max="780" value="600" id="wp1" oninput="updateArb()"><span class="read-out" id="wp1v">$600</span></div>
-          <div class="ctrl-row"><label>Raw ¢/lb</label><input type="range" min="12" max="28" step="0.5" value="19.5" id="rp1" oninput="updateArb()"><span class="read-out" id="rp1v">19.5¢</span></div>
-          <div class="ctrl-row"><label>Freight $/t</label><input type="range" min="15" max="70" value="38" id="fr1" oninput="updateArb()"><span class="read-out" id="fr1v">$38</span></div>
+          <div class="ctrl-row"><label>${t('a2_wt')}</label><input type="range" min="480" max="780" value="600" id="wp1" oninput="updateArb()"><span class="read-out" id="wp1v">$600</span></div>
+          <div class="ctrl-row"><label>${t('a2_rc')}</label><input type="range" min="12" max="28" step="0.5" value="19.5" id="rp1" oninput="updateArb()"><span class="read-out" id="rp1v">19.5¢</span></div>
+          <div class="ctrl-row"><label>${t('a2_fr')}</label><input type="range" min="15" max="70" value="38" id="fr1" oninput="updateArb()"><span class="read-out" id="fr1v">$38</span></div>
           <div class="read-out" id="arbRead"></div>
         </div>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Net margin = white − raw-in (÷0.92 yield) − $70 toll − freight − financing.</b> Only this is real profit.</li>
-          <li><b>Lock it when it's fat.</b> Above ~$25/t the arb is attractive, near-riskless carry; below zero, refining loses money.</li>
-          <li><b>Hedge it</b> and you fix both legs so the margin is secured until the cargo settles — no swings, small cost.</li>
+          <li>${t('a2_p1')}</li>
+          <li>${t('a2_p2')}</li>
+          <li>${t('a2_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">Try this</div>
-          <div class="txt">Push raw up to 26¢ while white stays at $600 — the net margin goes <b>negative</b>. The headline premium still looks positive, but after costs you'd be refining at a loss. <b>Read the net, not the premium.</b></div>
+          <div class="lab">${t('a2_lab')}</div>
+          <div class="txt">${t('a2_txt')}</div>
         </div>
       </div>
     </div>`;
@@ -1164,42 +1541,42 @@ function updateArb(){
 let mcLev=5;
 function sweetMargin(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 4 of 4 · the thing that ends seasons</div>
-    <div class="lesson-title">Leverage &amp; the margin call</div>
-    <p class="lesson-lede">Futures let you control a big position while posting only a small deposit — your <b>margin</b>. That's <b>leverage</b>, and it cuts both ways. If the market moves against you and your losses eat through your deposit, the exchange issues a <b>margin call</b> and force-closes your positions at the worst possible moment. Pick a leverage, then drag the adverse move.</p>
+    <div class="lesson-kicker">${t('l_kick4')}</div>
+    <div class="lesson-title">${t('a3_ttl')}</div>
+    <p class="lesson-lede">${t('a3_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 230" width="100%">
           <line x1="20" y1="195" x2="340" y2="195" stroke="#d6cdd2" stroke-width="1.5"/>
-          <text x="60" y="22" text-anchor="middle" font-size="10" fill="#5e7068">Your equity</text>
+          <text x="60" y="22" text-anchor="middle" font-size="10" fill="#5e7068">${t('a3_equity')}</text>
           <rect x="40" y="45" width="80" height="150" rx="3" fill="#e7dde2"/>
           <rect id="eqBar" class="bar-anim" x="40" y="45" width="80" height="150" rx="3" fill="#1a7a4c" opacity="0.82"/>
           <line id="mcLine" x1="36" y1="150" x2="124" y2="150" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="4 3"/>
-          <text x="128" y="153" font-size="8.5" fill="#c0392b">maintenance</text>
+          <text x="128" y="153" font-size="8.5" fill="#c0392b">${t('a3_maint')}</text>
           <text id="eqLbl" x="80" y="38" text-anchor="middle" font-size="12" font-weight="600" fill="#1a7a4c">$10.0M</text>
-          <text id="mcFlag" x="240" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="#c0392b" style="opacity:0">⚠ MARGIN CALL</text>
+          <text id="mcFlag" x="240" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="#c0392b" style="opacity:0">${t('a3_mc')}</text>
           <text id="mcSub" x="240" y="140" text-anchor="middle" font-size="9.5" fill="#8e7a82"></text>
         </svg>
         <div class="viz-controls">
           <div class="chip-row">
-            <div class="chip" id="lev2" onclick="setLev(2)">2× leverage</div>
-            <div class="chip" id="lev5" onclick="setLev(5)">5×</div>
-            <div class="chip" id="lev10" onclick="setLev(10)">10×</div>
+            <div class="chip" id="lev2" onclick="setLev(2)">${t('a3_lev2')}</div>
+            <div class="chip" id="lev5" onclick="setLev(5)">${t('a3_lev5')}</div>
+            <div class="chip" id="lev10" onclick="setLev(10)">${t('a3_lev10')}</div>
           </div>
-          <div class="ctrl-row"><label>Market vs you</label><input type="range" min="0" max="14" step="0.5" value="0" id="mcMove" oninput="updateMargin()"></div>
+          <div class="ctrl-row"><label>${t('a3_vs')}</label><input type="range" min="0" max="14" step="0.5" value="0" id="mcMove" oninput="updateMargin()"></div>
           <div class="read-out" id="mcRead"></div>
         </div>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Higher leverage = thinner cushion.</b> At 10×, a move of just a few percent against you can wipe out your whole deposit.</li>
-          <li><b>The maintenance line is the danger zone.</b> Fall below it and you're force-liquidated — your positions sold at the bottom, locking in the loss.</li>
-          <li><b>Margin calls hit at the worst time</b> — during a spike, when prices are most extreme and you'd most want to hold on.</li>
-          <li><b>Defence:</b> keep a cash buffer, size positions sensibly, and don't run the book at maximum leverage.</li>
+          <li>${t('a3_p1')}</li>
+          <li>${t('a3_p2')}</li>
+          <li>${t('a3_p3')}</li>
+          <li>${t('a3_p4')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">Try this</div>
-          <div class="txt">Set <b>10×</b> and drag the adverse move — equity collapses past the maintenance line almost immediately. Now try <b>2×</b>: the same move barely dents you. <b>Leverage is the difference between a rough month and a blown account.</b></div>
+          <div class="lab">${t('a3_lab')}</div>
+          <div class="txt">${t('a3_txt')}</div>
         </div>
       </div>
     </div>`;
@@ -1231,17 +1608,17 @@ function updateMargin(){
 
 function sweetL2(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy complete</div>
-    <div class="lesson-title">You're ready for the desk</div>
-    <p class="lesson-lede">Three things drive every call you'll make over the next 12 months:</p>
+    <div class="lesson-kicker">${t('l_kick5')}</div>
+    <div class="lesson-title">${t('a4_ttl')}</div>
+    <p class="lesson-lede">${t('a4_lede')}</p>
     <ul class="lesson-points" style="max-width:64ch">
-      <li><b>Directional trades</b> — go long or short raw (No.11) and white (No.5) on supply &amp; demand news.</li>
-      <li><b>The refining arb</b> — lock white − costs as a net margin; hedge it to secure the spread until settlement.</li>
-      <li><b>Risk</b> — trades use leverage, so an oversized book can get <b>margin-called</b> in a spike. Keep some cash buffer.</li>
+      <li>${t('a4_p1')}</li>
+      <li>${t('a4_p2')}</li>
+      <li>${t('a4_p3')}</li>
     </ul>
     <div class="takeaway" style="max-width:64ch">
-      <div class="lab">Your job for 12 months</div>
-      <div class="txt">Start with <b>$10M</b>. Read each headline, decide if it's bullish or bearish for raw, white, or the arb, and size accordingly. A scored <b>debrief</b> grades you at the end — and you can replay this Academy anytime from the Glossary panel.</div>
+      <div class="lab">${t('a4_lab')}</div>
+      <div class="txt">${t('a4_txt')}</div>
     </div>`;
 }
 
@@ -1255,7 +1632,33 @@ function startGame(){
 
 /* ============ INIT ============ */
 S=freshState();
-renderAcademy();
+/* ================= LANGUAGE ================= */
+function applyLang(){
+  document.documentElement.lang=LANG==='zh'?'zh-CN':'en';
+  document.body.classList.toggle('lang-zh',LANG==='zh');
+  document.title=t('doc_title');
+  const tog=document.getElementById('langToggle');
+  tog.textContent=t('lang_other');
+  tog.setAttribute('aria-label',t('lang_aria'));
+  document.getElementById('brandSub').innerHTML=t('brand_sub');
+  document.getElementById('backAll').textContent=t('back_all');
+  document.getElementById('glossBox').innerHTML=t('gloss');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{el.title=t(el.dataset.i18nTitle)});
+  if(S){
+    document.getElementById('advanceBtn').textContent=S.started?t('btn_advance'):t('btn_start');
+    render();
+  }else{
+    document.getElementById('turnLabel').textContent=t('press_start');
+  }
+  renderAcademy();
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG=LANG==='en'?'zh':'en';
+  try{localStorage.setItem('evolta_lang',LANG)}catch(e){}
+  applyLang();
+});
+applyLang();
 </script>
 </body>
 </html>

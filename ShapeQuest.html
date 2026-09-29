@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shape Quest — Evolta</title>
+<link rel="icon" type="image/png" href="logo.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
+
+:root{
+  --ink:#33324A;
+  --ink-soft:#6E6C8A;
+  --paper:#FFFDF7;
+  --card:#FFFFFF;
+  --line:#E9E5F5;
+  --shapes:#FF6B6B;
+  --symmetry:#2BB3A8;
+  --area:#F5A623;
+  --angles:#8B7CF6;
+  --good:#2E9E5B;
+  --good-bg:#E6F7EC;
+  --bad:#E5533D;
+  --bad-bg:#FDECE8;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:'Fredoka','PingFang SC','Hiragino Sans GB','Microsoft YaHei',
+              -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(1100px 520px at 12% -8%, #FFE9D6 0%, rgba(255,233,214,0) 62%),
+    radial-gradient(900px 520px at 92% 4%, #DCF3FF 0%, rgba(220,243,255,0) 60%),
+    var(--paper);
+  padding:14px 14px 40px;
+  overscroll-behavior-y:contain;
+}
+
+.app{max-width:560px;margin:0 auto;}
+
+/* ---------- top bar ---------- */
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:14px;
+}
+.icon-btn,.back-btn{
+  font-family:inherit;
+  font-size:13px;
+  font-weight:500;
+  color:var(--ink-soft);
+  background:var(--card);
+  border:2px solid var(--line);
+  border-radius:999px;
+  padding:8px 14px;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  line-height:1;
+  transition:transform .12s, border-color .18s, color .18s;
+}
+.icon-btn:active,.back-btn:active{transform:scale(.94);}
+.icon-btn:hover,.back-btn:hover{border-color:#CFC7EA;color:var(--ink);}
+.spacer{margin-left:auto;}
+
+/* ---------- screens ---------- */
+.screen{display:none;}
+.screen.active{display:block;animation:fadeUp .28s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* ---------- home ---------- */
+.hero{text-align:center;margin:6px 0 22px;}
+.hero h1{
+  font-size:38px;
+  font-weight:700;
+  margin:0 0 6px;
+  letter-spacing:-.5px;
+  line-height:1.15;
+}
+.hero p{margin:0;color:var(--ink-soft);font-size:15px;font-weight:400;}
+
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media (max-width:420px){ .mode-grid{grid-template-columns:1fr;} }
+
+.mode-card{
+  position:relative;
+  text-align:left;
+  font-family:inherit;
+  border:none;
+  border-radius:20px;
+  padding:18px 16px 16px;
+  cursor:pointer;
+  color:#fff;
+  box-shadow:0 8px 0 rgba(0,0,0,.10);
+  transition:transform .12s, box-shadow .12s;
+}
+.mode-card:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.10);}
+.mode-card .emoji{font-size:34px;display:block;margin-bottom:6px;line-height:1;}
+.mode-card .name{display:block;font-size:19px;font-weight:600;margin-bottom:3px;}
+.mode-card .desc{display:block;font-size:13px;font-weight:400;opacity:.92;line-height:1.4;}
+.m-shapes{background:var(--shapes);}
+.m-symmetry{background:var(--symmetry);}
+.m-area{background:var(--area);}
+.m-angles{background:var(--angles);}
+
+/* ---------- play ---------- */
+.playbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+.dots{display:flex;gap:5px;flex-wrap:wrap;}
+.dot{
+  width:9px;height:9px;border-radius:50%;
+  background:var(--line);
+  transition:background .2s, transform .2s;
+}
+.dot.done{background:var(--good);}
+.dot.miss{background:#F0B8AE;}
+.dot.now{background:var(--ink);transform:scale(1.35);}
+.stars{margin-left:auto;font-size:15px;font-weight:600;white-space:nowrap;}
+
+.prompt{
+  text-align:center;
+  font-size:21px;
+  font-weight:600;
+  line-height:1.35;
+  margin:4px 0 14px;
+  min-height:29px;
+}
+
+.stage{
+  background:var(--card);
+  border:2px solid var(--line);
+  border-radius:22px;
+  padding:16px;
+  margin-bottom:12px;
+}
+
+/* shape options */
+.opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.opt{
+  border:2px solid var(--line);
+  background:#FCFBFF;
+  border-radius:18px;
+  padding:10px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:104px;
+  transition:transform .12s, border-color .18s, background .18s;
+}
+.opt:active{transform:scale(.95);}
+.opt svg{display:block;width:76px;height:76px;}
+.opt.correct{border-color:var(--good);background:var(--good-bg);}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg);animation:shake .34s;}
+.opt.locked{cursor:default;}
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  25%{transform:translateX(-6px);}
+  50%{transform:translateX(6px);}
+  75%{transform:translateX(-4px);}
+}
+
+/* grids (symmetry + area) */
+.grid-wrap{display:flex;justify-content:center;}
+.grid{
+  display:grid;
+  gap:3px;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  position:relative;
+}
+.cell{
+  background:#F4F2FB;
+  border-radius:6px;
+  aspect-ratio:1;
+  min-width:0;
+  transition:background .13s, transform .13s;
+}
+.cell.fixed{background:var(--symmetry);}
+.cell.on{background:#7BD7CF;}
+.cell.pop{animation:pop .22s;}
+@keyframes pop{0%{transform:scale(.6);}60%{transform:scale(1.12);}100%{transform:scale(1);}}
+.mirror-line{
+  position:absolute;
+  top:-4px;bottom:-4px;
+  width:0;
+  border-left:3px dashed #C9A3F5;
+  pointer-events:none;
+}
+.cell.sel{background:var(--area);}
+.cell.sel-ok{background:#7ED9A0;}
+
+.readout{
+  text-align:center;
+  font-size:19px;
+  font-weight:600;
+  margin-top:12px;
+  min-height:26px;
+  letter-spacing:.3px;
+}
+.readout .sub{
+  display:block;
+  font-size:13px;
+  font-weight:400;
+  color:var(--ink-soft);
+  margin-top:2px;
+}
+
+/* angles */
+.angle-wrap{display:flex;justify-content:center;}
+.angle-svg{
+  width:100%;
+  max-width:320px;
+  height:auto;
+  touch-action:none;
+  cursor:grab;
+}
+.angle-svg:active{cursor:grabbing;}
+.knob{fill:var(--angles);stroke:#fff;stroke-width:3;}
+.choice-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
+.choice{
+  font-family:inherit;
+  font-size:16px;
+  font-weight:600;
+  padding:14px 6px;
+  border-radius:14px;
+  border:2px solid var(--line);
+  background:#FCFBFF;
+  color:var(--ink);
+  cursor:pointer;
+  transition:transform .12s, border-color .18s, background .18s;
+}
+.choice:active{transform:scale(.95);}
+.choice.correct{border-color:var(--good);background:var(--good-bg);color:var(--good);}
+.choice.wrong{border-color:var(--bad);background:var(--bad-bg);color:var(--bad);}
+
+/* feedback + actions */
+.feedback{
+  text-align:center;
+  font-size:16px;
+  font-weight:500;
+  border-radius:14px;
+  padding:11px 12px;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#F4F2FB;
+  color:var(--ink-soft);
+  margin-bottom:12px;
+}
+.feedback.good{background:var(--good-bg);color:var(--good);}
+.feedback.bad{background:var(--bad-bg);color:var(--bad);}
+
+.actions{display:flex;gap:10px;}
+.btn{
+  flex:1;
+  font-family:inherit;
+  font-size:17px;
+  font-weight:600;
+  padding:15px 12px;
+  border-radius:16px;
+  border:none;
+  cursor:pointer;
+  background:var(--card);
+  color:var(--ink);
+  border:2px solid var(--line);
+  transition:transform .12s;
+}
+.btn:active{transform:scale(.97);}
+.btn.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn.hidden{display:none;}
+
+/* ---------- done ---------- */
+.done-box{text-align:center;padding:26px 16px;}
+.done-stars{font-size:46px;letter-spacing:4px;margin-bottom:10px;line-height:1;}
+.done-score{font-size:44px;font-weight:700;margin:6px 0;}
+.done-msg{font-size:17px;color:var(--ink-soft);margin-bottom:24px;}
+
+/* ---------- confetti ---------- */
+#confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:60;}
+.confetti-bit{position:absolute;width:9px;height:14px;border-radius:2px;will-change:transform,opacity;}
+
+@media (max-width:380px){
+  .hero h1{font-size:32px;}
+  .prompt{font-size:19px;}
+  .opt svg{width:64px;height:64px;}
+  .choice{font-size:15px;padding:13px 4px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <a class="back-btn" href="index.html">&larr; Evolta</a>
+    <button class="icon-btn spacer" id="soundBtn" type="button">🔊</button>
+    <button class="icon-btn" id="langToggle" type="button">中文</button>
+  </div>
+
+  <!-- ============ HOME ============ -->
+  <section class="screen active" id="screenHome">
+    <div class="hero">
+      <h1 data-i18n="game_title">Shape Quest</h1>
+      <p data-i18n="home_sub">Pick a game and start exploring!</p>
+    </div>
+    <div class="mode-grid" id="modeGrid"></div>
+  </section>
+
+  <!-- ============ PLAY ============ -->
+  <section class="screen" id="screenPlay">
+    <div class="playbar">
+      <div class="dots" id="dots"></div>
+      <div class="stars" id="starCount">⭐ 0</div>
+    </div>
+
+    <div class="prompt" id="prompt"></div>
+    <div class="stage" id="stage"></div>
+    <div class="feedback" id="feedback"></div>
+
+    <div class="actions">
+      <button class="btn" id="quitBtn" type="button" data-i18n="btn_menu">Menu</button>
+      <button class="btn primary" id="mainBtn" type="button"></button>
+    </div>
+  </section>
+
+  <!-- ============ DONE ============ -->
+  <section class="screen" id="screenDone">
+    <div class="stage done-box">
+      <div class="done-stars" id="doneStars">⭐⭐⭐</div>
+      <div class="done-score" id="doneScore">0/8</div>
+      <div class="done-msg" id="doneMsg"></div>
+      <div class="actions">
+        <button class="btn" id="doneMenu" type="button" data-i18n="btn_menu">Menu</button>
+        <button class="btn primary" id="doneAgain" type="button" data-i18n="btn_again">Play again</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+<div id="confetti"></div>
+
+<script>
+/* ==========================================================
+   i18n — shares the evolta_lang key with the rest of the site
+   ========================================================== */
+const I18N = {
+  en: {
+    doc_title:    'Shape Quest — Evolta',
+    lang_other:   '中文',
+    lang_aria:    'Switch to Chinese',
+    game_title:   'Shape Quest',
+    home_sub:     'Pick a game and start exploring!',
+
+    mode_shapes_name: 'Shape Detective',
+    mode_shapes_desc: 'Find shapes by name and by sides',
+    mode_symmetry_name:'Symmetry Painter',
+    mode_symmetry_desc:'Mirror the pattern across the line',
+    mode_area_name:   'Area Builder',
+    mode_area_desc:   'Build rectangles to the right size',
+    mode_angles_name: 'Angle Explorer',
+    mode_angles_desc: 'Meet acute, right and obtuse angles',
+
+    btn_menu:     'Menu',
+    btn_again:    'Play again',
+    btn_next:     'Next',
+    btn_check:    'Check',
+    stars_label:  n => `⭐ ${n}`,
+
+    sh_circle:    'circle',
+    sh_oval:      'oval',
+    sh_triangle:  'triangle',
+    sh_square:    'square',
+    sh_rectangle: 'rectangle',
+    sh_rhombus:   'rhombus',
+    sh_trapezoid: 'trapezoid',
+    sh_pentagon:  'pentagon',
+    sh_hexagon:   'hexagon',
+
+    p_tap_name:   s => `Tap the ${s}`,
+    p_tap_sides:  n => `Which shape has ${n} sides?`,
+    p_symmetry:   'Mirror the pattern on the other side',
+    p_area:       n => `Build a rectangle with area ${n}`,
+    p_perimeter:  n => `Build a rectangle with perimeter ${n}`,
+    p_make_angle: a => `Drag to make ${a}`,
+    p_classify:   'What kind of angle is this?',
+
+    a_acute:      'Acute',
+    a_right:      'Right',
+    a_obtuse:     'Obtuse',
+    a_acute_ind:  'an acute angle',
+    a_right_ind:  'a right angle',
+    a_obtuse_ind: 'an obtuse angle',
+
+    r_size:       (w, h, a) => `${w} × ${h} = ${a}`,
+    r_area:       'area',
+    r_perimeter:  'perimeter',
+    r_drag_hint:  'Drag across the grid to draw a rectangle',
+    r_degrees:    d => `${d}°`,
+
+    fb_great:     'Great job! 🎉',
+    fb_nice:      'Nice one! 🌟',
+    fb_yes:       'That\'s it! ✨',
+    fb_wrong_is:  s => `Not quite — it was the ${s}`,
+    fb_wrong_ang: a => `Not quite — that one is ${a}`,
+    fb_too_big:   'A bit too big — try smaller',
+    fb_too_small: 'A bit too small — try bigger',
+    fb_area_off:  (got, want) => `That is ${got}. You need ${want} — keep trying!`,
+    fb_sym_off:   'Not symmetric yet — check each row',
+    fb_keep:      'Keep going!',
+
+    done_title:   'Round complete',
+    done_perfect: 'Perfect! You are a shape master! 🏆',
+    done_good:    'Well done! Almost every one. 🌟',
+    done_ok:      'Good effort — try one more round!',
+    done_try:     'Keep practising, you are getting there!'
+  },
+
+  zh: {
+    doc_title:    '几何大冒险 — Evolta',
+    lang_other:   'EN',
+    lang_aria:    '切换到英文',
+    game_title:   '几何大冒险',
+    home_sub:     '选一个游戏，开始探索吧！',
+
+    mode_shapes_name: '形状侦探',
+    mode_shapes_desc: '按名字和边数找出图形',
+    mode_symmetry_name:'对称画家',
+    mode_symmetry_desc:'把图案补成左右对称',
+    mode_area_name:   '面积小建筑师',
+    mode_area_desc:   '搭出指定大小的长方形',
+    mode_angles_name: '角度探险家',
+    mode_angles_desc: '认识锐角、直角和钝角',
+
+    btn_menu:     '返回菜单',
+    btn_again:    '再玩一次',
+    btn_next:     '下一题',
+    btn_check:    '检查',
+    stars_label:  n => `⭐ ${n}`,
+
+    sh_circle:    '圆形',
+    sh_oval:      '椭圆形',
+    sh_triangle:  '三角形',
+    sh_square:    '正方形',
+    sh_rectangle: '长方形',
+    sh_rhombus:   '菱形',
+    sh_trapezoid: '梯形',
+    sh_pentagon:  '五边形',
+    sh_hexagon:   '六边形',
+
+    p_tap_name:   s => `点一点${s}`,
+    p_tap_sides:  n => `哪个图形有 ${n} 条边？`,
+    p_symmetry:   '把右边补成对称的图案',
+    p_area:       n => `搭一个面积是 ${n} 的长方形`,
+    p_perimeter:  n => `搭一个周长是 ${n} 的长方形`,
+    p_make_angle: a => `拖一拖，做出一个${a}`,
+    p_classify:   '这是什么角？',
+
+    a_acute:      '锐角',
+    a_right:      '直角',
+    a_obtuse:     '钝角',
+    a_acute_ind:  '锐角',
+    a_right_ind:  '直角',
+    a_obtuse_ind: '钝角',
+
+    r_size:       (w, h, a) => `${w} × ${h} = ${a}`,
+    r_area:       '面积',
+    r_perimeter:  '周长',
+    r_drag_hint:  '在格子上拖一拖，画出长方形',
+    r_degrees:    d => `${d}°`,
+
+    fb_great:     '太棒了！🎉',
+    fb_nice:      '很厉害！🌟',
+    fb_yes:       '答对啦！✨',
+    fb_wrong_is:  s => `还差一点——正确答案是${s}`,
+    fb_wrong_ang: a => `还差一点——这个是${a}`,
+    fb_too_big:   '有点太大了，试试小一点',
+    fb_too_small: '有点太小了，试试大一点',
+    fb_area_off:  (got, want) => `现在是 ${got}，要的是 ${want}，再试试！`,
+    fb_sym_off:   '还不对称哦，一行一行对照看看',
+    fb_keep:      '继续加油！',
+
+    done_title:   '本轮结束',
+    done_perfect: '完美！你就是图形小达人！🏆',
+    done_good:    '很棒！几乎全对。🌟',
+    done_ok:      '不错哦，再来一轮试试！',
+    done_try:     '多练几次，你会越来越厉害！'
+  }
+};
+
+let LANG = (function () {
+  const q = new URLSearchParams(location.search).get('lang');
+  if (q && I18N[q]) return q;
+  let saved = null;
+  try { saved = localStorage.getItem('evolta_lang'); } catch (e) {}
+  if (saved && I18N[saved]) return saved;
+  return (navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+})();
+
+function t(key, ...args) {
+  const v = I18N[LANG][key] !== undefined ? I18N[LANG][key] : I18N.en[key];
+  return typeof v === 'function' ? v(...args) : v;
+}
+
+/* ==========================================================
+   Sound — short WebAudio blips, muted state persisted
+   ========================================================== */
+let soundOn = true;
+try { soundOn = localStorage.getItem('evolta_sound') !== 'off'; } catch (e) {}
+let audioCtx = null;
+
+function beep(freqs, dur) {
+  if (!soundOn) return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    freqs.forEach((f, i) => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = 'sine';
+      o.frequency.value = f;
+      const start = audioCtx.currentTime + i * dur;
+      g.gain.setValueAtTime(0.0001, start);
+      g.gain.exponentialRampToValueAtTime(0.16, start + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(start); o.stop(start + dur + 0.02);
+    });
+  } catch (e) { /* audio is a nicety, never a blocker */ }
+}
+const sfxGood = () => beep([620, 830, 1040], 0.11);
+const sfxBad  = () => beep([300, 220], 0.13);
+const sfxTap  = () => beep([520], 0.05);
+
+/* ==========================================================
+   Confetti
+   ========================================================== */
+const COLORS = ['#FF6B6B', '#2BB3A8', '#F5A623', '#8B7CF6', '#4CC38A', '#FF9CC4'];
+function confetti(n) {
+  const host = document.getElementById('confetti');
+  for (let i = 0; i < n; i++) {
+    const bit = document.createElement('div');
+    bit.className = 'confetti-bit';
+    const left = 15 + Math.random() * 70;
+    const drift = (Math.random() - 0.5) * 220;
+    const dur = 1100 + Math.random() * 900;
+    bit.style.left = left + 'vw';
+    bit.style.top = '-24px';
+    bit.style.background = COLORS[(Math.random() * COLORS.length) | 0];
+    host.appendChild(bit);
+    bit.animate([
+      { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+      { transform: `translate(${drift}px, ${window.innerHeight + 60}px) rotate(${540 + Math.random() * 540}deg)`, opacity: 0.9 }
+    ], { duration: dur, easing: 'cubic-bezier(.25,.6,.5,1)' }).onfinish = () => bit.remove();
+  }
+}
+
+/* ==========================================================
+   Shape drawing (SVG)
+   ========================================================== */
+function regularPoly(n, cx, cy, r, rot) {
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = rot + (i * 2 * Math.PI) / n;
+    pts.push(`${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`);
+  }
+  return pts.join(' ');
+}
+
+const SHAPES = {
+  circle:    { sides: 0, draw: c => `<circle cx="50" cy="50" r="34" fill="${c}"/>` },
+  oval:      { sides: 0, draw: c => `<ellipse cx="50" cy="50" rx="38" ry="25" fill="${c}"/>` },
+  triangle:  { sides: 3, draw: c => `<polygon points="${regularPoly(3, 50, 53, 38, -Math.PI / 2)}" fill="${c}"/>` },
+  square:    { sides: 4, draw: c => `<rect x="17" y="17" width="66" height="66" rx="4" fill="${c}"/>` },
+  rectangle: { sides: 4, draw: c => `<rect x="9" y="27" width="82" height="46" rx="4" fill="${c}"/>` },
+  rhombus:   { sides: 4, draw: c => `<polygon points="50,10 86,50 50,90 14,50" fill="${c}"/>` },
+  trapezoid: { sides: 4, draw: c => `<polygon points="26,22 74,22 90,78 10,78" fill="${c}"/>` },
+  pentagon:  { sides: 5, draw: c => `<polygon points="${regularPoly(5, 50, 52, 38, -Math.PI / 2)}" fill="${c}"/>` },
+  hexagon:   { sides: 6, draw: c => `<polygon points="${regularPoly(6, 50, 50, 38, -Math.PI / 2)}" fill="${c}"/>` }
+};
+const SHAPE_IDS = Object.keys(SHAPES);
+
+function shapeSVG(id, color) {
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">${SHAPES[id].draw(color)}</svg>`;
+}
+
+/* ==========================================================
+   Helpers
+   ========================================================== */
+const $ = id => document.getElementById(id);
+const randInt = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = arr => arr[(Math.random() * arr.length) | 0];
+function shuffle(a) {
+  const r = a.slice();
+  for (let i = r.length - 1; i > 0; i--) {
+    const j = (Math.random() * (i + 1)) | 0;
+    [r[i], r[j]] = [r[j], r[i]];
+  }
+  return r;
+}
+
+/* ==========================================================
+   Game state
+   ========================================================== */
+const TOTAL = 8;
+let modeId = null;
+let qIndex = 0;
+let stars = 0;
+let results = [];       // true | false per question
+let answered = false;   // question resolved, waiting for Next
+let task = null;
+
+const stage = $('stage');
+const promptEl = $('prompt');
+const feedbackEl = $('feedback');
+const mainBtn = $('mainBtn');
+
+function setFeedback(msg, kind) {
+  feedbackEl.textContent = msg || '';
+  feedbackEl.className = 'feedback' + (kind ? ' ' + kind : '');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function renderDots() {
+  const d = $('dots');
+  d.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const el = document.createElement('div');
+    let cls = 'dot';
+    if (i < results.length) cls += results[i] ? ' done' : ' miss';
+    else if (i === qIndex) cls += ' now';
+    el.className = cls;
+    d.appendChild(el);
+  }
+  $('starCount').textContent = t('stars_label', stars);
+}
+
+/* Resolve a question: award a star, show feedback, wait for Next. */
+function resolve(correct, msg) {
+  if (answered) return;
+  answered = true;
+  results[qIndex] = correct;
+  if (correct) {
+    stars++;
+    confetti(18);
+    sfxGood();
+    setFeedback(msg || pick([t('fb_great'), t('fb_nice'), t('fb_yes')]), 'good');
+  } else {
+    sfxBad();
+    setFeedback(msg || t('fb_keep'), 'bad');
+  }
+  renderDots();
+  mainBtn.textContent = t('btn_next');
+  mainBtn.classList.remove('hidden');
+  mainBtn.disabled = false;
+  mainBtn.dataset.action = 'next';
+}
+
+/* A nudge that does NOT end the question — used by the build-it modes. */
+function nudge(msg) {
+  sfxBad();
+  setFeedback(msg, 'bad');
+}
+
+/* ==========================================================
+   MODE 1 — Shape Detective
+   ========================================================== */
+const ShapeDetective = {
+  build() {
+    const byName = Math.random() < 0.55;
+    if (byName) {
+      const answer = pick(SHAPE_IDS);
+      const others = shuffle(SHAPE_IDS.filter(s => s !== answer)).slice(0, 3);
+      return { kind: 'name', answer, options: shuffle([answer, ...others]) };
+    }
+    // by side count — every option must have a distinct side count
+    const withSides = SHAPE_IDS.filter(s => SHAPES[s].sides > 0);
+    const answer = pick(withSides);
+    const n = SHAPES[answer].sides;
+    const pool = shuffle(SHAPE_IDS.filter(s => SHAPES[s].sides !== n));
+    const seen = new Set();
+    const others = [];
+    for (const s of pool) {
+      if (seen.has(SHAPES[s].sides)) continue;
+      seen.add(SHAPES[s].sides);
+      others.push(s);
+      if (others.length === 3) break;
+    }
+    return { kind: 'sides', answer, count: n, options: shuffle([answer, ...others]) };
+  },
+
+  render(tk) {
+    promptEl.textContent = tk.kind === 'name'
+      ? t('p_tap_name', t('sh_' + tk.answer))
+      : t('p_tap_sides', tk.count);
+
+    const grid = document.createElement('div');
+    grid.className = 'opt-grid';
+    tk.options.forEach((id, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'opt';
+      b.innerHTML = shapeSVG(id, COLORS[i % COLORS.length]);
+      b.addEventListener('click', () => {
+        if (answered) return;
+        const ok = id === tk.answer;
+        b.classList.add(ok ? 'correct' : 'wrong');
+        if (!ok) {
+          [...grid.children].forEach((c, ci) => {
+            if (tk.options[ci] === tk.answer) c.classList.add('correct');
+          });
+        }
+        [...grid.children].forEach(c => c.classList.add('locked'));
+        resolve(ok, ok ? null : t('fb_wrong_is', t('sh_' + tk.answer)));
+      });
+      grid.appendChild(b);
+    });
+
+    stage.innerHTML = '';
+    stage.appendChild(grid);
+    mainBtn.classList.add('hidden');
+  }
+};
+
+/* ==========================================================
+   MODE 2 — Symmetry Painter
+   ========================================================== */
+const COLS = 8, ROWS = 6, HALF = COLS / 2;
+
+const SymmetryPainter = {
+  build(level) {
+    const count = Math.min(3 + Math.floor(level / 2), 8);
+    const left = new Set();
+    // grow a blob so the pattern always looks deliberate rather than scattered
+    let r = randInt(1, ROWS - 2), c = randInt(0, HALF - 1);
+    left.add(r + ',' + c);
+    let guard = 0;
+    while (left.size < count && guard++ < 200) {
+      const [pr, pc] = pick([...left]).split(',').map(Number);
+      const [dr, dc] = pick([[0, 1], [0, -1], [1, 0], [-1, 0]]);
+      const nr = pr + dr, nc = pc + dc;
+      if (nr < 0 || nr >= ROWS || nc < 0 || nc >= HALF) continue;
+      left.add(nr + ',' + nc);
+    }
+    return { left, right: new Set() };
+  },
+
+  render(tk) {
+    promptEl.textContent = t('p_symmetry');
+
+    const wrap = document.createElement('div');
+    wrap.className = 'grid-wrap';
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    grid.style.gridTemplateColumns = `repeat(${COLS}, minmax(0, 1fr))`;
+    grid.style.width = 'min(100%, 340px)';
+
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.dataset.r = r;
+        cell.dataset.c = c;
+        if (c < HALF && tk.left.has(r + ',' + c)) cell.classList.add('fixed');
+        // Restore work already done (a language switch re-renders the stage).
+        if (c >= HALF && tk.right.has(r + ',' + c)) cell.classList.add('on');
+        grid.appendChild(cell);
+      }
+    }
+
+    const line = document.createElement('div');
+    line.className = 'mirror-line';
+    line.style.left = 'calc(50% - 1px)';
+    grid.appendChild(line);
+
+    wrap.appendChild(grid);
+    stage.innerHTML = '';
+    stage.appendChild(wrap);
+
+    let painting = false, paintOn = true;
+
+    const cellAt = (x, y) => {
+      const el = document.elementFromPoint(x, y);
+      if (!el || !el.classList.contains('cell')) return null;
+      const c = +el.dataset.c;
+      return c >= HALF ? el : null;   // only the right half is editable
+    };
+
+    const paint = el => {
+      const r = +el.dataset.r, c = +el.dataset.c;
+      const key = r + ',' + c;
+      const has = tk.right.has(key);
+      if (paintOn && has) return;
+      if (!paintOn && !has) return;
+      if (paintOn) { tk.right.add(key); el.classList.add('on', 'pop'); setTimeout(() => el.classList.remove('pop'), 240); }
+      else { tk.right.delete(key); el.classList.remove('on'); }
+      checkDone();
+    };
+
+    const checkDone = () => {
+      if (answered) return;
+      // Nothing to say until they've used the right number of squares.
+      if (tk.right.size !== tk.left.size) { setFeedback(''); return; }
+
+      for (const key of tk.left) {
+        const [r, c] = key.split(',').map(Number);
+        if (!tk.right.has(r + ',' + (COLS - 1 - c))) {
+          // Right count, wrong placement — the moment worth nudging on.
+          setFeedback(t('fb_sym_off'), 'bad');
+          return;
+        }
+      }
+      grid.style.pointerEvents = 'none';
+      resolve(true);
+    };
+
+    grid.addEventListener('pointerdown', e => {
+      if (answered) return;
+      const el = cellAt(e.clientX, e.clientY);
+      if (!el) return;
+      e.preventDefault();
+      painting = true;
+      paintOn = !tk.right.has(el.dataset.r + ',' + el.dataset.c);
+      grid.setPointerCapture(e.pointerId);
+      paint(el);
+    });
+    grid.addEventListener('pointermove', e => {
+      if (!painting || answered) return;
+      const el = cellAt(e.clientX, e.clientY);
+      if (el) paint(el);
+    });
+    const stop = () => { painting = false; };
+    grid.addEventListener('pointerup', stop);
+    grid.addEventListener('pointercancel', stop);
+
+    mainBtn.classList.add('hidden');
+  }
+};
+
+/* ==========================================================
+   MODE 3 — Area Builder
+   ========================================================== */
+const A_COLS = 8, A_ROWS = 6;
+
+const AreaBuilder = {
+  build(level) {
+    const wantPerimeter = level >= 3 && Math.random() < 0.4;
+    if (wantPerimeter) {
+      // pick a rectangle that fits, then ask for its perimeter
+      const w = randInt(2, A_COLS), h = randInt(2, A_ROWS);
+      return { type: 'perimeter', target: 2 * (w + h) };
+    }
+    const w = randInt(2, A_COLS), h = randInt(2, A_ROWS);
+    return { type: 'area', target: w * h };
+  },
+
+  render(tk) {
+    promptEl.textContent = tk.type === 'area'
+      ? t('p_area', tk.target)
+      : t('p_perimeter', tk.target);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'grid-wrap';
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    grid.style.gridTemplateColumns = `repeat(${A_COLS}, minmax(0, 1fr))`;
+    grid.style.width = 'min(100%, 340px)';
+
+    for (let r = 0; r < A_ROWS; r++) {
+      for (let c = 0; c < A_COLS; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.dataset.r = r;
+        cell.dataset.c = c;
+        grid.appendChild(cell);
+      }
+    }
+    wrap.appendChild(grid);
+
+    const readout = document.createElement('div');
+    readout.className = 'readout';
+    readout.innerHTML = `<span class="sub">${t('r_drag_hint')}</span>`;
+
+    stage.innerHTML = '';
+    stage.appendChild(wrap);
+    stage.appendChild(readout);
+
+    let anchor = null, cur = null, dragging = false;
+
+    const cellAt = (x, y) => {
+      const el = document.elementFromPoint(x, y);
+      return el && el.classList.contains('cell') ? el : null;
+    };
+
+    const bounds = () => {
+      const r0 = Math.min(anchor.r, cur.r), r1 = Math.max(anchor.r, cur.r);
+      const c0 = Math.min(anchor.c, cur.c), c1 = Math.max(anchor.c, cur.c);
+      return { r0, r1, c0, c1, h: r1 - r0 + 1, w: c1 - c0 + 1 };
+    };
+
+    const paint = () => {
+      const b = bounds();
+      const area = b.w * b.h;
+      const peri = 2 * (b.w + b.h);
+      const value = tk.type === 'area' ? area : peri;
+      const hit = value === tk.target;
+
+      [...grid.children].forEach(cell => {
+        const r = +cell.dataset.r, c = +cell.dataset.c;
+        const inside = r >= b.r0 && r <= b.r1 && c >= b.c0 && c <= b.c1;
+        cell.classList.toggle('sel', inside && !hit);
+        cell.classList.toggle('sel-ok', inside && hit);
+      });
+
+      readout.innerHTML =
+        `${t('r_size', b.w, b.h, area)}` +
+        `<span class="sub">${t('r_area')} ${area} &nbsp;·&nbsp; ${t('r_perimeter')} ${peri}</span>`;
+      return { area, peri, value, hit };
+    };
+
+    const commit = () => {
+      if (answered || !anchor) return;
+      const res = paint();
+      if (res.hit) {
+        grid.style.pointerEvents = 'none';
+        resolve(true);
+      } else if (tk.type === 'area') {
+        nudge(t('fb_area_off', res.area, tk.target));
+      } else {
+        nudge(res.peri > tk.target ? t('fb_too_big') : t('fb_too_small'));
+      }
+    };
+
+    grid.addEventListener('pointerdown', e => {
+      if (answered) return;
+      const el = cellAt(e.clientX, e.clientY);
+      if (!el) return;
+      e.preventDefault();
+      dragging = true;
+      anchor = { r: +el.dataset.r, c: +el.dataset.c };
+      cur = { ...anchor };
+      grid.setPointerCapture(e.pointerId);
+      paint();
+    });
+    grid.addEventListener('pointermove', e => {
+      if (!dragging || answered) return;
+      const el = cellAt(e.clientX, e.clientY);
+      if (!el) return;
+      cur = { r: +el.dataset.r, c: +el.dataset.c };
+      paint();
+    });
+    const end = () => { if (dragging) { dragging = false; commit(); } };
+    grid.addEventListener('pointerup', end);
+    grid.addEventListener('pointercancel', end);
+
+    mainBtn.classList.add('hidden');
+  }
+};
+
+/* ==========================================================
+   MODE 4 — Angle Explorer
+   ========================================================== */
+const AngleExplorer = {
+  build(level) {
+    const makeIt = level % 2 === 0;
+    const kind = pick(['acute', 'right', 'obtuse']);
+    if (makeIt) return { type: 'make', kind, angle: kind === 'obtuse' ? 40 : 130 };
+    // classify: keep the sample unambiguous
+    let angle;
+    if (kind === 'acute') angle = randInt(20, 75);
+    else if (kind === 'right') angle = 90;
+    else angle = randInt(105, 165);
+    return { type: 'classify', kind, angle };
+  },
+
+  render(tk) {
+    const W = 320, H = 210, PX = 52, PY = 168, LEN = 150;
+
+    promptEl.textContent = tk.type === 'make'
+      ? t('p_make_angle', t('a_' + tk.kind + '_ind'))
+      : t('p_classify');
+
+    const wrap = document.createElement('div');
+    wrap.className = 'angle-wrap';
+    wrap.innerHTML = `
+      <svg class="angle-svg" viewBox="0 0 ${W} ${H}">
+        <path id="arc" fill="rgba(139,124,246,.18)" stroke="none"></path>
+        <line x1="${PX}" y1="${PY}" x2="${PX + LEN + 60}" y2="${PY}"
+              stroke="#C9C4E4" stroke-width="6" stroke-linecap="round"/>
+        <line id="movingRay" x1="${PX}" y1="${PY}" x2="0" y2="0"
+              stroke="#8B7CF6" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="${PX}" cy="${PY}" r="7" fill="#33324A"/>
+        <circle id="knob" class="knob" cx="0" cy="0" r="15"></circle>
+        <text id="degLabel" x="${PX + 26}" y="${PY - 16}" font-size="17"
+              font-weight="600" fill="#6E6C8A" font-family="inherit"></text>
+      </svg>`;
+
+    stage.innerHTML = '';
+    stage.appendChild(wrap);
+
+    const svg = wrap.querySelector('svg');
+    const ray = wrap.querySelector('#movingRay');
+    const knob = wrap.querySelector('#knob');
+    const arc = wrap.querySelector('#arc');
+    const label = wrap.querySelector('#degLabel');
+
+    let angle = tk.angle;
+
+    const draw = () => {
+      const rad = (angle * Math.PI) / 180;
+      const x = PX + LEN * Math.cos(rad);
+      const y = PY - LEN * Math.sin(rad);
+      ray.setAttribute('x2', x);
+      ray.setAttribute('y2', y);
+      knob.setAttribute('cx', x);
+      knob.setAttribute('cy', y);
+
+      const R = 46;
+      const ax = PX + R, ay = PY;
+      const bx = PX + R * Math.cos(rad), by = PY - R * Math.sin(rad);
+      const large = angle > 180 ? 1 : 0;
+      arc.setAttribute('d', `M ${PX} ${PY} L ${ax} ${ay} A ${R} ${R} 0 ${large} 0 ${bx} ${by} Z`);
+
+      // In "make" tasks the number is a teaching aid; in classify it would
+      // give the answer away, so it stays hidden.
+      label.textContent = tk.type === 'make' ? t('r_degrees', Math.round(angle)) : '';
+    };
+    draw();
+
+    if (tk.type === 'make') {
+      const setFromEvent = e => {
+        const rect = svg.getBoundingClientRect();
+        const sx = ((e.clientX - rect.left) / rect.width) * W;
+        const sy = ((e.clientY - rect.top) / rect.height) * H;
+        let a = (Math.atan2(PY - sy, sx - PX) * 180) / Math.PI;
+        angle = Math.max(5, Math.min(175, a));
+        draw();
+      };
+      let drag = false;
+      svg.addEventListener('pointerdown', e => {
+        if (answered) return;
+        drag = true;
+        svg.setPointerCapture(e.pointerId);
+        setFromEvent(e);
+      });
+      svg.addEventListener('pointermove', e => { if (drag && !answered) setFromEvent(e); });
+      const stop = () => { drag = false; };
+      svg.addEventListener('pointerup', stop);
+      svg.addEventListener('pointercancel', stop);
+
+      mainBtn.classList.remove('hidden');
+      mainBtn.disabled = false;
+      mainBtn.textContent = t('btn_check');
+      mainBtn.dataset.action = 'check';
+      this._check = () => {
+        const a = Math.round(angle);
+        let ok = false;
+        if (tk.kind === 'right') ok = Math.abs(a - 90) <= 5;
+        else if (tk.kind === 'acute') ok = a >= 10 && a <= 80;
+        else ok = a >= 100 && a <= 170;
+        if (ok) {
+          svg.style.pointerEvents = 'none';
+          resolve(true);
+        } else if (tk.kind === 'right') {
+          nudge(a > 90 ? t('fb_too_big') : t('fb_too_small'));
+        } else if (tk.kind === 'acute') {
+          nudge(t('fb_too_big'));
+        } else {
+          nudge(t('fb_too_small'));
+        }
+      };
+    } else {
+      const row = document.createElement('div');
+      row.className = 'choice-row';
+      ['acute', 'right', 'obtuse'].forEach(k => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'choice';
+        b.textContent = t('a_' + k);
+        b.addEventListener('click', () => {
+          if (answered) return;
+          const ok = k === tk.kind;
+          b.classList.add(ok ? 'correct' : 'wrong');
+          if (!ok) {
+            [...row.children].forEach((c, i) => {
+              if (['acute', 'right', 'obtuse'][i] === tk.kind) c.classList.add('correct');
+            });
+          }
+          label.textContent = t('r_degrees', Math.round(angle));
+          resolve(ok, ok ? null : t('fb_wrong_ang', t('a_' + tk.kind + '_ind')));
+        });
+        row.appendChild(b);
+      });
+      stage.appendChild(row);
+      mainBtn.classList.add('hidden');
+    }
+  }
+};
+
+/* ==========================================================
+   Mode registry + flow
+   ========================================================== */
+const MODES = {
+  shapes:   { emoji: '🔺', cls: 'm-shapes',   impl: ShapeDetective },
+  symmetry: { emoji: '🦋', cls: 'm-symmetry', impl: SymmetryPainter },
+  area:     { emoji: '🧱', cls: 'm-area',     impl: AreaBuilder },
+  angles:   { emoji: '📐', cls: 'm-angles',   impl: AngleExplorer }
+};
+
+function renderHome() {
+  const grid = $('modeGrid');
+  grid.innerHTML = '';
+  Object.entries(MODES).forEach(([id, m]) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'mode-card ' + m.cls;
+    b.innerHTML =
+      `<span class="emoji">${m.emoji}</span>` +
+      `<span class="name" data-i18n="mode_${id}_name">${t('mode_' + id + '_name')}</span>` +
+      `<span class="desc" data-i18n="mode_${id}_desc">${t('mode_' + id + '_desc')}</span>`;
+    b.addEventListener('click', () => startMode(id));
+    grid.appendChild(b);
+  });
+}
+
+function startMode(id) {
+  modeId = id;
+  qIndex = 0;
+  stars = 0;
+  results = [];
+  showScreen('screenPlay');
+  nextQuestion();
+}
+
+function nextQuestion() {
+  if (qIndex >= TOTAL) return finish(true);
+  answered = false;
+  task = MODES[modeId].impl.build(qIndex);
+  setFeedback('');
+  mainBtn.dataset.action = '';
+  mainBtn.disabled = false;
+  renderDots();
+  MODES[modeId].impl.render(task);
+}
+
+function finish(celebrate) {
+  showScreen('screenDone');
+  const pct = stars / TOTAL;
+  const n = pct === 1 ? 3 : pct >= 0.75 ? 2 : pct >= 0.5 ? 1 : 0;
+  $('doneStars').textContent = '⭐'.repeat(n) + '☆'.repeat(3 - n);
+  $('doneScore').textContent = `${stars}/${TOTAL}`;
+  $('doneMsg').textContent =
+    pct === 1 ? t('done_perfect') : pct >= 0.75 ? t('done_good') :
+    pct >= 0.5 ? t('done_ok') : t('done_try');
+  if (celebrate) {
+    if (n === 3) confetti(70);
+    else if (n > 0) confetti(28);
+  }
+}
+
+mainBtn.addEventListener('click', () => {
+  const action = mainBtn.dataset.action;
+  if (action === 'next') {
+    qIndex++;
+    nextQuestion();
+  } else if (action === 'check' && AngleExplorer._check) {
+    AngleExplorer._check();
+  }
+});
+
+$('quitBtn').addEventListener('click', () => showScreen('screenHome'));
+$('doneMenu').addEventListener('click', () => showScreen('screenHome'));
+$('doneAgain').addEventListener('click', () => startMode(modeId));
+
+/* ==========================================================
+   Language + sound chrome
+   ========================================================== */
+function applyLang() {
+  document.documentElement.lang = LANG === 'zh' ? 'zh-CN' : 'en';
+  document.title = t('doc_title');
+  const tog = $('langToggle');
+  tog.textContent = t('lang_other');
+  tog.setAttribute('aria-label', t('lang_aria'));
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+
+  renderHome();
+
+  if ($('screenPlay').classList.contains('active')) {
+    renderDots();
+    if (answered) {
+      // The question is already scored. Re-rendering would rebuild the stage and
+      // risk awarding the star twice, so only the button label is refreshed here.
+      mainBtn.textContent = t('btn_next');
+    } else {
+      // Nothing awarded yet, so a full re-render is safe; each mode restores
+      // whatever progress lives on the task object.
+      MODES[modeId].impl.render(task);
+    }
+  }
+
+  if ($('screenDone').classList.contains('active')) finish(false);
+}
+
+$('langToggle').addEventListener('click', () => {
+  LANG = LANG === 'en' ? 'zh' : 'en';
+  try { localStorage.setItem('evolta_lang', LANG); } catch (e) {}
+  applyLang();
+});
+
+function applySound() {
+  $('soundBtn').textContent = soundOn ? '🔊' : '🔇';
+}
+$('soundBtn').addEventListener('click', () => {
+  soundOn = !soundOn;
+  try { localStorage.setItem('evolta_sound', soundOn ? 'on' : 'off'); } catch (e) {}
+  applySound();
+  if (soundOn) sfxTap();
+});
+
+applySound();
+applyLang();
+</script>
+</body>
+</html>

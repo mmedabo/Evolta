@@ -16,7 +16,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue',
+                         'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
             line-height: 1.6;
             color: #1a1a1a;
             background: #ffffff;
@@ -330,6 +331,43 @@
             .product-title { font-size: 22px; }
             .product-features { font-size: 15px; }
         }
+
+        .lang-toggle {
+            font-family: inherit;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: #1a1a1a;
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 999px;
+            padding: 8px 18px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .lang-toggle:hover {
+            background: #1a1a1a;
+            border-color: #1a1a1a;
+            color: #fff;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* CJK reads badly at the original uppercase tracking */
+        .lang-zh .tagline { letter-spacing: 6px; }
+        .lang-zh .section-title { letter-spacing: 4px; }
+        .lang-zh .play-btn,
+        .lang-zh .badge,
+        .lang-zh .lang-toggle { letter-spacing: 1px; font-size: 13px; }
+        .lang-zh .hero-description,
+        .lang-zh .learn-item p { line-height: 1.9; }
     </style>
 </head>
 <body>
@@ -340,16 +378,19 @@
                 <div class="logo-icon"></div>
                 Evolta
             </a>
-            <a class="back-link" href="index.html">&larr; All products</a>
+            <div class="header-actions">
+                <a class="back-link" href="index.html" data-i18n="back_all">&larr; All products</a>
+                <button class="lang-toggle" id="langToggle" type="button">中文</button>
+            </div>
         </div>
     </header>
 
     <!-- Hero -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Trading Sandbox</h1>
-            <p class="tagline">learn, play, evolve</p>
-            <p class="hero-description">
+            <h1 data-i18n="hero_title">Trading Sandbox</h1>
+            <p class="tagline" data-i18n="tagline">learn, play, evolve</p>
+            <p class="hero-description" data-i18n="hero_desc">
                 An interactive space to explore trading and risk management through
                 simulation games. Test your decision-making, understand how markets
                 behave, and learn financial concepts hands-on — no installation, no signup.
@@ -360,23 +401,23 @@
     <!-- What you'll learn -->
     <section class="learn">
         <div class="container">
-            <div class="section-title">What You'll Learn</div>
-            <p class="products-tagline">three ideas at the heart of every market</p>
+            <div class="section-title" data-i18n="learn_title">What You'll Learn</div>
+            <p class="products-tagline" data-i18n="learn_tagline">three ideas at the heart of every market</p>
             <div class="learn-grid">
                 <div class="learn-item">
                     <div class="num">01</div>
-                    <h4>Risk &amp; Hedging</h4>
-                    <p>Protect a book from unpredictable events using derivatives and diversification.</p>
+                    <h4 data-i18n="learn1_h">Risk &amp; Hedging</h4>
+                    <p data-i18n="learn1_p">Protect a book from unpredictable events using derivatives and diversification.</p>
                 </div>
                 <div class="learn-item">
                     <div class="num">02</div>
-                    <h4>Market Making</h4>
-                    <p>Provide liquidity by setting bid–ask spreads and managing inventory.</p>
+                    <h4 data-i18n="learn2_h">Market Making</h4>
+                    <p data-i18n="learn2_p">Provide liquidity by setting bid–ask spreads and managing inventory.</p>
                 </div>
                 <div class="learn-item">
                     <div class="num">03</div>
-                    <h4>Strategic Thinking</h4>
-                    <p>Balance profit, cost and risk under uncertainty and live market news.</p>
+                    <h4 data-i18n="learn3_h">Strategic Thinking</h4>
+                    <p data-i18n="learn3_p">Balance profit, cost and risk under uncertainty and live market news.</p>
                 </div>
             </div>
         </div>
@@ -385,65 +426,65 @@
     <!-- Games -->
     <section class="products">
         <div class="container">
-            <div class="section-title">Choose Your Game</div>
-            <p class="products-tagline">each one is self-contained and browser-based</p>
+            <div class="section-title" data-i18n="games_title">Choose Your Game</div>
+            <p class="products-tagline" data-i18n="games_tagline">each one is self-contained and browser-based</p>
 
             <div class="products-grid">
                 <!-- Power Trading (new, featured) -->
                 <div class="product-card featured">
-                    <span class="badge">New</span>
+                    <span class="badge" data-i18n="badge_new">New</span>
                     <div class="product-icon">⚡</div>
-                    <h3 class="product-title">Power Trading</h3>
-                    <p class="product-sub">Peak &amp; Dispatch — electricity from scratch</p>
+                    <h3 class="product-title" data-i18n="g1_title">Power Trading</h3>
+                    <p class="product-sub" data-i18n="g1_sub">Peak &amp; Dispatch — electricity from scratch</p>
                     <ul class="product-features">
-                        <li>Beginner Academy: 5 interactive lessons</li>
-                        <li>Merit order, price spikes &amp; the spark spread</li>
-                        <li>12-month power &amp; gas trading simulation</li>
-                        <li>Live news, risk limits &amp; a scored debrief</li>
+                        <li data-i18n="g1_f1">Beginner Academy: 5 interactive lessons</li>
+                        <li data-i18n="g1_f2">Merit order, price spikes &amp; the spark spread</li>
+                        <li data-i18n="g1_f3">12-month power &amp; gas trading simulation</li>
+                        <li data-i18n="g1_f4">Live news, risk limits &amp; a scored debrief</li>
                     </ul>
-                    <a class="play-btn" href="power-trading.html">Play Now</a>
+                    <a class="play-btn" href="power-trading.html" data-i18n="btn_play">Play Now</a>
                 </div>
 
                 <!-- Sweet Spread -->
                 <div class="product-card">
                     <div class="product-icon">🍬</div>
-                    <h3 class="product-title">Sweet Spread</h3>
-                    <p class="product-sub">Sugar trading &amp; the refining arbitrage</p>
+                    <h3 class="product-title" data-i18n="g2_title">Sweet Spread</h3>
+                    <p class="product-sub" data-i18n="g2_sub">Sugar trading &amp; the refining arbitrage</p>
                     <ul class="product-features">
-                        <li>Trade raw &amp; white sugar futures</li>
-                        <li>Lock the refining arbitrage</li>
-                        <li>Hedge FX and freight, survive margin calls</li>
-                        <li>Monthly news with a "why it moved" recap</li>
+                        <li data-i18n="g2_f1">Trade raw &amp; white sugar futures</li>
+                        <li data-i18n="g2_f2">Lock the refining arbitrage</li>
+                        <li data-i18n="g2_f3">Hedge FX and freight, survive margin calls</li>
+                        <li data-i18n="g2_f4">Monthly news with a "why it moved" recap</li>
                     </ul>
-                    <a class="play-btn" href="sweet-spread.html">Play Now</a>
+                    <a class="play-btn" href="sweet-spread.html" data-i18n="btn_play">Play Now</a>
                 </div>
 
                 <!-- Portfolio Hedging -->
                 <div class="product-card">
                     <div class="product-icon">🛡️</div>
-                    <h3 class="product-title">Portfolio Hedging</h3>
-                    <p class="product-sub">Protect investments from market shocks</p>
+                    <h3 class="product-title" data-i18n="g3_title">Portfolio Hedging</h3>
+                    <p class="product-sub" data-i18n="g3_sub">Protect investments from market shocks</p>
                     <ul class="product-features">
-                        <li>Build a diversified portfolio</li>
-                        <li>Buy puts and hedging instruments</li>
-                        <li>Weather random market events</li>
-                        <li>See how derivatives cut risk exposure</li>
+                        <li data-i18n="g3_f1">Build a diversified portfolio</li>
+                        <li data-i18n="g3_f2">Buy puts and hedging instruments</li>
+                        <li data-i18n="g3_f3">Weather random market events</li>
+                        <li data-i18n="g3_f4">See how derivatives cut risk exposure</li>
                     </ul>
-                    <a class="play-btn" href="HedgingGame.html">Play Now</a>
+                    <a class="play-btn" href="HedgingGame.html" data-i18n="btn_play">Play Now</a>
                 </div>
 
                 <!-- Market Making -->
                 <div class="product-card">
                     <div class="product-icon">💹</div>
-                    <h3 class="product-title">Market Making</h3>
-                    <p class="product-sub">Earn the spread, manage your inventory</p>
+                    <h3 class="product-title" data-i18n="g4_title">Market Making</h3>
+                    <p class="product-sub" data-i18n="g4_sub">Earn the spread, manage your inventory</p>
                     <ul class="product-features">
-                        <li>Set bid and ask prices live</li>
-                        <li>Profit from the spread you quote</li>
-                        <li>Manage inventory under volatility</li>
-                        <li>Practice price-making and liquidity</li>
+                        <li data-i18n="g4_f1">Set bid and ask prices live</li>
+                        <li data-i18n="g4_f2">Profit from the spread you quote</li>
+                        <li data-i18n="g4_f3">Manage inventory under volatility</li>
+                        <li data-i18n="g4_f4">Practice price-making and liquidity</li>
                     </ul>
-                    <a class="play-btn" href="MarketMaking.html">Play Now</a>
+                    <a class="play-btn" href="MarketMaking.html" data-i18n="btn_play">Play Now</a>
                 </div>
             </div>
         </div>
@@ -452,8 +493,164 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            © 2026 Evolta. Built for interactive learning. &nbsp;·&nbsp; <a href="index.html">evolta.ai</a>
+            <span data-i18n="footer">© 2026 Evolta. Built for interactive learning.</span> &nbsp;·&nbsp; <a href="index.html">evolta.ai</a>
         </div>
     </footer>
+
+    <script>
+        // ---------- i18n (shares evolta_lang with the rest of the site) ----------
+        const I18N = {
+            en: {
+                doc_title:      'Trading Sandbox — Evolta',
+                lang_other:     '中文',
+                lang_aria:      'Switch to Chinese',
+                back_all:       '← All products',
+
+                hero_title:     'Trading Sandbox',
+                tagline:        'learn, play, evolve',
+                hero_desc:      'An interactive space to explore trading and risk management through simulation games. Test your decision-making, understand how markets behave, and learn financial concepts hands-on — no installation, no signup.',
+
+                learn_title:    "What You'll Learn",
+                learn_tagline:  'three ideas at the heart of every market',
+                learn1_h:       'Risk & Hedging',
+                learn1_p:       'Protect a book from unpredictable events using derivatives and diversification.',
+                learn2_h:       'Market Making',
+                learn2_p:       'Provide liquidity by setting bid–ask spreads and managing inventory.',
+                learn3_h:       'Strategic Thinking',
+                learn3_p:       'Balance profit, cost and risk under uncertainty and live market news.',
+
+                games_title:    'Choose Your Game',
+                games_tagline:  'each one is self-contained and browser-based',
+                badge_new:      'New',
+                btn_play:       'Play Now',
+
+                g1_title:       'Power Trading',
+                g1_sub:         'Peak & Dispatch — electricity from scratch',
+                g1_f1:          'Beginner Academy: 5 interactive lessons',
+                g1_f2:          'Merit order, price spikes & the spark spread',
+                g1_f3:          '12-month power & gas trading simulation',
+                g1_f4:          'Live news, risk limits & a scored debrief',
+
+                g2_title:       'Sweet Spread',
+                g2_sub:         'Sugar trading & the refining arbitrage',
+                g2_f1:          'Trade raw & white sugar futures',
+                g2_f2:          'Lock the refining arbitrage',
+                g2_f3:          'Hedge FX and freight, survive margin calls',
+                g2_f4:          'Monthly news with a "why it moved" recap',
+
+                g3_title:       'Portfolio Hedging',
+                g3_sub:         'Protect investments from market shocks',
+                g3_f1:          'Build a diversified portfolio',
+                g3_f2:          'Buy puts and hedging instruments',
+                g3_f3:          'Weather random market events',
+                g3_f4:          'See how derivatives cut risk exposure',
+
+                g4_title:       'Market Making',
+                g4_sub:         'Earn the spread, manage your inventory',
+                g4_f1:          'Set bid and ask prices live',
+                g4_f2:          'Profit from the spread you quote',
+                g4_f3:          'Manage inventory under volatility',
+                g4_f4:          'Practice price-making and liquidity',
+
+                footer:         '© 2026 Evolta. Built for interactive learning.'
+            },
+
+            zh: {
+                doc_title:      '交易沙盘 — Evolta',
+                lang_other:     'EN',
+                lang_aria:      '切换到英文',
+                back_all:       '← 全部产品',
+
+                hero_title:     '交易沙盘',
+                tagline:        '学习 · 探索 · 进化',
+                hero_desc:      '一个用模拟游戏理解交易与风险管理的互动空间。检验你的决策、看清市场如何运行、动手学会金融概念——无需安装，无需注册。',
+
+                learn_title:    '你会学到什么',
+                learn_tagline:  '每个市场背后的三个核心概念',
+                learn1_h:       '风险与对冲',
+                learn1_p:       '用衍生品和分散配置，保护头寸不被突发事件击穿。',
+                learn2_h:       '做市',
+                learn2_p:       '通过报出买卖价差并管理库存来提供流动性。',
+                learn3_h:       '策略思维',
+                learn3_p:       '在不确定性与实时新闻中，权衡收益、成本与风险。',
+
+                games_title:    '选择你的游戏',
+                games_tagline:  '每一个都独立成篇，打开浏览器即可玩',
+                badge_new:      '新上线',
+                btn_play:       '开始游戏',
+
+                g1_title:       '电力交易',
+                g1_sub:         'Peak & Dispatch —— 从零开始理解电力',
+                g1_f1:          '新手学院：5 节互动课程',
+                g1_f2:          '边际成本排序、价格尖峰与价差',
+                g1_f3:          '为期 12 个月的电力与天然气交易模拟',
+                g1_f4:          '实时新闻、风险限额与复盘评分',
+
+                g2_title:       '价差交易',
+                g2_sub:         '食糖交易与精炼套利',
+                g2_f1:          '交易原糖与白糖期货',
+                g2_f2:          '锁定精炼环节的套利空间',
+                g2_f3:          '对冲汇率与运费，扛住追加保证金',
+                g2_f4:          '每月新闻，附「为何波动」复盘',
+
+                g3_title:       '投资组合对冲',
+                g3_sub:         '让投资扛得住市场冲击',
+                g3_f1:          '构建分散化的投资组合',
+                g3_f2:          '买入看跌期权等对冲工具',
+                g3_f3:          '应对随机发生的市场事件',
+                g3_f4:          '看清衍生品如何降低风险敞口',
+
+                g4_title:       '做市商',
+                g4_sub:         '赚取价差，管好库存',
+                g4_f1:          '实时报出买价与卖价',
+                g4_f2:          '从你报出的价差中获利',
+                g4_f3:          '在波动中管理库存',
+                g4_f4:          '练习定价与提供流动性',
+
+                footer:         '© 2026 Evolta. 为互动学习而生。'
+            }
+        };
+
+        let LANG = (function () {
+            const q = new URLSearchParams(location.search).get('lang');
+            if (q && I18N[q]) return q;
+            let saved = null;
+            try { saved = localStorage.getItem('evolta_lang'); } catch (e) {}
+            return (saved && I18N[saved]) ? saved : 'en';
+        })();
+
+        function t(key) {
+            return I18N[LANG][key] !== undefined ? I18N[LANG][key] : I18N.en[key];
+        }
+
+        const langToggle = document.getElementById('langToggle');
+
+        function applyLang() {
+            document.documentElement.lang = LANG === 'zh' ? 'zh-CN' : 'en';
+            document.body.classList.toggle('lang-zh', LANG === 'zh');
+            document.title = t('doc_title');
+
+            langToggle.textContent = t('lang_other');
+            langToggle.setAttribute('aria-label', t('lang_aria'));
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                el.textContent = t(el.dataset.i18n);
+            });
+
+            // Carry the choice into each game so the language survives the click.
+            document.querySelectorAll('.play-btn').forEach(a => {
+                const href = a.getAttribute('href').split('?')[0];
+                a.setAttribute('href', href + '?lang=' + LANG);
+            });
+        }
+
+        langToggle.addEventListener('click', () => {
+            LANG = LANG === 'en' ? 'zh' : 'en';
+            try { localStorage.setItem('evolta_lang', LANG); } catch (e) {}
+            applyLang();
+        });
+
+        applyLang();
+    </script>
 </body>
 </html>

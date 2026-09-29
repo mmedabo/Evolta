@@ -6,7 +6,7 @@
 <title>Peak &amp; Dispatch — Power Trading, From Scratch | Evolta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#f4f7f5;
@@ -255,14 +255,15 @@
   <header>
     <div class="brand">
       <h1>Peak <span class="amp">&amp;</span> Dispatch <span class="bolt">⚡</span></h1>
-      <div class="sub">Power Trading — from scratch · <span class="evolta">Evolta — learn · play · evolve</span></div>
+      <div class="sub" id="brandSub"></div>
     </div>
     <div class="topbar">
       <div class="clock" id="clock" style="display:none">
         <div class="month" id="monthLabel">—</div>
-        <div class="turn" id="turnLabel">Press start</div>
+        <div class="turn" id="turnLabel"></div>
       </div>
-      <a class="back-btn" href="TradingGamePortal.html">‹ All games</a>
+      <button class="back-btn" id="langToggle" type="button" style="cursor:pointer;margin-right:8px">中文</button>
+      <a class="back-btn" id="backAll" href="TradingGamePortal.html">‹ All games</a>
     </div>
   </header>
 
@@ -272,9 +273,9 @@
       <div class="acad-steps" id="acadSteps"></div>
       <div id="lessonContent"></div>
       <div class="acad-nav">
-        <button class="ghost-btn" id="backBtn" onclick="acadBack()" style="flex:none">‹ Back</button>
+        <button class="ghost-btn" id="backBtn" onclick="acadBack()" style="flex:none" data-i18n="nav_back">‹ Back</button>
         <div class="right">
-          <button class="ghost-btn" id="skipBtn" onclick="skipToGame()" style="flex:none">Skip to trading ›</button>
+          <button class="ghost-btn" id="skipBtn" onclick="skipToGame()" style="flex:none" data-i18n="nav_skip">Skip to trading ›</button>
           <button class="big-btn" id="nextBtn" onclick="acadNext()" style="width:auto;flex:none;padding:11px 26px">Next ›</button>
         </div>
       </div>
@@ -286,27 +287,21 @@
     <!-- LEFT COLUMN -->
     <div>
       <div class="panel" id="newsPanel">
-        <h2><span class="dot"></span>Control Room Wire</h2>
-        <div id="newsBox">
-          <div class="news">
-            <div class="hl">You're on the power desk.</div>
-            <div class="src">Evolta Trading Floor</div>
-            <div class="ex">Over 12 months you'll trade power forwards, bet on gas, and lock the <b>spark spread</b> — the margin a gas plant earns turning gas into electricity. Press <b>Start Season</b> to take the first news tick. Hover any <span class="tip" title="Like this — definitions appear on hover.">underlined term</span> for a definition.</div>
-          </div>
-        </div>
+        <h2><span class="dot"></span><span data-i18n="pn_wire">Control Room Wire</span></h2>
+        <div id="newsBox"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Market Board</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_board">Market Board</span></h2>
         <table class="mkt">
-          <thead><tr><th>Instrument</th><th style="text-align:right">Price</th><th style="text-align:right">Δ mo</th></tr></thead>
+          <thead><tr><th data-i18n="th_instrument">Instrument</th><th style="text-align:right" data-i18n="th_price">Price</th><th style="text-align:right" data-i18n="th_chg">Δ mo</th></tr></thead>
           <tbody id="mktBody"></tbody>
         </table>
         <div class="hint" id="sparkHint"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Trade Desk</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_desk">Trade Desk</span></h2>
         <div class="act-grid" id="tradeGrid"></div>
         <div style="margin-top:14px">
           <button class="big-btn" id="advanceBtn" onclick="startOrAdvance()">▶ Start Season</button>
@@ -317,44 +312,36 @@
     <!-- RIGHT COLUMN -->
     <div>
       <div class="panel">
-        <h2><span class="dot"></span>P&amp;L</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_pnl">P&amp;L</span></h2>
         <div class="big-num" id="equityNum">$5.00M</div>
-        <div class="stat"><span class="k">Realised P&amp;L</span><span class="v" id="realisedPL">$0</span></div>
-        <div class="stat"><span class="k">Open P&amp;L</span><span class="v" id="openPL">$0</span></div>
-        <div class="stat"><span class="k">Cash</span><span class="v" id="cashVal">$5.00M</span></div>
-        <div class="stat"><span class="k">Margin used</span><span class="v" id="marginVal">$0</span></div>
+        <div class="stat"><span class="k" data-i18n="k_realised">Realised P&amp;L</span><span class="v" id="realisedPL">$0</span></div>
+        <div class="stat"><span class="k" data-i18n="k_open">Open P&amp;L</span><span class="v" id="openPL">$0</span></div>
+        <div class="stat"><span class="k" data-i18n="k_cash">Cash</span><span class="v" id="cashVal">$5.00M</span></div>
+        <div class="stat"><span class="k" data-i18n="k_margin">Margin used</span><span class="v" id="marginVal">$0</span></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Risk</h2>
-        <div class="stat"><span class="k tip" title="Net long minus short exposure across all positions, in USD notional.">Net exposure</span><span class="v" id="netExp">$0</span></div>
+        <h2><span class="dot"></span><span data-i18n="pn_risk">Risk</span></h2>
+        <div class="stat"><span class="k tip" title=t('tip_netexp')>Net exposure</span><span class="v" id="netExp">$0</span></div>
         <div class="meter"><span id="riskBar" style="width:0%;background:var(--green)"></span></div>
-        <div class="hint" id="riskHint">Flat. No risk on the book.</div>
+        <div class="hint" id="riskHint"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Open Positions</h2>
-        <div id="posBox"><div class="hint">No open positions.</div></div>
+        <h2><span class="dot"></span><span data-i18n="pn_pos">Open Positions</span></h2>
+        <div id="posBox"></div>
       </div>
 
       <div class="panel" id="recapPanel" style="display:none">
-        <h2><span class="dot"></span>This Month's P&amp;L — Why</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_recap">This Month's P&amp;L — Why</span></h2>
         <div id="recapBox"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Glossary</h2>
-        <div class="glossary-grid">
-          <b>Power (baseload)</b> round-the-clock electricity, $/MWh<br>
-          <b>MWh</b> megawatt-hour — 1 MW running for 1 hour<br>
-          <b>Gas (Henry Hub)</b> natural gas fuel, $/MMBtu<br>
-          <b>Heat rate</b> MMBtu of gas to make 1 MWh. Lower = more efficient. Here 7.5.<br>
-          <b>Spark spread</b> Power − (heat rate × gas) − running cost. A gas plant's margin.<br>
-          <b>Peak premium</b> how much more daytime power costs vs the 24h average.<br>
-          <b>Capacity payment</b> a fee for keeping a plant <i>available</i>, even if it rarely runs.
-        </div>
+        <h2><span class="dot"></span><span data-i18n="pn_gloss">Glossary</span></h2>
+        <div class="glossary-grid" id="glossBox"></div>
         <div style="margin-top:12px">
-          <button class="ghost-btn" onclick="openAcademy()" style="width:100%">↺ Replay the Academy</button>
+          <button class="ghost-btn" onclick="openAcademy()" style="width:100%" data-i18n="replay_acad">↺ Replay the Academy</button>
         </div>
       </div>
     </div>
@@ -375,14 +362,357 @@
 /* The merit order: the heart of power markets. Plants ranked cheapest-first.
    The price everyone gets paid = the running cost of the LAST plant needed
    to meet demand (the "marginal" plant). */
+
+/* ================= i18n ================= */
+const I18N={
+en:{
+  doc_title:'Peak & Dispatch — Power Trading | Evolta',
+  lang_other:'中文', lang_aria:'Switch to Chinese',
+  brand_sub:'Power Trading — from scratch · <span class="evolta">Evolta — learn · play · evolve</span>',
+  back_all:'‹ All games', press_start:'Press start',
+  month_of:(m,n)=>'Month '+m+' of '+n,
+  months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+
+  nav_back:'‹ Back', nav_skip:'Skip to trading ›', nav_next:'Next ›', nav_enter:'Enter the trading floor ⚡',
+
+  pn_wire:'Control Room Wire', pn_board:'Market Board', pn_desk:'Trade Desk',
+  pn_pnl:'P&L', pn_risk:'Risk', pn_pos:'Open Positions',
+  pn_recap:"This Month's P&L — Why", pn_gloss:'Glossary',
+  th_instrument:'Instrument', th_price:'Price', th_chg:'Δ mo',
+  k_realised:'Realised P&L', k_open:'Open P&L', k_cash:'Cash', k_margin:'Margin used',
+  btn_start:'▶ Start Season', btn_advance:'▶ Advance Month',
+  no_pos:'No open positions.', risk_flat:'Flat. No risk on the book.',
+  replay_acad:'↺ Replay the Academy', why_matters:'Why it matters:',
+  gloss:"<b>Power (baseload)</b> round-the-clock electricity, $/MWh<br><b>MWh</b> megawatt-hour — 1 MW running for 1 hour<br><b>Gas (Henry Hub)</b> natural gas fuel, $/MMBtu<br><b>Heat rate</b> MMBtu of gas to make 1 MWh. Lower = more efficient. Here 7.5.<br><b>Spark spread</b> Power − (heat rate × gas) − running cost. A gas plant's margin.<br><b>Peak premium</b> how much more daytime power costs vs the 24h average.<br><b>Capacity payment</b> a fee for keeping a plant <i>available</i>, even if it rarely runs.",
+  intro_src:'Evolta Trading Floor',
+  intro_hl:'You run a merchant power book.',
+  intro_ex:'Over 12 months you will trade power, gas and the spark spread between them, sell capacity, and survive price spikes. Press <b>Start Season</b> to take the first news tick.',
+  tip_netexp:'Net long minus short exposure across all positions, in USD notional.',
+  tc_spark:'Spark Block', tc_spark_d1:"Run a gas plant: buy gas, sell power, lock today's ",
+  tc_spark_margin:'spark margin', tc_spark_d2:'. Settles in ~2 months. MWh = generation.',
+  tc_cap:'Capacity', tc_cap_d1:'Get paid a fee for keeping generation ',
+  tc_cap_avail:'available', tc_cap_d2:'. Low-risk income, paid now.',
+  tc_cap_tip:'A payment for being available to generate when needed, even if you rarely run. Low risk, steady income.',
+  r_none:"No open positions this month — the market moved but you weren't exposed.",
+  toast_start:'Start the season first.',
+  toast_margin:'Insufficient margin for that size.',
+  toast_margin_block:'Insufficient margin for that block.',
+  toast_block_h:'Hedged block — spark margin locked, no monthly swing.',
+  toast_block_u:'Block locked — margin floats until you settle.',
+  toast_block_neg:'You locked a NEGATIVE spark spread.',
+  r_hedged_flat:'Hedged block: flat by design — margin already secured.',
+  reset_hl:'New season. Fresh book.', reset_ex:'Press <b>Start Season</b> to take the first news tick.',
+
+  i_power:'Power · baseload', i_power_t:'Wholesale electricity for 24h delivery. 1 lot = 1,000 MWh. The headline price you bet on.',
+  i_peak:'Peak premium', i_peak_t:'How much more daytime (peak) power costs than the 24h average — driven by air-con and evening demand.',
+  i_gas_t:'Henry Hub gas, the fuel for the marginal power plants. 1 lot = 10,000 MMBtu.',
+  i_spark:'Spark spread', i_spark_t:'Power − 7.5×Gas − $4. The margin a gas plant earns generating. Your cleanest trade.',
+  i_carbon_t:'Cost to emit CO₂. Higher carbon hurts coal most and lifts power prices.',
+  i_wind_t:'How hard the wind is blowing. High wind = lots of free supply = lower power prices.',
+  i_gas:'Natural Gas', i_gas_s:'$/MMBtu · Henry Hub',
+  i_carbon:'Carbon', i_carbon_s:'$/t CO₂',
+  i_wind:'Wind output', i_wind_s:'% of capacity',
+  i_power_s:'$/MWh · round-the-clock', i_peak_s:'$/MWh over baseload', i_spark_s:'$/MWh clean margin',
+  long:'Long', short:'Short',
+  tc_power:'Power Forward', tc_power_d:'Directional bet on electricity. 1 lot = 1,000 MWh.',
+  tc_gas_d:'Directional bet on the fuel. 1 lot = 10,000 MMBtu.',
+  tc_spark_tip:'Power − 7.5×gas − $4 running cost, per MWh',
+  tc_lock_un_t:'Margin floats with power & gas until you settle.',
+  tc_lock_h_t:'Locks both legs (−$2/MWh). Margin secured, no monthly swing.',
+
+  st_solar:'Solar', st_wind:'Wind', st_nuclear:'Nuclear', st_coal:'Coal',
+  st_ccgt:'Gas (CCGT)', st_peaker:'Gas peaker', st_emergency:'Emergency',
+
+  l_k1:'Academy · Lesson 1 of 5', l_k2:'Academy · Lesson 2 of 5',
+  l_k3:'Academy · Lesson 3 of 5 · the most important idea',
+  l_k4:'Academy · Lesson 4 of 5', l_k5:'Academy · Lesson 5 of 5 · the trade you\'ll live on',
+  l_k6:'Academy complete',
+
+  l0_ttl:"Electricity is a product you can't put in a warehouse",
+  l0_lede:"Most things traders buy and sell can be stored — oil in tanks, sugar in sheds, gold in vaults. <b>Electricity is different.</b> It has to be made at the exact instant it's used. That single fact is why power is the most volatile market on earth, and why traders are needed at all.",
+  l0_gen:'GENERATION', l0_dem:'DEMAND',
+  l0_flows:'flows at the speed of light', l0_same:'made and used in the same instant',
+  l0_nobat:"no battery big enough to store a country's power",
+  l0_p1:"<b>You are a trader at a merchant power firm.</b> You don't build plants — you buy and sell electricity and the fuel that makes it, to profit from price moves and to manage risk.",
+  l0_p2:"<b>Three things you'll trade:</b> power itself, natural gas (the fuel), and the <i>spread</i> between them.",
+  l0_p3:"<b>Why it's hard:</b> because power can't be stored, a cold morning or a broken plant can send the price up 10× for a few hours — then back down.",
+  l0_lab:'The one idea to hold onto',
+  l0_txt:'Supply must equal demand <b>every single second</b>. When that balance is tight, prices explode. The next lesson lets you feel it.',
+
+  l1_ttl:'The grid is a balancing act, live, 24/7',
+  l1_lede:'Grid operators keep supply and demand matched to hold the system at <b>50 Hz</b> (its heartbeat). Too little supply and frequency drops toward a blackout; too much and it climbs. Drag the supply dial and watch what happens.',
+  l1_supply:'Supply',
+  l1_p1:"<b>Demand is fixed by us</b> — when millions of people switch on kettles and air-con, demand just <i>is</i> what it is. The grid can't ask them to wait.",
+  l1_p2:'<b>So supply must chase demand</b> in real time. Operators turn plants up and down second by second.',
+  l1_p3:"<b>Price is the lever.</b> When supply is scarce, the price is bid up to coax every last plant to run. When there's a glut, price can even go <i>negative</i> — generators pay to keep running.",
+  l1_lab:'Try this',
+  l1_txt:"Push supply well below demand. See the frequency crash toward blackout — that's the moment a trader who is <b>long power</b> makes a fortune, because the price spikes to keep the lights on.",
+
+  l2_ttl:'The "merit order": cheapest plants run first',
+  l2_lede:'Every plant has a running cost. The grid switches them on <b>cheapest first</b> — free solar &amp; wind, then nuclear, coal, gas, and finally expensive peakers. It stacks them up until supply meets demand. Here\'s the magic: <b>everyone gets paid the cost of the LAST plant needed</b> — the "marginal" plant. Drag demand and watch the price.',
+  l2_demand:'Demand', l2_clearing:'Clearing price: ',
+  l2_p1:'<b>Low demand</b> (night, mild weather): only cheap plants run. Price is low — maybe $0–35.',
+  l2_p2:'<b>High demand</b> (cold evening): the grid is forced into expensive peakers. The clearing price jumps to <i>their</i> cost, and <b>every</b> plant — even free solar — gets paid that high price.',
+  l2_p3:"That's why a small rise in demand can cause a <b>huge</b> jump in price: the supply stack is steep at the top.",
+  l2_lab:'Why traders care',
+  l2_txt:'If you can guess when demand will climb into the steep, expensive part of the stack, you buy power cheap today and sell it dear later. <b>Reading the stack is the job.</b>',
+
+  l3_ttl:'Where the violent price spikes come from',
+  l3_lede:'Now combine the two ideas. A <b>supply shock</b> (the wind drops, a plant breaks) or a <b>demand shock</b> (a cold snap) shoves the grid up the steep end of the stack. Hit the buttons and watch the price history react in real time.',
+  l3_cold:'❄ Cold snap (demand ↑)', l3_wind:'🍃 Wind drops', l3_nuke:'⚙ Plant breaks', l3_calm:'☀ Mild &amp; windy (reset)',
+  l3_p1:'<b>Cold snap:</b> heaters everywhere push demand up the stack into peakers. Price can go from $50 to $300+ in an hour.',
+  l3_p2:'<b>Wind drops:</b> free wind vanishes from the bottom of the stack, so <i>more expensive</i> plants must fill the gap — the whole stack shifts and price rises.',
+  l3_p3:'<b>Plant breaks:</b> sudden loss of cheap supply, same effect — scarcity.',
+  l3_p4:'<b>Mild &amp; windy:</b> tons of free renewable supply, weak demand → price collapses, sometimes below zero.',
+  l3_lab:"The trader's edge",
+  l3_txt:"You can't predict the weather perfectly — but you can read forecasts, plant outages and fuel costs to lean the right way <b>before</b> the spike. That's what the next 12 months will test.",
+
+  l4_ttl:'The spark spread — how a gas plant prints money',
+  l4_lede:'A gas plant buys gas and sells electricity. Its profit per MWh is the <b>spark spread</b>: the power price, minus the cost of the gas it burns, minus a small running cost. The "<b>heat rate</b>" (here <b>7.5</b>) is how many units of gas it takes to make one MWh. Slide the prices and watch the margin.',
+  l4_sold:'Power sold', l4_burned:'Gas burned', l4_spark:'Spark spread',
+  l4_pw:'Power $/MWh', l4_gs:'Gas $/MMBtu',
+  l4_p1:"<b>Spark spread = Power − (7.5 × Gas) − $4.</b> If it's positive, the plant earns money by running; if negative, it's cheaper to stay off.",
+  l4_p2:'<b>Two ways to widen:</b> power price rises, or gas price falls. A power trader who is "long the spark" wins from either.',
+  l4_p3:"<b>It's a cleaner bet than outright power</b> — you're insulated from gas-price swings that move power and gas together.",
+  l4_p4:'In the game you\'ll <b>lock</b> a spark spread: secure today\'s margin on a block of generation that settles in ~2 months.',
+  l4_lab:'Try this',
+  l4_txt:'Drag gas up to $9 while power stays at $58 — the spread goes <b>negative</b>. That gas plant would now <i>lose</i> money running. Real plants shut down here; smart traders saw it coming.',
+
+  l5_ttl:"You're ready for the desk",
+  l5_lede:"You now know the four ideas that drive every decision you'll make over the next 12 months:",
+  l5_p1:"<b>Power can't be stored</b> — supply must match demand every second, so prices are wild.",
+  l5_p2:'<b>The merit order sets the price</b> — the cost of the last plant needed sets what everyone is paid.',
+  l5_p3:'<b>Shocks cause spikes</b> — cold snaps, wind droughts and plant outages push the grid up the steep, expensive end of the stack.',
+  l5_p4:"<b>The spark spread</b> — Power − 7.5×Gas − $4 — is a gas plant's margin, and your cleanest trade.",
+  l5_lab:'Your job for 12 months',
+  l5_txt:"Start with <b>$5M</b>. Read each news headline, decide whether it's bullish or bearish for power, gas, or the spark, and size your trades. Watch your <b>risk</b> — too much leverage and a spike can margin-call you. A full <b>debrief</b> grades you at the end. You can replay this Academy any time from the Glossary panel.",
+  l5_tip:"Tip: hover any underlined term on the trading floor for a quick definition. There's a live spark-spread calculator on the desk, just like Lesson 5.",
+
+  news0_hl:'Arctic blast to grip the region; heating demand to surge', news0_src:'Weather Desk',
+  news0_ex:'A cold snap pushes electricity demand up the supply stack into expensive peakers. Strongly bullish power; mildly bullish gas (more gas burned for heat &amp; power).',
+  news1_hl:'Mild, breezy week ahead; wind output to hit record', news1_src:'Grid Operator',
+  news1_ex:'Abundant free wind floods the bottom of the stack and weak demand sits low on it — power prices fall, sometimes below zero. Bearish power.',
+  news2_hl:'Major gas pipeline outage cuts supply to the region', news2_src:'Platts',
+  news2_ex:'Less gas raises the fuel cost for the marginal gas plants — bullish gas AND power (power is set by gas-plant costs). Squeezes the spark spread.',
+  news3_hl:'LNG export terminal ramps up; gas pulled offshore', news3_src:'Bloomberg',
+  news3_ex:'Export demand tightens domestic gas — bullish gas. Power follows gas up, but the spark spread narrows as fuel gets dearer.',
+  news4_hl:'Large nuclear unit trips offline unexpectedly', news4_src:'Reuters',
+  news4_ex:"Sudden loss of cheap baseload forces costlier plants to fill the gap — bullish power. Doesn't touch gas directly.",
+  news5_hl:'New offshore wind farm enters commercial service', news5_src:'S&P Global',
+  news5_ex:'More cheap supply at the bottom of the stack pushes the marginal plant down — bearish power over time.',
+  news6_hl:'Carbon allowance price jumps on tighter EU cap', news6_src:'ICE Carbon',
+  news6_ex:'Higher carbon cost hits dirty coal hardest, nudging gas up the merit order — bullish power, and helps the spark spread vs coal.',
+  news7_hl:'Carbon market sells off on industrial slowdown', news7_src:'ICE Carbon',
+  news7_ex:'Cheaper carbon lowers the cost of fossil generation — bearish power.',
+  news8_hl:'Heatwave forecast; air-conditioning load to spike', news8_src:'Weather Desk',
+  news8_ex:'Peak afternoon demand climbs into peakers — bullish power, especially the peak premium. Gas demand for generation rises too.',
+  news9_hl:'Mild shoulder season; demand soft across the board', news9_src:'Grid Operator',
+  news9_ex:'Low demand sits on the cheap part of the stack — bearish power. Gas demand for power eases.',
+  news10_hl:'Gas storage refill beats expectations; glut building', news10_src:'EIA',
+  news10_ex:'Plentiful gas in store is bearish gas, which drags power down a touch but WIDENS the spark spread (cheaper fuel).',
+  news11_hl:'Drought slashes hydro output across the basin', news11_src:'Reuters',
+  news11_ex:'Lost cheap hydro must be replaced by gas plants — bullish power and bullish gas demand.',
+  news12_hl:'Coal plant retirements accelerate under new rules', news12_src:'Bloomberg',
+  news12_ex:'Fewer cheap-ish coal plants leaves gas as the marginal price-setter more often — structurally bullish power and the spark spread.',
+  news13_hl:'Speculators trim long power positions into expiry', news13_src:'Exchange Data',
+  news13_ex:'Spec liquidation can pressure power lower short-term regardless of fundamentals.',
+
+  d_missed:'Missed opportunities', d_opportunistic:'Opportunistic',
+  d_final:'Final equity', d_diracc:'Directional accuracy', d_sparks:'Spark spreads',
+  d_capacity:'Capacity income', d_risk:'Risk discipline', d_mc:'Margin calls',
+  d_mc_none:'None — clean book',
+  c_strong:'Strong P&L — you read the supply &amp; demand shocks well.',
+  c_down:'You finished down. Review which headlines you leaned the wrong way on.',
+  c_diracc:'Your directional calls lost more than they won — size into high-conviction news (cold snaps, outages, wind) and sit out the noise.',
+  c_nospark:'You never locked a spark spread. When it clears $20+/MWh that is a clean, fundamentals-driven margin you left on the table.',
+  c_nocap:"You never sold capacity — it's low-risk income that cushions a bad month.",
+  c_mc:'Margin calls wiped positions at the worst time. Keep net leverage under ~1.5x and hold a cash buffer for spikes.',
+  c_heavy:'You ran a very heavy book. In power, a single spike against an oversized position is fatal — size discipline beats being right.',
+  c_ok:'Balanced, disciplined trading. Next: press harder on conviction trades to lift returns without breaching risk limits.'
+},
+zh:{
+  doc_title:'尖峰与调度 — 电力交易 | Evolta',
+  lang_other:'EN', lang_aria:'切换到英文',
+  brand_sub:'电力交易入门 · <span class="evolta">Evolta — 学习 · 探索 · 进化</span>',
+  back_all:'‹ 全部游戏', press_start:'点击开始',
+  month_of:(m,n)=>'第 '+m+' 个月 / 共 '+n+' 个月',
+  months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+
+  nav_back:'‹ 上一课', nav_skip:'跳过，直接交易 ›', nav_next:'下一课 ›', nav_enter:'进入交易大厅 ⚡',
+
+  pn_wire:'调度中心快讯', pn_board:'行情板', pn_desk:'交易台',
+  pn_pnl:'盈亏', pn_risk:'风险', pn_pos:'持仓',
+  pn_recap:'本月盈亏拆解', pn_gloss:'术语表',
+  th_instrument:'品种', th_price:'价格', th_chg:'月度变动',
+  k_realised:'已实现盈亏', k_open:'浮动盈亏', k_cash:'现金', k_margin:'占用保证金',
+  btn_start:'▶ 开始本季', btn_advance:'▶ 推进一个月',
+  no_pos:'暂无持仓。', risk_flat:'空仓，账上没有风险。',
+  replay_acad:'↺ 重看教程', why_matters:'这条新闻的意义：',
+  gloss:'<b style="color:var(--amber)">兆瓦时 MWh</b> 电量单位，1 手 = 1,000 兆瓦时<br><b style="color:var(--amber)">基荷</b> 全天 24 小时均匀交割的电力<br><b style="color:var(--amber)">峰荷溢价</b> 白天高峰时段电价高出基荷的部分<br><b style="color:var(--amber)">边际成本排序</b> 机组按运行成本由低到高依次启用<br><b style="color:var(--amber)">出清价格</b> 最后一台被启用机组的成本，所有机组都按此结算<br><b style="color:var(--amber)">电气价差</b> 电价 − 7.5×气价 − $4，燃气电厂的毛利<br><b style="color:var(--amber)">热耗率</b> 发一兆瓦时电所需的天然气单位数（此处为 7.5）<br><b style="color:var(--amber)">容量</b> 承诺在需要时可用的出力，换取固定收入',
+  intro_src:'Evolta 交易大厅',
+  intro_hl:'你负责一本自营电力交易账。',
+  intro_ex:'接下来 12 个月里，你要交易电力、天然气以及两者之间的电气价差，出售容量，并在价格尖峰中活下来。点击<b>开始本季</b>接收第一条新闻。',
+  tip_netexp:'所有持仓的多头减空头敞口，按美元名义金额计。',
+  tc_spark:'电气价差发电块', tc_spark_d1:'把电厂跑起来：买气、卖电，并锁定今天的',
+  tc_spark_margin:'电气价差毛利', tc_spark_d2:'。约 2 个月后交割。兆瓦时按发电量计。',
+  tc_cap:'容量', tc_cap_d1:'因为让机组保持',
+  tc_cap_avail:'可用状态', tc_cap_d2:'而获得一笔费用。低风险收入，当期到账。',
+  tc_cap_tip:'为"随时可以顶上去发电"这件事本身支付的费用，即使机组很少真正运行。风险低，收入稳定。',
+  r_none:'本月没有持仓——行情动了，但你没有暴露在里面。',
+  toast_start:'请先开始本季。',
+  toast_margin:'保证金不足，做不了这么大的仓位。',
+  toast_margin_block:'保证金不足，锁不了这一块发电量。',
+  toast_block_h:'已锁定对冲发电块——电气价差毛利锁死，不再有月度波动。',
+  toast_block_u:'已锁定发电块——毛利在交割前会浮动。',
+  toast_block_neg:'你锁定了一个"负"的电气价差。',
+  r_hedged_flat:'已对冲发电块：按设计盯市为零——毛利早已锁定。',
+  reset_hl:'新的一季，全新的账本。', reset_ex:'点击<b>开始本季</b>，接收第一条新闻。',
+
+  i_power:'电力 · 基荷', i_power_t:'24 小时交割的批发电力。每手 = 1,000 兆瓦时。这是你下注的主要价格。',
+  i_peak:'峰荷溢价', i_peak_t:'白天（高峰时段）电价比 24 小时均价高出多少——由空调负荷和傍晚用电高峰驱动。',
+  i_gas_t:'亨利港天然气，边际机组的燃料。每手 = 10,000 百万英热。',
+  i_spark:'电气价差', i_spark_t:'电价 − 7.5×气价 − $4。燃气电厂发电所赚的毛利，也是你最干净的一笔交易。',
+  i_carbon_t:'排放二氧化碳的成本。碳价越高，对煤电打击越大，同时会抬升电价。',
+  i_wind_t:'风力大小。风大意味着大量零成本电源入网，电价随之走低。',
+  i_gas:'天然气', i_gas_s:'$/百万英热 · 亨利港',
+  i_carbon:'碳价', i_carbon_s:'$/吨 CO₂',
+  i_wind:'风电出力', i_wind_s:'占装机比例',
+  i_power_s:'$/兆瓦时 · 全天候', i_peak_s:'$/兆瓦时 · 高于基荷部分', i_spark_s:'$/兆瓦时 · 净毛利',
+  long:'多头', short:'空头',
+  tc_power:'电力远期', tc_power_d:'对电力做方向性交易。每手 = 1,000 兆瓦时。',
+  tc_gas_d:'对燃料做方向性交易。每手 = 10,000 百万英热。',
+  tc_spark_tip:'电价 − 7.5×气价 − $4 运行成本，按每兆瓦时计',
+  tc_lock_un_t:'在交割前，毛利随电价和气价浮动。',
+  tc_lock_h_t:'同时锁定两条腿（成本 −$2/兆瓦时）。毛利被固定，不再有月度波动。',
+
+  st_solar:'光伏', st_wind:'风电', st_nuclear:'核电', st_coal:'煤电',
+  st_ccgt:'燃气联合循环', st_peaker:'燃气调峰', st_emergency:'应急机组',
+
+  l_k1:'教程 · 第 1 课 / 共 5 课', l_k2:'教程 · 第 2 课 / 共 5 课',
+  l_k3:'教程 · 第 3 课 / 共 5 课 · 最重要的概念',
+  l_k4:'教程 · 第 4 课 / 共 5 课', l_k5:'教程 · 第 5 课 / 共 5 课 · 你赖以为生的那笔交易',
+  l_k6:'教程完成',
+
+  l0_ttl:'电力是一种没法放进仓库的商品',
+  l0_lede:'交易员买卖的大多数东西都能储存——石油存在油罐里，食糖堆在仓库里，黄金锁在金库里。<b>但电力不一样。</b>它必须在被使用的那一瞬间才被生产出来。正是这一点，让电力成为地球上波动最剧烈的市场，也正因如此才需要交易员。',
+  l0_gen:'发电侧', l0_dem:'用电侧',
+  l0_flows:'以光速流动', l0_same:'同一瞬间生产、同一瞬间消耗',
+  l0_nobat:'没有任何电池能装下一个国家的用电量',
+  l0_p1:'<b>你是一家售电公司的交易员。</b>你不建电厂——你买卖电力和发电用的燃料，从价格波动中获利，并管理风险。',
+  l0_p2:'<b>你要交易三样东西：</b>电力本身、天然气（燃料），以及两者之间的<i>价差</i>。',
+  l0_p3:'<b>难点在于：</b>因为电存不住，一个寒冷的清晨或一台机组故障，就可能让价格在几小时内暴涨 10 倍——然后又跌回去。',
+  l0_lab:'要记住的一句话',
+  l0_txt:'供给必须<b>每一秒</b>都等于需求。一旦这个平衡变紧，价格就会爆炸。下一课让你亲手体验。',
+
+  l1_ttl:'电网是一场 24 小时不间断的实时平衡',
+  l1_lede:'电网调度员要让供需时刻匹配，把系统频率维持在 <b>50 赫兹</b>（电网的心跳）。供给不足，频率就会下滑、逼近停电；供给过剩，频率则会上升。拖动供给旋钮，看看会发生什么。',
+  l1_supply:'供给',
+  l1_p1:'<b>需求由我们决定</b>——当几百万人同时打开热水壶和空调，需求就是那么多。电网没法让他们等一等。',
+  l1_p2:'<b>所以只能由供给去追需求</b>，而且是实时的。调度员每一秒都在调整机组出力。',
+  l1_p3:'<b>价格就是那根杠杆。</b>供给紧张时，价格被抬高，好把每一台还能发电的机组都请出来；供给过剩时，价格甚至会变成<i>负数</i>——发电企业倒贴钱也要继续发。',
+  l1_lab:'试试看',
+  l1_txt:'把供给压到远低于需求。看着频率一路跌向停电——那一刻，手上<b>做多电力</b>的交易员会赚得盆满钵满，因为价格必须飙升才能保住灯火。',
+
+  l2_ttl:'"边际成本排序"：最便宜的机组先发',
+  l2_lede:'每台机组都有自己的运行成本。电网按<b>由便宜到贵</b>的顺序依次启用——先是零成本的光伏和风电，然后是核电、煤电、燃气，最后才是昂贵的调峰机组。一层层叠上去，直到供给追上需求。神奇的地方在于：<b>所有机组拿到的都是最后那台被启用机组的成本</b>——也就是"边际机组"的价格。拖动需求，看看价格怎么变。',
+  l2_demand:'需求', l2_clearing:'出清价格：',
+  l2_p1:'<b>需求低时</b>（夜间、气温温和）：只有便宜机组在发电，价格很低——大概 $0–35。',
+  l2_p2:'<b>需求高时</b>（寒冷的傍晚）：电网被迫启用昂贵的调峰机组。出清价格跳到<i>它们</i>的成本上，而<b>所有</b>机组——哪怕是零成本的光伏——都按这个高价结算。',
+  l2_p3:'这就是为什么需求只涨一点点，价格却能<b>暴涨</b>：供给曲线的顶端非常陡。',
+  l2_lab:'交易员为什么在意这个',
+  l2_txt:'如果你能预判需求什么时候会爬到那段又陡又贵的区间，你就能今天低价买入电力、之后高价卖出。<b>读懂这条供给曲线，就是这份工作本身。</b>',
+
+  l3_ttl:'剧烈的价格尖峰是怎么来的',
+  l3_lede:'现在把前两个概念合起来。一次<b>供给冲击</b>（风停了、机组故障）或一次<b>需求冲击</b>（寒潮来袭），都会把电网推到供给曲线陡峭的那一端。点击下面的按钮，实时看价格走势怎么反应。',
+  l3_cold:'❄ 寒潮（需求 ↑）', l3_wind:'🍃 风力骤减', l3_nuke:'⚙ 机组故障', l3_calm:'☀ 温和多风（重置）',
+  l3_p1:'<b>寒潮：</b>家家户户开暖气，需求被推到调峰机组那一段。价格能在一小时内从 $50 冲到 $300 以上。',
+  l3_p2:'<b>风力骤减：</b>供给曲线底部零成本的风电消失了，只能由<i>更贵</i>的机组补上——整条曲线右移，价格上涨。',
+  l3_p3:'<b>机组故障：</b>便宜电源突然消失，效果一样——短缺。',
+  l3_p4:'<b>温和多风：</b>大量零成本的可再生电力涌入，需求又疲弱 → 价格塌陷，有时甚至为负。',
+  l3_lab:'交易员的优势在哪',
+  l3_txt:'你没法完美预测天气——但你可以读天气预报、机组检修计划和燃料成本，<b>在</b>尖峰到来<b>之前</b>把仓位摆对方向。接下来的 12 个月考的就是这个。',
+
+  l4_ttl:'电气价差——燃气电厂是怎么印钞的',
+  l4_lede:'燃气电厂买进天然气、卖出电力。它每兆瓦时的利润就是<b>电气价差</b>：电价，减去所烧天然气的成本，再减去一小笔运行成本。<b>热耗率</b>（这里是 <b>7.5</b>）表示发一兆瓦时电需要多少单位的气。拖动价格，看看毛利怎么变。',
+  l4_sold:'卖出的电', l4_burned:'烧掉的气', l4_spark:'电气价差',
+  l4_pw:'电价 $/兆瓦时', l4_gs:'气价 $/百万英热',
+  l4_p1:'<b>电气价差 = 电价 − (7.5 × 气价) − $4。</b>为正，电厂开机就能赚钱；为负，还不如停机划算。',
+  l4_p2:'<b>有两条路能让它变宽：</b>电价上涨，或气价下跌。"做多电气价差"的交易员两边都能赢。',
+  l4_p3:'<b>它比单纯做多电力更干净</b>——你不必承受那种同时推动电价和气价的燃料波动。',
+  l4_p4:'在游戏里，你可以<b>锁定</b>电气价差：把今天的毛利锁在一块约两个月后交割的发电量上。',
+  l4_lab:'试试看',
+  l4_txt:'把气价拖到 $9，而电价仍停在 $58——价差会变成<b>负数</b>。这台燃气机组现在开机就是<i>亏钱</i>。现实中电厂到这一步就会停机；聪明的交易员早就看出来了。',
+
+  l5_ttl:'你已经可以上台交易了',
+  l5_lede:'接下来 12 个月里，你的每一个决定都建立在这四点上：',
+  l5_p1:'<b>电存不住</b>——供给必须每一秒都匹配需求，所以价格极其狂野。',
+  l5_p2:'<b>边际成本排序决定价格</b>——最后一台被启用的机组的成本，就是所有人的结算价。',
+  l5_p3:'<b>冲击带来尖峰</b>——寒潮、风力枯竭和机组故障，会把电网推到又陡又贵的那一段。',
+  l5_p4:'<b>电气价差</b>——电价 − 7.5×气价 − $4——是燃气电厂的毛利，也是你最干净的一笔交易。',
+  l5_lab:'接下来 12 个月的任务',
+  l5_txt:'你从 <b>500 万美元</b>起步。读懂每条新闻，判断它对电力、天然气还是电气价差偏多还是偏空，并据此决定仓位。留意你的<b>风险</b>——杠杆太高，一次尖峰就能把你追保。结束时会有一份完整的<b>复盘</b>评分。教程随时可以从术语表面板重看。',
+  l5_tip:'小提示：把鼠标停在交易大厅里任何带下划线的术语上，就能看到简短释义。交易台上还有一个实时的电气价差计算器，和第 5 课里一样。',
+
+  news0_hl:'极地寒潮将笼罩全区，取暖负荷即将激增', news0_src:'气象台',
+  news0_ex:'寒潮把用电需求推到供给曲线上昂贵的调峰机组那一段。对电价强烈利多；对天然气小幅利多（取暖和发电都要多烧气）。',
+  news1_hl:'未来一周温和多风，风电出力将创新高', news1_src:'电网调度',
+  news1_ex:'充沛的零成本风电灌满供给曲线底部，而需求又落在低位——电价下跌，有时甚至跌破零。对电价利空。',
+  news2_hl:'主干天然气管道故障，本地区供应受限', news2_src:'普氏',
+  news2_ex:'气少了，边际燃气机组的燃料成本上升——对天然气和电力都利多（电价由燃气机组成本决定）。但会压缩电气价差。',
+  news3_hl:'LNG 出口终端提负荷，天然气被抽往海外', news3_src:'彭博',
+  news3_ex:'出口需求收紧国内气源——对天然气利多。电价跟随气价上行，但燃料变贵会让电气价差收窄。',
+  news4_hl:'大型核电机组意外跳机', news4_src:'路透',
+  news4_ex:'廉价基荷电源突然消失，只能由更贵的机组顶上——对电价利多。对天然气没有直接影响。',
+  news5_hl:'新建海上风电场投入商业运行', news5_src:'标普全球',
+  news5_ex:'供给曲线底部又多了一批廉价电源，边际机组随之下移——长期对电价利空。',
+  news6_hl:'欧盟收紧配额总量，碳价跳涨', news6_src:'ICE 碳市场',
+  news6_ex:'碳成本上升对高排放的煤电打击最大，让燃气在调度顺序中相对前移——对电价利多，也有利于燃气相对煤电的价差。',
+  news7_hl:'工业放缓，碳市场大幅回落', news7_src:'ICE 碳市场',
+  news7_ex:'碳价走低降低了化石能源发电的成本——对电价利空。',
+  news8_hl:'预报将出现热浪，空调负荷即将冲高', news8_src:'气象台',
+  news8_ex:'午后高峰需求爬升到调峰机组区间——对电价利多，对峰荷溢价尤其明显。发电用气需求也会上升。',
+  news9_hl:'平季气温温和，各时段需求普遍疲弱', news9_src:'电网调度',
+  news9_ex:'低需求落在供给曲线便宜的那一段——对电价利空。发电用气需求也随之减少。',
+  news10_hl:'天然气注库超预期，供应过剩正在形成', news10_src:'美国能源信息署',
+  news10_ex:'库存充足对天然气利空，会小幅拖低电价，但由于燃料变便宜，反而会<b>拉宽</b>电气价差。',
+  news11_hl:'流域干旱导致水电出力大幅下降', news11_src:'路透',
+  news11_ex:'损失的廉价水电必须由燃气机组补上——对电价利多，对天然气需求也利多。',
+  news12_hl:'新规之下煤电退役加速', news12_src:'彭博',
+  news12_ex:'相对便宜的煤电机组减少，燃气更频繁地成为边际定价机组——对电价和电气价差都构成结构性利多。',
+  news13_hl:'临近到期，投机资金削减电力多头', news13_src:'交易所数据',
+  news13_ex:'投机平仓可能在短期内压低电价，与基本面关系不大。',
+
+  d_missed:'错过了机会', d_opportunistic:'把握住了机会',
+  d_final:'最终权益', d_diracc:'方向判断准确率', d_sparks:'电气价差',
+  d_capacity:'容量收入', d_risk:'风险纪律', d_mc:'追保次数',
+  d_mc_none:'没有，账本干净',
+  c_strong:'盈亏表现强劲——你把供需冲击读得很准。',
+  c_down:'这一季收在亏损。回头看看你在哪些新闻上把方向做反了。',
+  c_diracc:'你的方向性交易亏多赚少——在高确信度的新闻上（寒潮、机组故障、风力变化）加大仓位，其余噪音就不要参与。',
+  c_nospark:'你一次电气价差都没锁。当它超过 $20/兆瓦时，那是一笔干净、由基本面驱动的毛利，你白白放过了。',
+  c_nocap:'你一次容量都没卖——那是低风险的收入，能在糟糕的月份里起到缓冲作用。',
+  c_mc:'追加保证金在最糟糕的时点抹掉了你的持仓。把净杠杆控制在约 1.5 倍以内，并留出应对尖峰的现金缓冲。',
+  c_heavy:'你的仓位跑得非常重。在电力市场，一次反向尖峰打在超大仓位上就是致命的——控制规模比判断正确更重要。',
+  c_ok:'交易均衡、有纪律。下一步：在高确信度的机会上再压得重一些，同时不要突破风险限额。'
+}
+};
+let LANG=(function(){
+  const q=new URLSearchParams(location.search).get('lang');
+  if(q&&I18N[q])return q;
+  let v=null;try{v=localStorage.getItem('evolta_lang')}catch(e){}
+  return (v&&I18N[v])?v:'en';
+})();
+function t(k,...a){const v=I18N[LANG][k]!==undefined?I18N[LANG][k]:I18N.en[k];return typeof v==='function'?v(...a):v}
+function MON(i){return t('months')[i];}
+
 const STACK = [
-  {name:'Solar',     cost:0,   cap:14, color:'#f0a83a'},
-  {name:'Wind',      cost:0,   cap:16, color:'#3a86c8'},
-  {name:'Nuclear',   cost:12,  cap:18, color:'#7a5cc8'},
-  {name:'Coal',      cost:34,  cap:20, color:'#5e7068'},
-  {name:'Gas (CCGT)',cost:58,  cap:22, color:'#1a7a4c'},
-  {name:'Gas peaker',cost:130, cap:14, color:'#c0392b'},
-  {name:'Emergency', cost:500, cap:10, color:'#7a1f17'},
+  {key:'st_solar',   cost:0,   cap:14, color:'#f0a83a'},
+  {key:'st_wind',    cost:0,   cap:16, color:'#3a86c8'},
+  {key:'st_nuclear', cost:12,  cap:18, color:'#7a5cc8'},
+  {key:'st_coal',    cost:34,  cap:20, color:'#5e7068'},
+  {key:'st_ccgt',    cost:58,  cap:22, color:'#1a7a4c'},
+  {key:'st_peaker',  cost:130, cap:14, color:'#c0392b'},
+  {key:'st_emergency',cost:500, cap:10, color:'#7a1f17'},
 ];
 
 let acadStep = 0;
@@ -408,7 +738,7 @@ function renderAcademy(){
   ACAD_LESSONS[acadStep]();
   document.getElementById('backBtn').style.visibility = acadStep===0?'hidden':'visible';
   const next = document.getElementById('nextBtn');
-  next.textContent = acadStep===ACAD_LESSONS.length-1 ? 'Enter the trading floor ⚡' : 'Next ›';
+  next.textContent = acadStep===ACAD_LESSONS.length-1 ? t('nav_enter') : t('nav_next');
   document.getElementById('skipBtn').style.display = acadStep===ACAD_LESSONS.length-1?'none':'inline-block';
 }
 function acadNext(){
@@ -427,39 +757,39 @@ function openAcademy(){
 /* ---------- LESSON 0 : What is power trading? ---------- */
 function renderL0_intro(){
   document.getElementById('lessonContent').innerHTML = `
-    <div class="lesson-kicker">Academy · Lesson 1 of 5</div>
-    <div class="lesson-title">Electricity is a product you can't put in a warehouse</div>
-    <p class="lesson-lede">Most things traders buy and sell can be stored — oil in tanks, sugar in sheds, gold in vaults. <b>Electricity is different.</b> It has to be made at the exact instant it's used. That single fact is why power is the most volatile market on earth, and why traders are needed at all.</p>
+    <div class="lesson-kicker">${t('l_k1')}</div>
+    <div class="lesson-title">${t('l0_ttl')}</div>
+    <p class="lesson-lede">${t('l0_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 300" width="100%">
           <!-- factory / generation -->
           <rect x="20" y="120" width="70" height="60" rx="6" fill="#1a7a4c" opacity="0.12"/>
-          <text x="55" y="110" text-anchor="middle" font-size="10" fill="#5e7068">GENERATION</text>
+          <text x="55" y="110" text-anchor="middle" font-size="10" fill="#5e7068">${t('l0_gen')}</text>
           <text x="55" y="155" text-anchor="middle" font-size="22">🏭</text>
           <!-- city / demand -->
           <rect x="270" y="120" width="70" height="60" rx="6" fill="#0b5ea8" opacity="0.12"/>
-          <text x="305" y="110" text-anchor="middle" font-size="10" fill="#5e7068">DEMAND</text>
+          <text x="305" y="110" text-anchor="middle" font-size="10" fill="#5e7068">${t('l0_dem')}</text>
           <text x="305" y="155" text-anchor="middle" font-size="22">🏙️</text>
           <!-- wire with moving electrons -->
           <line x1="92" y1="150" x2="268" y2="150" stroke="#d6e0da" stroke-width="3"/>
           <circle r="4" fill="#d98a1f"><animate attributeName="cx" from="92" to="268" dur="1.3s" repeatCount="indefinite"/><animate attributeName="cy" values="150;150" dur="1.3s" repeatCount="indefinite"/></circle>
           <circle r="4" fill="#f0a83a"><animate attributeName="cx" from="92" to="268" dur="1.3s" begin="0.45s" repeatCount="indefinite"/><animate attributeName="cy" values="150;150" dur="1.3s" begin="0.45s" repeatCount="indefinite"/></circle>
           <circle r="4" fill="#d98a1f"><animate attributeName="cx" from="92" to="268" dur="1.3s" begin="0.9s" repeatCount="indefinite"/><animate attributeName="cy" values="150;150" dur="1.3s" begin="0.9s" repeatCount="indefinite"/></circle>
-          <text x="180" y="140" text-anchor="middle" font-size="9" fill="#94a59d">flows at the speed of light</text>
-          <text x="180" y="210" text-anchor="middle" font-size="11" fill="#243530">made and used in the same instant</text>
-          <text x="180" y="232" text-anchor="middle" font-size="9" fill="#c0392b">no battery big enough to store a country's power</text>
+          <text x="180" y="140" text-anchor="middle" font-size="9" fill="#94a59d">${t('l0_flows')}</text>
+          <text x="180" y="210" text-anchor="middle" font-size="11" fill="#243530">${t('l0_same')}</text>
+          <text x="180" y="232" text-anchor="middle" font-size="9" fill="#c0392b">${t('l0_nobat')}</text>
         </svg>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>You are a trader at a merchant power firm.</b> You don't build plants — you buy and sell electricity and the fuel that makes it, to profit from price moves and to manage risk.</li>
-          <li><b>Three things you'll trade:</b> power itself, natural gas (the fuel), and the <i>spread</i> between them.</li>
-          <li><b>Why it's hard:</b> because power can't be stored, a cold morning or a broken plant can send the price up 10× for a few hours — then back down.</li>
+          <li>${t('l0_p1')}</li>
+          <li>${t('l0_p2')}</li>
+          <li>${t('l0_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">The one idea to hold onto</div>
-          <div class="txt">Supply must equal demand <b>every single second</b>. When that balance is tight, prices explode. The next lesson lets you feel it.</div>
+          <div class="lab">${t('l0_lab')}</div>
+          <div class="txt">${t('l0_txt')}</div>
         </div>
       </div>
     </div>`;
@@ -469,9 +799,9 @@ function renderL0_intro(){
 let balSupply = 50;
 function renderL1_balance(){
   document.getElementById('lessonContent').innerHTML = `
-    <div class="lesson-kicker">Academy · Lesson 2 of 5</div>
-    <div class="lesson-title">The grid is a balancing act, live, 24/7</div>
-    <p class="lesson-lede">Grid operators keep supply and demand matched to hold the system at <b>50 Hz</b> (its heartbeat). Too little supply and frequency drops toward a blackout; too much and it climbs. Drag the supply dial and watch what happens.</p>
+    <div class="lesson-kicker">${t('l_k2')}</div>
+    <div class="lesson-title">${t('l1_ttl')}</div>
+    <p class="lesson-lede">${t('l1_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 250" width="100%">
@@ -490,7 +820,7 @@ function renderL1_balance(){
         </svg>
         <div class="viz-controls">
           <div class="ctrl-row">
-            <label>Supply</label>
+            <label>${t('l1_supply')}</label>
             <input type="range" min="20" max="80" value="50" id="balSlider" oninput="updateBalance(this.value)">
           </div>
           <div class="read-out" id="balRead">Supply <b>50</b> GW · Demand <b>50</b> GW · matched</div>
@@ -498,13 +828,13 @@ function renderL1_balance(){
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Demand is fixed by us</b> — when millions of people switch on kettles and air-con, demand just <i>is</i> what it is. The grid can't ask them to wait.</li>
-          <li><b>So supply must chase demand</b> in real time. Operators turn plants up and down second by second.</li>
-          <li><b>Price is the lever.</b> When supply is scarce, the price is bid up to coax every last plant to run. When there's a glut, price can even go <i>negative</i> — generators pay to keep running.</li>
+          <li>${t('l1_p1')}</li>
+          <li>${t('l1_p2')}</li>
+          <li>${t('l1_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">Try this</div>
-          <div class="txt">Push supply well below demand. See the frequency crash toward blackout — that's the moment a trader who is <b>long power</b> makes a fortune, because the price spikes to keep the lights on.</div>
+          <div class="lab">${t('l1_lab')}</div>
+          <div class="txt">${t('l1_txt')}</div>
         </div>
       </div>
     </div>`;
@@ -537,9 +867,9 @@ function updateBalance(v){
 let moDemand = 60;
 function renderL2_meritorder(){
   document.getElementById('lessonContent').innerHTML = `
-    <div class="lesson-kicker">Academy · Lesson 3 of 5 · the most important idea</div>
-    <div class="lesson-title">The "merit order": cheapest plants run first</div>
-    <p class="lesson-lede">Every plant has a running cost. The grid switches them on <b>cheapest first</b> — free solar &amp; wind, then nuclear, coal, gas, and finally expensive peakers. It stacks them up until supply meets demand. Here's the magic: <b>everyone gets paid the cost of the LAST plant needed</b> — the "marginal" plant. Drag demand and watch the price.</p>
+    <div class="lesson-kicker">${t('l_k3')}</div>
+    <div class="lesson-title">${t('l2_ttl')}</div>
+    <p class="lesson-lede">${t('l2_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 380 280" width="100%" id="moSvg">
@@ -556,7 +886,7 @@ function renderL2_meritorder(){
         </svg>
         <div class="viz-controls">
           <div class="ctrl-row">
-            <label>Demand</label>
+            <label>${t('l2_demand')}</label>
             <input type="range" min="20" max="118" value="60" id="moSlider" oninput="updateMerit(+this.value)">
           </div>
           <div class="read-out">Clearing price: <b id="moPrice">$58</b>/MWh · set by <b id="moMarginal">Gas (CCGT)</b></div>
@@ -564,13 +894,13 @@ function renderL2_meritorder(){
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Low demand</b> (night, mild weather): only cheap plants run. Price is low — maybe $0–35.</li>
-          <li><b>High demand</b> (cold evening): the grid is forced into expensive peakers. The clearing price jumps to <i>their</i> cost, and <b>every</b> plant — even free solar — gets paid that high price.</li>
-          <li>That's why a small rise in demand can cause a <b>huge</b> jump in price: the supply stack is steep at the top.</li>
+          <li>${t('l2_p1')}</li>
+          <li>${t('l2_p2')}</li>
+          <li>${t('l2_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">Why traders care</div>
-          <div class="txt">If you can guess when demand will climb into the steep, expensive part of the stack, you buy power cheap today and sell it dear later. <b>Reading the stack is the job.</b></div>
+          <div class="lab">${t('l2_lab')}</div>
+          <div class="txt">${t('l2_txt')}</div>
         </div>
       </div>
     </div>`;
@@ -600,7 +930,7 @@ function updateMerit(d){
     const dim = cum>=d; // beyond demand = not dispatched
     if(!found && cum+p.cap>=d){ marginal=p; price=p.cost; found=true; }
     cum+=p.cap;
-    return {x,w,yTopB,h,color:p.color,name:p.name,dim};
+    return {x,w,yTopB,h,color:p.color,name:t(p.key),dim};
   });
   document.getElementById('moBars').innerHTML = bars.map(b=>`
     <rect class="bar-anim" x="${b.x}" y="${b.yTopB}" width="${Math.max(0,b.w-1.5)}" height="${b.h}"
@@ -617,7 +947,7 @@ function updateMerit(d){
   const plbl=document.getElementById('moPriceLbl');
   plbl.setAttribute('y',py-4); plbl.textContent='$'+price;
   document.getElementById('moPrice').textContent='$'+price;
-  document.getElementById('moMarginal').textContent=marginal.name;
+  document.getElementById('moMarginal').textContent=t(marginal.key);
   // color the price readout by severity
   const col = price>=130?'#c0392b':price>=58?'#d98a1f':'#1a7a4c';
   plbl.setAttribute('fill',col);
@@ -629,9 +959,9 @@ let spikeBase = {demand:62, wind:16, nukeOut:false};
 let priceHist = [];
 function renderL3_spikes(){
   document.getElementById('lessonContent').innerHTML = `
-    <div class="lesson-kicker">Academy · Lesson 4 of 5</div>
-    <div class="lesson-title">Where the violent price spikes come from</div>
-    <p class="lesson-lede">Now combine the two ideas. A <b>supply shock</b> (the wind drops, a plant breaks) or a <b>demand shock</b> (a cold snap) shoves the grid up the steep end of the stack. Hit the buttons and watch the price history react in real time.</p>
+    <div class="lesson-kicker">${t('l_k4')}</div>
+    <div class="lesson-title">${t('l3_ttl')}</div>
+    <p class="lesson-lede">${t('l3_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 380 200" width="100%">
@@ -644,23 +974,23 @@ function renderL3_spikes(){
           <text id="spikeNow" x="360" y="30" text-anchor="end" font-size="16" fill="#d98a1f" font-weight="600">$58</text>
         </svg>
         <div class="chip-row" style="margin-top:6px">
-          <div class="chip" onclick="spikeEvent('cold')">❄ Cold snap (demand ↑)</div>
-          <div class="chip" onclick="spikeEvent('wind')">🍃 Wind drops</div>
-          <div class="chip" onclick="spikeEvent('nuke')">⚙ Plant breaks</div>
-          <div class="chip" onclick="spikeEvent('calm')">☀ Mild &amp; windy (reset)</div>
+          <div class="chip" onclick="spikeEvent('cold')">${t('l3_cold')}</div>
+          <div class="chip" onclick="spikeEvent('wind')">${t('l3_wind')}</div>
+          <div class="chip" onclick="spikeEvent('nuke')">${t('l3_nuke')}</div>
+          <div class="chip" onclick="spikeEvent('calm')">${t('l3_calm')}</div>
         </div>
         <div class="read-out" id="spikeRead" style="margin-top:10px">A normal evening. Price set by gas.</div>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Cold snap:</b> heaters everywhere push demand up the stack into peakers. Price can go from $50 to $300+ in an hour.</li>
-          <li><b>Wind drops:</b> free wind vanishes from the bottom of the stack, so <i>more expensive</i> plants must fill the gap — the whole stack shifts and price rises.</li>
-          <li><b>Plant breaks:</b> sudden loss of cheap supply, same effect — scarcity.</li>
-          <li><b>Mild &amp; windy:</b> tons of free renewable supply, weak demand → price collapses, sometimes below zero.</li>
+          <li>${t('l3_p1')}</li>
+          <li>${t('l3_p2')}</li>
+          <li>${t('l3_p3')}</li>
+          <li>${t('l3_p4')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">The trader's edge</div>
-          <div class="txt">You can't predict the weather perfectly — but you can read forecasts, plant outages and fuel costs to lean the right way <b>before</b> the spike. That's what the next 12 months will test.</div>
+          <div class="lab">${t('l3_lab')}</div>
+          <div class="txt">${t('l3_txt')}</div>
         </div>
       </div>
     </div>`;
@@ -711,9 +1041,9 @@ function drawSpike(){
 let sparkGas=4.0, sparkPower=58;
 function renderL4_spark(){
   document.getElementById('lessonContent').innerHTML = `
-    <div class="lesson-kicker">Academy · Lesson 5 of 5 · the trade you'll live on</div>
-    <div class="lesson-title">The spark spread — how a gas plant prints money</div>
-    <p class="lesson-lede">A gas plant buys gas and sells electricity. Its profit per MWh is the <b>spark spread</b>: the power price, minus the cost of the gas it burns, minus a small running cost. The "<b>heat rate</b>" (here <b>7.5</b>) is how many units of gas it takes to make one MWh. Slide the prices and watch the margin.</p>
+    <div class="lesson-kicker">${t('l_k5')}</div>
+    <div class="lesson-title">${t('l4_ttl')}</div>
+    <p class="lesson-lede">${t('l4_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 250" width="100%">
@@ -731,12 +1061,12 @@ function renderL4_spark(){
         </svg>
         <div class="viz-controls">
           <div class="ctrl-row">
-            <label>Power $/MWh</label>
+            <label>${t('l4_pw')}</label>
             <input type="range" min="20" max="200" value="58" id="spPower" oninput="updateSpark()">
             <span class="read-out" id="spPowerV">$58</span>
           </div>
           <div class="ctrl-row">
-            <label>Gas $/MMBtu</label>
+            <label>${t('l4_gs')}</label>
             <input type="range" min="1.5" max="12" step="0.1" value="4" id="spGas" oninput="updateSpark()">
             <span class="read-out" id="spGasV">$4.0</span>
           </div>
@@ -745,14 +1075,14 @@ function renderL4_spark(){
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Spark spread = Power − (7.5 × Gas) − $4.</b> If it's positive, the plant earns money by running; if negative, it's cheaper to stay off.</li>
-          <li><b>Two ways to widen:</b> power price rises, or gas price falls. A power trader who is "long the spark" wins from either.</li>
-          <li><b>It's a cleaner bet than outright power</b> — you're insulated from gas-price swings that move power and gas together.</li>
-          <li>In the game you'll <b>lock</b> a spark spread: secure today's margin on a block of generation that settles in ~2 months.</li>
+          <li>${t('l4_p1')}</li>
+          <li>${t('l4_p2')}</li>
+          <li>${t('l4_p3')}</li>
+          <li>${t('l4_p4')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">Try this</div>
-          <div class="txt">Drag gas up to $9 while power stays at $58 — the spread goes <b>negative</b>. That gas plant would now <i>lose</i> money running. Real plants shut down here; smart traders saw it coming.</div>
+          <div class="lab">${t('l4_lab')}</div>
+          <div class="txt">${t('l4_txt')}</div>
         </div>
       </div>
     </div>`;
@@ -785,18 +1115,18 @@ function updateSpark(){
 /* ---------- LESSON 5 : Ready ---------- */
 function renderL5_ready(){
   document.getElementById('lessonContent').innerHTML = `
-    <div class="lesson-kicker">Academy complete</div>
-    <div class="lesson-title">You're ready for the desk</div>
-    <p class="lesson-lede">You now know the four ideas that drive every decision you'll make over the next 12 months:</p>
+    <div class="lesson-kicker">${t('l_k6')}</div>
+    <div class="lesson-title">${t('l5_ttl')}</div>
+    <p class="lesson-lede">${t('l5_lede')}</p>
     <ul class="lesson-points" style="max-width:64ch">
-      <li><b>Power can't be stored</b> — supply must match demand every second, so prices are wild.</li>
-      <li><b>The merit order sets the price</b> — the cost of the last plant needed sets what everyone is paid.</li>
-      <li><b>Shocks cause spikes</b> — cold snaps, wind droughts and plant outages push the grid up the steep, expensive end of the stack.</li>
-      <li><b>The spark spread</b> — Power − 7.5×Gas − $4 — is a gas plant's margin, and your cleanest trade.</li>
+      <li>${t('l5_p1')}</li>
+      <li>${t('l5_p2')}</li>
+      <li>${t('l5_p3')}</li>
+      <li>${t('l5_p4')}</li>
     </ul>
     <div class="takeaway" style="max-width:64ch">
-      <div class="lab">Your job for 12 months</div>
-      <div class="txt">Start with <b>$5M</b>. Read each news headline, decide whether it's bullish or bearish for power, gas, or the spark, and size your trades. Watch your <b>risk</b> — too much leverage and a spike can margin-call you. A full <b>debrief</b> grades you at the end. You can replay this Academy any time from the Glossary panel.</div>
+      <div class="lab">${t('l5_lab')}</div>
+      <div class="txt">${t('l5_txt')}</div>
     </div>
     <p class="hint" style="font-size:12px;margin-top:14px">Tip: hover any underlined term on the trading floor for a quick definition. There's a live spark-spread calculator on the desk, just like Lesson 5.</p>`;
 }
@@ -812,11 +1142,11 @@ const START_CASH = 5_000_000;
 const MARGIN_RATE = 0.10;
 const MAINT_RATE = 0.07;
 const SPARK_MONTHS = 2;         // generation block settles in ~2 months
-const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+/* month labels live in the dictionary; MON(i) resolves them */
 
 let S=null;
 function freshState(){
-  return {
+  return {newsMode:'intro',
     started:false, turn:0, cash:START_CASH, realised:0,
     power:58,           // $/MWh baseload
     gas:4.0,            // $/MMBtu
@@ -835,50 +1165,35 @@ function freshState(){
 
 /* ---- news engine ---- */
 const NEWS_POOL=[
-  {hl:"Arctic blast to grip the region; heating demand to surge",src:"Weather Desk",
-   ex:"A cold snap pushes electricity demand up the supply stack into expensive peakers. Strongly bullish power; mildly bullish gas (more gas burned for heat &amp; power).",
-   eff:s=>{s.dPower+=14; s.dGas+=0.5;}},
-  {hl:"Mild, breezy week ahead; wind output to hit record",src:"Grid Operator",
-   ex:"Abundant free wind floods the bottom of the stack and weak demand sits low on it — power prices fall, sometimes below zero. Bearish power.",
-   eff:s=>{s.dPower-=12; s.dWind+=18;}},
-  {hl:"Major gas pipeline outage cuts supply to the region",src:"Platts",
-   ex:"Less gas raises the fuel cost for the marginal gas plants — bullish gas AND power (power is set by gas-plant costs). Squeezes the spark spread.",
-   eff:s=>{s.dGas+=1.2; s.dPower+=9;}},
-  {hl:"LNG export terminal ramps up; gas pulled offshore",src:"Bloomberg",
-   ex:"Export demand tightens domestic gas — bullish gas. Power follows gas up, but the spark spread narrows as fuel gets dearer.",
-   eff:s=>{s.dGas+=0.9; s.dPower+=5;}},
-  {hl:"Large nuclear unit trips offline unexpectedly",src:"Reuters",
-   ex:"Sudden loss of cheap baseload forces costlier plants to fill the gap — bullish power. Doesn't touch gas directly.",
-   eff:s=>{s.dPower+=11;}},
-  {hl:"New offshore wind farm enters commercial service",src:"S&P Global",
-   ex:"More cheap supply at the bottom of the stack pushes the marginal plant down — bearish power over time.",
-   eff:s=>{s.dPower-=8; s.dWind+=10;}},
-  {hl:"Carbon allowance price jumps on tighter EU cap",src:"ICE Carbon",
-   ex:"Higher carbon cost hits dirty coal hardest, nudging gas up the merit order — bullish power, and helps the spark spread vs coal.",
-   eff:s=>{s.dCarbon+=14; s.dPower+=6;}},
-  {hl:"Carbon market sells off on industrial slowdown",src:"ICE Carbon",
-   ex:"Cheaper carbon lowers the cost of fossil generation — bearish power.",
-   eff:s=>{s.dCarbon-=12; s.dPower-=5;}},
-  {hl:"Heatwave forecast; air-conditioning load to spike",src:"Weather Desk",
-   ex:"Peak afternoon demand climbs into peakers — bullish power, especially the peak premium. Gas demand for generation rises too.",
-   eff:s=>{s.dPower+=12; s.dGas+=0.4;}},
-  {hl:"Mild shoulder season; demand soft across the board",src:"Grid Operator",
-   ex:"Low demand sits on the cheap part of the stack — bearish power. Gas demand for power eases.",
-   eff:s=>{s.dPower-=7; s.dGas-=0.3;}},
-  {hl:"Gas storage refill beats expectations; glut building",src:"EIA",
-   ex:"Plentiful gas in store is bearish gas, which drags power down a touch but WIDENS the spark spread (cheaper fuel).",
-   eff:s=>{s.dGas-=0.8; s.dPower-=3;}},
-  {hl:"Drought slashes hydro output across the basin",src:"Reuters",
-   ex:"Lost cheap hydro must be replaced by gas plants — bullish power and bullish gas demand.",
-   eff:s=>{s.dPower+=8; s.dGas+=0.3;}},
-  {hl:"Coal plant retirements accelerate under new rules",src:"Bloomberg",
-   ex:"Fewer cheap-ish coal plants leaves gas as the marginal price-setter more often — structurally bullish power and the spark spread.",
-   eff:s=>{s.dPower+=7; s.dCarbon+=3;}},
-  {hl:"Speculators trim long power positions into expiry",src:"Exchange Data",
-   ex:"Spec liquidation can pressure power lower short-term regardless of fundamentals.",
-   eff:s=>{s.dPower-=6;}},
+  {id:0,  eff:s=>{s.dPower+=14; s.dGas+=0.5;}},
+  {id:1,  eff:s=>{s.dPower-=12; s.dWind+=18;}},
+  {id:2,  eff:s=>{s.dGas+=1.2; s.dPower+=9;}},
+  {id:3,  eff:s=>{s.dGas+=0.9; s.dPower+=5;}},
+  {id:4,  eff:s=>{s.dPower+=11;}},
+  {id:5,  eff:s=>{s.dPower-=8; s.dWind+=10;}},
+  {id:6,  eff:s=>{s.dCarbon+=14; s.dPower+=6;}},
+  {id:7,  eff:s=>{s.dCarbon-=12; s.dPower-=5;}},
+  {id:8,  eff:s=>{s.dPower+=12; s.dGas+=0.4;}},
+  {id:9,  eff:s=>{s.dPower-=7; s.dGas-=0.3;}},
+  {id:10, eff:s=>{s.dGas-=0.8; s.dPower-=3;}},
+  {id:11, eff:s=>{s.dPower+=8; s.dGas+=0.3;}},
+  {id:12, eff:s=>{s.dPower+=7; s.dCarbon+=3;}},
+  {id:13, eff:s=>{s.dPower-=6;}},
 ];
 function pickNews(){ return NEWS_POOL[Math.floor(Math.random()*NEWS_POOL.length)]; }
+function newsHTML(){
+  if(S.newsMode==='news'&&S.pendingNews){
+    const n=S.pendingNews;
+    return '<div class="news"><div class="hl">'+t('news'+n.id+'_hl')+'</div><div class="src">'+t('news'+n.id+'_src')+'</div>'+
+           '<div class="ex"><b>'+t('why_matters')+'</b> '+t('news'+n.id+'_ex')+'</div></div>';
+  }
+  if(S.newsMode==='reset'){
+    return '<div class="news"><div class="hl">'+t('reset_hl')+'</div><div class="src">'+t('intro_src')+'</div>'+
+           '<div class="ex">'+t('reset_ex')+'</div></div>';
+  }
+  return '<div class="news"><div class="hl">'+t('intro_hl')+'</div><div class="src">'+t('intro_src')+'</div>'+
+         '<div class="ex">'+t('intro_ex')+'</div></div>';
+}
 
 function applyMonth(news){
   S.dPower=0;S.dGas=0;S.dCarbon=0;S.dWind=0;
@@ -928,10 +1243,10 @@ function equity(){ return S.cash + totalOpenPL(); }
 
 /* ---- trading ---- */
 function trade(key,name,side,lots){
-  if(!S.started){ toast("Start the season first."); return; }
+  if(!S.started){ toast(t('toast_start')); return; }
   lots=Math.max(1,Math.floor(lots||1));
   const addMargin=lotNotional(key)*lots*MARGIN_RATE;
-  if(marginUsed()+addMargin>equity()){ toast("Insufficient margin for that size.",true); return; }
+  if(marginUsed()+addMargin>equity()){ toast(t('toast_margin'),true); return; }
   let p=S.pos.find(x=>x.key===key);
   const px=instrPrice(key);
   if(p){
@@ -953,18 +1268,18 @@ function trade(key,name,side,lots){
 function trackDir(r){ if(r>0.0001)S.directionalRight++; else if(r<-0.0001)S.directionalWrong++; }
 
 function lockSpark(mwh,hedged){
-  if(!S.started){ toast("Start the season first."); return; }
+  if(!S.started){ toast(t('toast_start')); return; }
   mwh=Math.max(5000,Math.floor(mwh||5000));
   let sp=sparkSpread();
   const hedgeCost = hedged?2:0;   // $/MWh to lock both legs
   sp-=hedgeCost;
   const addMargin=S.power*mwh*MARGIN_RATE*0.4;
-  if(marginUsed()+addMargin>equity()){ toast("Insufficient margin for that block.",true); return; }
+  if(marginUsed()+addMargin>equity()){ toast(t('toast_margin_block'),true); return; }
   S.sparks.push({mwh,lockedSpark:sp,monthsLeft:SPARK_MONTHS,hedged:!!hedged});
   S.sparksTaken++;
-  if(hedged) toast("Hedged block — spark margin locked, no monthly swing.");
-  else if(sp>0) toast("Block locked — margin floats until you settle.");
-  else toast("You locked a NEGATIVE spark spread.",true);
+  if(hedged) toast(t('toast_block_h'));
+  else if(sp>0) toast(t('toast_block_u'));
+  else toast(t('toast_block_neg'),true);
   render();
 }
 function closeSpark(b){
@@ -976,7 +1291,7 @@ function closeSpark(b){
 }
 /* Capacity: passive availability fee, low-risk income */
 function sellCapacity(mw){
-  if(!S.started){ toast("Start the season first."); return; }
+  if(!S.started){ toast(t('toast_start')); return; }
   mw=Math.max(10,Math.floor(mw||50));
   const fee=mw*1400; // $/MW for the month
   S.cash+=fee; S.realised+=fee; S.capacityEarned+=fee;
@@ -1003,7 +1318,7 @@ function buildRecap(news,before){
     const prev=before.posPL.find(x=>x.name===p.name&&x.side===p.side);
     const delta=nowPL-(prev?prev.pl:0);
     if(Math.abs(delta)<1) return;
-    lines.push({txt:`${p.side>0?'Long':'Short'} ${p.name}: ${delta>=0?'+':''}${fmtUSD(delta)}`,delta});
+    lines.push({txt:(p.side>0?t('long'):t('short'))+' '+instrName(p.key)+': '+(delta>=0?'+':'')+fmtUSD(delta),delta});
   });
 
   let arbDriver='';
@@ -1015,9 +1330,9 @@ function buildRecap(news,before){
     const top=drivers[0];
     arbDriver=`Unhedged block: ${d>=0?'+':''}${fmtUSD(d)} — mainly ${top[1]>=0?'a favourable':'an adverse'} move in ${top[0]} (${top[1]>=0?'+':''}$${Math.abs(top[1]).toFixed(0)}/MWh to the spark).`;
   }
-  if(S.sparks.some(b=>b.hedged)) arbDriver+=(arbDriver?' ':'')+'Hedged block: flat by design — margin already secured.';
+  if(S.sparks.some(b=>b.hedged)) arbDriver+=(arbDriver?' ':'')+t('r_hedged_flat');
 
-  S.recap={ month:MONTHS[S.turn], headline:news.hl, moves,
+  S.recap={ month:MON(S.turn), headline:news.hl, moves,
     lines:lines.sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta)).map(l=>l.txt),
     arbDriver, totalSwing:totalOpenPL()-before.openPL };
 }
@@ -1025,7 +1340,7 @@ function buildRecap(news,before){
 /* ---- turn advance ---- */
 function startOrAdvance(){
   if(!S.started){
-    S.started=true; S.turn=0; S.pendingNews=pickNews();
+    S.started=true; S.turn=0; S.pendingNews=pickNews();S.newsMode='news';
     document.getElementById('advanceBtn').textContent="▶ Advance Month";
     render(); return;
   }
@@ -1045,10 +1360,10 @@ function startOrAdvance(){
   const lev=Math.abs(netExposure())/Math.max(1,equity());
   if(lev>S.maxRiskBreach)S.maxRiskBreach=lev;
 
-  S.history.push({m:MONTHS[S.turn],eq:equity()});
+  S.history.push({m:MON(S.turn),eq:equity()});
   S.turn++;
   if(S.turn>=12){ render(); endGame(); return; }
-  S.pendingNews=pickNews(); render();
+  S.pendingNews=pickNews();S.newsMode='news'; render();
 }
 function forceLiquidate(){
   S.pos.forEach(p=>{ S.realised+=posOpenPL(p); S.cash+=posOpenPL(p); });
@@ -1067,25 +1382,20 @@ function colorPL(n){return n>0?'up':n<0?'down':'flat';}
 function arrow(n){return n>0?'▲':n<0?'▼':'—';}
 
 function render(){
-  document.getElementById('monthLabel').textContent = S.started?MONTHS[Math.min(S.turn,11)]:"—";
+  document.getElementById('monthLabel').textContent = S.started?MON(Math.min(S.turn,11)):"—";
   document.getElementById('turnLabel').textContent = S.started?`Month ${S.turn+1} of 12`:"Press start";
 
-  if(S.pendingNews){
-    const n=S.pendingNews;
-    document.getElementById('newsBox').innerHTML=
-      `<div class="news"><div class="hl">${n.hl}</div><div class="src">${n.src}</div>
-       <div class="ex"><b>Why it matters:</b> ${n.ex}</div></div>`;
-  }
+  document.getElementById('newsBox').innerHTML=newsHTML();
 
   const spark=sparkSpread();
   const dP=S.power-S.lastPower, dG=S.gas-S.lastGas, dC=S.carbon-S.lastCarbon, dW=S.wind-S.lastWind, dS=spark-(S.lastSpark??spark);
   const rows=[
-    {nm:'Power · baseload',sub:'$/MWh · round-the-clock',px:'$'+S.power,chg:dP,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:'Wholesale electricity for 24h delivery. 1 lot = 1,000 MWh. The headline price you bet on.'},
-    {nm:'Peak premium',sub:'$/MWh · daytime extra',px:'$'+S.peakPrem,chg:0,fmt:()=>'info',tip:'How much more daytime (peak) power costs than the 24h average — driven by air-con and evening demand.'},
-    {nm:'Natural gas',sub:'$/MMBtu · the fuel',px:'$'+S.gas.toFixed(2),chg:dG,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(2),tip:'Henry Hub gas, the fuel for the marginal power plants. 1 lot = 10,000 MMBtu.'},
-    {nm:'Spark spread',sub:'$/MWh · plant margin',px:'$'+spark.toFixed(0),chg:dS,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:'Power − 7.5×Gas − $4. The margin a gas plant earns generating. Your cleanest trade.'},
-    {nm:'Carbon',sub:'$/t CO₂',px:'$'+S.carbon,chg:dC,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:'Cost to emit CO₂. Higher carbon hurts coal most and lifts power prices.'},
-    {nm:'Wind output',sub:'% of capacity',px:S.wind+'%',chg:dW,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:'How hard the wind is blowing. High wind = lots of free supply = lower power prices.'},
+    {nm:t('i_power'),sub:t('i_power_s'),px:'$'+S.power,chg:dP,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:t('i_power_t')},
+    {nm:t('i_peak'),sub:'$/MWh · daytime extra',px:'$'+S.peakPrem,chg:0,fmt:()=>'info',tip:t('i_peak_t')},
+    {nm:'Natural gas',sub:'$/MMBtu · the fuel',px:'$'+S.gas.toFixed(2),chg:dG,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(2),tip:t('i_gas_t')},
+    {nm:t('i_spark'),sub:'$/MWh · plant margin',px:'$'+spark.toFixed(0),chg:dS,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:t('i_spark_t')},
+    {nm:t('i_carbon'),sub:t('i_carbon_s'),px:'$'+S.carbon,chg:dC,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:t('i_carbon_t')},
+    {nm:t('i_wind'),sub:t('i_wind_s'),px:S.wind+'%',chg:dW,fmt:v=>arrow(v)+' '+Math.abs(v).toFixed(0),tip:t('i_wind_t')},
   ];
   document.getElementById('mktBody').innerHTML=rows.map(r=>{
     const cls=r.chg>0?'up':r.chg<0?'down':'flat';
@@ -1102,20 +1412,20 @@ function render(){
 
   const tg=document.getElementById('tradeGrid');
   tg.innerHTML=`
-    ${tradeCard('power','Power Forward','Directional bet on electricity. 1 lot = 1,000 MWh.')}
-    ${tradeCard('gas','Natural Gas','Directional bet on the fuel. 1 lot = 10,000 MMBtu.')}
+    ${tradeCard('power',t('tc_power'),t('tc_power_d'))}
+    ${tradeCard('gas',t('i_gas'),t('tc_gas_d'))}
     <div class="trade-card">
       <div class="tt">Spark Spread</div>
-      <div class="td">Run a gas plant: buy gas, sell power, lock today's <span class="tip" title="Power − 7.5×gas − $4 running cost, per MWh">spark margin</span>. Settles in ~2 months. MWh = generation.</div>
+      <div class="td">${t('tc_spark_d1')}<span class="tip" title="${t('tc_spark_tip')}">${t('tc_spark_margin')}</span>${t('tc_spark_d2')}</div>
       <div class="qty-row"><label>MWh</label><input type="number" id="sparkQty" value="20000" min="5000" step="5000"></div>
       <div class="btn-row">
-        <button class="buy" onclick="lockSpark(+document.getElementById('sparkQty').value,false)" title="Margin floats with power & gas until you settle.">Lock — Unhedged</button>
-        <button onclick="lockSpark(+document.getElementById('sparkQty').value,true)" title="Locks both legs (−$2/MWh). Margin secured, no monthly swing.">Lock — Hedged</button>
+        <button class="buy" onclick="lockSpark(+document.getElementById('sparkQty').value,false)" title="${t('tc_lock_un_t')}">Lock — Unhedged</button>
+        <button onclick="lockSpark(+document.getElementById('sparkQty').value,true)" title="${t('tc_lock_h_t')}">Lock — Hedged</button>
       </div>
     </div>
     <div class="trade-card">
       <div class="tt">Capacity Sale</div>
-      <div class="td">Get paid a fee for keeping generation <span class="tip" title="A payment for being available to generate when needed, even if you rarely run. Low risk, steady income.">available</span>. Low-risk income, paid now.</div>
+      <div class="td">${t('tc_cap_d1')}<span class="tip" title="${t('tc_cap_tip')}">${t('tc_cap_avail')}</span>${t('tc_cap_d2')}</div>
       <div class="qty-row"><label>MW offered</label><input type="number" id="capQty" value="50" min="10" step="10"></div>
       <div class="btn-row"><button onclick="sellCapacity(+document.getElementById('capQty').value)">Sell Capacity</button></div>
     </div>`;
@@ -1143,7 +1453,7 @@ function render(){
   S.pos.forEach((p,i)=>{
     const pl=posOpenPL(p);
     const unit=p.key==='power'?'$'+p.entryPx.toFixed(0)+'/MWh':'$'+p.entryPx.toFixed(2);
-    html+=`<div class="pos"><div class="pl"><span><span class="tag ${p.side>0?'long':'short'}">${p.side>0?'Long':'Short'}</span> ${p.name}</span>
+    html+=`<div class="pos"><div class="pl"><span><span class="tag ${p.side>0?'long':'short'}">${p.side>0?t('long'):t('short')}</span> ${instrName(p.key)}</span>
       <small>${p.lots} lot${p.lots>1?'s':''} @ ${unit}</small></div>
       <div class="pr"><span class="${colorPL(pl)}">${fmtUSD(pl)}</span><br>
       <button style="padding:2px 6px;font-size:9px;margin-top:3px" onclick="closePos(${i})">Close</button></div></div>`;
@@ -1156,7 +1466,7 @@ function render(){
       <div class="pr"><span class="${colorPL(pl)}">${b.hedged?'flat':fmtUSD(pl)}</span><br>
       <button style="padding:2px 6px;font-size:9px;margin-top:3px" onclick="closeSparkIdx(${i})">Settle</button></div></div>`;
   });
-  pb.innerHTML=html||'<div class="hint">No open positions.</div>';
+  pb.innerHTML=html||'<div class="hint">'+t('no_pos')+'</div>';
 
   const rp=document.getElementById('recapPanel'), rb=document.getElementById('recapBox');
   if(S.recap){
@@ -1166,7 +1476,7 @@ function render(){
     if(r.moves.length) h+=`<div style="font-size:11px;color:var(--txt-dim);margin-bottom:8px;line-height:1.6"><b style="color:var(--green)">Market moved:</b><br>`+r.moves.map(m=>'· '+m).join('<br>')+`</div>`;
     if(r.lines.length) h+=`<div style="font-size:11.5px;border-top:1px solid var(--line);padding-top:8px;margin-bottom:6px"><b style="color:var(--green)">Position impact:</b><br>`+r.lines.map(l=>{const pos=l.includes('+');return `<div style="padding:2px 0"><span class="${pos?'up':'down'}">${l}</span></div>`;}).join('')+`</div>`;
     if(r.arbDriver) h+=`<div style="font-size:11px;color:var(--txt-dim);border-top:1px solid var(--line);padding-top:8px;line-height:1.6">${r.arbDriver}</div>`;
-    if(!r.lines.length && !r.arbDriver) h+=`<div class="hint">No open positions this month — the market moved but you weren't exposed.</div>`;
+    if(!r.lines.length && !r.arbDriver) h+='<div class="hint">'+t('r_none')+'</div>';
     rb.innerHTML=h; rp.style.display='block';
   }else rp.style.display='none';
 }
@@ -1180,6 +1490,7 @@ function tradeCard(key,name,desc){
       <button class="sell" onclick="trade('${key}','${name}',-1,+document.getElementById('q_${key}').value)">Sell / Short</button>
     </div></div>`;
 }
+function instrName(k){ return k==='power'?t('tc_power'):k==='gas'?t('i_gas'):k; }
 function closePos(i){ const p=S.pos[i]; if(!p)return; trade(p.key,p.name,-p.side,p.lots); }
 function closeSparkIdx(i){ closeSpark(S.sparks[i]); }
 
@@ -1231,24 +1542,22 @@ function endGame(){
 }
 function buildCoaching(ret,dirAcc,s){
   const notes=[];
-  if(ret>15) notes.push("Strong P&L — you read the supply &amp; demand shocks well.");
-  else if(ret<0) notes.push("You finished down. Review which headlines you leaned the wrong way on.");
-  if(dirAcc<45) notes.push("Your directional calls lost more than they won — size into high-conviction news (cold snaps, outages, wind) and sit out the noise.");
-  if(s.sparksTaken===0) notes.push("You never locked a spark spread. When it clears $20+/MWh that is a clean, fundamentals-driven margin you left on the table.");
+  if(ret>15) notes.push(t('c_strong'));
+  else if(ret<0) notes.push(t('c_down'));
+  if(dirAcc<45) notes.push(t('c_diracc'));
+  if(s.sparksTaken===0) notes.push(t('c_nospark'));
   if(s.sparksMissed>0) notes.push(`You skipped ${s.sparksMissed} fat spark spread${s.sparksMissed>1?'s':''} — generation traders live on that margin.`);
-  if(s.capacityEarned===0) notes.push("You never sold capacity — it's low-risk income that cushions a bad month.");
-  if(s.marginCalls>0) notes.push("Margin calls wiped positions at the worst time. Keep net leverage under ~1.5x and hold a cash buffer for spikes.");
-  if(s.maxRiskBreach>1.5) notes.push("You ran a very heavy book. In power, a single spike against an oversized position is fatal — size discipline beats being right.");
-  if(notes.length===0) notes.push("Balanced, disciplined trading. Next: press harder on conviction trades to lift returns without breaching risk limits.");
+  if(s.capacityEarned===0) notes.push(t('c_nocap'));
+  if(s.marginCalls>0) notes.push(t('c_mc'));
+  if(s.maxRiskBreach>1.5) notes.push(t('c_heavy'));
+  if(notes.length===0) notes.push(t('c_ok'));
   return notes.join(" ");
 }
 function restart(){
   document.getElementById('modalBg').classList.remove('show');
   S=freshState();
   document.getElementById('advanceBtn').textContent="▶ Start Season";
-  document.getElementById('newsBox').innerHTML=
-    `<div class="news"><div class="hl">New season. Fresh book.</div><div class="src">Evolta Trading Floor</div>
-     <div class="ex">Press <b>Start Season</b> to take the first news tick.</div></div>`;
+  S.newsMode='reset';
   render();
 }
 
@@ -1262,7 +1571,33 @@ function startGame(){
 }
 
 /* ---- init ---- */
-renderAcademy();
+/* ================= LANGUAGE ================= */
+function applyLang(){
+  document.documentElement.lang=LANG==='zh'?'zh-CN':'en';
+  document.body.classList.toggle('lang-zh',LANG==='zh');
+  document.title=t('doc_title');
+  const tog=document.getElementById('langToggle');
+  tog.textContent=t('lang_other');
+  tog.setAttribute('aria-label',t('lang_aria'));
+  document.getElementById('brandSub').innerHTML=t('brand_sub');
+  document.getElementById('backAll').textContent=t('back_all');
+  document.getElementById('glossBox').innerHTML=t('gloss');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{el.title=t(el.dataset.i18nTitle)});
+  if(S){
+    document.getElementById('advanceBtn').textContent=S.started?t('btn_advance'):t('btn_start');
+    render();
+  }else{
+    document.getElementById('turnLabel').textContent=t('press_start');
+  }
+  renderAcademy();
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG=LANG==='en'?'zh':'en';
+  try{localStorage.setItem('evolta_lang',LANG)}catch(e){}
+  applyLang();
+});
+applyLang();
 </script>
 </body>
 </html>

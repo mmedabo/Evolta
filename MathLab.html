@@ -12,7 +12,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+                         'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
             background: #faf9f6;
             min-height: 100vh;
             display: flex;
@@ -37,6 +38,51 @@
             font-size: 24px;
             font-weight: 600;
             letter-spacing: -0.5px;
+        }
+
+        .top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            color: #999;
+            text-decoration: none;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            padding: 6px 12px;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #2c2c2c;
+            border-color: #2c2c2c;
+            color: #fff;
+        }
+
+        .lang-toggle {
+            font-family: inherit;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+            color: #2c2c2c;
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            padding: 6px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-toggle:hover {
+            background: #2c2c2c;
+            border-color: #2c2c2c;
+            color: #fff;
         }
 
         .difficulty-screen, .game-screen, .results-screen {
@@ -86,10 +132,15 @@
             border-color: #1a1a1a;
         }
 
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
         .game-info {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
             padding: 16px;
             background: #faf9f6;
             border-radius: 6px;
@@ -127,21 +178,46 @@
             50% { opacity: 0.6; }
         }
 
+        .stage {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #fbfbf8;
+            border: 1px solid #ececec;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .stage-caption {
+            text-align: center;
+            font-size: 11px;
+            color: #aaa;
+            letter-spacing: 0.4px;
+            margin-bottom: 12px;
+        }
+
         .question {
             text-align: center;
             font-size: 32px;
             font-weight: 600;
             color: #2c2c2c;
-            margin: 32px 0 24px 0;
-            min-height: 60px;
+            margin: 16px 0 4px 0;
+            min-height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             letter-spacing: -0.5px;
         }
 
+        .tolerance-note {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+
         .input-group {
-            margin: 24px 0;
+            margin: 16px 0;
         }
 
         .answer-input {
@@ -184,6 +260,11 @@
         .numpad-btn:active {
             transform: scale(0.95);
             background: #f5f5f5;
+        }
+
+        .numpad-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
 
         .numpad-btn.wide {
@@ -258,7 +339,7 @@
         }
 
         .feedback {
-            margin: 16px 0;
+            margin: 12px 0 0;
             padding: 12px;
             border-radius: 6px;
             font-weight: 500;
@@ -269,11 +350,6 @@
         .feedback.correct {
             background: #d4edda;
             color: #155724;
-        }
-
-        .feedback.close {
-            background: #fff3cd;
-            color: #856404;
         }
 
         .feedback.wrong {
@@ -302,22 +378,30 @@
 </head>
 <body>
     <div class="container">
-        <h1>⚡ Quick Math Challenge</h1>
+        <div class="top-row">
+            <a class="back-btn" href="index.html">&larr; Evolta</a>
+            <button class="lang-toggle" id="langToggle" type="button">中文</button>
+        </div>
+
+        <h1><span aria-hidden="true">⚡</span> <span data-i18n="doc_h1">Quick Math Challenge</span></h1>
 
         <!-- Difficulty Selection Screen -->
         <div class="difficulty-screen active">
-            <p style="text-align: center; color: #666; margin-bottom: 24px; font-size: 14px;">
+            <p style="text-align: center; color: #666; margin-bottom: 8px; font-size: 14px;" data-i18n="choose_difficulty">
                 Choose your difficulty level
+            </p>
+            <p style="text-align: center; color: #aaa; margin-bottom: 24px; font-size: 12px;" data-i18n="intro_rule">
+                Land the jump by answering within 5% of the true value.
             </p>
             <div class="difficulty-buttons">
                 <button class="btn" onclick="startGame('easy')">
-                    Easy<br><small style="font-size: 13px; opacity: 0.6; font-weight: 400;">Single digit operations</small>
+                    <span data-i18n="diff_easy">Easy</span><br><small style="font-size: 13px; opacity: 0.6; font-weight: 400;" data-i18n="diff_easy_sub">Single digit operations</small>
                 </button>
                 <button class="btn" onclick="startGame('medium')">
-                    Medium<br><small style="font-size: 13px; opacity: 0.6; font-weight: 400;">Double digit operations</small>
+                    <span data-i18n="diff_medium">Medium</span><br><small style="font-size: 13px; opacity: 0.6; font-weight: 400;" data-i18n="diff_medium_sub">Double digit operations</small>
                 </button>
                 <button class="btn" onclick="startGame('hard')">
-                    Hard<br><small style="font-size: 13px; opacity: 0.6; font-weight: 400;">Advanced calculations</small>
+                    <span data-i18n="diff_hard">Hard</span><br><small style="font-size: 13px; opacity: 0.6; font-weight: 400;" data-i18n="diff_hard_sub">Advanced calculations</small>
                 </button>
             </div>
         </div>
@@ -330,26 +414,30 @@
 
             <div class="game-info">
                 <div class="info-item">
-                    <div class="info-label">Round</div>
+                    <div class="info-label" data-i18n="lbl_round">Round</div>
                     <div class="info-value" id="roundDisplay">1/10</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Timer</div>
+                    <div class="info-label" data-i18n="lbl_timer">Timer</div>
                     <div class="info-value timer" id="timerDisplay">5</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Score</div>
+                    <div class="info-label" data-i18n="lbl_landed">Landed</div>
                     <div class="info-value" id="scoreDisplay">0</div>
                 </div>
             </div>
 
-            <div id="feedbackArea"></div>
+            <canvas class="stage" id="stage" width="360" height="200"></canvas>
+            <div class="stage-caption" id="stageCaption">Too low → falls short &nbsp;·&nbsp; too high → overshoots</div>
 
             <div class="question" id="questionDisplay"></div>
+            <div class="tolerance-note" id="toleranceNote">Land within <strong>5%</strong> of the true answer</div>
+
+            <div id="feedbackArea"></div>
 
             <div class="input-group">
-                <input type="text" class="answer-input" id="answerInput" 
-                       placeholder="Your answer" readonly>
+                <input type="text" class="answer-input" id="answerInput"
+                       placeholder="Your answer" data-i18n-placeholder="input_ph" readonly>
             </div>
 
             <div class="numpad">
@@ -367,57 +455,460 @@
                 <button class="numpad-btn delete" onclick="deleteDigit()">⌫</button>
             </div>
 
-            <button class="btn btn-primary submit-btn" onclick="submitAnswer()">Submit Answer</button>
+            <button class="btn btn-primary submit-btn" id="submitBtn" onclick="submitAnswer()" data-i18n="btn_jump">Jump</button>
         </div>
 
         <!-- Results Screen -->
         <div class="results-screen">
-            <h2 style="color: #2c2c2c; margin-bottom: 8px; font-size: 20px; font-weight: 600;">Game Complete</h2>
-            
+            <h2 style="color: #2c2c2c; margin-bottom: 8px; font-size: 20px; font-weight: 600;" data-i18n="res_title">Game Complete</h2>
+
             <div class="score-display" id="finalScore">0</div>
-            <p style="color: #999; margin-bottom: 24px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Total Points</p>
+            <p style="color: #999; margin-bottom: 24px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;" data-i18n="res_landings">Successful Landings</p>
 
             <div class="stats">
                 <div class="stat-row">
-                    <span class="stat-label">Total Time</span>
+                    <span class="stat-label" data-i18n="res_rate">Landing Rate</span>
+                    <span class="stat-value" id="landingRate">0%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label" data-i18n="res_time">Total Time</span>
                     <span class="stat-value" id="totalTime">0s</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">Average Score per Round</span>
-                    <span class="stat-value" id="avgScore">0</span>
-                </div>
-                <div class="stat-row">
-                    <span class="stat-label">Difficulty</span>
+                    <span class="stat-label" data-i18n="res_difficulty">Difficulty</span>
                     <span class="stat-value" id="difficultyDisplay">-</span>
                 </div>
             </div>
 
-            <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" 
-                    onclick="resetGame()">Play Again</button>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 20px;"
+                    onclick="resetGame()" data-i18n="btn_again">Play Again</button>
         </div>
     </div>
 
     <script>
+        // ---------- i18n ----------
+        const I18N = {
+            en: {
+                doc_title:        'Quick Math Challenge',
+                doc_h1:           'Quick Math Challenge',
+                lang_other:       '中文',
+                lang_aria:        'Switch to Chinese',
+
+                choose_difficulty:'Choose your difficulty level',
+                intro_rule:       'Land the jump by answering within 5% of the true value.',
+                diff_easy:        'Easy',
+                diff_easy_sub:    'Single digit operations',
+                diff_medium:      'Medium',
+                diff_medium_sub:  'Double digit operations',
+                diff_hard:        'Hard',
+                diff_hard_sub:    'Advanced calculations',
+
+                lbl_round:        'Round',
+                lbl_timer:        'Timer',
+                lbl_landed:       'Landed',
+                stage_caption:    'Too low → falls short &nbsp;·&nbsp; too high → overshoots',
+                tolerance_note:   'Land within <strong>5%</strong> of the true answer',
+                input_ph:         'Your answer',
+                btn_jump:         'Jump',
+
+                time_prefix:      "Time's up • ",
+                fb_landed:        'Landed it • +1',
+                fb_short:         'Fell short',
+                fb_over:          'Overshot',
+                fb_miss:          (dir, pct) => `${dir} • off by ${pct}%`,
+                fb_timeup_none:   "Time's up • no answer entered",
+                det_answer:       (u, c) => `Your answer: ${u} • Correct: ${c}`,
+                det_needed:       (u, b) => `Your answer: ${u} • needed ${b}`,
+                det_correct:      (c, b) => `Correct: ${c} • needed ${b}`,
+
+                res_title:        'Game Complete',
+                res_landings:     'Successful Landings',
+                res_rate:         'Landing Rate',
+                res_time:         'Total Time',
+                res_difficulty:   'Difficulty',
+                btn_again:        'Play Again',
+                name_easy:        'Easy',
+                name_medium:      'Medium',
+                name_hard:        'Hard'
+            },
+
+            zh: {
+                doc_title:        '速算挑战',
+                doc_h1:           '速算挑战',
+                lang_other:       'EN',
+                lang_aria:        '切换到英文',
+
+                choose_difficulty:'选择难度',
+                intro_rule:       '答案落在真实值的 5% 以内，就能稳稳落地。',
+                diff_easy:        '简单',
+                diff_easy_sub:    '个位数运算',
+                diff_medium:      '中等',
+                diff_medium_sub:  '两位数运算',
+                diff_hard:        '困难',
+                diff_hard_sub:    '进阶运算',
+
+                lbl_round:        '回合',
+                lbl_timer:        '倒计时',
+                lbl_landed:       '着陆',
+                stage_caption:    '答小了 → 跳短 &nbsp;·&nbsp; 答大了 → 跳过头',
+                tolerance_note:   '落在真实答案的 <strong>5%</strong> 以内',
+                input_ph:         '你的答案',
+                btn_jump:         '起跳',
+
+                time_prefix:      '时间到 • ',
+                fb_landed:        '成功着陆 • +1',
+                fb_short:         '跳短了',
+                fb_over:          '跳过头了',
+                fb_miss:          (dir, pct) => `${dir} • 偏差 ${pct}%`,
+                fb_timeup_none:   '时间到 • 未作答',
+                det_answer:       (u, c) => `你的答案：${u} • 正确答案：${c}`,
+                det_needed:       (u, b) => `你的答案：${u} • 需落在 ${b}`,
+                det_correct:      (c, b) => `正确答案：${c} • 需落在 ${b}`,
+
+                res_title:        '游戏结束',
+                res_landings:     '成功着陆次数',
+                res_rate:         '着陆成功率',
+                res_time:         '总用时',
+                res_difficulty:   '难度',
+                btn_again:        '再玩一次',
+                name_easy:        '简单',
+                name_medium:      '中等',
+                name_hard:        '困难'
+            }
+        };
+
+        let LANG = (function () {
+            const q = new URLSearchParams(location.search).get('lang');
+            if (q && I18N[q]) return q;
+            let saved = null;
+            try { saved = localStorage.getItem('evolta_lang'); } catch (e) {}
+            return (saved && I18N[saved]) ? saved : 'en';
+        })();
+
+        function t(key, ...args) {
+            const v = I18N[LANG][key] !== undefined ? I18N[LANG][key] : I18N.en[key];
+            return typeof v === 'function' ? v(...args) : v;
+        }
+
+        function applyLang() {
+            document.documentElement.lang = LANG === 'zh' ? 'zh-CN' : 'en';
+            document.title = t('doc_title');
+
+            const toggle = document.getElementById('langToggle');
+            toggle.textContent = t('lang_other');
+            toggle.setAttribute('aria-label', t('lang_aria'));
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                el.textContent = t(el.dataset.i18n);
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                el.placeholder = t(el.dataset.i18nPlaceholder);
+            });
+
+            // These two carry markup, so they need innerHTML rather than text.
+            document.getElementById('stageCaption').innerHTML = t('stage_caption');
+            document.getElementById('toleranceNote').innerHTML = t('tolerance_note');
+
+            // A finished game is still on screen — keep its difficulty label current.
+            const diffEl = document.getElementById('difficultyDisplay');
+            if (diffEl && diffEl.textContent !== '-') diffEl.textContent = t('name_' + difficulty);
+        }
+
+        document.getElementById('langToggle').addEventListener('click', () => {
+            LANG = LANG === 'en' ? 'zh' : 'en';
+            try { localStorage.setItem('evolta_lang', LANG); } catch (e) {}
+            applyLang();
+        });
+
+        // ---------- GAME STATE ----------
+        const TOLERANCE = 0.05;   // 5% band — the width of the landing platform
+
         let currentRound = 1;
         let totalRounds = 10;
-        let score = 0;
+        let score = 0;            // successful landings
         let currentAnswer = 0;
         let timeLeft = 5;
         let timerInterval = null;
         let difficulty = 'easy';
         let gameStartTime = 0;
         let totalGameTime = 0;
+        let jumping = false;      // locks input while the jump plays out
+
+        // ---------- STAGE / JUMP ANIMATION ----------
+        const VW = 360, VH = 200;         // logical canvas size
+        const GROUND = 145;               // platform surface y
+        const DECK = 14;                  // platform thickness
+        const TAKEOFF = { x0: 18, x1: 108 };
+        const PAD     = { x0: 230, x1: 330 };
+        const PAD_MID = (PAD.x0 + PAD.x1) / 2;      // 280 — a perfect answer lands here
+        const PAD_HALF = (PAD.x1 - PAD.x0) / 2;     // 50  — maps to exactly 5% error
+        const FLIGHT = 0.85;              // seconds to reach the target x
+        const GRAV = 863;                 // px/s² — gives a ~78px apex over FLIGHT
+        const VY0 = GRAV * FLIGHT / 2;
+
+        const stage = document.getElementById('stage');
+        const sctx = stage.getContext('2d');
+        let raf = null;
+        let dust = [];
+
+        function setupStage() {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            stage.width = VW * dpr;
+            stage.height = VH * dpr;
+            sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        setupStage();
+
+        function drawPlatform(p, highlight) {
+            sctx.fillStyle = highlight || '#2c2c2c';
+            roundRect(p.x0, GROUND, p.x1 - p.x0, DECK, 3);
+            sctx.fill();
+        }
+
+        function roundRect(x, y, w, h, r) {
+            sctx.beginPath();
+            sctx.moveTo(x + r, y);
+            sctx.arcTo(x + w, y, x + w, y + h, r);
+            sctx.arcTo(x + w, y + h, x, y + h, r);
+            sctx.arcTo(x, y + h, x, y, r);
+            sctx.arcTo(x, y, x + w, y, r);
+            sctx.closePath();
+        }
+
+        // A stick figure whose feet sit at (x, feetY).
+        function drawFigure(x, feetY, pose, rot) {
+            const H = 44;               // hip-to-head height budget
+            sctx.save();
+            sctx.translate(x, feetY);
+            if (rot) sctx.rotate(rot);
+
+            let squash = pose === 'land' ? 0.82 : (pose === 'crouch' ? 0.78 : 1);
+            sctx.scale(1, squash);
+
+            sctx.strokeStyle = '#2c2c2c';
+            sctx.lineWidth = 3;
+            sctx.lineCap = 'round';
+            sctx.lineJoin = 'round';
+
+            const hipY = -H * 0.52;
+            const shoulderY = -H * 0.86;
+            const headY = -H - 2;
+
+            // legs
+            sctx.beginPath();
+            if (pose === 'air') {
+                sctx.moveTo(0, hipY); sctx.lineTo(-9, hipY + 12); sctx.lineTo(-4, hipY + 22);
+                sctx.moveTo(0, hipY); sctx.lineTo(10, hipY + 10); sctx.lineTo(14, hipY + 21);
+            } else if (pose === 'crouch') {
+                sctx.moveTo(0, hipY); sctx.lineTo(-8, hipY + 11); sctx.lineTo(-6, 0);
+                sctx.moveTo(0, hipY); sctx.lineTo(8, hipY + 11); sctx.lineTo(6, 0);
+            } else if (pose === 'fall') {
+                sctx.moveTo(0, hipY); sctx.lineTo(-12, hipY + 8); sctx.lineTo(-16, hipY + 20);
+                sctx.moveTo(0, hipY); sctx.lineTo(11, hipY + 12); sctx.lineTo(6, hipY + 24);
+            } else {
+                sctx.moveTo(0, hipY); sctx.lineTo(-5, hipY + 12); sctx.lineTo(-6, 0);
+                sctx.moveTo(0, hipY); sctx.lineTo(5, hipY + 12); sctx.lineTo(6, 0);
+            }
+            sctx.stroke();
+
+            // torso
+            sctx.beginPath();
+            sctx.moveTo(0, hipY);
+            sctx.lineTo(0, shoulderY);
+            sctx.stroke();
+
+            // arms
+            sctx.beginPath();
+            if (pose === 'air') {
+                sctx.moveTo(0, shoulderY); sctx.lineTo(-12, shoulderY - 11);
+                sctx.moveTo(0, shoulderY); sctx.lineTo(13, shoulderY - 9);
+            } else if (pose === 'crouch') {
+                sctx.moveTo(0, shoulderY); sctx.lineTo(-13, shoulderY + 3);
+                sctx.moveTo(0, shoulderY); sctx.lineTo(-9, shoulderY + 12);
+            } else if (pose === 'fall') {
+                sctx.moveTo(0, shoulderY); sctx.lineTo(-15, shoulderY - 4);
+                sctx.moveTo(0, shoulderY); sctx.lineTo(14, shoulderY - 12);
+            } else {
+                sctx.moveTo(0, shoulderY); sctx.lineTo(-11, shoulderY + 12);
+                sctx.moveTo(0, shoulderY); sctx.lineTo(11, shoulderY + 12);
+            }
+            sctx.stroke();
+
+            // head
+            sctx.beginPath();
+            sctx.arc(0, headY, 7, 0, Math.PI * 2);
+            sctx.fillStyle = '#2c2c2c';
+            sctx.fill();
+
+            sctx.restore();
+        }
+
+        function spawnDust(x, y, n) {
+            for (let i = 0; i < n; i++) {
+                const a = -Math.PI * (0.15 + Math.random() * 0.7);
+                const sp = 20 + Math.random() * 60;
+                dust.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1 });
+            }
+        }
+
+        function stepDust(dt) {
+            dust.forEach(d => {
+                d.x += d.vx * dt;
+                d.y += d.vy * dt;
+                d.vy += 220 * dt;
+                d.life -= dt * 1.9;
+            });
+            dust = dust.filter(d => d.life > 0);
+        }
+
+        function drawDust() {
+            dust.forEach(d => {
+                sctx.globalAlpha = Math.max(0, d.life) * 0.5;
+                sctx.fillStyle = '#9a9a92';
+                sctx.beginPath();
+                sctx.arc(d.x, d.y, 2.4, 0, Math.PI * 2);
+                sctx.fill();
+            });
+            sctx.globalAlpha = 1;
+        }
+
+        function drawScene(fig, padTint) {
+            sctx.clearRect(0, 0, VW, VH);
+
+            // pit floor hint
+            sctx.strokeStyle = '#efefea';
+            sctx.lineWidth = 1;
+            sctx.beginPath();
+            sctx.moveTo(0, GROUND + DECK + 24);
+            sctx.lineTo(VW, GROUND + DECK + 24);
+            sctx.stroke();
+
+            drawPlatform(TAKEOFF, '#2c2c2c');
+            drawPlatform(PAD, padTint || '#2c2c2c');
+
+            // the 5% band marker sitting on the landing pad
+            sctx.strokeStyle = padTint || '#c9c9c2';
+            sctx.lineWidth = 1.5;
+            sctx.beginPath();
+            sctx.moveTo(PAD.x0, GROUND - 7); sctx.lineTo(PAD.x0, GROUND - 1);
+            sctx.moveTo(PAD.x1, GROUND - 7); sctx.lineTo(PAD.x1, GROUND - 1);
+            sctx.moveTo(PAD_MID, GROUND - 5); sctx.lineTo(PAD_MID, GROUND - 1);
+            sctx.stroke();
+
+            sctx.fillStyle = padTint || '#b5b5ad';
+            sctx.font = '600 10px -apple-system, Segoe UI, sans-serif';
+            sctx.textAlign = 'center';
+            sctx.fillText('±5%', PAD_MID, GROUND - 12);
+            sctx.textAlign = 'left';
+
+            drawDust();
+            if (fig) drawFigure(fig.x, fig.y, fig.pose, fig.rot);
+        }
+
+        function resetStage() {
+            if (raf) cancelAnimationFrame(raf);
+            raf = null;
+            dust = [];
+            drawScene({ x: TAKEOFF.x1 - 16, y: GROUND, pose: 'idle', rot: 0 });
+        }
+
+        // Signed relative error: 0 = dead centre, ±0.05 = platform edge.
+        function relativeError(userAnswer) {
+            if (currentAnswer === 0) return userAnswer === 0 ? 0 : (userAnswer > 0 ? 3 : -3);
+            return (userAnswer - currentAnswer) / Math.abs(currentAnswer);
+        }
+
+        // Play the jump, then hand control back through onDone(landed).
+        function playJump(err, onDone) {
+            jumping = true;
+            setInputEnabled(false);
+
+            // The verdict comes from the arithmetic, never from where a frame
+            // happens to sample the arc — otherwise a bang-on 5% answer could
+            // miss by a pixel of rounding.
+            const willLand = Math.abs(err) <= TOLERANCE;
+            const ratio = Math.max(-3, Math.min(3, err / TOLERANCE));
+            const targetX = PAD_MID + ratio * PAD_HALF;
+            const startX = TAKEOFF.x1 - 16;
+
+            const vx = (targetX - startX) / FLIGHT;
+            let x = startX, y = GROUND, vy = -VY0;
+            let phase = 'crouch';
+            let phaseT = 0;
+            let landed = false;
+            let last = performance.now();
+
+            function frame(now) {
+                let dt = (now - last) / 1000;
+                last = now;
+                if (dt > 0.05) dt = 0.05;
+                phaseT += dt;
+
+                if (phase === 'crouch') {
+                    drawScene({ x, y, pose: 'crouch', rot: 0 });
+                    if (phaseT >= 0.18) {
+                        spawnDust(x, GROUND, 8);
+                        phase = 'flight';
+                        phaseT = 0;
+                    }
+                } else if (phase === 'flight') {
+                    x += vx * dt;
+                    vy += GRAV * dt;
+                    y += vy * dt;
+
+                    if (willLand && vy > 0 && y >= GROUND) {
+                        x = targetX;
+                        y = GROUND;
+                        landed = true;
+                        spawnDust(x, GROUND, 12);
+                        phase = 'land';
+                        phaseT = 0;
+                    } else if (y > GROUND) {
+                        // below deck height with nothing underneath — tumble into the pit
+                        drawScene({ x, y, pose: 'fall', rot: Math.min(1.4, (y - GROUND) / 90) });
+                        if (y > VH + 80) phase = 'done';
+                    } else {
+                        drawScene({ x, y, pose: 'air', rot: 0 });
+                    }
+                } else if (phase === 'land') {
+                    drawScene({ x, y, pose: phaseT < 0.14 ? 'land' : 'idle', rot: 0 }, '#1e7e34');
+                    if (phaseT >= 0.45) phase = 'done';
+                }
+
+                stepDust(dt);
+
+                if (phase === 'done') {
+                    if (!landed) drawScene(null, '#c0392b');
+                    raf = null;
+                    jumping = false;
+                    onDone(landed);
+                    return;
+                }
+                raf = requestAnimationFrame(frame);
+            }
+            raf = requestAnimationFrame(frame);
+        }
+
+        // ---------- INPUT ----------
+        function setInputEnabled(on) {
+            document.querySelectorAll('.numpad-btn').forEach(b => b.disabled = !on);
+            document.getElementById('submitBtn').disabled = !on;
+        }
 
         function addDigit(digit) {
+            if (jumping) return;
             const input = document.getElementById('answerInput');
-            if (input.value === '0' || input.value === '') {
+            if (input.value === '' || input.value === '0') {
                 input.value = digit;
+            } else if (input.value === '-0') {
+                input.value = '-' + digit;
             } else {
                 input.value += digit;
             }
         }
 
         function deleteDigit() {
+            if (jumping) return;
             const input = document.getElementById('answerInput');
             if (input.value.length > 0) {
                 input.value = input.value.slice(0, -1);
@@ -425,9 +916,10 @@
         }
 
         function toggleNegative() {
+            if (jumping) return;
             const input = document.getElementById('answerInput');
             if (input.value === '' || input.value === '0') return;
-            
+
             if (input.value.startsWith('-')) {
                 input.value = input.value.substring(1);
             } else {
@@ -435,57 +927,55 @@
             }
         }
 
+        // ---------- GAME FLOW ----------
         function startGame(selectedDifficulty) {
             difficulty = selectedDifficulty;
             currentRound = 1;
             score = 0;
             gameStartTime = Date.now();
-            
+
             document.querySelector('.difficulty-screen').classList.remove('active');
             document.querySelector('.game-screen').classList.add('active');
-            
+
             nextRound();
         }
 
         function generateQuestion() {
             let num1, num2, operation, answer;
-            
-            if (difficulty === 'easy') {
-                num1 = Math.floor(Math.random() * 10) + 1;
-                num2 = Math.floor(Math.random() * 10) + 1;
-                const ops = ['+', '-', '×'];
-                operation = ops[Math.floor(Math.random() * ops.length)];
-            } else if (difficulty === 'medium') {
-                num1 = Math.floor(Math.random() * 50) + 10;
-                num2 = Math.floor(Math.random() * 50) + 10;
-                const ops = ['+', '-', '×'];
-                operation = ops[Math.floor(Math.random() * ops.length)];
-            } else { // hard
-                num1 = Math.floor(Math.random() * 100) + 10;
-                num2 = Math.floor(Math.random() * 100) + 10;
-                const ops = ['+', '-', '×', '÷'];
-                operation = ops[Math.floor(Math.random() * ops.length)];
-                
-                // For division, make sure it's clean
-                if (operation === '÷') {
-                    num2 = Math.floor(Math.random() * 12) + 1;
-                    num1 = num2 * (Math.floor(Math.random() * 20) + 1);
-                }
-            }
 
-            switch(operation) {
-                case '+':
-                    answer = num1 + num2;
-                    break;
-                case '-':
-                    answer = num1 - num2;
-                    break;
-                case '×':
-                    answer = num1 * num2;
-                    break;
-                case '÷':
-                    answer = num1 / num2;
-                    break;
+            for (let guard = 0; guard < 50; guard++) {
+                if (difficulty === 'easy') {
+                    num1 = Math.floor(Math.random() * 10) + 1;
+                    num2 = Math.floor(Math.random() * 10) + 1;
+                    const ops = ['+', '-', '×'];
+                    operation = ops[Math.floor(Math.random() * ops.length)];
+                } else if (difficulty === 'medium') {
+                    num1 = Math.floor(Math.random() * 50) + 10;
+                    num2 = Math.floor(Math.random() * 50) + 10;
+                    const ops = ['+', '-', '×'];
+                    operation = ops[Math.floor(Math.random() * ops.length)];
+                } else { // hard
+                    num1 = Math.floor(Math.random() * 100) + 10;
+                    num2 = Math.floor(Math.random() * 100) + 10;
+                    const ops = ['+', '-', '×', '÷'];
+                    operation = ops[Math.floor(Math.random() * ops.length)];
+
+                    // For division, make sure it's clean
+                    if (operation === '÷') {
+                        num2 = Math.floor(Math.random() * 12) + 1;
+                        num1 = num2 * (Math.floor(Math.random() * 20) + 1);
+                    }
+                }
+
+                switch (operation) {
+                    case '+': answer = num1 + num2; break;
+                    case '-': answer = num1 - num2; break;
+                    case '×': answer = num1 * num2; break;
+                    case '÷': answer = num1 / num2; break;
+                }
+
+                // A zero answer has no meaningful 5% band — reroll it.
+                if (answer !== 0) break;
             }
 
             return {
@@ -502,13 +992,15 @@
 
             const q = generateQuestion();
             currentAnswer = q.answer;
-            
+
             document.getElementById('questionDisplay').textContent = q.question;
             document.getElementById('answerInput').value = '';
             document.getElementById('roundDisplay').textContent = `${currentRound}/${totalRounds}`;
             document.getElementById('scoreDisplay').textContent = score;
             document.getElementById('feedbackArea').innerHTML = '';
-            
+
+            resetStage();
+            setInputEnabled(true);
             updateProgressBar();
             startTimer();
         }
@@ -516,13 +1008,13 @@
         function startTimer() {
             timeLeft = 5;
             updateTimerDisplay();
-            
+
             if (timerInterval) clearInterval(timerInterval);
-            
+
             timerInterval = setInterval(() => {
                 timeLeft--;
                 updateTimerDisplay();
-                
+
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     timeUp();
@@ -533,7 +1025,7 @@
         function updateTimerDisplay() {
             const timerEl = document.getElementById('timerDisplay');
             timerEl.textContent = timeLeft;
-            
+
             if (timeLeft <= 2) {
                 timerEl.classList.add('warning');
             } else {
@@ -546,73 +1038,86 @@
             document.getElementById('progressBar').style.width = progress + '%';
         }
 
-        function submitAnswer() {
-            const userAnswer = parseFloat(document.getElementById('answerInput').value);
-            
-            if (isNaN(userAnswer)) {
-                return;
-            }
+        function bandText() {
+            const lo = currentAnswer - Math.abs(currentAnswer) * TOLERANCE;
+            const hi = currentAnswer + Math.abs(currentAnswer) * TOLERANCE;
+            return `${trim(lo)} – ${trim(hi)}`;
+        }
 
-            clearInterval(timerInterval);
-            calculateScore(userAnswer);
-            
+        function trim(n) {
+            return Math.round(n * 100) / 100;
+        }
+
+        function advanceRound() {
             setTimeout(() => {
                 currentRound++;
                 nextRound();
-            }, 1500);
+            }, 1300);
+        }
+
+        // Shared by the Jump button and by the timer auto-submitting what's typed.
+        function resolveJump(userAnswer, auto) {
+            const err = relativeError(userAnswer);
+            const prefix = auto ? t('time_prefix') : '';
+
+            playJump(err, (landed) => {
+                if (landed) {
+                    score++;
+                    document.getElementById('scoreDisplay').textContent = score;
+                    showFeedback(
+                        `${prefix}${t('fb_landed')}`,
+                        'correct',
+                        t('det_answer', userAnswer, trim(currentAnswer))
+                    );
+                } else {
+                    const dir = t(err < 0 ? 'fb_short' : 'fb_over');
+                    showFeedback(
+                        `${prefix}${t('fb_miss', dir, (Math.abs(err) * 100).toFixed(1))}`,
+                        'wrong',
+                        t('det_needed', userAnswer, bandText())
+                    );
+                }
+                advanceRound();
+            });
+        }
+
+        function currentInputValue() {
+            const raw = document.getElementById('answerInput').value.trim();
+            if (raw === '' || raw === '-') return NaN;
+            return parseFloat(raw);
+        }
+
+        function submitAnswer() {
+            if (jumping) return;
+            const userAnswer = currentInputValue();
+            if (isNaN(userAnswer)) return;
+
+            clearInterval(timerInterval);
+            setInputEnabled(false);
+            resolveJump(userAnswer, false);
         }
 
         function timeUp() {
-            showFeedback('Time\'s up!', 'wrong', `Correct answer: ${currentAnswer}`);
-            
-            setTimeout(() => {
-                currentRound++;
-                nextRound();
-            }, 1500);
-        }
+            if (jumping) return;
+            setInputEnabled(false);
 
-        function calculateScore(userAnswer) {
-            const difference = Math.abs(userAnswer - currentAnswer);
-            const percentError = (difference / Math.abs(currentAnswer)) * 100;
-            
-            let points = 0;
-            let message = '';
-            let type = 'wrong';
-
-            if (difference === 0) {
-                points = 100;
-                message = 'Perfect!';
-                type = 'correct';
-            } else if (percentError <= 5) {
-                points = 80;
-                message = 'Very close!';
-                type = 'close';
-            } else if (percentError <= 10) {
-                points = 60;
-                message = 'Pretty close';
-                type = 'close';
-            } else if (percentError <= 20) {
-                points = 40;
-                message = 'Not bad';
-                type = 'close';
-            } else if (percentError <= 30) {
-                points = 20;
-                message = 'Keep trying';
-                type = 'wrong';
-            } else {
-                points = 10;
-                message = 'Practice more';
-                type = 'wrong';
+            // Whatever is already typed counts as the answer — the clock only
+            // takes away the chance to keep editing it.
+            const typed = currentInputValue();
+            if (!isNaN(typed)) {
+                resolveJump(typed, true);
+                return;
             }
 
-            score += points;
-            document.getElementById('scoreDisplay').textContent = score;
-            
-            showFeedback(
-                `${message} • +${points} points`, 
-                type, 
-                `Your answer: ${userAnswer} • Correct: ${currentAnswer}`
-            );
+            // Nothing entered at all: no push off the edge, straight into the pit.
+            playJump(-3 * TOLERANCE, () => {
+                showFeedback(
+                    t('fb_timeup_none'),
+                    'wrong',
+                    t('det_correct', trim(currentAnswer), bandText())
+                );
+                advanceRound();
+            });
         }
 
         function showFeedback(message, type, detail) {
@@ -620,23 +1125,26 @@
             feedbackArea.innerHTML = `
                 <div class="feedback ${type}">
                     <div>${message}</div>
-                    <small style="font-size: 14px; opacity: 0.8;">${detail}</small>
+                    <small style="font-size: 13px; opacity: 0.8;">${detail}</small>
                 </div>
             `;
         }
 
         function endGame() {
             clearInterval(timerInterval);
+            if (raf) cancelAnimationFrame(raf);
+            raf = null;
+            jumping = false;
             totalGameTime = Math.round((Date.now() - gameStartTime) / 1000);
-            
+
             document.querySelector('.game-screen').classList.remove('active');
             document.querySelector('.results-screen').classList.add('active');
-            
-            document.getElementById('finalScore').textContent = score;
+
+            document.getElementById('finalScore').textContent = `${score}/${totalRounds}`;
+            document.getElementById('landingRate').textContent =
+                Math.round((score / totalRounds) * 100) + '%';
             document.getElementById('totalTime').textContent = totalGameTime + 's';
-            document.getElementById('avgScore').textContent = Math.round(score / totalRounds);
-            document.getElementById('difficultyDisplay').textContent = 
-                difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+            document.getElementById('difficultyDisplay').textContent = t('name_' + difficulty);
         }
 
         function resetGame() {
@@ -644,6 +1152,8 @@
             document.querySelector('.difficulty-screen').classList.add('active');
         }
 
+        // ---------- INIT ----------
+        applyLang();
     </script>
 </body>
 </html>
