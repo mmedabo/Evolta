@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clarity — Write Like an Aircraft Manual</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #faf9f6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 24px 16px 48px;
+            color: #2c2c2c;
+            line-height: 1.6;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            max-width: 560px;
+            width: 100%;
+            padding: 36px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.8px;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 13px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .lead {
+            color: #555;
+            font-size: 15px;
+            font-weight: 300;
+            margin-bottom: 28px;
+        }
+        .lead strong { font-weight: 600; color: #2c2c2c; }
+
+        .menu { display: flex; flex-direction: column; gap: 12px; }
+
+        .btn {
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 500;
+            border: 1px solid #e5e5e5;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            color: #2c2c2c;
+            text-align: left;
+            font-family: inherit;
+            width: 100%;
+        }
+        .btn small {
+            display: block;
+            font-size: 13px;
+            opacity: 0.55;
+            font-weight: 400;
+            margin-top: 3px;
+        }
+        .btn:hover { background: #f5f5f5; border-color: #2c2c2c; }
+        .btn:active { transform: scale(0.99); }
+
+        .btn-primary { background: #2c2c2c; color: white; border-color: #2c2c2c; text-align: center; }
+        .btn-primary:hover { background: #1a1a1a; border-color: #1a1a1a; }
+
+        .btn-ghost {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            padding: 8px 0;
+            font-family: inherit;
+            margin-bottom: 16px;
+        }
+        .btn-ghost:hover { color: #2c2c2c; }
+
+        /* Play screen */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .pill {
+            font-size: 11px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: #999;
+        }
+        .pill b { color: #2c2c2c; font-size: 13px; }
+
+        .progress-bar { height: 4px; background: #eee; border-radius: 4px; overflow: hidden; margin-bottom: 22px; }
+        .progress-fill { height: 100%; background: #2c2c2c; transition: width 0.3s; width: 0; }
+
+        .rule-tag {
+            display: inline-block;
+            font-size: 11px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: #2c2c2c;
+            background: #f0f1f3;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 999px;
+            padding: 5px 12px;
+            margin-bottom: 14px;
+        }
+        .q-task { font-size: 18px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.3px; }
+        .q-prompt { color: #666; font-size: 14px; margin-bottom: 20px; }
+
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option {
+            padding: 16px;
+            border: 1px solid #e5e5e5;
+            border-radius: 7px;
+            cursor: pointer;
+            background: #fafafa;
+            font-size: 14px;
+            transition: all 0.15s;
+        }
+        .option:hover { border-color: #2c2c2c; background: #fff; }
+        .option.correct { border-color: #28a745; background: #e9f7ee; cursor: default; }
+        .option.wrong { border-color: #d63031; background: #fdecec; cursor: default; }
+        .option.disabled { pointer-events: none; opacity: 0.6; }
+
+        /* Spot game */
+        .spot-sentence {
+            font-size: 18px;
+            line-height: 2.1;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            margin-bottom: 8px;
+        }
+        .word {
+            cursor: pointer;
+            padding: 2px 3px;
+            border-radius: 4px;
+            transition: background 0.12s;
+            border-bottom: 2px dashed transparent;
+        }
+        .word:hover { background: #eee; }
+        .word.picked { background: #fff3cd; border-bottom-color: #c9a227; }
+        .word.hit { background: #e9f7ee; border-bottom-color: #28a745; }
+        .word.miss { background: #fdecec; border-bottom-color: #d63031; }
+        .word.falsepick { background: #f0f0f0; border-bottom-color: #999; text-decoration: line-through; }
+        .word.locked { pointer-events: none; }
+        .hint { font-size: 13px; color: #999; margin-bottom: 18px; }
+
+        .feedback {
+            margin-top: 18px;
+            padding: 14px 16px;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+        .feedback.good { background: #e9f7ee; color: #176b33; }
+        .feedback.bad { background: #fdecec; color: #8a1f22; }
+        .feedback b { display: block; margin-bottom: 4px; }
+        .feedback .fix { margin-top: 10px; font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; background: rgba(255,255,255,0.6); padding: 8px 10px; border-radius: 5px; white-space: pre-line; }
+
+        .next-btn { margin-top: 18px; }
+        .hidden { display: none; }
+
+        /* Results */
+        .score-display { font-size: 60px; font-weight: 600; text-align: center; letter-spacing: -2px; margin: 10px 0 2px; }
+        .score-sub { text-align: center; color: #999; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; }
+        .verdict { text-align: center; font-size: 15px; color: #444; margin-bottom: 24px; padding: 0 10px; }
+
+        /* Before / After */
+        .ba-card { border: 1px solid #eee; border-radius: 9px; overflow: hidden; margin-bottom: 22px; }
+        .ba-head { padding: 14px 16px; font-weight: 600; font-size: 15px; background: #fafafa; border-bottom: 1px solid #eee; }
+        .ba-body { display: grid; grid-template-columns: 1fr 1fr; }
+        .ba-col { padding: 16px; font-size: 13.5px; }
+        .ba-col.before { border-right: 1px solid #eee; background: #fff8f8; }
+        .ba-col.after { background: #f6fbf7; }
+        .ba-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+        .ba-label.before { color: #c0392b; }
+        .ba-label.after { color: #1e8449; }
+        .ba-col p { color: #555; margin: 0; }
+        .ba-col ol { margin: 0; padding-left: 18px; color: #333; }
+        .ba-col ol li { margin-bottom: 6px; }
+        .ba-warn { color: #b9770e; font-weight: 600; margin-bottom: 8px; font-size: 12.5px; }
+        .ba-stats { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 16px; border-top: 1px solid #eee; background: #fff; }
+        .ba-stat { font-size: 12px; color: #555; background: #f3f3f3; border-radius: 6px; padding: 6px 10px; }
+        .ba-stat b { color: #2c2c2c; }
+        .arrow { color: #999; }
+
+        /* Method */
+        .m-section { margin-bottom: 26px; }
+        .m-section h3 { font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; color: #999; margin-bottom: 12px; font-weight: 600; }
+        .rules { list-style: none; }
+        .rules li { padding: 10px 0 10px 28px; border-bottom: 1px solid #f0f0f0; font-size: 14px; position: relative; color: #333; }
+        .rules li:before { content: counter(r); counter-increment: r; position: absolute; left: 0; top: 10px; width: 20px; height: 20px; background: #2c2c2c; color: #fff; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+        .rules { counter-reset: r; }
+        .rules li:last-child { border-bottom: none; }
+
+        .prompt-box { position: relative; background: #1a1a1a; color: #e8e8e8; border-radius: 8px; padding: 18px; font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.7; white-space: pre-wrap; }
+        .copy-btn { position: absolute; top: 12px; right: 12px; background: #333; color: #fff; border: none; border-radius: 5px; padding: 6px 12px; font-size: 11px; letter-spacing: 0.5px; cursor: pointer; font-family: inherit; }
+        .copy-btn:hover { background: #444; }
+
+        .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .mini-card { border: 1px solid #eee; border-radius: 8px; padding: 14px; }
+        .mini-card h4 { font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; }
+        .mini-card.use h4 { color: #1e8449; }
+        .mini-card.skip h4 { color: #c0392b; }
+        .mini-card ul { list-style: none; font-size: 13px; color: #555; }
+        .mini-card li { padding: 4px 0; }
+        .mini-card li:before { content: "—"; color: #bbb; margin-right: 8px; }
+
+        .note { background: #fafafa; border-left: 3px solid #2c2c2c; padding: 14px 16px; font-size: 13.5px; color: #555; border-radius: 0 6px 6px 0; }
+        .note b { color: #2c2c2c; }
+
+        @media (max-width: 520px) {
+            .container { padding: 24px; }
+            h1 { font-size: 24px; }
+            .ba-body { grid-template-columns: 1fr; }
+            .ba-col.before { border-right: none; border-bottom: 1px solid #eee; }
+            .cols2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Clarity</h1>
+    <div class="subtitle">write like an aircraft manual</div>
+
+    <!-- HOME -->
+    <div class="screen active" id="home">
+        <p class="lead">
+            Aircraft mechanics write with a standard called <strong>ASD-STE100 Simplified Technical English</strong>.
+            They have used it since the 1980s. It makes an instruction mean one thing only.
+            You can borrow the same rules to make AI output clear and easy to act on.
+        </p>
+        <div class="menu">
+            <button class="btn" onclick="show('play'); startGame()">
+                Play
+                <small>Learn the 6 rules by fixing everyday instructions.</small>
+            </button>
+            <button class="btn" onclick="show('ba')">
+                Before &amp; After
+                <small>See the same instruction with and without the method.</small>
+            </button>
+            <button class="btn" onclick="show('method')">
+                The Method
+                <small>The rules, the copy-paste prompt, and how to adopt it.</small>
+            </button>
+        </div>
+    </div>
+
+    <!-- PLAY -->
+    <div class="screen" id="play">
+        <button class="btn-ghost" onclick="show('home')">← Menu</button>
+        <div class="topbar">
+            <div class="pill">Round <b id="roundNum">1</b>/<span id="roundTotal">8</span></div>
+            <div class="pill">Score <b id="scoreNum">0</b></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+        <div id="roundBody"></div>
+        <div id="roundFeedback"></div>
+        <button class="btn btn-primary next-btn hidden" id="nextBtn" onclick="nextRound()">Next →</button>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="screen" id="results">
+        <div class="score-display" id="finalScore">0</div>
+        <div class="score-sub">out of <span id="maxScore">800</span> points</div>
+        <p class="verdict" id="verdict"></p>
+        <div class="menu">
+            <button class="btn btn-primary" onclick="startGame(); show('play')">Play Again</button>
+            <button class="btn" onclick="show('method')">See The Method →</button>
+            <button class="btn" onclick="show('home')">Menu</button>
+        </div>
+    </div>
+
+    <!-- BEFORE / AFTER -->
+    <div class="screen" id="ba">
+        <button class="btn-ghost" onclick="show('home')">← Menu</button>
+        <p class="lead">
+            The content barely changes. The <strong>form</strong> changes.
+            Hedge words go. One action goes in one sentence. A warning comes before the step.
+        </p>
+        <div id="baContent"></div>
+        <button class="btn btn-primary" onclick="show('method')">How do I get this? →</button>
+    </div>
+
+    <!-- METHOD -->
+    <div class="screen" id="method">
+        <button class="btn-ghost" onclick="show('home')">← Menu</button>
+
+        <div class="m-section">
+            <h3>The 6 rules</h3>
+            <ol class="rules">
+                <li>Write one instruction per sentence.</li>
+                <li>Keep procedural sentences to 20 words or fewer.</li>
+                <li>Use the active voice. Use the imperative for steps.</li>
+                <li>Use one term for one thing. Do not use synonyms.</li>
+                <li>Do not hedge. If you are not sure, say so in one separate sentence.</li>
+                <li>Put warnings and cautions before the step they apply to.</li>
+            </ol>
+        </div>
+
+        <div class="m-section">
+            <h3>Adopt it in your AI work</h3>
+            <p class="lead" style="margin-bottom:14px;">Paste this into a system prompt, a custom instruction, or an agent's style file.</p>
+            <div class="prompt-box" id="promptText"><button class="copy-btn" onclick="copyPrompt()">Copy</button>Write at about 80% of the ASD-STE100 Simplified Technical English standard.
+- One instruction per sentence. Procedural sentences: 20 words or fewer.
+- Use active voice. Use the imperative for steps.
+- Use one term for one thing. Do not use synonyms for technical terms.
+- Do not hedge. If you are not sure, say so in one separate sentence.
+- Put warnings and cautions before the step they apply to.
+- Keep standard technical terms and acronyms.</div>
+        </div>
+
+        <div class="m-section">
+            <h3>Where to use it</h3>
+            <div class="cols2">
+                <div class="mini-card use">
+                    <h4>Use it for</h4>
+                    <ul>
+                        <li>Step-by-step guides and how-tos</li>
+                        <li>Checklists and procedures</li>
+                        <li>Output another tool must read</li>
+                        <li>Readers who use English as a second language</li>
+                    </ul>
+                </div>
+                <div class="mini-card skip">
+                    <h4>Skip it for</h4>
+                    <ul>
+                        <li>Marketing and sales copy</li>
+                        <li>Analysis that weighs trade-offs</li>
+                        <li>Creative writing</li>
+                        <li>Casual conversation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="m-section">
+            <h3>The bigger win</h3>
+            <p class="note">
+                Most people use these rules to clean up what the AI <b>writes</b>.
+                The larger gain is in what the AI <b>reads</b>. If an assistant answers from your
+                notes or docs, write those in the same style. One name per thing and one claim per
+                sentence help the assistant find the right passage.
+            </p>
+        </div>
+
+        <div class="m-section">
+            <h3>Two limits</h3>
+            <p class="note">
+                The model copies the standard. It does not check every word against the official dictionary.
+                <b>Short sentences do not make a wrong answer right.</b> They only make a wrong answer easy to spot.
+            </p>
+        </div>
+
+        <div class="menu">
+            <button class="btn btn-primary" onclick="show('play'); startGame()">Test yourself →</button>
+            <button class="btn" onclick="show('home')">Menu</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ---------- Content ---------- */
+
+// Multiple-choice: pick the clearer version.
+const CHOOSE = [
+    {
+        task: "Make French press coffee",
+        prompt: "Which set of instructions follows the method?",
+        rule: "One action per sentence",
+        options: [
+            { t: "Add 30 g of coffee to the press. Pour 500 ml of water at 95°C. Wait 4 minutes. Press the plunger down slowly.", ok: true },
+            { t: "You'll generally want to add roughly the right amount of coffee, then pour in some hot water and wait a bit before you press it down.", ok: false }
+        ],
+        why: "The clear version puts one action in each sentence. Exact amounts replace 'roughly' and 'a bit'. No hedge words remain."
+    },
+    {
+        task: "Reset a Wi-Fi router",
+        prompt: "Which one handles the risk correctly?",
+        rule: "Warning before the step",
+        options: [
+            { t: "Warning: You lose internet for 2 minutes. Hold the Reset button for 10 seconds. Release the button. Wait for the power light to turn green.", ok: true },
+            { t: "Hold the reset button until it restarts. You might lose your connection for a while, by the way.", ok: false }
+        ],
+        why: "The warning comes before the step, not as an afterthought. The step uses an exact time, not 'a while'."
+    },
+    {
+        task: "Charge an e-scooter",
+        prompt: "Which one is easier to follow?",
+        rule: "One term for one thing",
+        options: [
+            { t: "Connect the charger to the scooter. The battery light blinks while the battery charges. The light turns green when the battery is full.", ok: true },
+            { t: "Plug the charger into the power pack. The battery light blinks while the cell fills up, and the unit is done when it stops.", ok: false }
+        ],
+        why: "The battery stays the 'battery'. 'power pack', 'cell' and 'unit' make the reader guess if these are the same thing."
+    },
+    {
+        task: "Hang a picture frame",
+        prompt: "Which one can you act on?",
+        rule: "Exact values, not vague ones",
+        options: [
+            { t: "Measure 150 cm from the floor. Mark the wall with a pencil. Hammer the nail into the mark.", ok: true },
+            { t: "Kind of measure where you want it, somewhere around eye level, then put a nail roughly there.", ok: false }
+        ],
+        why: "Exact numbers replace 'somewhere' and 'roughly'. Each sentence is one action you can do."
+    },
+    {
+        task: "Answer: does this charger fit my laptop?",
+        prompt: "The honest answer is partly uncertain. Which version is better?",
+        rule: "Do not hedge — isolate the uncertainty",
+        options: [
+            { t: "This charger fits the laptop port. I am not sure it supplies enough power. Check the wattage on the label.", ok: true },
+            { t: "This charger could maybe work, but it might not really supply enough power in some cases, possibly.", ok: false }
+        ],
+        why: "Uncertainty is real, so keep it. But put it in one clear sentence. Do not smear 'maybe' across the whole answer."
+    }
+];
+
+// Spot game: tap the words that break the rules (hedges / vague words).
+// Each token is [word, isBad].
+const SPOT = [
+    {
+        task: "Restart a frozen app",
+        tokens: [["This",0],["could",1],["potentially",1],["help",0],["in",0],["some",1],["cases,",0],["so",0],["you",0],["may",1],["want",0],["to",0],["restart",0],["the",0],["app.",0]],
+        fix: "Restart the app."
+    },
+    {
+        task: "Check a loose cable",
+        tokens: [["You",0],["might",1],["want",0],["to",0],["possibly",1],["check",0],["the",0],["cable,",0],["although",0],["it",0],["could",1],["be",0],["fine.",0]],
+        fix: "Check the cable. If it is loose, push it in."
+    },
+    {
+        task: "Water a plant",
+        tokens: [["Generally",1],["speaking,",0],["you",0],["should",0],["probably",1],["water",0],["it",0],["roughly",1],["once",0],["a",0],["week,",0],["depending.",1]],
+        fix: "Water the plant once a week. Give it 200 ml of water."
+    },
+    {
+        task: "Save your work",
+        tokens: [["It's",0],["usually",1],["a",0],["good",0],["idea",0],["to",0],["kind",1],["of",0],["save",0],["your",0],["work",0],["fairly",1],["often,",0],["just",1],["to",0],["be",0],["safe.",0]],
+        fix: "Save your work every 10 minutes."
+    },
+    {
+        task: "Update software",
+        tokens: [["You",0],["may",1],["possibly",1],["need",0],["to",0],["perhaps",1],["update",0],["the",0],["software",0],["if",0],["issues",0],["seem",1],["to",0],["arise.",0]],
+        fix: "Update the software now. The update fixes known errors."
+    }
+];
+
+const BA = [
+    {
+        topic: "Make French press coffee",
+        before: "If you want coffee, you'll generally want to add roughly the right amount of grounds — maybe a few scoops — and pour in hot water that isn't too hot, then let it sit for a bit before you slowly press the plunger down, more or less.",
+        warn: null,
+        after: ["Add 30 g of coffee to the press.", "Pour 500 ml of water at 95°C.", "Wait 4 minutes.", "Press the plunger down slowly."],
+        stats: [["Hedge words", "6", "0"], ["Structure", "1 sentence", "4 steps"], ["Amounts", "“a few scoops”", "“30 g”"]]
+    },
+    {
+        topic: "Set up a Wi-Fi router",
+        before: "To get online, you should probably plug everything in and wait a while for the lights to do their thing, and then you can maybe connect your phone once it seems ready, assuming nothing goes wrong.",
+        warn: "Keep the router away from water.",
+        after: ["Connect the router to the wall socket.", "Connect the router to the modem with the grey cable.", "Wait 2 minutes for the power light to turn green.", "On your phone, open Wi-Fi settings.", "Select the network name on the router label.", "Enter the password on the router label."],
+        stats: [["Hedge words", "5", "0"], ["Safety warning", "none", "before step 1"], ["Steps", "implied", "6 numbered"]]
+    },
+    {
+        topic: "Repot a plant",
+        before: "When the plant seems a bit too big, you might want to move it to a somewhat larger pot with some fresh soil, watering it a little afterward, more or less when it looks dry.",
+        warn: null,
+        after: ["Choose a pot 5 cm wider than the old pot.", "Fill the new pot one-third with fresh soil.", "Lift the plant out of the old pot.", "Place the plant in the new pot.", "Add soil around the roots.", "Water the plant with 200 ml of water."],
+        stats: [["Hedge words", "5", "0"], ["Sizes", "“somewhat larger”", "“5 cm wider”"], ["Steps", "1 sentence", "6 steps"]]
+    }
+];
+
+/* ---------- App state ---------- */
+let rounds = [];
+let idx = 0;
+let score = 0;
+const ROUND_COUNT = 8;
+const POINTS = 100;
+
+function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+    if (id === 'ba') renderBA();
+}
+
+function shuffle(a) {
+    a = a.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+/* ---------- Game ---------- */
+function startGame() {
+    const pool = shuffle([
+        ...CHOOSE.map(c => ({ type: 'choose', data: c })),
+        ...SPOT.map(s => ({ type: 'spot', data: s }))
+    ]);
+    rounds = pool.slice(0, ROUND_COUNT);
+    idx = 0;
+    score = 0;
+    document.getElementById('roundTotal').textContent = rounds.length;
+    document.getElementById('maxScore').textContent = rounds.length * POINTS;
+    renderRound();
+}
+
+function renderRound() {
+    const r = rounds[idx];
+    document.getElementById('roundNum').textContent = idx + 1;
+    document.getElementById('scoreNum').textContent = score;
+    document.getElementById('progress').style.width = (idx / rounds.length * 100) + '%';
+    document.getElementById('roundFeedback').innerHTML = '';
+    document.getElementById('nextBtn').classList.add('hidden');
+    document.getElementById('nextBtn').textContent = (idx + 1 < rounds.length) ? 'Next →' : 'See results →';
+
+    if (r.type === 'choose') renderChoose(r.data);
+    else renderSpot(r.data);
+}
+
+function renderChoose(d) {
+    const opts = shuffle(d.options);
+    const html = `
+        <span class="rule-tag">Rule · ${d.rule}</span>
+        <div class="q-task">${d.task}</div>
+        <div class="q-prompt">${d.prompt}</div>
+        <div class="options" id="opts">
+            ${opts.map((o, i) => `<div class="option" data-ok="${o.ok}" onclick="pickChoose(this)">${o.t}</div>`).join('')}
+        </div>`;
+    document.getElementById('roundBody').innerHTML = html;
+}
+
+function pickChoose(el) {
+    const correct = el.dataset.ok === 'true';
+    document.querySelectorAll('#opts .option').forEach(o => {
+        o.classList.add('disabled');
+        if (o.dataset.ok === 'true') o.classList.add('correct');
+    });
+    if (!correct) el.classList.add('wrong');
+    if (correct) score += POINTS;
+    document.getElementById('scoreNum').textContent = score;
+
+    const d = rounds[idx].data;
+    showFeedback(correct, correct ? 'Correct.' : 'Not quite.', d.why);
+}
+
+function renderSpot(d) {
+    const html = `
+        <span class="rule-tag">Rule · No hedging</span>
+        <div class="q-task">${d.task}</div>
+        <div class="q-prompt">Tap every word that breaks the rules. Then submit.</div>
+        <div class="spot-sentence" id="spot">
+            ${d.tokens.map((t, i) => `<span class="word" data-i="${i}" onclick="toggleWord(this)">${t[0]}</span>`).join(' ')}
+        </div>
+        <p class="hint">Look for hedge words: could, might, may, maybe, possibly, perhaps, generally, usually, roughly, probably, seem.</p>
+        <button class="btn btn-primary" id="spotSubmit" onclick="submitSpot()">Submit</button>`;
+    document.getElementById('roundBody').innerHTML = html;
+}
+
+function toggleWord(el) {
+    el.classList.toggle('picked');
+}
+
+function submitSpot() {
+    const d = rounds[idx].data;
+    document.getElementById('spotSubmit').classList.add('hidden');
+    let hits = 0, misses = 0, falsePicks = 0;
+    const totalBad = d.tokens.filter(t => t[1] === 1).length;
+
+    document.querySelectorAll('#spot .word').forEach(w => {
+        w.classList.add('locked');
+        const i = +w.dataset.i;
+        const isBad = d.tokens[i][1] === 1;
+        const picked = w.classList.contains('picked');
+        w.classList.remove('picked');
+        if (isBad && picked) { w.classList.add('hit'); hits++; }
+        else if (isBad && !picked) { w.classList.add('miss'); misses++; }
+        else if (!isBad && picked) { w.classList.add('falsepick'); falsePicks++; }
+    });
+
+    const raw = (hits - falsePicks) / totalBad;
+    const gained = Math.max(0, Math.round(raw * POINTS));
+    score += gained;
+    document.getElementById('scoreNum').textContent = score;
+
+    const good = gained >= POINTS;
+    const msg = good ? `All hedge words found. +${gained}` : `${hits}/${totalBad} found, ${falsePicks} wrong. +${gained}`;
+    showFeedback(good, msg, 'Clear version:', d.fix);
+}
+
+function showFeedback(good, title, body, fix) {
+    const el = document.getElementById('roundFeedback');
+    el.innerHTML = `
+        <div class="feedback ${good ? 'good' : 'bad'}">
+            <b>${title}</b>${body}
+            ${fix ? `<div class="fix">${fix}</div>` : ''}
+        </div>`;
+    document.getElementById('nextBtn').classList.remove('hidden');
+}
+
+function nextRound() {
+    idx++;
+    if (idx < rounds.length) {
+        renderRound();
+    } else {
+        endGame();
+    }
+}
+
+function endGame() {
+    const max = rounds.length * POINTS;
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('verdict').textContent = verdictText(score / max);
+    show('results');
+}
+
+function verdictText(pct) {
+    if (pct >= 0.9) return "You write like a maintenance manual. One action, one sentence, no hedging.";
+    if (pct >= 0.65) return "Strong. You spot the hedging and pick the clear version most of the time.";
+    if (pct >= 0.4) return "Getting there. Read The Method, then play again.";
+    return "Start with The Method. The 6 rules make the next round much easier.";
+}
+
+/* ---------- Before / After ---------- */
+function renderBA() {
+    document.getElementById('baContent').innerHTML = BA.map(b => `
+        <div class="ba-card">
+            <div class="ba-head">${b.topic}</div>
+            <div class="ba-body">
+                <div class="ba-col before">
+                    <div class="ba-label before">Without the method</div>
+                    <p>${b.before}</p>
+                </div>
+                <div class="ba-col after">
+                    <div class="ba-label after">With the method</div>
+                    ${b.warn ? `<div class="ba-warn">Warning: ${b.warn}</div>` : ''}
+                    <ol>${b.after.map(s => `<li>${s}</li>`).join('')}</ol>
+                </div>
+            </div>
+            <div class="ba-stats">
+                ${b.stats.map(s => `<span class="ba-stat">${s[0]}: <b>${s[1]}</b> <span class="arrow">→</span> <b>${s[2]}</b></span>`).join('')}
+            </div>
+        </div>`).join('');
+}
+
+/* ---------- Method ---------- */
+function copyPrompt() {
+    const text = document.getElementById('promptText').textContent.replace(/^Copy/, '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+        const b = document.querySelector('.copy-btn');
+        b.textContent = 'Copied';
+        setTimeout(() => b.textContent = 'Copy', 1600);
+    }).catch(() => {});
+}
+</script>
+</body>
+</html>
