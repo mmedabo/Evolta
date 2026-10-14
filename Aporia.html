@@ -864,6 +864,7 @@ const schoolNamesCN = {
 
 function setLang(l) {
   lang = l;
+  try { localStorage.setItem('evolta_lang', l); } catch (e) {}
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.trim() === (l === 'en' ? 'English' : '中文')));
   const t = i18n[l];
 
@@ -1095,6 +1096,14 @@ function renderBubbles(top5, total, sNames, schoolKeyMap) {
 
 // Init
 loadStats();
+
+// Honour ?lang=, then the site-wide choice made on the Evolta landing page.
+(function () {
+  const q = new URLSearchParams(location.search).get('lang');
+  let l = (q === 'en' || q === 'zh') ? q : null;
+  if (!l) { try { l = localStorage.getItem('evolta_lang'); } catch (e) {} }
+  setLang(l === 'zh' ? 'zh' : 'en');
+})();
 </script>
 </body>
 </html>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Career Match · Evolta</title>
+<style>
+  :root{
+    --bg-0:#ffffff;
+    --accent-a:#8b5cf6;
+    --accent-b:#22d3c9;
+    --accent-b-text:#0c8f86;
+    --accent-grad: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+    --text-0:#1c1730;
+    --text-1:#54506c;
+    --text-2:#78728f;
+    --good:#188357;
+    --bad:#b8283d;
+    --card-border: rgba(20,10,40,0.1);
+    --card-bg: rgba(139,92,246,0.035);
+    --radius: 18px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:var(--bg-0);
+    color:var(--text-0);
+    display:flex;
+    justify-content:center;
+    padding: 28px 16px 60px;
+  }
+  .app-shell{ width:100%; max-width:720px; }
+
+  header.site{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:22px; gap:10px; flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand-mark{
+    width:38px;height:38px;border-radius:11px;
+    background:var(--accent-grad);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700; font-size:17px; color:#0e0b1a;
+  }
+  .brand-text small{ display:block; color:var(--text-2); font-size:11px; letter-spacing:.06em; text-transform:uppercase;}
+  .brand-text strong{ font-size:15px; letter-spacing:.02em; }
+  .back-link{
+    color:var(--text-2); text-decoration:none; font-size:13px;
+    border:1px solid var(--card-border); padding:7px 12px; border-radius:999px;
+  }
+  .back-link:hover{ color:var(--text-0); border-color:var(--accent-a); }
+
+  .progress-wrap{ margin-bottom:20px; }
+  .progress-track{
+    height:8px; border-radius:999px; background:rgba(20,10,40,0.08);
+    overflow:hidden; position:relative;
+  }
+  .progress-fill{
+    height:100%; width:0%; border-radius:999px;
+    background:var(--accent-grad); transition:width .4s ease;
+  }
+  .progress-meta{
+    display:flex; justify-content:space-between; margin-top:8px;
+    font-size:12.5px; color:var(--text-2);
+  }
+  .stat-pill{
+    background:rgba(20,10,40,0.05); border:1px solid var(--card-border);
+    padding:4px 10px; border-radius:999px; font-weight:600; color:var(--text-1);
+  }
+
+  .card{
+    background:#fff; border:1px solid var(--card-border); border-radius:var(--radius);
+    padding:26px; box-shadow:0 1px 2px rgba(20,10,40,0.03);
+  }
+  .screen{ display:none; }
+  .screen.active{ display:block; }
+
+  .eyebrow{ font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-b-text); margin-bottom:6px; }
+  h1{ font-size:26px; margin:0 0 10px; line-height:1.25; }
+  h2{ font-size:20px; margin:0 0 8px; }
+  .lead{ font-size:14.5px; color:var(--text-1); line-height:1.6; margin:0 0 6px; }
+
+  .intro-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .intro-head h1{ margin-bottom:0; }
+  .intro-start-top{ flex-shrink:0; white-space:nowrap; }
+
+  /* Role showcase tiles on intro */
+  .role-showcase{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:20px 0 22px; }
+  .role-card{
+    background:rgba(20,10,40,0.025); border:1px solid var(--card-border); border-radius:16px;
+    padding:14px 12px 16px; text-align:center;
+    opacity:0; animation:cardIn .6s ease forwards;
+  }
+  @keyframes cardIn{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:translateY(0); } }
+  .role-icon{
+    width:44px; height:44px; margin:0 auto 8px; border-radius:12px;
+    background:var(--accent-grad); display:flex; align-items:center; justify-content:center;
+    animation:tileFloat 3.2s ease-in-out infinite;
+  }
+  .role-card:nth-child(2) .role-icon{ animation-delay:.3s; }
+  .role-card:nth-child(3) .role-icon{ animation-delay:.6s; }
+  .role-card:nth-child(4) .role-icon{ animation-delay:.9s; }
+  .role-name{ font-size:13.5px; font-weight:700; color:var(--text-0); margin-bottom:4px; }
+  .role-desc{ font-size:11.5px; color:var(--text-2); line-height:1.5; margin:0; }
+
+  @keyframes tileFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-3px); } }
+
+  .stat-poster{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px; margin:18px 0 22px; }
+  .stat-card{
+    background:rgba(20,10,40,0.025); border:1px solid var(--card-border); border-radius:14px;
+    padding:14px; text-align:center;
+  }
+  .stat-num{ font-size:20px; font-weight:800; background:var(--accent-grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .stat-cap{ font-size:11px; color:var(--text-2); margin-top:4px; line-height:1.4; }
+
+  .btn{
+    appearance:none; border:none; cursor:pointer;
+    font-size:14.5px; font-weight:600; padding:12px 20px; border-radius:12px;
+    color:var(--text-0); background:rgba(20,10,40,0.045); border:1px solid var(--card-border);
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .btn:hover{ border-color:var(--accent-a); transform:translateY(-1px); }
+  .btn:active{ transform:translateY(0); }
+  .btn-primary{ background:var(--accent-grad); color:#0e0b1a; border:none; }
+  .btn-primary:hover{ filter:brightness(1.08); }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+
+  /* Sorting mechanic */
+  .sort-pool{
+    display:flex; flex-wrap:wrap; gap:10px; margin:16px 0;
+    padding:12px; border-radius:12px; background:rgba(20,10,40,0.02); border:1px dashed var(--card-border);
+    min-height:56px;
+  }
+  .sort-chip{
+    padding:10px 14px; border-radius:12px;
+    background:#fff; border:1px solid var(--card-border);
+    font-weight:600; font-size:13px; cursor:pointer; user-select:none;
+    transition: all .15s ease; max-width:100%;
+    animation: tileFloat 3.4s ease-in-out infinite;
+  }
+  .sort-chip:nth-child(2n){ animation-delay:.35s; }
+  .sort-chip:nth-child(3n){ animation-delay:.7s; }
+  .sort-chip:nth-child(4n){ animation-delay:1.05s; }
+  .sort-chip:hover{ border-color:var(--accent-a); }
+  .sort-chip.selected{ border-color:var(--accent-a); background:rgba(139,92,246,0.1); box-shadow:0 0 0 2px rgba(139,92,246,0.15); animation:none; }
+  .sort-chip.placed-correct{
+    background:rgba(34,211,201,0.14); border-color:var(--accent-b); cursor:default; animation:none;
+  }
+  .sort-chip.wrong-flash{ animation:chipShake .35s ease; border-color:var(--bad); }
+  @keyframes chipShake{
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-5px); }
+    75%{ transform:translateX(5px); }
+  }
+
+  .bucket-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin:16px 0; }
+  .bucket{
+    border:2px dashed var(--card-border); border-radius:14px; padding:12px 10px;
+    min-height:110px; cursor:pointer; transition: border-color .15s ease, background .15s ease;
+    text-align:center;
+  }
+  .bucket:hover{ border-color:var(--accent-a); background:rgba(139,92,246,0.03); }
+  .bucket.shake{ animation:chipShake .35s ease; border-color:var(--bad); }
+  .bucket-label{ font-size:12.5px; font-weight:700; color:var(--text-0); margin-bottom:8px; }
+  .bucket-items{ display:flex; flex-direction:column; gap:6px; }
+  .bucket-items .sort-chip{ width:100%; font-size:11.5px; padding:8px 10px; animation:none; cursor:default; }
+
+  .feedback{
+    margin-top:10px; padding:10px 14px; border-radius:12px; font-size:13.5px;
+    display:none;
+  }
+  .feedback.show{ display:block; }
+  .feedback.correct{ background:rgba(34,211,201,0.12); color:#188357; }
+  .feedback.incorrect{ background:rgba(184,40,61,0.08); color:#b8283d; }
+  .feedback.info{ background:rgba(139,92,246,0.08); color:var(--text-1); }
+
+  .hintbot{ margin-top:16px; }
+  .hint-btn{ font-size:13px; padding:9px 14px; }
+  .hint-bubble{
+    margin-top:10px; padding:12px 14px; border-radius:12px;
+    background:rgba(139,92,246,0.06); border:1px solid var(--card-border);
+    font-size:13px; color:var(--text-1); line-height:1.55; display:none;
+  }
+  .hint-bubble.show{ display:block; }
+
+  .level-progress{ font-size:12.5px; color:var(--text-2); margin:4px 0 0; }
+
+  .end-stars{ font-size:34px; margin:10px 0; }
+  .cheat-sheet .role-recap{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:14px; }
+  .recap-card{ background:rgba(20,10,40,0.025); border:1px solid var(--card-border); border-radius:14px; padding:14px; }
+  .recap-card .sym{ font-size:20px; font-weight:800; background:var(--accent-grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .recap-card .name{ font-size:13px; font-weight:700; margin-top:4px; }
+  .recap-card .desc{ font-size:11.5px; color:var(--text-2); margin-top:6px; line-height:1.5; }
+
+  .footer-credit{ text-align:center; color:var(--text-2); font-size:12px; margin-top:26px; }
+  .footer-credit a{ color:var(--accent-b-text); text-decoration:none; }
+
+  @media (max-width:480px){
+    h1{ font-size:22px; }
+    .card{ padding:18px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:0.001ms !important;
+      animation-iteration-count:1 !important;
+      scroll-behavior:auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="site">
+    <div class="brand">
+      <div class="brand-mark">⇄</div>
+      <div class="brand-text">
+        <small>Evolta · AI Fundamentals</small>
+        <strong>AI Career Match</strong>
+      </div>
+    </div>
+    <a class="back-link" href="https://evolta.ai" target="_blank" rel="noopener">← Evolta home</a>
+  </header>
+
+  <div class="progress-wrap" id="progressWrap" style="display:none;">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-meta">
+      <span id="progressLabel">Level 1 of 6</span>
+      <span class="stat-pill">⭐ Score: <span id="scoreLabel">0</span></span>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <section class="screen active" id="screen-intro">
+    <div class="card">
+      <div class="intro-head">
+        <div>
+          <div class="eyebrow">AI Fundamentals · Career Paths</div>
+          <h1>Which AI Career Fits You?</h1>
+        </div>
+        <button class="btn btn-primary intro-start-top" onclick="startGame()">Start Game →</button>
+      </div>
+      <p class="lead">"AI Engineer" means different things at different companies, and the titles keep shifting. Sort responsibilities, skills, and real job titles into the right bucket across 6 rounds, and walk away knowing exactly what each role actually does.</p>
+
+      <div class="role-showcase">
+        <div class="role-card" style="animation-delay:.05s">
+          <div class="role-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="10" cy="10" r="6" fill="none" stroke="#fff" stroke-width="1.8"/><line x1="14.5" y1="14.5" x2="20" y2="20" stroke="#fff" stroke-width="2"/></svg>
+          </div>
+          <div class="role-name">Data Scientist</div>
+          <p class="role-desc">Builds the model from scratch — design, train, prove it with a metric.</p>
+        </div>
+        <div class="role-card" style="animation-delay:.15s">
+          <div class="role-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20"><rect x="4" y="4" width="16" height="16" rx="3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3" fill="none" stroke="#fff" stroke-width="1.8"/></svg>
+          </div>
+          <div class="role-name">ML Engineer</div>
+          <p class="role-desc">Runs the model in production — serve it, monitor it, retrain it.</p>
+        </div>
+        <div class="role-card" style="animation-delay:.25s">
+          <div class="role-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20"><rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="#fff" stroke-width="2"/><circle cx="10" cy="10" r="1.2" fill="#fff"/><circle cx="14" cy="10" r="1.2" fill="#fff"/><line x1="9" y1="14" x2="15" y2="14" stroke="#fff" stroke-width="1.4"/></svg>
+          </div>
+          <div class="role-name">AI Engineer</div>
+          <p class="role-desc">Wires someone else's model into a product — prompts, RAG, evaluation.</p>
+        </div>
+        <div class="role-card" style="animation-delay:.35s">
+          <div class="role-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="8" cy="9" r="3" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M3,20 C3,15 13,15 13,20" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M14,10 L17,13 L22,7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="role-name">Forward Deployed Eng.</div>
+          <p class="role-desc">Ships AI at the customer's desk — code and the conversation.</p>
+        </div>
+      </div>
+
+      <div class="stat-poster">
+        <div class="stat-card"><div class="stat-num">70.8%</div><div class="stat-cap">of AI jobs need Python</div></div>
+        <div class="stat-card"><div class="stat-num">59.7%</div><div class="stat-cap">need evaluation skills</div></div>
+        <div class="stat-card"><div class="stat-num">4.2x</div><div class="stat-cap">FDE listings grew in 6 months</div></div>
+        <div class="stat-card"><div class="stat-num">3.9%</div><div class="stat-cap">are "pure GenAI," nothing else</div></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="startGame()">Start Game →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEVEL 1: RESPONSIBILITIES -->
+  <section class="screen" id="screen-1">
+    <div class="card">
+      <div class="eyebrow">Round 1 · Core Responsibilities</div>
+      <h2>🎯 Sort the Responsibility</h2>
+      <p class="lead">Tap a card, then tap the role it belongs to.</p>
+      <div class="sort-pool" id="l1-pool"></div>
+      <div class="bucket-grid" id="l1-buckets"></div>
+      <p class="level-progress" id="l1-progress">0 of 6 placed</p>
+      <div class="feedback" id="l1-feedback"></div>
+      <div class="hintbot">
+        <button class="btn hint-btn" id="l1-hint-btn" onclick="showHint('l1')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="l1-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l1-next" style="display:none;" onclick="goTo(2)">Next Round →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEVEL 2: SKILLS -->
+  <section class="screen" id="screen-2">
+    <div class="card">
+      <div class="eyebrow">Round 2 · Skills</div>
+      <h2>🧰 Sort the Skill</h2>
+      <p class="lead">Same idea, more cards. Which role's toolbox does each skill belong in?</p>
+      <div class="sort-pool" id="l2-pool"></div>
+      <div class="bucket-grid" id="l2-buckets"></div>
+      <p class="level-progress" id="l2-progress">0 of 9 placed</p>
+      <div class="feedback" id="l2-feedback"></div>
+      <div class="hintbot">
+        <button class="btn hint-btn" id="l2-hint-btn" onclick="showHint('l2')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="l2-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l2-next" style="display:none;" onclick="goTo(3)">Next Round →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEVEL 3: AI ENGINEER SUBTYPES -->
+  <section class="screen" id="screen-3">
+    <div class="card">
+      <div class="eyebrow">Round 3 · The "AI Engineer" Title Hides 3 Jobs</div>
+      <h2>🔍 Sort the AI Engineer Type</h2>
+      <p class="lead">"AI Engineer" splits into three very different jobs. Sort each task into AI-First, AI-Support, or classic ML.</p>
+      <div class="sort-pool" id="l3-pool"></div>
+      <div class="bucket-grid" id="l3-buckets"></div>
+      <p class="level-progress" id="l3-progress">0 of 6 placed</p>
+      <div class="feedback" id="l3-feedback"></div>
+      <div class="hintbot">
+        <button class="btn hint-btn" id="l3-hint-btn" onclick="showHint('l3')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="l3-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l3-next" style="display:none;" onclick="goTo(4)">Next Round →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEVEL 4: JOB TITLES -->
+  <section class="screen" id="screen-4">
+    <div class="card">
+      <div class="eyebrow">Round 4 · Real Job Titles</div>
+      <h2>🏷️ Sort the Job Title</h2>
+      <p class="lead">These are real titles pulled from job postings. Which core role does each one map to?</p>
+      <div class="sort-pool" id="l4-pool"></div>
+      <div class="bucket-grid" id="l4-buckets"></div>
+      <p class="level-progress" id="l4-progress">0 of 8 placed</p>
+      <div class="feedback" id="l4-feedback"></div>
+      <div class="hintbot">
+        <button class="btn hint-btn" id="l4-hint-btn" onclick="showHint('l4')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="l4-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l4-next" style="display:none;" onclick="goTo(5)">Next Round →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEVEL 5: SPOT THE FDE -->
+  <section class="screen" id="screen-5">
+    <div class="card">
+      <div class="eyebrow">Round 5 · Spot the FDE</div>
+      <h2>🤝 AI Engineer or Forward Deployed?</h2>
+      <p class="lead">Both write code and both use LLMs. The difference is who they sit with and what they own.</p>
+      <div class="sort-pool" id="l5-pool"></div>
+      <div class="bucket-grid" id="l5-buckets"></div>
+      <p class="level-progress" id="l5-progress">0 of 6 placed</p>
+      <div class="feedback" id="l5-feedback"></div>
+      <div class="hintbot">
+        <button class="btn hint-btn" id="l5-hint-btn" onclick="showHint('l5')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="l5-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l5-next" style="display:none;" onclick="goTo(6)">Boss Round →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOSS ROUND -->
+  <section class="screen" id="screen-6">
+    <div class="card">
+      <div class="eyebrow">Boss Round · Everything, Mixed</div>
+      <h2>🏆 The Final Sort</h2>
+      <p class="lead">Responsibilities, skills, and titles, all mixed together. Sort every card into its role for the win.</p>
+      <div class="sort-pool" id="boss-pool"></div>
+      <div class="bucket-grid" id="boss-buckets"></div>
+      <p class="level-progress" id="boss-progress">0 of 12 placed</p>
+      <div class="feedback" id="boss-feedback"></div>
+      <div class="hintbot">
+        <button class="btn hint-btn" id="boss-hint-btn" onclick="showHint('boss')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="boss-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="boss-next" style="display:none;" onclick="goTo(9)">See Results →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="screen" id="screen-9">
+    <div class="card">
+      <div class="eyebrow">Game Complete</div>
+      <h1>Nice work! 🎉</h1>
+      <div class="end-stars" id="endStars">⭐⭐⭐</div>
+      <p class="lead">Final score: <strong id="endScore">0</strong> / <span id="endMax">0</span></p>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="restartGame()">Play Again ↻</button>
+      </div>
+    </div>
+
+    <div class="card cheat-sheet" style="margin-top:16px;">
+      <div class="eyebrow">Cheat Sheet</div>
+      <h2>The four roles, at a glance</h2>
+      <div class="role-recap">
+        <div class="recap-card"><div class="sym">DS</div><div class="name">Data Scientist</div><div class="desc">Designs the dataset, trains the model, proves it with a metric.</div></div>
+        <div class="recap-card"><div class="sym">ML</div><div class="name">ML Engineer</div><div class="desc">Serves the model, monitors drift, retrains in production.</div></div>
+        <div class="recap-card"><div class="sym">AI</div><div class="name">AI Engineer</div><div class="desc">Integrates an existing LLM: prompts, RAG, evaluation, monitoring.</div></div>
+        <div class="recap-card"><div class="sym">FDE</div><div class="name">Forward Deployed</div><div class="desc">An AI Engineer embedded with one customer, owning the outcome.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-credit">
+    Built for <a href="https://evolta.ai" target="_blank" rel="noopener">Evolta.ai</a> · AI Fundamentals series · based on the <a href="https://github.com/alexeygrigorev/ai-engineering-field-guide" target="_blank" rel="noopener">AI Engineering Field Guide</a>
+  </p>
+</div>
+
+<script>
+/* ---------- Game state ---------- */
+let SCORE = 0;
+const TOTAL_POSSIBLE = 60 + 90 + 60 + 80 + 60 + 230; // 580
+const state = {};
+const HINT_USED = {};
+
+function addScore(n){ SCORE += n; document.getElementById('scoreLabel').textContent = SCORE; }
+
+function goTo(levelIdx){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + levelIdx).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  const stepMap = {1:1,2:2,3:3,4:4,5:5,6:6};
+  if(stepMap[levelIdx]){
+    document.getElementById('progressWrap').style.display = 'block';
+    document.getElementById('progressLabel').textContent = 'Round ' + stepMap[levelIdx] + ' of 6' + (levelIdx===6 ? ' · Boss' : '');
+    document.getElementById('progressFill').style.width = (stepMap[levelIdx]/6*100) + '%';
+  }
+  if(levelIdx === 9){
+    document.getElementById('progressFill').style.width = '100%';
+    showResults();
+  }
+
+  const initFns = {1:initL1, 2:initL2, 3:initL3, 4:initL4, 5:initL5, 6:initBoss};
+  if(initFns[levelIdx]) initFns[levelIdx]();
+}
+
+function startGame(){ SCORE = 0; document.getElementById('scoreLabel').textContent = 0; goTo(1); }
+function restartGame(){ startGame(); }
+
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* ---------- Generic sort-round engine ---------- */
+/*
+ A "round" config: { key, pointsEach, buckets:[{key,label}], items:[{id,text,answer}] }
+ state[key] = { selected:null, placed:{}, attempts:{}, total, correctCount }
+*/
+function renderRound(cfg){
+  const s = { placed:{}, attempts:{}, selected:null, total: cfg.items.length, correctCount:0, hintUsed:false };
+  state[cfg.key] = s;
+
+  const poolEl = document.getElementById(cfg.key + '-pool');
+  poolEl.innerHTML = shuffle(cfg.items).map(it =>
+    `<div class="sort-chip" id="${cfg.key}-chip-${it.id}" onclick="selectChip('${cfg.key}','${it.id}')">${it.text}</div>`
+  ).join('');
+
+  const bucketsEl = document.getElementById(cfg.key + '-buckets');
+  bucketsEl.innerHTML = cfg.buckets.map(b =>
+    `<div class="bucket" id="${cfg.key}-bucket-${b.key}" onclick="placeSelected('${cfg.key}','${b.key}')">
+      <div class="bucket-label">${b.label}</div>
+      <div class="bucket-items" id="${cfg.key}-bucket-items-${b.key}"></div>
+    </div>`
+  ).join('');
+
+  document.getElementById(cfg.key + '-progress').textContent = `0 of ${s.total} placed`;
+  document.getElementById(cfg.key + '-feedback').className = 'feedback';
+  document.getElementById(cfg.key + '-feedback').innerHTML = '';
+  document.getElementById(cfg.key + '-next').style.display = 'none';
+  resetHintbot(cfg.key);
+}
+
+function selectChip(key, id){
+  const s = state[key];
+  if(s.placed[id]) return;
+  document.querySelectorAll(`#${key}-pool .sort-chip`).forEach(c => c.classList.remove('selected'));
+  const el = document.getElementById(`${key}-chip-${id}`);
+  el.classList.add('selected');
+  s.selected = id;
+}
+
+function placeSelected(key, bucketKey){
+  const s = state[key];
+  if(!s.selected) return;
+  const id = s.selected;
+  if(s.placed[id]) return;
+  const cfg = ROUND_CONFIG[key];
+  const item = cfg.items.find(it => it.id === id);
+  const chipEl = document.getElementById(`${key}-chip-${id}`);
+  const bucketEl = document.getElementById(`${key}-bucket-${bucketKey}`);
+
+  if(item.answer === bucketKey){
+    s.placed[id] = true;
+    s.correctCount++;
+    const firstTry = !(s.attempts[id] > 0);
+    const points = (firstTry && !s.hintUsed) ? cfg.pointsEach : Math.round(cfg.pointsEach / 2);
+    addScore(points);
+    chipEl.classList.remove('selected');
+    chipEl.classList.add('placed-correct');
+    chipEl.onclick = null;
+    document.getElementById(`${key}-bucket-items-${bucketKey}`).appendChild(chipEl);
+    s.selected = null;
+    document.getElementById(`${key}-progress`).textContent = `${s.correctCount} of ${s.total} placed`;
+
+    const fb = document.getElementById(`${key}-feedback`);
+    fb.className = 'feedback show correct';
+    fb.innerHTML = `✅ ${item.text} → ${cfg.buckets.find(b=>b.key===bucketKey).label}`;
+
+    if(s.correctCount === s.total){
+      document.getElementById(`${key}-next`).style.display = 'inline-block';
+      fb.innerHTML += ' — round complete!';
+    }
+  } else {
+    s.attempts[id] = (s.attempts[id] || 0) + 1;
+    bucketEl.classList.add('shake');
+    chipEl.classList.add('wrong-flash');
+    setTimeout(() => { bucketEl.classList.remove('shake'); chipEl.classList.remove('wrong-flash'); }, 350);
+    const fb = document.getElementById(`${key}-feedback`);
+    fb.className = 'feedback show incorrect';
+    fb.innerHTML = `❌ Not quite — try another role for "${item.text}"`;
+  }
+}
+
+function resetHintbot(key){
+  document.getElementById(key + '-hint-btn').disabled = false;
+  document.getElementById(key + '-hint-btn').textContent = '🤖 Ask HintBot for a hint';
+  document.getElementById(key + '-hint-bubble').className = 'hint-bubble';
+  document.getElementById(key + '-hint-bubble').innerHTML = '';
+}
+
+function showHint(key){
+  const s = state[key];
+  s.hintUsed = true;
+  const bubble = document.getElementById(key + '-hint-bubble');
+  bubble.className = 'hint-bubble show';
+  bubble.innerHTML = ROUND_CONFIG[key].hint + ' <em>(remaining cards in this round are worth half points)</em>';
+  document.getElementById(key + '-hint-btn').disabled = true;
+  document.getElementById(key + '-hint-btn').textContent = '🤖 Hint used';
+}
+
+/* ---------- Round configs ---------- */
+const ROUND_CONFIG = {
+  l1: {
+    key:'l1', pointsEach:10,
+    hint:'Ask: does this person design something new, keep something running, or plug in something that already exists?',
+    buckets:[
+      {key:'ds', label:'Data Scientist'},
+      {key:'ml', label:'ML Engineer'},
+      {key:'ai', label:'AI Engineer'}
+    ],
+    items:[
+      {id:'r1', text:'Design the dataset and train a model from scratch', answer:'ds'},
+      {id:'r2', text:'Prove a hypothesis with a metric', answer:'ds'},
+      {id:'r3', text:'Serve a model in production and keep it healthy', answer:'ml'},
+      {id:'r4', text:'Monitor for data drift and retrain on schedule', answer:'ml'},
+      {id:'r5', text:'Integrate GPT or Claude via API into a product', answer:'ai'},
+      {id:'r6', text:'Design and version prompts like code', answer:'ai'}
+    ]
+  },
+  l2: {
+    key:'l2', pointsEach:10,
+    hint:'Statistics and experiments lean Data Scientist. Serving and infrastructure lean ML Engineer. Prompts and retrieval lean AI Engineer.',
+    buckets:[
+      {key:'ds', label:'Data Scientist'},
+      {key:'ml', label:'ML Engineer'},
+      {key:'ai', label:'AI Engineer'}
+    ],
+    items:[
+      {id:'s1', text:'Statistical hypothesis testing', answer:'ds'},
+      {id:'s2', text:'Feature engineering', answer:'ds'},
+      {id:'s3', text:'Experiment design (A/B tests)', answer:'ds'},
+      {id:'s4', text:'Model serving & deployment', answer:'ml'},
+      {id:'s5', text:'Kubernetes & Docker for inference', answer:'ml'},
+      {id:'s6', text:'Retraining pipelines', answer:'ml'},
+      {id:'s7', text:'Prompt engineering', answer:'ai'},
+      {id:'s8', text:'RAG & vector databases', answer:'ai'},
+      {id:'s9', text:'LLM-as-judge evaluation', answer:'ai'}
+    ]
+  },
+  l3: {
+    key:'l3', pointsEach:10,
+    hint:'"On" AI (building it directly) is AI-First. "Near" AI (building tools for others) is AI-Support. No LLMs at all is classic ML.',
+    buckets:[
+      {key:'first', label:'AI-First'},
+      {key:'support', label:'AI-Support'},
+      {key:'ml', label:'ML (rebranded)'}
+    ],
+    items:[
+      {id:'t1', text:'Build a RAG system for knowledge retrieval', answer:'first'},
+      {id:'t2', text:'Implement agent workflows for automation', answer:'first'},
+      {id:'t3', text:'Build a GPU cluster for inference', answer:'support'},
+      {id:'t4', text:'Build a prompt-management UI for the AI team', answer:'support'},
+      {id:'t5', text:'Train a computer-vision model with PyTorch, no LLMs', answer:'ml'},
+      {id:'t6', text:'Build a recommendation system from structured data', answer:'ml'}
+    ]
+  },
+  l4: {
+    key:'l4', pointsEach:10,
+    hint:'Match the title to the role it most resembles: Data Scientist, ML Engineer, AI Engineer, or Forward Deployed Engineer.',
+    buckets:[
+      {key:'ds', label:'Data Scientist'},
+      {key:'ml', label:'ML Engineer'},
+      {key:'ai', label:'AI Engineer'},
+      {key:'fde', label:'Forward Deployed'}
+    ],
+    items:[
+      {id:'j1', text:'Statistician', answer:'ds'},
+      {id:'j2', text:'Data Scientist', answer:'ds'},
+      {id:'j3', text:'MLOps Engineer', answer:'ml'},
+      {id:'j4', text:'Machine Learning Engineer', answer:'ml'},
+      {id:'j5', text:'Applied AI Engineer', answer:'ai'},
+      {id:'j6', text:'Prompt Engineer', answer:'ai'},
+      {id:'j7', text:'Forward Deployed Engineer', answer:'fde'},
+      {id:'j8', text:'Solutions Engineer (customer-embedded)', answer:'fde'}
+    ]
+  },
+  l5: {
+    key:'l5', pointsEach:10,
+    hint:'FDEs sit with one customer and own the outcome. AI Engineers usually build for many customers or an internal team at once.',
+    buckets:[
+      {key:'fde', label:'Forward Deployed'},
+      {key:'ai', label:'AI Engineer'}
+    ],
+    items:[
+      {id:'f1', text:"Scopes requirements by sitting with the customer's own data", answer:'fde'},
+      {id:'f2', text:'Deploys into whatever cloud the customer already uses', answer:'fde'},
+      {id:'f3', text:'Owns the outcome at one account, not just the demo', answer:'fde'},
+      {id:'f4', text:'Iterates on prompts against an internal evaluation set', answer:'ai'},
+      {id:'f5', text:'Ships a feature used the same way by every customer', answer:'ai'},
+      {id:'f6', text:'Owns a shared internal AI platform feature', answer:'ai'}
+    ]
+  },
+  boss: {
+    key:'boss', pointsEach:15,
+    hint:'Everything from the last 5 rounds is mixed here. Think about who designs, who runs, who integrates, and who embeds with the customer.',
+    buckets:[
+      {key:'ds', label:'Data Scientist'},
+      {key:'ml', label:'ML Engineer'},
+      {key:'ai', label:'AI Engineer'},
+      {key:'fde', label:'Forward Deployed'}
+    ],
+    items:[
+      {id:'b1', text:'Designs the dataset and trains the model', answer:'ds'},
+      {id:'b2', text:'Runs an A/B test to prove a hypothesis', answer:'ds'},
+      {id:'b3', text:'Statistical hypothesis testing', answer:'ds'},
+      {id:'b4', text:'Serves a model in production and keeps it healthy', answer:'ml'},
+      {id:'b5', text:'Retraining pipelines as data drifts', answer:'ml'},
+      {id:'b6', text:'Kubernetes & Docker for inference', answer:'ml'},
+      {id:'b7', text:'Builds a RAG system on top of an existing LLM', answer:'ai'},
+      {id:'b8', text:'Prompt engineering and versioning', answer:'ai'},
+      {id:'b9', text:'LLM-as-judge evaluation', answer:'ai'},
+      {id:'b10', text:'Embeds with one customer to scope the real problem', answer:'fde'},
+      {id:'b11', text:'Deploys into whatever cloud the customer already runs', answer:'fde'},
+      {id:'b12', text:'Forward Deployed Engineer (job title)', answer:'fde'}
+    ]
+  }
+};
+
+function initL1(){ renderRound(ROUND_CONFIG.l1); }
+function initL2(){ renderRound(ROUND_CONFIG.l2); }
+function initL3(){ renderRound(ROUND_CONFIG.l3); }
+function initL4(){ renderRound(ROUND_CONFIG.l4); }
+function initL5(){ renderRound(ROUND_CONFIG.l5); }
+function initBoss(){
+  renderRound(ROUND_CONFIG.boss);
+}
+
+/* Boss round gives a +50 completion bonus on top of per-item points */
+const _origPlaceSelected = placeSelected;
+let bossBonusGiven = false;
+placeSelected = function(key, bucketKey){
+  _origPlaceSelected(key, bucketKey);
+  if(key === 'boss'){
+    const s = state.boss;
+    if(s.correctCount === s.total && !bossBonusGiven){
+      bossBonusGiven = true;
+      addScore(50);
+      const fb = document.getElementById('boss-feedback');
+      fb.innerHTML += ' <strong>+50 bonus for finishing the boss round!</strong>';
+    }
+  }
+};
+
+function initBossReset(){ bossBonusGiven = false; }
+const _origInitBoss = initBoss;
+initBoss = function(){ initBossReset(); _origInitBoss(); };
+
+/* ---------- Results ---------- */
+function showResults(){
+  document.getElementById('endScore').textContent = SCORE;
+  document.getElementById('endMax').textContent = TOTAL_POSSIBLE;
+  const pct = SCORE / TOTAL_POSSIBLE;
+  const starsEl = document.getElementById('endStars');
+  starsEl.textContent = pct >= 0.9 ? '⭐⭐⭐' : pct >= 0.6 ? '⭐⭐' : '⭐';
+}
+</script>
+</body>
+</html>

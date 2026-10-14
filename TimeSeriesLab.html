@@ -1,0 +1,2399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeSeriesLab · Evolta</title>
+<link rel="icon" href="favicon.png">
+<style>
+  :root{
+    --bg-0:#ffffff;
+    --accent-a:#8b5cf6;
+    --accent-b:#22d3c9;
+    --accent-b-text:#0c8f86;
+    --accent-grad: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+    --text-0:#1c1730;
+    --text-1:#54506c;
+    --text-2:#78728f;
+    --good:#3ddc97;
+    --bad:#ff6b7a;
+    --card-border: rgba(20,10,40,0.1);
+    --card-bg: rgba(139,92,246,0.035);
+    --radius: 18px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:var(--bg-0);
+    color:var(--text-0);
+    display:flex;
+    justify-content:center;
+    padding: 28px 16px 60px;
+  }
+  .app-shell{ width:100%; max-width:760px; }
+
+  header.site{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:22px; gap:10px; flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand-mark{
+    width:38px;height:38px;border-radius:11px;
+    background:var(--accent-grad);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700; font-size:19px; color:#0e0b1a;
+  }
+  .brand-text small{ display:block; color:var(--text-2); font-size:11px; letter-spacing:.06em; text-transform:uppercase;}
+  .brand-text strong{ font-size:15px; letter-spacing:.02em; }
+  .back-link{
+    color:var(--text-2); text-decoration:none; font-size:13px;
+    border:1px solid var(--card-border); padding:7px 12px; border-radius:999px;
+  }
+  .back-link:hover{ color:var(--text-0); border-color:var(--accent-a); }
+
+  .progress-wrap{ margin-bottom:20px; }
+  .progress-track{
+    height:8px; border-radius:999px; background:rgba(20,10,40,0.08);
+    overflow:hidden; position:relative;
+  }
+  .progress-fill{
+    height:100%; width:0%; background:var(--accent-grad);
+    transition: width .5s ease;
+  }
+  .progress-meta{
+    display:flex; justify-content:space-between; font-size:12px; color:var(--text-2);
+    margin-top:6px;
+  }
+  .stat-pill{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--card-bg); border:1px solid var(--card-border);
+    padding:4px 10px; border-radius:999px; font-size:12px; color:var(--text-1);
+  }
+
+  .screen{ display:none; animation: fadeIn .4s ease; }
+  .screen.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius);
+    padding:26px;
+  }
+  .card + .card{ margin-top:16px; }
+
+  h1{ font-size:26px; margin:0 0 6px; letter-spacing:-0.01em; }
+  h2{ font-size:20px; margin:0 0 6px; }
+  p.lead{ color:var(--text-1); line-height:1.6; margin:0 0 18px; font-size:14.5px; }
+  .eyebrow{
+    text-transform:uppercase; letter-spacing:.1em; font-size:11.5px;
+    color:var(--accent-b-text); font-weight:700; margin-bottom:8px;
+  }
+  .mono{ font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .intro-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .intro-head h1{ margin-bottom:0; }
+  .intro-start-top{ flex-shrink:0; white-space:nowrap; }
+
+  /* ---------- intro explainer ---------- */
+  .why-section{ margin:26px 0 4px; padding-top:22px; border-top:1px solid var(--card-border); }
+  .why-kicker{
+    font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--accent-b-text); margin-bottom:8px;
+  }
+  .why-subhead{ margin-top:28px; }
+  .why-intro{ font-size:13px; line-height:1.65; color:var(--text-1); margin:0 0 14px; }
+
+  .concept-showcase{ display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:14px; margin:18px 0 6px; }
+  .concept-card{
+    background:rgba(20,10,40,0.025); border:1px solid var(--card-border); border-radius:16px;
+    padding:12px 12px 14px;
+    opacity:0; animation:conceptIn .6s ease forwards;
+  }
+  .concept-card:nth-child(2){ animation-delay:.12s; }
+  .concept-card:nth-child(3){ animation-delay:.24s; }
+  .concept-card:nth-child(4){ animation-delay:.36s; }
+  .concept-viz{ width:100%; height:60px; display:block; margin-bottom:8px; overflow:visible; }
+  .concept-head{ display:flex; align-items:baseline; gap:7px; margin-bottom:5px; flex-wrap:wrap; }
+  .concept-sym{ font-size:16px; font-weight:800; background:var(--accent-grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .concept-name{ font-size:12px; font-weight:700; color:var(--text-0); }
+  .concept-desc{ font-size:11.5px; color:var(--text-2); line-height:1.55; margin:0; }
+  @keyframes conceptIn{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:translateY(0); } }
+
+  /* echo bars: AR keeps ringing, MA rings once */
+  .echo-bar{ fill:var(--accent-a); animation:echoPulse 2.6s ease-in-out infinite; transform-box:fill-box; transform-origin:bottom; }
+  .echo-bar.shock{ fill:var(--accent-b); }
+  .echo-bar.e1{ animation-delay:.18s; }
+  .echo-bar.e2{ animation-delay:.36s; }
+  .echo-bar.e3{ animation-delay:.54s; }
+  .echo-bar.e4{ animation-delay:.72s; }
+  .echo-bar.e5{ animation-delay:.9s; }
+  @keyframes echoPulse{ 0%,100%{ transform:scaleY(1); } 50%{ transform:scaleY(1.14); } }
+  .echo-dead{ fill:rgba(20,10,40,.22); }
+
+  /* integration panel: trending line crossfades into its flat difference */
+  @keyframes fadeOutIn{ 0%,16%{ opacity:1; } 50%,66%{ opacity:0; } 100%{ opacity:1; } }
+  @keyframes fadeInOut{ 0%,16%{ opacity:0; } 50%,66%{ opacity:1; } 100%{ opacity:0; } }
+  .i-trend{ animation:fadeOutIn 5s ease-in-out infinite; }
+  .i-flat{ animation:fadeInOut 5s ease-in-out infinite; }
+
+  .eqbox{
+    background:rgba(20,10,40,0.03); border:1px solid var(--card-border);
+    border-radius:14px; padding:14px 16px; margin:14px 0 0;
+  }
+  .eqrow{ display:flex; gap:12px; align-items:baseline; padding:7px 0; flex-wrap:wrap; }
+  .eqrow + .eqrow{ border-top:1px dashed var(--card-border); }
+  .eqtag{
+    flex-shrink:0; min-width:74px; font-size:11px; font-weight:800; color:var(--accent-b-text);
+    background:rgba(34,211,201,0.1); padding:3px 8px; border-radius:999px; text-align:center;
+  }
+  .eqmath{ font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px; color:var(--text-0); line-height:1.6; }
+  .eqnote{ font-size:11.5px; color:var(--text-2); line-height:1.55; width:100%; margin-top:2px; }
+
+  .why-flow{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:4px;
+    margin:16px 0 4px; padding:16px 10px; background:rgba(20,10,40,.025); border-radius:14px;
+    flex-wrap:wrap;
+  }
+  .why-flow-step{ display:flex; flex-direction:column; align-items:center; gap:7px; flex:1 1 0; min-width:72px; }
+  .why-flow-badge{
+    width:32px; height:32px; border-radius:50%; background:var(--accent-grad);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:14px; color:#0e0b1a; font-weight:800;
+    animation:tileFloat 3s ease-in-out infinite;
+  }
+  .why-flow-step:nth-child(3) .why-flow-badge{ animation-delay:.4s; }
+  .why-flow-step:nth-child(5) .why-flow-badge{ animation-delay:.8s; }
+  .why-flow-step:nth-child(7) .why-flow-badge{ animation-delay:1.2s; }
+  .why-flow-step:nth-child(9) .why-flow-badge{ animation-delay:1.6s; }
+  .why-flow-label{ font-size:10px; color:var(--text-2); text-align:center; line-height:1.4; max-width:104px; }
+  .why-flow-arrow{ color:var(--text-2); font-size:14px; align-self:center; margin-top:16px; flex-shrink:0; }
+
+  .sig-table{ margin:14px 0 0; border:1px solid var(--card-border); border-radius:14px; overflow:hidden; }
+  .sig-row{ display:grid; grid-template-columns:1fr 1.25fr 1.25fr; }
+  .sig-row + .sig-row{ border-top:1px solid var(--card-border); }
+  .sig-row.head{ background:rgba(139,92,246,0.07); }
+  .sig-cell{ padding:10px 12px; font-size:12px; line-height:1.5; color:var(--text-1); }
+  .sig-row.head .sig-cell{ font-size:11px; font-weight:800; color:var(--text-0); text-transform:uppercase; letter-spacing:.04em; }
+  .sig-cell:first-child{ font-weight:700; color:var(--text-0); }
+  .sig-cell + .sig-cell{ border-left:1px solid var(--card-border); }
+
+  .why-steps{ display:flex; flex-direction:column; margin-top:14px; }
+  .why-step{ display:flex; align-items:flex-start; gap:14px; position:relative; }
+  .why-step:not(:last-child){ padding-bottom:14px; }
+  .why-step:not(:last-child)::before{
+    content:''; position:absolute; left:15px; top:34px; bottom:0; width:2px; background:var(--card-border);
+  }
+  .why-step-num{
+    flex-shrink:0; width:32px; height:32px; border-radius:50%; background:var(--accent-grad);
+    color:#0e0b1a; font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center;
+    z-index:1; animation:tileFloat 3.2s ease-in-out infinite;
+  }
+  .why-step:nth-child(2) .why-step-num{ animation-delay:.3s; }
+  .why-step:nth-child(3) .why-step-num{ animation-delay:.6s; }
+  .why-step:nth-child(4) .why-step-num{ animation-delay:.9s; }
+  .why-step:nth-child(5) .why-step-num{ animation-delay:1.2s; }
+  .why-step:nth-child(6) .why-step-num{ animation-delay:1.5s; }
+  .why-step:nth-child(7) .why-step-num{ animation-delay:1.8s; }
+  .why-step:nth-child(8) .why-step-num{ animation-delay:2.1s; }
+  .why-step-body{
+    flex:1 1 auto; min-width:0; background:rgba(20,10,40,0.025); border:1px solid var(--card-border);
+    border-radius:16px; padding:12px 14px 14px;
+  }
+  .why-step-body h3{
+    font-size:13px; font-weight:700; color:var(--text-0); margin:0 0 6px;
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  }
+  .why-step-tags{
+    font-size:10px; font-weight:700; color:var(--accent-b-text);
+    background:rgba(34,211,201,0.1); padding:2px 7px; border-radius:999px;
+  }
+  .why-step-body p{ font-size:12px; line-height:1.6; color:var(--text-1); margin:0; }
+  .why-footer{ font-size:12px; font-weight:700; color:var(--accent-b-text); text-align:center; margin:18px 0 0; }
+
+  /* ---------- controls ---------- */
+  .btn{
+    appearance:none; cursor:pointer;
+    font-size:14.5px; font-weight:600; padding:12px 20px; border-radius:12px;
+    color:var(--text-0); background:rgba(20,10,40,0.045); border:1px solid var(--card-border);
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .btn:hover{ border-color:var(--accent-a); transform:translateY(-1px); }
+  .btn:active{ transform:translateY(0); }
+  .btn-primary{ background:var(--accent-grad); color:#0e0b1a; border:none; }
+  .btn-primary:hover{ filter:brightness(1.08); }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+  .btn-sm{ font-size:13px; padding:9px 14px; }
+
+  .option-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin:16px 0; }
+  .option-btn{
+    padding:13px 10px; border-radius:12px; text-align:center;
+    background:rgba(20,10,40,0.04); border:1px solid var(--card-border);
+    cursor:pointer; font-weight:700; font-size:14px; line-height:1.4; transition:all .15s ease;
+    animation: tileFloat 3.4s ease-in-out infinite;
+  }
+  .option-btn:nth-child(2n){ animation-delay:.45s; }
+  .option-btn:nth-child(3n){ animation-delay:.9s; }
+  .option-btn:nth-child(4n){ animation-delay:1.35s; }
+  .option-btn:hover{ border-color:var(--accent-b); }
+  .option-btn.correct{ background:rgba(61,220,151,0.18); border-color:var(--good); }
+  .option-btn.incorrect{ background:rgba(255,107,122,0.18); border-color:var(--bad); }
+  .option-btn.disabled{ pointer-events:none; animation:none; }
+  .option-grid.wide{ grid-template-columns:1fr; }
+  .option-grid.wide .option-btn{ text-align:left; font-weight:600; font-size:13.5px; padding:12px 14px; }
+  @keyframes tileFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-3px); } }
+
+  .input-row{ display:flex; gap:10px; align-items:center; margin:16px 0; flex-wrap:wrap; }
+  .num-input{
+    background:rgba(20,10,40,0.04); border:1px solid var(--card-border);
+    border-radius:12px; padding:12px 14px; color:var(--text-0); font-size:16px;
+    width:160px; font-weight:600;
+  }
+  .num-input:focus{ outline:none; border-color:var(--accent-b); }
+  .input-label{ font-size:13px; color:var(--text-1); }
+
+  .feedback{
+    margin-top:14px; padding:12px 14px; border-radius:12px; font-size:13.5px; line-height:1.6;
+    border:1px solid transparent; display:none;
+  }
+  .feedback.show{ display:block; }
+  .feedback.correct{ background:rgba(61,220,151,0.12); border-color:rgba(61,220,151,0.4); color:#188357; }
+  .feedback.incorrect{ background:rgba(255,107,122,0.12); border-color:rgba(255,107,122,0.4); color:#b8283d; }
+  .feedback .mono{ font-size:12.5px; }
+
+  .hint{ font-size:12.5px; color:var(--text-2); margin-top:6px; line-height:1.55; }
+  .step-note{ font-size:12.5px; color:var(--text-1); background:rgba(20,10,40,0.03); border-radius:10px; padding:10px 12px; margin-top:12px; line-height:1.6; }
+  .warn-note{
+    font-size:12.5px; line-height:1.6; color:#9a5b13; background:rgba(255,159,92,0.12);
+    border:1px solid rgba(255,159,92,0.4); border-radius:10px; padding:10px 12px; margin-top:12px;
+    display:none;
+  }
+  .warn-note.show{ display:block; }
+
+  /* ---------- charts ---------- */
+  .chart-wrap{ margin:16px 0 6px; }
+  .chart-title{
+    font-size:11px; font-weight:800; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--text-2); margin-bottom:5px; display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap;
+  }
+  .chart-title .legend{ display:flex; gap:12px; font-weight:600; letter-spacing:0; text-transform:none; font-size:11px; }
+  .chart-title .legend i{ display:inline-block; width:14px; height:3px; border-radius:2px; margin-right:5px; vertical-align:middle; }
+  .ts-svg{ width:100%; height:auto; display:block; }
+  .panel-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin:16px 0 6px; }
+  .panel{ background:rgba(20,10,40,0.025); border:1px solid var(--card-border); border-radius:14px; padding:10px 10px 8px; }
+  .panel-label{ font-size:12px; font-weight:800; color:var(--text-0); margin-bottom:4px; }
+  .stem-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; margin:14px 0 6px; }
+
+  .readout-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin:14px 0 4px; }
+  .readout{ background:rgba(20,10,40,0.03); border:1px solid var(--card-border); border-radius:12px; padding:10px 12px; }
+  .readout .k{ font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--text-2); font-weight:700; }
+  .readout .v{ font-size:17px; font-weight:800; color:var(--text-0); margin-top:3px; }
+  .readout .v.ok{ color:#19a974; }
+  .readout .v.warn{ color:#d2691e; }
+  .readout .sub{ font-size:10.5px; color:var(--text-2); margin-top:2px; line-height:1.4; }
+
+  .slider-row{ margin:16px 0 4px; }
+  .slider-head{ display:flex; justify-content:space-between; align-items:baseline; font-size:13px; color:var(--text-1); gap:10px; flex-wrap:wrap; }
+  .slider-head b{ font-size:16px; color:var(--text-0); }
+  .ts-slider{
+    width:100%; -webkit-appearance:none; appearance:none;
+    height:8px; border-radius:999px; background:rgba(20,10,40,.1); outline:none; margin:10px 0 0;
+  }
+  .ts-slider::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:22px; height:22px; border-radius:50%;
+    background:var(--accent-grad); cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.3);
+  }
+  .ts-slider::-moz-range-thumb{ width:22px; height:22px; border-radius:50%; background:var(--accent-b); border:none; cursor:pointer; }
+  .slider-scale{ display:flex; justify-content:space-between; font-size:10.5px; color:var(--text-2); margin-top:4px; }
+
+  .target-pill{ background:rgba(20,10,40,.04); border:1px solid var(--card-border); border-radius:999px; padding:5px 12px; font-size:12.5px; color:var(--text-1); }
+  .pill-row{ display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 0; }
+  .tag{
+    font-size:11px; font-weight:700; color:var(--text-1);
+    background:rgba(20,10,40,.035); border:1px solid var(--card-border);
+    padding:4px 10px; border-radius:999px;
+  }
+  .tag b{ color:var(--accent-b-text); }
+
+  .toggle-row{ display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 0; }
+  .toggle{
+    padding:9px 14px; border-radius:999px; font-size:13px; font-weight:700; cursor:pointer;
+    background:rgba(20,10,40,0.035); border:1px solid var(--card-border); transition:all .15s ease;
+  }
+  .toggle:hover{ border-color:var(--accent-b); }
+  .toggle.on{ background:rgba(139,92,246,0.14); border-color:var(--accent-a); color:var(--text-0); }
+
+  .data-box{
+    background:rgba(20,10,40,0.03); border:1px solid var(--card-border); border-radius:12px;
+    padding:12px 14px; margin:12px 0; font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:12.5px; line-height:1.8; color:var(--text-0);
+  }
+  .data-box .lbl{ color:var(--text-2); }
+
+  /* ---------- hintbot ---------- */
+  .hintbot{ margin-top:18px; padding-top:16px; border-top:1px dashed var(--card-border); }
+  .hint-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(139,92,246,0.1); border:1px solid rgba(139,92,246,0.35);
+    font-size:13.5px; padding:9px 16px;
+  }
+  .hint-btn:hover{ background:rgba(139,92,246,0.18); border-color:var(--accent-a); }
+  .hint-bubble{ display:none; margin-top:10px; }
+  .hint-bubble.show{ display:block; }
+  .hint-line{
+    display:flex; gap:10px; align-items:flex-start;
+    background:rgba(34,211,201,0.07); border:1px solid rgba(34,211,201,0.25);
+    border-radius:12px; padding:10px 12px; font-size:13.5px; line-height:1.6; color:var(--text-1);
+    margin-top:8px;
+  }
+  .hint-line .bot-avatar{
+    flex-shrink:0; width:24px; height:24px; border-radius:50%;
+    background:var(--accent-grad); display:flex; align-items:center; justify-content:center; font-size:12px;
+  }
+  .hint-line strong{ color:var(--accent-b-text); }
+
+  /* ---------- boss ---------- */
+  .boss-step{
+    border:1px solid var(--card-border); border-radius:16px; padding:14px 16px 16px;
+    margin-top:14px; background:rgba(20,10,40,0.02); animation: fadeIn .4s ease;
+  }
+  .boss-step-head{
+    font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--accent-b-text); margin-bottom:8px;
+  }
+  .boss-step p.lead{ margin-bottom:10px; font-size:14px; }
+  .boss-step.done{ opacity:.92; }
+
+  /* ---------- results ---------- */
+  .end-stars{ font-size:34px; letter-spacing:6px; margin:10px 0 4px; }
+  .formula-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:16px 0 0; }
+  .formula-card{
+    background:rgba(20,10,40,0.025); border:1px solid var(--card-border);
+    border-radius:14px; padding:14px; text-align:center;
+  }
+  .formula-card .sym{ font-size:19px; font-weight:800; background:var(--accent-grad);
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .formula-card .name{ font-size:12.5px; color:var(--text-1); margin-top:4px; font-weight:700; }
+  .formula-card .expr{ font-size:11.5px; color:var(--text-2); margin-top:6px; font-family:ui-monospace,Menlo,Consolas,monospace; line-height:1.5; }
+  .next-list{ margin:12px 0 0; padding-left:20px; color:var(--text-1); font-size:13px; line-height:1.9; }
+  .next-list b{ color:var(--text-0); }
+
+  .footer-credit{ text-align:center; color:var(--text-2); font-size:12px; margin-top:26px; line-height:1.7; }
+  .footer-credit a{ color:var(--accent-b-text); text-decoration:none; }
+
+  @media (max-width:520px){
+    h1{ font-size:22px; }
+    .card{ padding:18px; }
+    .sig-row{ grid-template-columns:1fr; }
+    .sig-cell + .sig-cell{ border-left:none; border-top:1px dashed var(--card-border); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:0.001ms !important;
+      animation-iteration-count:1 !important;
+      scroll-behavior:auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="site">
+    <div class="brand">
+      <div class="brand-mark">φ</div>
+      <div class="brand-text">
+        <small>Evolta · Econometrics</small>
+        <strong>TimeSeriesLab</strong>
+      </div>
+    </div>
+    <a class="back-link" href="https://evolta.ai" target="_blank" rel="noopener">← Evolta home</a>
+  </header>
+
+  <div class="progress-wrap" id="progressWrap" style="display:none;">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-meta">
+      <span id="progressLabel">Level 1 of 8</span>
+      <span class="stat-pill">⭐ Score: <span id="scoreLabel">0</span></span>
+    </div>
+  </div>
+
+  <!-- ============ INTRO ============ -->
+  <section class="screen active" id="screen-intro">
+    <div class="card">
+      <div class="intro-head">
+        <div>
+          <div class="eyebrow">Econometrics · Time Series · Topic 1</div>
+          <h1>AR, MA, ARMA & ARIMA</h1>
+        </div>
+        <button class="btn btn-primary intro-start-top" onclick="startGame()">Start Lab →</button>
+      </div>
+      <p class="lead" style="margin-top:12px;">
+        Cross-section data has no yesterday. Time series does — and that memory is the whole game.
+        This lab builds the Box–Jenkins family one letter at a time: <b>AR</b> (memory of past
+        <em>values</em>), <b>MA</b> (memory of past <em>shocks</em>), <b>ARMA</b> (both), and the <b>I</b>
+        that makes a drifting series sit still long enough to be modelled. You'll tune coefficients
+        with sliders, fire shocks and watch them echo, read ACF/PACF plots like a diagnostician,
+        and forecast at the end.
+      </p>
+
+      <div class="why-section">
+        <div class="why-kicker">The one-sentence version of each letter</div>
+        <p class="why-intro">
+          Every model here is a recipe that turns an invisible stream of random shocks
+          <span class="mono">ε<sub>t</sub></span> (mean 0, constant variance, no autocorrelation — "white noise")
+          into the series you actually observe. The letters only differ in <em>how long the recipe remembers</em>.
+        </p>
+
+        <div class="concept-showcase">
+          <div class="concept-card">
+            <svg class="concept-viz" viewBox="0 0 150 60" aria-label="A shock followed by geometrically decaying echoes">
+              <line x1="6" y1="52" x2="144" y2="52" stroke="rgba(20,10,40,.18)" stroke-width="1"/>
+              <rect class="echo-bar shock" x="16" y="14" width="9" height="38" rx="2"/>
+              <rect class="echo-bar e1" x="37" y="25.4" width="9" height="26.6" rx="2"/>
+              <rect class="echo-bar e2" x="58" y="33.4" width="9" height="18.6" rx="2"/>
+              <rect class="echo-bar e3" x="79" y="39.1" width="9" height="12.9" rx="2"/>
+              <rect class="echo-bar e4" x="100" y="42.9" width="9" height="9.1" rx="2"/>
+              <rect class="echo-bar e5" x="121" y="45.5" width="9" height="6.5" rx="2"/>
+            </svg>
+            <div class="concept-head"><span class="concept-sym">AR(p)</span><span class="concept-name">Autoregressive</span></div>
+            <p class="concept-desc">Today is a weighted echo of its own past <b>levels</b>. One shock keeps ringing forever, decaying like φ<sup>h</sup>.</p>
+          </div>
+
+          <div class="concept-card">
+            <svg class="concept-viz" viewBox="0 0 150 60" aria-label="A shock, one echo, then nothing">
+              <line x1="6" y1="52" x2="144" y2="52" stroke="rgba(20,10,40,.18)" stroke-width="1"/>
+              <rect class="echo-bar shock" x="16" y="14" width="9" height="38" rx="2"/>
+              <rect class="echo-bar e1" x="37" y="27.3" width="9" height="24.7" rx="2"/>
+              <rect class="echo-dead" x="58" y="50" width="9" height="2" rx="1"/>
+              <rect class="echo-dead" x="79" y="50" width="9" height="2" rx="1"/>
+              <rect class="echo-dead" x="100" y="50" width="9" height="2" rx="1"/>
+              <rect class="echo-dead" x="121" y="50" width="9" height="2" rx="1"/>
+            </svg>
+            <div class="concept-head"><span class="concept-sym">MA(q)</span><span class="concept-name">Moving average</span></div>
+            <p class="concept-desc">Today is a weighted sum of the last few <b>shocks</b>. Memory is finite: after q periods the shock is gone, exactly.</p>
+          </div>
+
+          <div class="concept-card">
+            <svg class="concept-viz" viewBox="0 0 150 60" aria-label="A shock with a kick then a decaying tail">
+              <line x1="6" y1="52" x2="144" y2="52" stroke="rgba(20,10,40,.18)" stroke-width="1"/>
+              <rect class="echo-bar shock" x="16" y="14" width="9" height="38" rx="2"/>
+              <rect class="echo-bar e1" x="37" y="18" width="9" height="34" rx="2"/>
+              <rect class="echo-bar e2" x="58" y="28" width="9" height="24" rx="2"/>
+              <rect class="echo-bar e3" x="79" y="35" width="9" height="17" rx="2"/>
+              <rect class="echo-bar e4" x="100" y="40" width="9" height="12" rx="2"/>
+              <rect class="echo-bar e5" x="121" y="43.6" width="9" height="8.4" rx="2"/>
+            </svg>
+            <div class="concept-head"><span class="concept-sym">ARMA(p,q)</span><span class="concept-name">Both memories</span></div>
+            <p class="concept-desc">A short-lived shock kick (MA) on top of a long decaying tail (AR). Most real series need a bit of each.</p>
+          </div>
+
+          <div class="concept-card">
+            <svg class="concept-viz" viewBox="0 0 150 60" aria-label="A trending series becoming flat after differencing">
+              <line x1="6" y1="52" x2="144" y2="52" stroke="rgba(20,10,40,.18)" stroke-width="1"/>
+              <polyline class="i-trend" points="10,48 28,44 46,38 64,40 82,30 100,22 118,18 136,10"
+                fill="none" stroke="#8b5cf6" stroke-width="2.4" stroke-linejoin="round"/>
+              <polyline class="i-flat" points="10,30 28,24 46,34 64,28 82,33 100,25 118,31 136,27"
+                fill="none" stroke="#22d3c9" stroke-width="2.4" stroke-linejoin="round"/>
+            </svg>
+            <div class="concept-head"><span class="concept-sym">I(d)</span><span class="concept-name">Integrated</span></div>
+            <p class="concept-desc">The series wanders with no fixed mean. Difference it <b>d</b> times (Δy<sub>t</sub> = y<sub>t</sub> − y<sub>t−1</sub>) and model the result.</p>
+          </div>
+        </div>
+
+        <div class="why-kicker why-subhead">The notation, once</div>
+        <div class="eqbox">
+          <div class="eqrow">
+            <span class="eqtag">AR(p)</span>
+            <span class="eqmath">y<sub>t</sub> = c + φ₁y<sub>t−1</sub> + … + φ<sub>p</sub>y<sub>t−p</sub> + ε<sub>t</sub></span>
+            <span class="eqnote">Easier to read in deviation form: (y<sub>t</sub> − μ) = φ₁(y<sub>t−1</sub> − μ) + … + ε<sub>t</sub>, with μ = c / (1 − φ₁ − … − φ<sub>p</sub>).</span>
+          </div>
+          <div class="eqrow">
+            <span class="eqtag">MA(q)</span>
+            <span class="eqmath">y<sub>t</sub> = μ + ε<sub>t</sub> + θ₁ε<sub>t−1</sub> + … + θ<sub>q</sub>ε<sub>t−q</sub></span>
+            <span class="eqnote">This lab uses the <b>plus</b> convention. Many textbooks and some software write −θ instead; the model is the same, the sign of θ̂ flips. Always check your package's convention.</span>
+          </div>
+          <div class="eqrow">
+            <span class="eqtag">ARMA(p,q)</span>
+            <span class="eqmath">y<sub>t</sub> = c + Σφ<sub>i</sub>y<sub>t−i</sub> + ε<sub>t</sub> + Σθ<sub>j</sub>ε<sub>t−j</sub></span>
+            <span class="eqnote">Requires a stationary y. A small ARMA often beats a big pure AR — fewer parameters, same fit.</span>
+          </div>
+          <div class="eqrow">
+            <span class="eqtag">ARIMA(p,d,q)</span>
+            <span class="eqmath">ARMA(p,q) fitted to Δ<sup>d</sup>y<sub>t</sub></span>
+            <span class="eqnote">d = how many differences make it stationary. ARIMA(0,1,0) is the random walk; ARIMA(0,1,1) is exponential smoothing in disguise.</span>
+          </div>
+        </div>
+
+        <div class="why-kicker why-subhead">Stationarity: the licence to model</div>
+        <p class="why-intro">
+          These models assume the mean, variance and autocorrelations don't depend on <em>when</em> you look —
+          otherwise there is no stable thing to estimate, and the usual t-stats and R² mislead you
+          (the classic spurious-regression trap). For an AR(1), stationarity means <b>|φ| &lt; 1</b>:
+          shocks die out. At φ = 1 you have a <b>unit root</b> — a random walk that never returns to a mean,
+          whose variance grows with t. The fix is the <b>I</b>: difference it, then model the differences.
+          Over-differencing has its own tell, and you'll meet it in Level 5.
+        </p>
+
+        <div class="why-kicker why-subhead">The Box–Jenkins loop you're learning</div>
+        <div class="why-flow">
+          <div class="why-flow-step"><div class="why-flow-badge">1</div><div class="why-flow-label">Plot it<br>look for trend</div></div>
+          <div class="why-flow-arrow">→</div>
+          <div class="why-flow-step"><div class="why-flow-badge">2</div><div class="why-flow-label">Stationary?<br>pick <b>d</b></div></div>
+          <div class="why-flow-arrow">→</div>
+          <div class="why-flow-step"><div class="why-flow-badge">3</div><div class="why-flow-label">ACF / PACF<br>pick <b>p, q</b></div></div>
+          <div class="why-flow-arrow">→</div>
+          <div class="why-flow-step"><div class="why-flow-badge">4</div><div class="why-flow-label">Estimate<br>& compare AIC</div></div>
+          <div class="why-flow-arrow">→</div>
+          <div class="why-flow-step"><div class="why-flow-badge">5</div><div class="why-flow-label">Diagnose<br>residuals white?</div></div>
+          <div class="why-flow-arrow">→</div>
+          <div class="why-flow-step"><div class="why-flow-badge">6</div><div class="why-flow-label">Forecast</div></div>
+        </div>
+
+        <div class="why-kicker why-subhead">The identification table (memorise this one)</div>
+        <div class="sig-table">
+          <div class="sig-row head">
+            <div class="sig-cell">Process</div>
+            <div class="sig-cell">ACF — correlation with lag k</div>
+            <div class="sig-cell">PACF — same, after removing shorter lags</div>
+          </div>
+          <div class="sig-row">
+            <div class="sig-cell">AR(p)</div>
+            <div class="sig-cell">Decays gradually (geometric, possibly alternating)</div>
+            <div class="sig-cell"><b>Cuts off after lag p</b></div>
+          </div>
+          <div class="sig-row">
+            <div class="sig-cell">MA(q)</div>
+            <div class="sig-cell"><b>Cuts off after lag q</b></div>
+            <div class="sig-cell">Decays gradually</div>
+          </div>
+          <div class="sig-row">
+            <div class="sig-cell">ARMA(p,q)</div>
+            <div class="sig-cell">Decays — no clean cut-off</div>
+            <div class="sig-cell">Decays — no clean cut-off</div>
+          </div>
+          <div class="sig-row">
+            <div class="sig-cell">Unit root, I(1)</div>
+            <div class="sig-cell">Starts near 1 and decays very slowly</div>
+            <div class="sig-cell">Big spike at lag 1 (≈ 1), then little</div>
+          </div>
+        </div>
+        <p class="hint">
+          "Cuts off" means: inside the ±1.96/√n band from that lag onwards — statistically indistinguishable from zero.
+          Mixed ARMA can't be read off the plots; that's what AIC/BIC comparisons are for.
+        </p>
+
+        <div class="why-kicker why-subhead">Your route through the lab</div>
+        <div class="why-steps">
+          <div class="why-step"><div class="why-step-num">1</div><div class="why-step-body">
+            <h3>Spot the white noise <span class="why-step-tags">ε<sub>t</sub></span></h3>
+            <p>Tell apart no-memory noise, a random walk, and a near-unit-root AR — by eye, then by ACF.</p>
+          </div></div>
+          <div class="why-step"><div class="why-step-num">2</div><div class="why-step-body">
+            <h3>The φ dial <span class="why-step-tags">AR(1) persistence</span></h3>
+            <p>Same shocks, one slider. Watch persistence, half-life and variance move together — and the series stop reverting as φ → 1.</p>
+          </div></div>
+          <div class="why-step"><div class="why-step-num">3</div><div class="why-step-body">
+            <h3>Fire a shock <span class="why-step-tags">impulse response</span></h3>
+            <p>The clean AR-vs-MA distinction: infinite decaying memory versus memory that ends at lag q.</p>
+          </div></div>
+          <div class="why-step"><div class="why-step-num">4</div><div class="why-step-body">
+            <h3>Correlogram detective <span class="why-step-tags">ACF / PACF</span></h3>
+            <p>Three mystery processes. Read the cut-offs, name the model. This is the skill that pays.</p>
+          </div></div>
+          <div class="why-step"><div class="why-step-num">5</div><div class="why-step-body">
+            <h3>Unit roots & the Δ button <span class="why-step-tags">the "I"</span></h3>
+            <p>Difference a random walk into stationarity — then difference once too often and meet ρ₁ ≈ −0.5.</p>
+          </div></div>
+          <div class="why-step"><div class="why-step-num">6</div><div class="why-step-body">
+            <h3>Build an ARMA(1,1) <span class="why-step-tags">fit by ACF</span></h3>
+            <p>Two sliders, one hidden truth. Match the target's correlogram and see why mixed models are hard to pin down.</p>
+          </div></div>
+          <div class="why-step"><div class="why-step-num">7</div><div class="why-step-body">
+            <h3>Forecast & fan chart <span class="why-step-tags">mean reversion</span></h3>
+            <p>Compute 1- and 3-step forecasts by hand, then watch them decay to μ as the interval widens to ±1.96σ<sub>y</sub>.</p>
+          </div></div>
+          <div class="why-step"><div class="why-step-num">8</div><div class="why-step-body">
+            <h3>Boss: full Box–Jenkins <span class="why-step-tags">(p,d,q)</span></h3>
+            <p>One mystery series, five calls: d, then p, then q, name the model, and forecast one step ahead.</p>
+          </div></div>
+        </div>
+        <p class="why-footer">8 levels · HintBot on every screen · 1,200 points on the table</p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="startGame()">Start Lab →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEVEL 1 · WHITE NOISE ============ -->
+  <section class="screen" id="screen-1">
+    <div class="card">
+      <div class="eyebrow">Level 1 · White noise</div>
+      <h2>🎧 Spot the series with no memory</h2>
+      <p class="lead">
+        All three panels have roughly the same scale of random variation. Only one is <strong>white noise</strong>:
+        zero mean, constant variance, and <em>zero</em> autocorrelation at every lag. Which one?
+      </p>
+      <div class="panel-grid" id="l1-panels"></div>
+      <div class="option-grid" id="l1-options"></div>
+      <div class="feedback" id="l1-feedback"></div>
+
+      <div id="l1-part2" style="display:none;">
+        <div class="step-note" id="l1-acf-note"></div>
+        <div class="chart-wrap" id="l1-acf"></div>
+        <p class="lead" style="margin-top:14px;">Second question: for a white-noise process, what is the theoretical autocorrelation ρ<sub>k</sub> at every lag k ≥ 1?</p>
+        <div class="option-grid" id="l1-options2"></div>
+        <div class="feedback" id="l1-feedback2"></div>
+      </div>
+
+      <div class="hintbot">
+        <button class="btn hint-btn" id="l1-hint-btn" onclick="showHint('l1')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="l1-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l1-next" style="display:none;" onclick="goTo(2)">Next Level →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEVEL 2 · AR(1) SLIDER ============ -->
+  <section class="screen" id="screen-2">
+    <div class="card">
+      <div class="eyebrow">Level 2 · AR(1) persistence</div>
+      <h2>🎚️ The φ dial</h2>
+      <p class="lead">
+        One AR(1): <span class="mono">y<sub>t</sub> = φ·y<sub>t−1</sub> + ε<sub>t</sub></span>. The shock sequence
+        <span class="mono">ε<sub>t</sub></span> is <strong>frozen</strong> — every change you see comes from φ alone.
+        <br><strong>Your task:</strong> tune φ so that a shock's effect has a <strong>half-life of
+        <span id="l2-target-h">3</span> periods</strong>, then lock it in.
+      </p>
+
+      <div class="chart-wrap">
+        <div class="chart-title"><span>Simulated path (same shocks throughout)</span><span id="l2-chart-tag"></span></div>
+        <div id="l2-chart"></div>
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-head"><span>φ (AR coefficient) = <b id="l2-phi-label">0.00</b></span>
+          <span class="target-pill">🎯 Target half-life: <strong id="l2-target-pill">3</strong> periods</span></div>
+        <input type="range" class="ts-slider" id="l2-slider" min="-0.9" max="0.98" step="0.01" value="0" oninput="updateL2()">
+        <div class="slider-scale"><span>−0.9 (zig-zag)</span><span>0 (white noise)</span><span>0.98 (near unit root)</span></div>
+      </div>
+
+      <div class="readout-grid">
+        <div class="readout"><div class="k">ρ₁ = φ</div><div class="v" id="l2-rho1">0.00</div><div class="sub">lag-1 autocorrelation</div></div>
+        <div class="readout"><div class="k">Half-life</div><div class="v" id="l2-half">0</div><div class="sub">ln 0.5 / ln φ</div></div>
+        <div class="readout"><div class="k">sd(y) / sd(ε)</div><div class="v" id="l2-sdratio">1.00</div><div class="sub">1 / √(1 − φ²)</div></div>
+        <div class="readout"><div class="k">Shock left after 5</div><div class="v" id="l2-irf5">0%</div><div class="sub">φ⁵</div></div>
+      </div>
+
+      <div class="stem-grid">
+        <div class="panel"><div class="panel-label">Theoretical ACF — ρ<sub>k</sub> = φ<sup>k</sup></div><div id="l2-acf"></div></div>
+        <div class="panel"><div class="panel-label">Theoretical PACF — one spike at lag 1</div><div id="l2-pacf"></div></div>
+      </div>
+
+      <div class="warn-note" id="l2-warn"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l2-lock" onclick="checkL2()">🔒 Lock in this φ</button>
+      </div>
+      <div class="feedback" id="l2-feedback"></div>
+      <div class="hintbot">
+        <button class="btn hint-btn" id="l2-hint-btn" onclick="showHint('l2')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="l2-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l2-next" style="display:none;" onclick="goTo(3)">Next Level →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEVEL 3 · IMPULSE RESPONSE ============ -->
+  <section class="screen" id="screen-3">
+    <div class="card">
+      <div class="eyebrow">Level 3 · AR vs MA memory</div>
+      <h2>⚡ Fire a shock, watch the echo</h2>
+      <p class="lead">
+        Both models below are driven by the <em>same</em> single unit shock at t = 5 and nothing else.
+        Pick a model, fire the shock, and watch how long it survives. This is an
+        <strong>impulse response function</strong> — the cleanest way to feel the AR/MA difference.
+      </p>
+
+      <div class="toggle-row" id="l3-toggles">
+        <div class="toggle on" id="l3-tog-ar" onclick="setL3Model('ar')">AR(1), φ = 0.7</div>
+        <div class="toggle" id="l3-tog-ma" onclick="setL3Model('ma')">MA(1), θ = 0.7</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="fireL3()">⚡ Fire the shock</button>
+        <button class="btn btn-sm" onclick="setL3Both()">Overlay both</button>
+      </div>
+
+      <div class="chart-wrap">
+        <div class="chart-title">
+          <span>Response to a one-off unit shock at t = 5</span>
+          <span class="legend"><span><i style="background:#8b5cf6"></i>AR(1)</span><span><i style="background:#22d3c9"></i>MA(1)</span></span>
+        </div>
+        <div id="l3-chart"></div>
+      </div>
+      <div class="step-note" id="l3-note">
+        AR(1): effect after h periods = φ<sup>h</sup> = 0.7<sup>h</sup> — never exactly zero.
+        MA(1): effect is 1 at impact, θ = 0.7 one period later, and <strong>exactly 0</strong> after that.
+      </div>
+
+      <p class="lead" style="margin-top:18px;">Q1 · In the <strong>MA(1)</strong>, how long does a shock keep moving the series after it lands?</p>
+      <div class="option-grid wide" id="l3-options1"></div>
+      <div class="feedback" id="l3-feedback1"></div>
+
+      <div id="l3-part2" style="display:none;">
+        <p class="lead" style="margin-top:18px;">Q2 · In the <strong>AR(1) with φ = 0.7</strong>, roughly how much of the shock is still in the series 3 periods later?</p>
+        <div class="option-grid" id="l3-options2"></div>
+        <div class="feedback" id="l3-feedback2"></div>
+      </div>
+
+      <div class="hintbot">
+        <button class="btn hint-btn" id="l3-hint-btn" onclick="showHint('l3')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="l3-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l3-next" style="display:none;" onclick="goTo(4)">Next Level →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEVEL 4 · ACF/PACF DETECTIVE ============ -->
+  <section class="screen" id="screen-4">
+    <div class="card">
+      <div class="eyebrow">Level 4 · Identification</div>
+      <h2>🔍 Correlogram detective</h2>
+      <p class="lead">
+        Three mystery processes, one at a time. Read the two correlograms and name the model.
+        Rule of thumb: <strong>PACF cuts off at p</strong> for an AR, <strong>ACF cuts off at q</strong> for an MA.
+      </p>
+      <div class="pill-row">
+        <span class="tag">Round <b id="l4-round">1</b> of 3</span>
+        <span class="tag">Correct so far: <b id="l4-correct">0</b></span>
+      </div>
+
+      <div class="chart-wrap">
+        <div class="chart-title"><span>Mystery series — a sample path</span></div>
+        <div id="l4-path"></div>
+      </div>
+      <div class="stem-grid">
+        <div class="panel"><div class="panel-label">ACF</div><div id="l4-acf"></div></div>
+        <div class="panel"><div class="panel-label">PACF</div><div id="l4-pacf"></div></div>
+      </div>
+      <p class="hint">Dashed lines are the ±1.96/√n significance band (n = 250). Stems inside the band ≈ zero.</p>
+
+      <div class="option-grid" id="l4-options"></div>
+      <div class="feedback" id="l4-feedback"></div>
+      <div class="hintbot">
+        <button class="btn hint-btn" id="l4-hint-btn" onclick="showHint('l4')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="l4-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l4-continue" style="display:none;" onclick="nextL4Round()">Next round →</button>
+        <button class="btn btn-primary" id="l4-next" style="display:none;" onclick="goTo(5)">Next Level →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEVEL 5 · UNIT ROOTS & DIFFERENCING ============ -->
+  <section class="screen" id="screen-5">
+    <div class="card">
+      <div class="eyebrow">Level 5 · The "I" in ARIMA</div>
+      <h2>📈 Unit roots and the Δ button</h2>
+      <p class="lead">
+        Here is a series of <span id="l5-n">160</span> observations. Before any ARMA model is allowed near it,
+        one question has to be answered.
+      </p>
+
+      <div class="chart-wrap">
+        <div class="chart-title"><span>The series in levels — y<sub>t</sub></span></div>
+        <div id="l5-chart-lvl"></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title"><span>Sample ACF of the levels (lags 1–16)</span></div>
+        <div id="l5-acf-lvl"></div>
+      </div>
+
+      <p class="lead" style="margin-top:16px;">Q1 · Is this series stationary?</p>
+      <div class="option-grid wide" id="l5-options1"></div>
+      <div class="feedback" id="l5-feedback1"></div>
+
+      <div id="l5-part2" style="display:none;">
+        <div class="btn-row">
+          <button class="btn btn-primary btn-sm" id="l5-diff-btn" onclick="applyL5Diff()">Δ Difference it once</button>
+        </div>
+        <div id="l5-diff-view" style="display:none;">
+          <div class="chart-wrap">
+            <div class="chart-title"><span>First difference — Δy<sub>t</sub> = y<sub>t</sub> − y<sub>t−1</sub></span></div>
+            <div id="l5-chart-d1"></div>
+          </div>
+          <div class="stem-grid">
+            <div class="panel"><div class="panel-label">Sample ACF of Δy</div><div id="l5-acf-d1"></div></div>
+            <div class="panel"><div class="panel-label">Sample PACF of Δy</div><div id="l5-pacf-d1"></div></div>
+          </div>
+          <div class="readout-grid" id="l5-readouts"></div>
+          <p class="lead" style="margin-top:14px;">Q2 · So what order of differencing <strong>d</strong> does this series need?</p>
+          <div class="option-grid" id="l5-options2"></div>
+          <div class="feedback" id="l5-feedback2"></div>
+        </div>
+      </div>
+
+      <div id="l5-part3" style="display:none;">
+        <div class="btn-row">
+          <button class="btn btn-sm" id="l5-diff2-btn" onclick="applyL5Diff2()">Δ² Difference it again (just to see)</button>
+        </div>
+        <div id="l5-diff2-view" style="display:none;">
+          <div class="chart-wrap">
+            <div class="chart-title"><span>Second difference — Δ²y<sub>t</sub></span></div>
+            <div id="l5-chart-d2"></div>
+          </div>
+          <div class="stem-grid">
+            <div class="panel"><div class="panel-label">Sample ACF of Δ²y</div><div id="l5-acf-d2"></div></div>
+            <div class="panel"><div class="panel-label">Variance ladder</div><div id="l5-var-ladder"></div></div>
+          </div>
+          <p class="lead" style="margin-top:14px;">Q3 · Differencing a second time was a mistake. What is the give-away?</p>
+          <div class="option-grid wide" id="l5-options3"></div>
+          <div class="feedback" id="l5-feedback3"></div>
+        </div>
+      </div>
+
+      <div class="hintbot">
+        <button class="btn hint-btn" id="l5-hint-btn" onclick="showHint('l5')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="l5-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l5-next" style="display:none;" onclick="goTo(6)">Next Level →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEVEL 6 · BUILD AN ARMA(1,1) ============ -->
+  <section class="screen" id="screen-6">
+    <div class="card">
+      <div class="eyebrow">Level 6 · Estimation by eye</div>
+      <h2>🛠️ Build the mystery ARMA(1,1)</h2>
+      <p class="lead">
+        A hidden <span class="mono">y<sub>t</sub> = φ·y<sub>t−1</sub> + ε<sub>t</sub> + θ·ε<sub>t−1</sub></span> generated the
+        <strong>target</strong> below. Your series uses the <em>same shocks</em>, so if you find the right φ and θ the two
+        paths will lie on top of each other. Fit on the <strong>ACF</strong> — that's what the data actually identifies.
+      </p>
+
+      <div class="chart-wrap">
+        <div class="chart-title">
+          <span>Target vs your model</span>
+          <span class="legend"><span><i style="background:#8b5cf6"></i>target</span><span><i style="background:#22d3c9"></i>yours</span></span>
+        </div>
+        <div id="l6-chart"></div>
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-head"><span>φ (AR part) = <b id="l6-phi-label">0.00</b></span></div>
+        <input type="range" class="ts-slider" id="l6-phi" min="-0.9" max="0.9" step="0.01" value="0" oninput="updateL6()">
+      </div>
+      <div class="slider-row">
+        <div class="slider-head"><span>θ (MA part) = <b id="l6-theta-label">0.00</b></span></div>
+        <input type="range" class="ts-slider" id="l6-theta" min="-0.9" max="0.9" step="0.01" value="0" oninput="updateL6()">
+      </div>
+
+      <div class="stem-grid">
+        <div class="panel">
+          <div class="panel-label">ACF — yours (solid) vs target (hollow)</div>
+          <div id="l6-acf"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-label">Fit quality</div>
+          <div class="readout-grid" style="grid-template-columns:1fr; margin:6px 0 0;">
+            <div class="readout"><div class="k">max |ρ<sub>k</sub> gap|, k = 1…6</div><div class="v" id="l6-err">—</div><div class="sub" id="l6-err-sub">lock in under 0.05 for full marks</div></div>
+            <div class="readout"><div class="k">your ρ₁ / target ρ₁</div><div class="v" id="l6-rho1">—</div></div>
+            <div class="readout"><div class="k">your ρ₂ / target ρ₂</div><div class="v" id="l6-rho2">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l6-lock" onclick="checkL6()">🔒 Lock in φ and θ</button>
+      </div>
+      <div class="feedback" id="l6-feedback"></div>
+      <div class="hintbot">
+        <button class="btn hint-btn" id="l6-hint-btn" onclick="showHint('l6')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="l6-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l6-next" style="display:none;" onclick="goTo(7)">Next Level →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEVEL 7 · FORECASTING ============ -->
+  <section class="screen" id="screen-7">
+    <div class="card">
+      <div class="eyebrow">Level 7 · Forecasting</div>
+      <h2>🔮 Forecast an AR(1) by hand</h2>
+      <p class="lead">
+        A fitted AR(1) in deviation form: <span class="mono">(y<sub>t</sub> − μ) = φ(y<sub>t−1</sub> − μ) + ε<sub>t</sub></span>.
+        The optimal forecast sets all <em>future</em> shocks to their expectation, zero. Work out the next step and the
+        three-step-ahead point forecast.
+      </p>
+
+      <div class="chart-wrap">
+        <div class="chart-title"><span>History — the last 40 observations</span></div>
+        <div id="l7-chart"></div>
+      </div>
+
+      <div class="data-box" id="l7-data"></div>
+
+      <div class="input-row">
+        <span class="input-label">1-step: ŷ<sub>T+1</sub> =</span>
+        <input type="number" step="0.01" class="num-input" id="l7-input1" placeholder="?">
+        <span class="input-label">3-step: ŷ<sub>T+3</sub> =</span>
+        <input type="number" step="0.01" class="num-input" id="l7-input3" placeholder="?">
+        <button class="btn btn-primary" onclick="checkL7()">Check both</button>
+      </div>
+      <div class="feedback" id="l7-feedback"></div>
+
+      <div id="l7-part2" style="display:none;">
+        <div class="chart-wrap">
+          <div class="chart-title">
+            <span>Fan chart — point forecast with 95% interval</span>
+            <span class="legend"><span><i style="background:#8b5cf6"></i>history</span><span><i style="background:#22d3c9"></i>forecast</span></span>
+          </div>
+          <div id="l7-fan"></div>
+        </div>
+        <div class="readout-grid" id="l7-readouts"></div>
+        <p class="lead" style="margin-top:14px;">Q · As the horizon h grows, what happens to an AR(1) forecast and its interval?</p>
+        <div class="option-grid wide" id="l7-options"></div>
+        <div class="feedback" id="l7-feedback2"></div>
+      </div>
+
+      <div class="hintbot">
+        <button class="btn hint-btn" id="l7-hint-btn" onclick="showHint('l7')">🤖 Ask HintBot for a hint</button>
+        <div class="hint-bubble" id="l7-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="l7-next" style="display:none;" onclick="goTo(8)">Boss Round →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEVEL 8 · BOSS ============ -->
+  <section class="screen" id="screen-8">
+    <div class="card">
+      <div class="eyebrow">Boss Round · Full Box–Jenkins</div>
+      <h2>🚀 Name the model, then forecast it</h2>
+      <p class="lead">
+        One mystery series. Five calls, in the order a real analyst makes them: how much differencing,
+        then p, then q, then the ARIMA label, then one step ahead.
+      </p>
+
+      <div class="chart-wrap">
+        <div class="chart-title"><span>The mystery series in levels</span></div>
+        <div id="boss-chart"></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title"><span>Sample ACF of the levels (lags 1–16)</span></div>
+        <div id="boss-acf-lvl"></div>
+      </div>
+
+      <div id="boss-steps"></div>
+
+      <div class="hintbot">
+        <button class="btn hint-btn" id="boss-hint-btn" onclick="showHint('boss')">🤖 Ask HintBot for a hint on this step</button>
+        <div class="hint-bubble" id="boss-hint-bubble"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="boss-next" style="display:none;" onclick="goTo(9)">See Results →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section class="screen" id="screen-9">
+    <div class="card">
+      <div class="eyebrow">Lab Complete</div>
+      <h1>Nice work! 🎉</h1>
+      <div class="end-stars" id="endStars">⭐⭐⭐</div>
+      <p class="lead">Final score: <strong id="endScore">0</strong> / <span id="endMax">0</span></p>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="restartGame()">Play Again ↻</button>
+        <button class="btn" onclick="goTo('intro')">Back to the explainer</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">Cheat Sheet</div>
+      <h2>The formulas worth keeping</h2>
+      <div class="formula-grid">
+        <div class="formula-card"><div class="sym">AR(1)</div><div class="name">Persistence</div><div class="expr">ρ<sub>k</sub> = φ<sup>k</sup><br>|φ| &lt; 1<br>Var = σ²/(1−φ²)</div></div>
+        <div class="formula-card"><div class="sym">MA(1)</div><div class="name">Finite memory</div><div class="expr">ρ₁ = θ/(1+θ²)<br>ρ<sub>k</sub> = 0, k ≥ 2<br>invertible: |θ| &lt; 1</div></div>
+        <div class="formula-card"><div class="sym">ARMA(1,1)</div><div class="name">Both</div><div class="expr">ρ₁ = (φ+θ)(1+φθ)<br>⁄ (1+2φθ+θ²)<br>ρ<sub>k</sub> = φ·ρ<sub>k−1</sub></div></div>
+        <div class="formula-card"><div class="sym">I(d)</div><div class="name">Differencing</div><div class="expr">Δy = y<sub>t</sub> − y<sub>t−1</sub><br>RW = ARIMA(0,1,0)<br>over-diff ⇒ ρ₁ ≈ −0.5</div></div>
+        <div class="formula-card"><div class="sym">ŷ<sub>T+h</sub></div><div class="name">AR(1) forecast</div><div class="expr">μ + φ<sup>h</sup>(y<sub>T</sub> − μ)<br>σ<sub>h</sub>² = σ²(1−φ<sup>2h</sup>)/(1−φ²)</div></div>
+        <div class="formula-card"><div class="sym">Half-life</div><div class="name">Shock decay</div><div class="expr">H = ln 0.5 / ln φ<br>φ = 0.5<sup>1/H</sup></div></div>
+      </div>
+      <div class="step-note" style="margin-top:14px;">
+        <strong>Reading order that always works:</strong> plot → is there a unit root (slow-decaying ACF)? → difference to get d →
+        PACF cut-off gives p, ACF cut-off gives q → estimate → check the residual ACF is inside the bands (Ljung–Box) →
+        compare AIC/BIC across close candidates → forecast.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">Where this goes next</div>
+      <h2>Natural follow-ups</h2>
+      <ul class="next-list">
+        <li><b>Formal unit-root tests</b> — ADF, KPSS: the statistical version of the eyeball test in Level 5.</li>
+        <li><b>Residual diagnostics</b> — Ljung–Box Q on residual autocorrelation; a good model leaves white noise behind.</li>
+        <li><b>Order selection</b> — AIC / BIC when ACF and PACF both just decay (the mixed-ARMA case from Level 6).</li>
+        <li><b>SARIMA</b> — the same letters with a seasonal block, (P,D,Q)<sub>s</sub>, for monthly and quarterly data.</li>
+        <li><b>Beyond the mean</b> — ARCH/GARCH when the <em>variance</em> is what clusters; VAR and cointegration for several series at once.</li>
+      </ul>
+    </div>
+
+    <p class="footer-credit">
+      Built for <a href="https://evolta.ai" target="_blank" rel="noopener">Evolta.ai</a> · Econometrics series, Topic 1
+    </p>
+  </section>
+
+  <p class="footer-credit" id="globalCredit">
+    Built for <a href="https://evolta.ai" target="_blank" rel="noopener">Evolta.ai</a> · Econometrics series, Topic 1
+  </p>
+
+</div>
+<script>
+/* ===========================================================
+   TimeSeriesLab · Evolta
+   AR / MA / ARMA / ARIMA — interactive econometrics lab
+   =========================================================== */
+
+const $ = id => document.getElementById(id);
+
+/* ---------- seeded RNG so a given series is reproducible ---------- */
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+/* Box–Muller normals: the shock stream every model in this lab is driven by */
+function normals(n, seed, sd){
+  const r = mulberry32(seed), out = [];
+  sd = (sd === undefined) ? 1 : sd;
+  for(let i=0;i<n;i++){
+    let u = 0, v = 0;
+    while(u === 0) u = r();
+    while(v === 0) v = r();
+    out.push(sd * Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v));
+  }
+  return out;
+}
+function rnd(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function r2(x,d){ d = (d===undefined)?2:d; const f=Math.pow(10,d); return Math.round(x*f)/f; }
+function fx(x,d){ d = (d===undefined)?2:d; return x.toFixed(d); }
+function approxEqual(a,b,tol){ return Math.abs(a-b) <= tol; }
+
+/* ---------- the ARMA machinery ----------
+   z_t = Σ φ_i z_{t-i} + ε_t + Σ θ_j ε_{t-j},  y_t = μ + z_t
+   (plus-sign MA convention — stated on the intro screen)            */
+function armaPath(eps, phis, thetas, mu){
+  mu = mu || 0; phis = phis || []; thetas = thetas || [];
+  const z = [], y = [];
+  for(let t=0;t<eps.length;t++){
+    let v = eps[t];
+    for(let i=0;i<phis.length;i++){ const k = t-i-1; if(k >= 0) v += phis[i]*z[k]; }
+    for(let j=0;j<thetas.length;j++){ const k = t-j-1; if(k >= 0) v += thetas[j]*eps[k]; }
+    z.push(v); y.push(mu + v);
+  }
+  return y;
+}
+const BURN = 60; // drop the transient so paths start from the stationary distribution
+
+const TS = {
+  mean(y){ return y.reduce((a,b)=>a+b,0) / y.length; },
+  variance(y){ const m = TS.mean(y); return y.reduce((a,b)=>a+(b-m)*(b-m),0) / y.length; },
+  sd(y){ return Math.sqrt(TS.variance(y)); },
+  diff(y, k){
+    k = k || 1;
+    let s = [...y];
+    for(let i=0;i<k;i++){ const d=[]; for(let t=1;t<s.length;t++) d.push(s[t]-s[t-1]); s = d; }
+    return s;
+  },
+  integrate(dy, y0, drift){
+    y0 = y0 || 0; drift = drift || 0;
+    const out = []; let lvl = y0;
+    for(let t=0;t<dy.length;t++){ lvl += drift + dy[t]; out.push(lvl); }
+    return out;
+  },
+  /* sample ACF, ρ̂_k, index 0 = lag 0 = 1 */
+  acf(y, K){
+    const n = y.length, m = TS.mean(y);
+    let c0 = 0;
+    for(let t=0;t<n;t++) c0 += (y[t]-m)*(y[t]-m);
+    const out = [1];
+    for(let k=1;k<=K;k++){
+      let c = 0;
+      for(let t=k;t<n;t++) c += (y[t]-m)*(y[t-k]-m);
+      out.push(c0 === 0 ? 0 : c/c0);
+    }
+    return out;
+  }
+};
+
+/* Durbin–Levinson: PACF from any ACF (theoretical or sample).
+   Returns length-K array, index 0 = lag 1. */
+function pacfFromACF(rho, K){
+  const out = [];
+  let prev = [];
+  for(let k=1;k<=K;k++){
+    let num = rho[k], den = 1;
+    for(let j=1;j<k;j++){ num -= prev[j]*rho[k-j]; den -= prev[j]*rho[j]; }
+    const pk = Math.abs(den) < 1e-12 ? 0 : num/den;
+    const cur = [];
+    cur[k] = pk;
+    for(let j=1;j<k;j++) cur[j] = prev[j] - pk*prev[k-j];
+    out.push(pk);
+    prev = cur;
+  }
+  return out;
+}
+
+/* Population ACF for the families used in this lab. spec = {phis:[], thetas:[]} */
+function theoryACF(spec, K){
+  const phis = spec.phis || [], th = spec.thetas || [];
+  const p = phis.length, q = th.length;
+  if(p === 0 && q === 0) return [1].concat(new Array(K).fill(0));
+  if(p === 0){
+    /* pure MA: γ_k = σ² Σ_j ψ_j ψ_{j+k}, ψ_0 = 1 */
+    const psi = [1].concat(th);
+    const g = k => { let s=0; for(let j=0;j+k<psi.length;j++) s += psi[j]*psi[j+k]; return s; };
+    const g0 = g(0);
+    const out = [];
+    for(let k=0;k<=K;k++) out.push(k <= q ? g(k)/g0 : 0);
+    return out;
+  }
+  if(p === 1 && q === 0){
+    const f = phis[0], out = [];
+    for(let k=0;k<=K;k++) out.push(Math.pow(f,k));
+    return out;
+  }
+  if(p === 1 && q === 1){
+    const f = phis[0], t = th[0];
+    const r1 = (f + t)*(1 + f*t) / (1 + 2*f*t + t*t);
+    const out = [1, r1];
+    for(let k=2;k<=K;k++) out.push(f*out[k-1]);
+    return out.slice(0, K+1);
+  }
+  if(p === 2 && q === 0){
+    const f1 = phis[0], f2 = phis[1];
+    const out = [1, f1/(1-f2)];
+    out.push(f1*out[1] + f2);
+    for(let k=3;k<=K;k++) out.push(f1*out[k-1] + f2*out[k-2]);
+    return out.slice(0, K+1);
+  }
+  /* fallback: long simulation */
+  return TS.acf(armaPath(normals(6000, 4242, 1), phis, th, 0).slice(BURN), K);
+}
+
+/* ---------- SVG charts ---------- */
+const C = {
+  a:'#8b5cf6', b:'#22d3c9', bDark:'#0c8f86',
+  grid:'rgba(20,10,40,0.09)', axis:'rgba(20,10,40,0.3)',
+  text:'#78728f', ghost:'rgba(20,10,40,0.3)', band:'rgba(34,211,201,0.18)',
+  warn:'#e07a1f'
+};
+
+/* o = { series:[{data, color, dash, dots, width, x0}], band:{x0,lo,hi},
+        n, w, h, yMin, yMax, vline, vlabel, zero } */
+function lineChart(o){
+  const w = o.w || 660, h = o.h || 180;
+  const padL = 40, padR = 12, padT = 12, padB = 20;
+  const series = (o.series || []).filter(s => s && s.data && s.data.length);
+  if(!series.length) return '';
+  let lo = Infinity, hi = -Infinity;
+  const see = v => { if(v < lo) lo = v; if(v > hi) hi = v; };
+  series.forEach(s => s.data.forEach(see));
+  if(o.band){ o.band.lo.forEach(see); o.band.hi.forEach(see); }
+  if(o.yMin !== undefined) see(o.yMin);
+  if(o.yMax !== undefined) see(o.yMax);
+  const dLo = lo, dHi = hi;
+  if(hi - lo < 1e-9){ hi += 0.5; lo -= 0.5; }
+  const padv = (hi - lo)*0.1; lo -= padv; hi += padv;
+  const n = o.n || Math.max.apply(null, series.map(s => (s.x0||0) + s.data.length));
+  const X = i => padL + (n <= 1 ? 0 : (i/(n-1))*(w-padL-padR));
+  const Y = v => padT + (1 - (v-lo)/(hi-lo))*(h-padT-padB);
+  let g = '';
+
+  /* horizontal gridlines at data min / mid / max */
+  [dHi, (dHi+dLo)/2, dLo].forEach(v => {
+    g += `<line x1="${padL}" y1="${fx(Y(v),1)}" x2="${w-padR}" y2="${fx(Y(v),1)}" stroke="${C.grid}" stroke-width="1"/>`;
+    g += `<text x="${padL-5}" y="${fx(Y(v)+3.5,1)}" font-size="9" fill="${C.text}" text-anchor="end">${r2(v,1)}</text>`;
+  });
+  if(o.zero !== false && lo < 0 && hi > 0){
+    g += `<line x1="${padL}" y1="${fx(Y(0),1)}" x2="${w-padR}" y2="${fx(Y(0),1)}" stroke="${C.axis}" stroke-width="1" stroke-dasharray="3 3"/>`;
+  }
+  if(o.band){
+    const x0 = o.band.x0 || 0;
+    const up = o.band.hi.map((v,i) => `${fx(X(i+x0),1)},${fx(Y(v),1)}`).join(' ');
+    const dn = o.band.lo.map((v,i) => `${fx(X(i+x0),1)},${fx(Y(v),1)}`).reverse().join(' ');
+    g += `<polygon points="${up} ${dn}" fill="${C.band}" stroke="none"/>`;
+  }
+  if(o.vline !== undefined){
+    g += `<line x1="${fx(X(o.vline),1)}" y1="${padT}" x2="${fx(X(o.vline),1)}" y2="${h-padB}" stroke="${C.ghost}" stroke-width="1" stroke-dasharray="2 3"/>`;
+    if(o.vlabel) g += `<text x="${fx(X(o.vline)+4,1)}" y="${padT+9}" font-size="9" fill="${C.text}">${o.vlabel}</text>`;
+  }
+  series.forEach(s => {
+    const x0 = s.x0 || 0;
+    const pts = s.data.map((v,i) => `${fx(X(i+x0),1)},${fx(Y(v),1)}`).join(' ');
+    g += `<polyline points="${pts}" fill="none" stroke="${s.color||C.a}" stroke-width="${s.width||1.8}"`
+       + (s.dash ? ` stroke-dasharray="${s.dash}"` : '') + ` stroke-linejoin="round"/>`;
+    if(s.dots) s.data.forEach((v,i) => {
+      g += `<circle cx="${fx(X(i+x0),1)}" cy="${fx(Y(v),1)}" r="${s.dots}" fill="${s.color||C.a}"/>`;
+    });
+  });
+  g += `<text x="${w-padR}" y="${h-4}" font-size="9" fill="${C.text}" text-anchor="end">time →</text>`;
+  return `<svg class="ts-svg" viewBox="0 0 ${w} ${h}" role="img">${g}</svg>`;
+}
+
+/* Stem (correlogram) plot. values[0] = lag 1. ghost = a second series drawn hollow. */
+function stemChart(o){
+  const w = o.w || 330, h = o.h || 160;
+  const padL = 30, padR = 8, padT = 10, padB = 22;
+  const vals = o.values, K = vals.length;
+  const mid = padT + (h-padT-padB)/2;
+  const half = (h-padT-padB)/2 - 4;
+  const X = k => padL + ((k+0.5)/K)*(w-padL-padR);
+  const clamp = v => Math.max(-1, Math.min(1, v));
+  const Y = v => mid - clamp(v)*half;
+  let g = '';
+  [1, 0.5, -0.5, -1].forEach(v => {
+    g += `<line x1="${padL}" y1="${fx(Y(v),1)}" x2="${w-padR}" y2="${fx(Y(v),1)}" stroke="${C.grid}" stroke-width="1"/>`;
+    g += `<text x="${padL-5}" y="${fx(Y(v)+3.5,1)}" font-size="9" fill="${C.text}" text-anchor="end">${v}</text>`;
+  });
+  g += `<line x1="${padL}" y1="${fx(mid,1)}" x2="${w-padR}" y2="${fx(mid,1)}" stroke="${C.axis}" stroke-width="1"/>`;
+  if(o.sig){
+    [o.sig, -o.sig].forEach(s => {
+      g += `<line x1="${padL}" y1="${fx(Y(s),1)}" x2="${w-padR}" y2="${fx(Y(s),1)}" stroke="${C.b}" stroke-width="1" stroke-dasharray="4 3" opacity="0.85"/>`;
+    });
+  }
+  if(o.ghost){
+    o.ghost.forEach((v,k) => {
+      const x = X(k) - 3;
+      g += `<line x1="${fx(x,1)}" y1="${fx(mid,1)}" x2="${fx(x,1)}" y2="${fx(Y(v),1)}" stroke="${C.ghost}" stroke-width="1.4"/>`;
+      g += `<circle cx="${fx(x,1)}" cy="${fx(Y(v),1)}" r="3.2" fill="#fff" stroke="${C.ghost}" stroke-width="1.4"/>`;
+    });
+  }
+  vals.forEach((v,k) => {
+    const x = o.ghost ? X(k) + 3 : X(k);
+    const col = o.color || C.a;
+    g += `<line x1="${fx(x,1)}" y1="${fx(mid,1)}" x2="${fx(x,1)}" y2="${fx(Y(v),1)}" stroke="${col}" stroke-width="2.2"/>`;
+    g += `<circle cx="${fx(x,1)}" cy="${fx(Y(v),1)}" r="3" fill="${col}"/>`;
+    if(K <= 12 || (k+1) % 2 === 1){
+      g += `<text x="${fx(X(k),1)}" y="${h-6}" font-size="8.5" fill="${C.text}" text-anchor="middle">${k+1}</text>`;
+    }
+  });
+  g += `<text x="${padL}" y="${h-6}" font-size="8.5" fill="${C.text}" text-anchor="end" dx="-2">lag</text>`;
+  return `<svg class="ts-svg" viewBox="0 0 ${w} ${h}" role="img">${g}</svg>`;
+}
+
+/* Small horizontal bar comparison (used for the variance ladder) */
+function barLadder(rows){
+  const w = 330, h = 24 + rows.length*30;
+  const padL = 58, padR = 44;
+  const max = Math.max.apply(null, rows.map(r => r.v));
+  let g = '';
+  rows.forEach((r,i) => {
+    const y = 14 + i*30;
+    const len = max <= 0 ? 0 : (r.v/max)*(w-padL-padR);
+    g += `<text x="${padL-6}" y="${y+12}" font-size="10" fill="${C.text}" text-anchor="end">${r.k}</text>`;
+    g += `<rect x="${padL}" y="${y+2}" width="${fx(Math.max(len,1),1)}" height="14" rx="4" fill="${r.hot ? C.warn : C.a}" opacity="${r.hot ? 0.9 : 0.75}"/>`;
+    g += `<text x="${fx(padL+len+6,1)}" y="${y+13}" font-size="10" fill="${C.text}">${r2(r.v,2)}</text>`;
+  });
+  return `<svg class="ts-svg" viewBox="0 0 ${w} ${h}" role="img">${g}</svg>`;
+}
+
+/* ---------- game state ---------- */
+let SCORE = 0;
+/* L1 100 · L2 100 · L3 100 · L4 150 · L5 150 · L6 150 · L7 150 · Boss 300 */
+const TOTAL_POSSIBLE = 100 + 100 + 100 + 150 + 150 + 150 + 150 + 300;
+let state = {};
+
+function addScore(pts){ SCORE += pts; $('scoreLabel').textContent = SCORE; }
+
+/* award(): halves the points if HintBot already gave the full answer away */
+function award(key, pts){
+  const half = !!HINT_FULL[key];
+  addScore(half ? Math.round(pts/2) : pts);
+  return half ? ' <em>(half points — full hint used)</em>' : '';
+}
+
+/* ---------- HintBot ---------- */
+let HINT_STEP = {};
+let HINT_FULL = {};
+
+function resetHintbot(key){
+  HINT_STEP[key] = 0;
+  const bubble = $(key + '-hint-bubble');
+  const btn = $(key + '-hint-btn');
+  if(bubble){ bubble.innerHTML = ''; bubble.classList.remove('show'); }
+  if(btn){
+    btn.disabled = false;
+    btn.textContent = '🤖 Ask HintBot for a hint' + (key === 'boss' ? ' on this step' : '');
+  }
+}
+
+function showHint(key){
+  const hints = HINT_GENERATORS[key]();
+  HINT_STEP[key] = Math.min((HINT_STEP[key]||0) + 1, hints.length);
+  const idx = HINT_STEP[key] - 1;
+  const bubble = $(key + '-hint-bubble');
+  const btn = $(key + '-hint-btn');
+  bubble.classList.add('show');
+  bubble.innerHTML += `<div class="hint-line"><span class="bot-avatar">🤖</span><span><strong>Hint ${idx+1}:</strong> ${hints[idx]}</span></div>`;
+  if(HINT_STEP[key] >= hints.length){
+    btn.disabled = true;
+    btn.textContent = 'No more hints for this one';
+    if(key === 'boss') HINT_FULL['boss' + state.boss.step] = true;
+    else HINT_FULL[key] = true;
+  } else {
+    btn.textContent = `🤖 Ask for another hint (${hints.length - HINT_STEP[key]} left)`;
+  }
+}
+
+/* ---------- navigation ---------- */
+function goTo(levelIdx){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('screen-' + levelIdx).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  if(levelIdx === 'intro'){ $('progressWrap').style.display = 'none'; return; }
+  if(levelIdx >= 1 && levelIdx <= 8){
+    $('progressWrap').style.display = 'block';
+    $('progressLabel').textContent = 'Level ' + levelIdx + ' of 8' + (levelIdx === 8 ? ' · Boss' : '');
+    $('progressFill').style.width = (levelIdx/8*100) + '%';
+  }
+  if(levelIdx === 9){
+    $('progressFill').style.width = '100%';
+    showResults();
+  }
+  const initFns = {1:initL1, 2:initL2, 3:initL3, 4:initL4, 5:initL5, 6:initL6, 7:initL7, 8:initBoss};
+  if(initFns[levelIdx]) initFns[levelIdx]();
+}
+
+function startGame(){
+  SCORE = 0; $('scoreLabel').textContent = 0;
+  HINT_FULL = {}; HINT_STEP = {};
+  $('globalCredit').style.display = 'none';
+  goTo(1);
+}
+function restartGame(){ startGame(); }
+
+/* shared helper: wire up a one-shot multiple-choice question */
+function renderChoices(containerId, options, handlerName, extraClass){
+  $(containerId).className = 'option-grid' + (extraClass ? ' ' + extraClass : '');
+  $(containerId).innerHTML = options.map((o,i) =>
+    `<div class="option-btn" onclick="${handlerName}(${i}, this)">${o}</div>`).join('');
+}
+function lockChoices(containerId, correctIdx, chosenIdx){
+  const kids = $(containerId).querySelectorAll('.option-btn');
+  kids.forEach((el,i) => {
+    el.classList.add('disabled');
+    if(i === correctIdx) el.classList.add('correct');
+    else if(i === chosenIdx) el.classList.add('incorrect');
+  });
+}
+function setFeedback(id, ok, html){
+  const fb = $(id);
+  fb.className = 'feedback show ' + (ok ? 'correct' : 'incorrect');
+  fb.innerHTML = (ok ? '✅ ' : '❌ ') + html;
+}
+
+/* ===========================================================
+   LEVEL 1 Â· White noise
+   =========================================================== */
+const L1_KINDS = {
+  wn: { label:'white noise' },
+  rw: { label:'a random walk' },
+  ar: { label:'an AR(1) with Ï† = 0.92' }
+};
+
+function initL1(){
+  const n = 110;
+  const panels = shuffle([
+    { kind:'wn', data: normals(n, rnd(1,9999), 1) },
+    { kind:'rw', data: TS.integrate(normals(n, rnd(1,9999), 1), 0, 0) },
+    { kind:'ar', data: armaPath(normals(n+BURN, rnd(1,9999), 1), [0.92], [], 0).slice(BURN) }
+  ]);
+  const letters = ['A','B','C'];
+  state.l1 = {
+    panels, letters,
+    answer: panels.findIndex(p => p.kind === 'wn'),
+    answered:false, answered2:false
+  };
+
+  $('l1-panels').innerHTML = panels.map((p,i) =>
+    `<div class="panel"><div class="panel-label">Panel ${letters[i]}</div>${
+      lineChart({series:[{data:p.data, color:C.a, width:1.5}], w:330, h:150})
+    }</div>`).join('');
+
+  renderChoices('l1-options', letters.map(l => 'Panel ' + l), 'checkL1');
+  $('l1-feedback').className = 'feedback';
+  $('l1-part2').style.display = 'none';
+  $('l1-feedback2').className = 'feedback';
+  $('l1-next').style.display = 'none';
+  resetHintbot('l1');
+}
+
+function checkL1(i){
+  if(state.l1.answered) return;
+  state.l1.answered = true;
+  const letters = state.l1.letters, answer = state.l1.answer, panels = state.l1.panels;
+  const ok = i === answer;
+  lockChoices('l1-options', answer, i);
+  const names = panels.map((p,k) => `Panel ${letters[k]} = ${L1_KINDS[p.kind].label}`).join(' Â· ');
+  const note = ok ? award('l1', 50) : '';
+  setFeedback('l1-feedback', ok,
+    `Panel ${letters[answer]} ${ok ? 'is' : 'was'} the white noise. ${names}.
+     <br><br>The random walk <em>wanders</em>: no mean to return to, and a variance that grows with t.
+     The AR(1) with Ï† = 0.92 does revert eventually, which is why neighbouring points look so smooth â€” Ïâ‚ = 0.92.
+     White noise is the only one of the three where knowing today tells you nothing about tomorrow.` + note);
+
+  const wn = panels[answer].data;
+  const acf = TS.acf(wn, 14).slice(1);
+  const sig = 1.96/Math.sqrt(wn.length);
+  $('l1-acf-note').innerHTML = `Sample ACF of panel ${letters[answer]} (n = ${wn.length}). Nearly every stem sits inside the
+    Â±1.96/âˆšn = Â±${r2(sig,2)} band â€” the visual definition of "no autocorrelation". Small wobbles are sampling noise, not
+    memory: across 14 lags you'd expect about one stem to poke out by chance alone.`;
+  $('l1-acf').innerHTML = stemChart({values:acf, sig:sig, w:660, h:170});
+  $('l1-part2').style.display = 'block';
+  renderChoices('l1-options2', ['Ï<sub>k</sub> = 0', 'Ï<sub>k</sub> = 1', 'Ï<sub>k</sub> = 0.5', 'It grows with k'], 'checkL1b');
+}
+
+function checkL1b(i){
+  if(state.l1.answered2) return;
+  state.l1.answered2 = true;
+  const ok = i === 0;
+  lockChoices('l1-options2', 0, i);
+  const note = ok ? award('l1', 50) : '';
+  setFeedback('l1-feedback2', ok,
+    `Ï<sub>k</sub> = 0 for every k â‰¥ 1 (Ïâ‚€ = 1 trivially). That is the <em>definition</em> of white noise: mean 0,
+     constant variance ÏƒÂ², zero autocovariance at all other lags. Everything else in this lab is this same stream
+     pushed through a filter that remembers.` + note);
+  $('l1-next').style.display = 'inline-block';
+}
+
+/* ===========================================================
+   LEVEL 2 Â· AR(1) persistence slider
+   =========================================================== */
+function initL2(){
+  const H = pick([2,3,5]);
+  state.l2 = {
+    eps: normals(110 + BURN, rnd(1,9999), 1),
+    H, target: Math.pow(0.5, 1/H),
+    phi: 0, locked:false
+  };
+  $('l2-target-h').textContent = H;
+  $('l2-target-pill').textContent = H;
+  $('l2-slider').value = 0;
+  $('l2-slider').disabled = false;
+  $('l2-lock').disabled = false;
+  $('l2-feedback').className = 'feedback';
+  $('l2-next').style.display = 'none';
+  resetHintbot('l2');
+  updateL2();
+}
+
+function updateL2(){
+  const phi = parseFloat($('l2-slider').value);
+  state.l2.phi = phi;
+  const y = armaPath(state.l2.eps, [phi], [], 0).slice(BURN);
+
+  $('l2-phi-label').textContent = fx(phi);
+  $('l2-chart').innerHTML = lineChart({series:[{data:y, color:C.a}], w:660, h:180});
+  $('l2-chart-tag').textContent = Math.abs(phi) < 0.05 ? 'Ï† â‰ˆ 0 â†’ this is just the shocks themselves' : '';
+
+  const acf = theoryACF({phis:[phi]}, 12);
+  $('l2-acf').innerHTML  = stemChart({values:acf.slice(1), sig:1.96/Math.sqrt(250), w:330, h:160});
+  $('l2-pacf').innerHTML = stemChart({values:pacfFromACF(acf, 12), sig:1.96/Math.sqrt(250), w:330, h:160, color:C.bDark});
+
+  $('l2-rho1').textContent = fx(phi);
+  const half = phi > 0.001 ? Math.log(0.5)/Math.log(phi) : null;
+  const halfEl = $('l2-half');
+  if(half === null){
+    halfEl.textContent = 'â€”';
+    halfEl.className = 'v';
+  } else {
+    halfEl.textContent = fx(half, 2);
+    halfEl.className = 'v' + (Math.abs(half - state.l2.H) <= 0.2 ? ' ok' : '');
+  }
+  $('l2-sdratio').textContent = fx(1/Math.sqrt(1 - phi*phi));
+  $('l2-irf5').textContent = Math.round(Math.pow(phi,5)*100) + '%';
+
+  const warn = $('l2-warn');
+  if(phi >= 0.95){
+    warn.className = 'warn-note show';
+    warn.innerHTML = `âš ï¸ Ï† = ${fx(phi)} is nearly a <strong>unit root</strong>. Mean reversion is so slow that over 100
+      observations the series looks like a trending random walk, and sd(y) is already
+      ${fx(1/Math.sqrt(1-phi*phi),1)}Ã— sd(Îµ). At exactly Ï† = 1 the variance is unbounded, the process is
+      non-stationary, and you need the <em>I</em> of ARIMA â€” Level 5.`;
+  } else if(phi <= -0.5){
+    warn.className = 'warn-note show';
+    warn.innerHTML = `Negative Ï† is <strong>anti-persistence</strong>: up today, down tomorrow. The ACF alternates sign
+      (Ï<sub>k</sub> = Ï†<sup>k</sup>), which is why the path zig-zags. A half-life isn't defined here â€” the shock flips
+      sign rather than decaying smoothly.`;
+  } else {
+    warn.className = 'warn-note';
+  }
+}
+
+function checkL2(){
+  if(state.l2.locked) return;
+  state.l2.locked = true;
+  const phi = state.l2.phi, target = state.l2.target, H = state.l2.H;
+  const err = Math.abs(phi - target);
+  const ok = err <= 0.03;
+  const pts = ok ? 100 : (err <= 0.08 ? 50 : 0);
+  const note = pts ? award('l2', pts) : '';
+  setFeedback('l2-feedback', ok,
+    `${ok ? 'Locked in.' : (pts ? 'Close â€” partial credit.' : 'Not this time.')}
+     A half-life of ${H} periods means Ï†<sup>${H}</sup> = 0.5, so
+     <span class="mono">Ï† = 0.5<sup>1/${H}</sup> = ${r2(target,3)}</span>. You picked ${fx(phi)} â€” off by ${r2(err,3)}.
+     <br><br>Why it matters: Ï† isn't just a fitted number, it <em>is</em> the economic claim. Ï† = 0.3 says a shock is
+     spent almost immediately; Ï† = 0.95 says today's surprise is still half-alive 14 periods out, and any inference
+     you do has to account for that persistence.` + note);
+  $('l2-slider').disabled = true;
+  $('l2-lock').disabled = true;
+  $('l2-next').style.display = 'inline-block';
+}
+
+/* ===========================================================
+   LEVEL 3 Â· Impulse response â€” AR vs MA memory
+   =========================================================== */
+const L3_N = 22, L3_SHOCK = 5, L3_PHI = 0.7, L3_THETA = 0.7;
+
+function irfPath(model, upto){
+  const out = [];
+  for(let t=0;t<L3_N;t++){
+    if(upto !== undefined && t > upto) break;
+    if(t < L3_SHOCK){ out.push(0); continue; }
+    const h = t - L3_SHOCK;
+    out.push(model === 'ar' ? Math.pow(L3_PHI, h) : (h === 0 ? 1 : (h === 1 ? L3_THETA : 0)));
+  }
+  return out;
+}
+
+function initL3(){
+  if(state.l3 && state.l3.timer) clearInterval(state.l3.timer);
+  state.l3 = { model:'ar', both:false, shown:L3_N, timer:null, answered1:false, answered2:false };
+  $('l3-tog-ar').className = 'toggle on';
+  $('l3-tog-ma').className = 'toggle';
+  $('l3-feedback1').className = 'feedback';
+  $('l3-part2').style.display = 'none';
+  $('l3-feedback2').className = 'feedback';
+  $('l3-next').style.display = 'none';
+  renderChoices('l3-options1', [
+    'Exactly 1 more period, then it is gone for good',
+    'Forever, shrinking by a factor 0.7 each period',
+    '2 periods, because Î¸ = 0.7 gets squared',
+    'It never moves the series at all'
+  ], 'checkL3a', 'wide');
+  resetHintbot('l3');
+  drawL3();
+}
+
+function setL3Model(m){
+  if(state.l3.timer){ clearInterval(state.l3.timer); state.l3.timer = null; }
+  state.l3.model = m; state.l3.both = false; state.l3.shown = L3_N;
+  $('l3-tog-ar').className = 'toggle' + (m === 'ar' ? ' on' : '');
+  $('l3-tog-ma').className = 'toggle' + (m === 'ma' ? ' on' : '');
+  drawL3();
+}
+function setL3Both(){
+  if(state.l3.timer){ clearInterval(state.l3.timer); state.l3.timer = null; }
+  state.l3.both = true; state.l3.shown = L3_N;
+  $('l3-tog-ar').className = 'toggle on';
+  $('l3-tog-ma').className = 'toggle on';
+  drawL3();
+}
+function fireL3(){
+  if(state.l3.timer) clearInterval(state.l3.timer);
+  state.l3.shown = 0;
+  drawL3();
+  state.l3.timer = setInterval(() => {
+    state.l3.shown++;
+    drawL3();
+    if(state.l3.shown >= L3_N - 1){ clearInterval(state.l3.timer); state.l3.timer = null; }
+  }, 110);
+}
+function drawL3(){
+  const s = state.l3, up = s.shown;
+  const series = [];
+  if(s.both || s.model === 'ar') series.push({data: irfPath('ar', up), color:C.a, dots:2.6});
+  if(s.both || s.model === 'ma') series.push({data: irfPath('ma', up), color:C.b, dots:2.6, dash: s.both ? '5 3' : null});
+  $('l3-chart').innerHTML = lineChart({
+    series:series, n:L3_N, w:660, h:190, yMin:-0.12, yMax:1.12,
+    vline:L3_SHOCK, vlabel:'shock'
+  });
+}
+
+function checkL3a(i){
+  if(state.l3.answered1) return;
+  state.l3.answered1 = true;
+  const ok = i === 0;
+  lockChoices('l3-options1', 0, i);
+  const note = ok ? award('l3', 50) : '';
+  setFeedback('l3-feedback1', ok,
+    `An MA(q) has <strong>finite memory of exactly q periods</strong>. Write it out:
+     y<sub>t</sub> = Îµ<sub>t</sub> + 0.7Îµ<sub>tâˆ’1</sub>. The shock Îµâ‚… appears in yâ‚… with coefficient 1 and in yâ‚† with
+     coefficient 0.7 â€” after that it is not in the equation at all. Not small: <em>absent</em>.
+     <br><br>That is exactly why the ACF of an MA(1) is zero from lag 2 onwards. The correlogram cut-off and the
+     impulse response are the same fact seen from two angles.` + note);
+  $('l3-part2').style.display = 'block';
+  renderChoices('l3-options2',
+    ['â‰ˆ 34% (0.7Â³)', '0% â€” expired, like the MA', 'â‰ˆ 70%', 'â‰ˆ 21% (0.7 Ã— 3)'],
+    'checkL3b');
+}
+
+function checkL3b(i){
+  if(state.l3.answered2) return;
+  state.l3.answered2 = true;
+  const ok = i === 0;
+  lockChoices('l3-options2', 0, i);
+  const note = ok ? award('l3', 50) : '';
+  setFeedback('l3-feedback2', ok,
+    `0.7Â³ = ${r2(Math.pow(0.7,3),3)}, so roughly a third survives three periods on â€” and 0.7Â¹â° â‰ˆ 0.028 still isn't
+     zero. An AR(1) has <strong>infinite but geometrically decaying</strong> memory, because yesterday's level already
+     carries every shock that ever happened:
+     <span class="mono">y<sub>t</sub> = Îµ<sub>t</sub> + Ï†Îµ<sub>tâˆ’1</sub> + Ï†Â²Îµ<sub>tâˆ’2</sub> + â€¦</span>
+     <br><br>That is the MA(âˆž) representation of an AR(1) â€” and it only converges when |Ï†| &lt; 1, which is
+     stationarity turning up yet again.` + note);
+  $('l3-next').style.display = 'inline-block';
+}
+
+/* ===========================================================
+   LEVEL 4 Â· ACF / PACF identification
+   =========================================================== */
+const L4_FAMILIES = [
+  {
+    key:'ar1', label:'AR(1)',
+    make(){ const f = pick([0.7, 0.78, 0.85, -0.72]); return {spec:{phis:[f], thetas:[]}, params:`Ï† = ${f}`}; },
+    read(p){ return `The ACF decays geometrically (Ï<sub>k</sub> = Ï†<sup>k</sup>) while the PACF has a single spike at
+      lag 1 and nothing after it. PACF cut-off at lag 1 â‡’ p = 1, and no ACF cut-off â‡’ q = 0. True value: ${p}.`; }
+  },
+  {
+    key:'ma1', label:'MA(1)',
+    make(){ const t = pick([0.8, 0.9, -0.85]); return {spec:{phis:[], thetas:[t]}, params:`Î¸ = ${t}`}; },
+    read(p){ return `The ACF has one spike and is <em>exactly</em> zero from lag 2 â€” the finite-memory signature â€”
+      while the PACF trails off with alternating signs. ACF cut-off at lag 1 â‡’ q = 1. True value: ${p}.`; }
+  },
+  {
+    key:'ar2', label:'AR(2)',
+    make(){ const f1 = pick([0.5, 0.55, 0.45]), f2 = pick([0.3, 0.35]); return {spec:{phis:[f1,f2], thetas:[]}, params:`Ï†â‚ = ${f1}, Ï†â‚‚ = ${f2}`}; },
+    read(p){ return `The ACF still decays gradually, but the PACF has <strong>two</strong> spikes and then goes quiet.
+      PACF cut-off at lag 2 â‡’ p = 2. True values: ${p}.`; }
+  },
+  {
+    key:'ma2', label:'MA(2)',
+    make(){ const t1 = pick([0.7, 0.6]), t2 = pick([0.5, 0.55]); return {spec:{phis:[], thetas:[t1,t2]}, params:`Î¸â‚ = ${t1}, Î¸â‚‚ = ${t2}`}; },
+    read(p){ return `The ACF is non-zero at lags 1 and 2 and dead from lag 3 onwards; the PACF decays instead of
+      cutting off. ACF cut-off at lag 2 â‡’ q = 2. True values: ${p}.`; }
+  }
+];
+
+function initL4(){
+  state.l4 = { order: shuffle([0,1,2,3]).slice(0,3), round:0, correct:0 };
+  $('l4-next').style.display = 'none';
+  renderL4Round();
+}
+
+function renderL4Round(){
+  const fam = L4_FAMILIES[state.l4.order[state.l4.round]];
+  const made = fam.make();
+  const K = 12, sig = 1.96/Math.sqrt(250);
+  const acf = theoryACF(made.spec, K);
+  state.l4.cur = { fam, made, answered:false };
+
+  $('l4-round').textContent = state.l4.round + 1;
+  $('l4-correct').textContent = state.l4.correct;
+
+  const path = armaPath(normals(130 + BURN, rnd(1,9999), 1), made.spec.phis, made.spec.thetas, 0).slice(BURN);
+  $('l4-path').innerHTML = lineChart({series:[{data:path, color:C.a, width:1.6}], w:660, h:160});
+  $('l4-acf').innerHTML  = stemChart({values:acf.slice(1), sig:sig, w:330, h:160});
+  $('l4-pacf').innerHTML = stemChart({values:pacfFromACF(acf, K), sig:sig, w:330, h:160, color:C.bDark});
+
+  renderChoices('l4-options', L4_FAMILIES.map(f => f.label), 'checkL4');
+  $('l4-feedback').className = 'feedback';
+  $('l4-continue').style.display = 'none';
+  resetHintbot('l4');
+}
+
+function checkL4(i){
+  if(state.l4.cur.answered) return;
+  state.l4.cur.answered = true;
+  const fam = state.l4.cur.fam;
+  const correctIdx = L4_FAMILIES.findIndex(f => f.key === fam.key);
+  const ok = i === correctIdx;
+  lockChoices('l4-options', correctIdx, i);
+  if(ok) state.l4.correct++;
+  const note = ok ? award('l4', 50) : '';
+  setFeedback('l4-feedback', ok,
+    `It was <strong>${fam.label}</strong>. ${fam.read(state.l4.cur.made.params)}` + note);
+  $('l4-correct').textContent = state.l4.correct;
+
+  if(state.l4.round < 2) $('l4-continue').style.display = 'inline-block';
+  else $('l4-next').style.display = 'inline-block';
+}
+
+function nextL4Round(){
+  state.l4.round++;
+  renderL4Round();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ===========================================================
+   LEVEL 5 Â· Unit roots and differencing (the "I")
+   =========================================================== */
+function initL5(){
+  const n = 160, drift = 0.25;
+  const eps = normals(n, rnd(1,9999), 1);
+  const lvl = TS.integrate(eps, 10, drift);
+  state.l5 = { eps, lvl, drift, n, a1:false, a2:false, a3:false };
+
+  $('l5-n').textContent = n;
+  $('l5-chart-lvl').innerHTML = lineChart({series:[{data:lvl, color:C.a}], w:660, h:180});
+  const acfLvl = TS.acf(lvl, 16).slice(1);
+  $('l5-acf-lvl').innerHTML = stemChart({values:acfLvl, sig:1.96/Math.sqrt(n), w:660, h:170});
+
+  renderChoices('l5-options1', [
+    'No â€” it drifts with no fixed mean to revert to: the classic unit-root picture',
+    'Yes â€” the mean and the variance both look constant across the sample',
+    'Yes â€” it is noisy, but it always comes back to where it started',
+    'No â€” the problem is a seasonal cycle, so seasonal dummies would fix it'
+  ], 'checkL5a', 'wide');
+
+  $('l5-feedback1').className = 'feedback';
+  $('l5-feedback2').className = 'feedback';
+  $('l5-feedback3').className = 'feedback';
+  $('l5-part2').style.display = 'none';
+  $('l5-part3').style.display = 'none';
+  $('l5-diff-view').style.display = 'none';
+  $('l5-diff2-view').style.display = 'none';
+  $('l5-diff-btn').disabled = false;
+  $('l5-diff2-btn').disabled = false;
+  $('l5-next').style.display = 'none';
+  resetHintbot('l5');
+}
+
+function checkL5a(i){
+  if(state.l5.a1) return;
+  state.l5.a1 = true;
+  const ok = i === 0;
+  lockChoices('l5-options1', 0, i);
+  const acf1 = TS.acf(state.l5.lvl, 16);
+  const note = ok ? award('l5', 50) : '';
+  setFeedback('l5-feedback1', ok,
+    `Not stationary. Two tells, and they agree: the plot has no level it returns to, and the sample ACF starts at
+     ÏÌ‚â‚ = ${r2(acf1[1],2)} and is still ${r2(acf1[16],2)} at lag 16 â€” <strong>near 1, decaying painfully slowly</strong>.
+     That is the unit-root signature. (A formal <em>ADF test</em> is the statistical version of this eyeball check.)
+     <br><br>Fitting an ARMA to this would be a mistake: with a unit root the usual t-statistics don't have their
+     textbook distribution, which is how you get spurious regressions between two unrelated trending series.` + note);
+  $('l5-part2').style.display = 'block';
+}
+
+function applyL5Diff(){
+  const s = state.l5;
+  $('l5-diff-btn').disabled = true;
+  const d1 = TS.diff(s.lvl, 1);
+  s.d1 = d1;
+  $('l5-diff-view').style.display = 'block';
+  $('l5-chart-d1').innerHTML = lineChart({series:[{data:d1, color:C.b}], w:660, h:170});
+  const acf = TS.acf(d1, 12), sig = 1.96/Math.sqrt(d1.length);
+  $('l5-acf-d1').innerHTML  = stemChart({values:acf.slice(1), sig:sig, w:330, h:160});
+  $('l5-pacf-d1').innerHTML = stemChart({values:pacfFromACF(acf, 12), sig:sig, w:330, h:160, color:C.bDark});
+  $('l5-readouts').innerHTML = `
+    <div class="readout"><div class="k">mean(Î”y)</div><div class="v">${r2(TS.mean(d1),2)}</div><div class="sub">the drift â€” a constant in the model</div></div>
+    <div class="readout"><div class="k">sd(Î”y)</div><div class="v">${r2(TS.sd(d1),2)}</div><div class="sub">vs sd(levels) = ${r2(TS.sd(s.lvl),1)}</div></div>
+    <div class="readout"><div class="k">ÏÌ‚â‚ of Î”y</div><div class="v ok">${r2(acf[1],2)}</div><div class="sub">inside Â±${r2(sig,2)} â‡’ white</div></div>`;
+  renderChoices('l5-options2', ['d = 0', 'd = 1', 'd = 2', 'd = 3'], 'checkL5b');
+}
+
+function checkL5b(i){
+  if(state.l5.a2) return;
+  state.l5.a2 = true;
+  const ok = i === 1;
+  lockChoices('l5-options2', 1, i);
+  const acf = TS.acf(state.l5.d1, 12);
+  const note = ok ? award('l5', 50) : '';
+  setFeedback('l5-feedback2', ok,
+    `<strong>d = 1</strong>. One difference was enough: Î”y has a stable mean (${r2(TS.mean(state.l5.d1),2)} â€” the drift),
+     a constant variance, and ÏÌ‚â‚ = ${r2(acf[1],2)} sitting inside the band. In Boxâ€“Jenkins notation this series is
+     <span class="mono">ARIMA(0,1,0) with drift</span> â€” a random walk, so the differences are white noise and there is
+     nothing left to model.
+     <br><br>Note what differencing cost you: the <em>level</em> information. You now model changes, and the forecast
+     for the level is "today plus the expected change".` + note);
+  $('l5-part3').style.display = 'block';
+}
+
+function applyL5Diff2(){
+  const s = state.l5;
+  $('l5-diff2-btn').disabled = true;
+  const d2 = TS.diff(s.lvl, 2);
+  s.d2 = d2;
+  $('l5-diff2-view').style.display = 'block';
+  $('l5-chart-d2').innerHTML = lineChart({series:[{data:d2, color:C.warn}], w:660, h:170});
+  const acf2 = TS.acf(d2, 12), sig = 1.96/Math.sqrt(d2.length);
+  $('l5-acf-d2').innerHTML = stemChart({values:acf2.slice(1), sig:sig, w:330, h:160, color:C.warn});
+  $('l5-var-ladder').innerHTML = barLadder([
+    {k:'Var(Î”y)',  v: TS.variance(s.d1)},
+    {k:'Var(Î”Â²y)', v: TS.variance(s.d2), hot:true}
+  ]) + `<p class="hint" style="padding:0 4px;">ÏÌ‚â‚ of Î”Â²y = <b>${r2(acf2[1],2)}</b>, and the variance roughly doubled.</p>`;
+  renderChoices('l5-options3', [
+    'Ïâ‚ jumps to about âˆ’0.5 and the variance inflates â€” you have manufactured an MA(1) with Î¸ = âˆ’1',
+    'The series is now perfectly white noise, which is the ideal outcome',
+    'The mean flipped sign, so the drift has to be re-estimated',
+    'Nothing â€” an extra difference is harmless, so when in doubt difference again'
+  ], 'checkL5c', 'wide');
+}
+
+function checkL5c(i){
+  if(state.l5.a3) return;
+  state.l5.a3 = true;
+  const ok = i === 0;
+  lockChoices('l5-options3', 0, i);
+  const acf2 = TS.acf(state.l5.d2, 4);
+  const note = ok ? award('l5', 50) : '';
+  setFeedback('l5-feedback3', ok,
+    `Exactly. Î”y was already white noise Îµ<sub>t</sub>, so Î”Â²y = Îµ<sub>t</sub> âˆ’ Îµ<sub>tâˆ’1</sub> â€” an MA(1) with
+     Î¸ = âˆ’1 that <em>you</em> created. Its theoretical Ïâ‚ is âˆ’1/2; the sample gives ${r2(acf2[1],2)}, and the variance
+     went from ÏƒÂ² to 2ÏƒÂ².
+     <br><br>So <strong>over-differencing is not a free safety margin</strong>: it inflates forecast error variance and
+     forces you to fit a spurious MA term. Î¸ = âˆ’1 also sits exactly on the <em>non-invertibility</em> boundary, which
+     makes estimation badly behaved. The diagnostic to remember: a strongly negative ÏÌ‚â‚ after differencing means
+     back off by one.` + note);
+  $('l5-next').style.display = 'inline-block';
+}
+
+/* ===========================================================
+   LEVEL 6 Â· Fit the mystery ARMA(1,1)
+   =========================================================== */
+function initL6(){
+  const phiT = pick([0.3, 0.45, 0.6, 0.75]);
+  const thT  = pick([-0.5, -0.3, 0.3, 0.5, 0.65]);
+  const eps = normals(110 + BURN, rnd(1,9999), 1);
+  state.l6 = {
+    phiT, thT, eps,
+    target: armaPath(eps, [phiT], [thT], 0).slice(BURN),
+    targetACF: theoryACF({phis:[phiT], thetas:[thT]}, 8),
+    locked:false
+  };
+  $('l6-phi').value = 0; $('l6-theta').value = 0;
+  $('l6-phi').disabled = false; $('l6-theta').disabled = false;
+  $('l6-lock').disabled = false;
+  $('l6-feedback').className = 'feedback';
+  $('l6-next').style.display = 'none';
+  resetHintbot('l6');
+  updateL6();
+}
+
+function l6Err(acfU){
+  let m = 0;
+  for(let k=1;k<=6;k++) m = Math.max(m, Math.abs(acfU[k] - state.l6.targetACF[k]));
+  return m;
+}
+
+function updateL6(){
+  const phi = parseFloat($('l6-phi').value), th = parseFloat($('l6-theta').value);
+  state.l6.phi = phi; state.l6.theta = th;
+  $('l6-phi-label').textContent = fx(phi);
+  $('l6-theta-label').textContent = fx(th);
+
+  const mine = armaPath(state.l6.eps, [phi], [th], 0).slice(BURN);
+  $('l6-chart').innerHTML = lineChart({
+    series:[{data:state.l6.target, color:C.a, width:2}, {data:mine, color:C.b, width:1.6, dash:'5 3'}],
+    w:660, h:190
+  });
+
+  const acfU = theoryACF({phis:[phi], thetas:[th]}, 8);
+  $('l6-acf').innerHTML = stemChart({values:acfU.slice(1), ghost:state.l6.targetACF.slice(1), w:330, h:170});
+
+  const err = l6Err(acfU);
+  const el = $('l6-err');
+  el.textContent = r2(err, 3);
+  el.className = 'v' + (err <= 0.05 ? ' ok' : (err <= 0.12 ? ' warn' : ''));
+  $('l6-rho1').textContent = `${r2(acfU[1],2)} / ${r2(state.l6.targetACF[1],2)}`;
+  $('l6-rho2').textContent = `${r2(acfU[2],2)} / ${r2(state.l6.targetACF[2],2)}`;
+  $('l6-err-sub').innerHTML = (Math.abs(phi + th) < 0.08 && Math.abs(phi) > 0.15)
+    ? 'âš ï¸ Ï† â‰ˆ âˆ’Î¸: the AR and MA factors cancel and this collapses to white noise (common-factor redundancy)'
+    : 'lock in under 0.05 for full marks';
+}
+
+function checkL6(){
+  if(state.l6.locked) return;
+  state.l6.locked = true;
+  const s = state.l6;
+  const err = l6Err(theoryACF({phis:[s.phi], thetas:[s.theta]}, 8));
+  const ok = err <= 0.05;
+  const pts = ok ? 150 : (err <= 0.12 ? 75 : 0);
+  const note = pts ? award('l6', pts) : '';
+  setFeedback('l6-feedback', ok,
+    `${ok ? 'Good fit.' : (pts ? 'Close â€” partial credit.' : 'Not close enough.')}
+     The true process was <span class="mono">Ï† = ${s.phiT}, Î¸ = ${s.thT}</span>; you locked in
+     <span class="mono">Ï† = ${fx(s.phi)}, Î¸ = ${fx(s.theta)}</span> with a worst-lag ACF gap of ${r2(err,3)}.
+     <br><br>Notice how <em>flat</em> the fit surface is: several (Ï†, Î¸) pairs give almost the same correlogram, because
+     in an ARMA the AR and MA parts can trade off against each other. That is why Level 4's cut-off trick fails for
+     mixed models, and why you pick orders with <strong>AIC/BIC</strong> and check that the residuals are white
+     (Ljungâ€“Box) rather than by staring at the ACF. Estimation in practice is maximum likelihood, not sliders â€”
+     but this is what the likelihood is doing.` + note);
+  $('l6-phi').disabled = true; $('l6-theta').disabled = true;
+  $('l6-lock').disabled = true;
+  $('l6-next').style.display = 'inline-block';
+}
+
+/* ===========================================================
+   LEVEL 7 Â· Forecasting an AR(1)
+   =========================================================== */
+function initL7(){
+  const phi = pick([0.5, 0.6, 0.7, 0.8]);
+  const mu = pick([20, 50, 100]);
+  const sd = pick([2, 3]);
+  const y = armaPath(normals(45 + BURN, rnd(1,9999), sd), [phi], [], mu).slice(BURN);
+  const hist = y.slice(0, 40);
+  const yT = r2(hist[hist.length-1], 2);
+  state.l7 = {
+    phi, mu, sd, hist, yT,
+    f1: mu + phi*(yT - mu),
+    f3: mu + Math.pow(phi,3)*(yT - mu),
+    a1:false, a2:false
+  };
+  $('l7-chart').innerHTML = lineChart({series:[{data:hist, color:C.a, dots:2}], w:660, h:180});
+  $('l7-data').innerHTML =
+    `<span class="lbl">fitted model :</span> (y<sub>t</sub> âˆ’ Î¼) = Ï†Â·(y<sub>tâˆ’1</sub> âˆ’ Î¼) + Îµ<sub>t</sub><br>` +
+    `<span class="lbl">Î¼Ì‚ &nbsp;=</span> ${mu}<br>` +
+    `<span class="lbl">Ï†Ì‚ &nbsp;=</span> ${phi}<br>` +
+    `<span class="lbl">ÏƒÌ‚<sub>Îµ</sub> =</span> ${sd}<br>` +
+    `<span class="lbl">y<sub>T</sub> =</span> ${fx(yT)} &nbsp;&nbsp;<span class="lbl">(the last observation)</span>`;
+  $('l7-input1').value = ''; $('l7-input3').value = '';
+  $('l7-input1').disabled = false; $('l7-input3').disabled = false;
+  $('l7-feedback').className = 'feedback';
+  $('l7-feedback2').className = 'feedback';
+  $('l7-part2').style.display = 'none';
+  $('l7-next').style.display = 'none';
+  resetHintbot('l7');
+}
+
+function checkL7(){
+  if(state.l7.a1) return;
+  const s = state.l7;
+  const g1 = parseFloat($('l7-input1').value), g3 = parseFloat($('l7-input3').value);
+  if(isNaN(g1) || isNaN(g3)){
+    setFeedback('l7-feedback', false, 'Fill in both forecasts first.');
+    $('l7-feedback').className = 'feedback show incorrect';
+    return;
+  }
+  s.a1 = true;
+  const ok1 = approxEqual(g1, s.f1, 0.2), ok3 = approxEqual(g3, s.f3, 0.2);
+  const hits = (ok1?1:0) + (ok3?1:0);
+  const note = hits ? award('l7', hits*25) : '';
+  setFeedback('l7-feedback', hits === 2,
+    `${hits === 2 ? 'Both right.' : (hits ? 'One of two.' : 'Neither â€” here is the arithmetic.')}
+     <br><span class="mono">Å·<sub>T+1</sub> = Î¼ + Ï†(y<sub>T</sub> âˆ’ Î¼) = ${s.mu} + ${s.phi}(${fx(s.yT)} âˆ’ ${s.mu})
+     = <b>${r2(s.f1,2)}</b></span>
+     <br><span class="mono">Å·<sub>T+3</sub> = Î¼ + Ï†Â³(y<sub>T</sub> âˆ’ Î¼) = ${s.mu} + ${r2(Math.pow(s.phi,3),3)}(${fx(s.yT)} âˆ’ ${s.mu})
+     = <b>${r2(s.f3,2)}</b></span>
+     <br><br>The deviation from Î¼ shrinks by a factor Ï† every step, because the best guess for every future shock is
+     zero. Iterating the model forward is all forecasting an ARMA ever is.` + note);
+  $('l7-input1').disabled = true; $('l7-input3').disabled = true;
+  renderL7Fan();
+}
+
+function renderL7Fan(){
+  const s = state.l7, H = 14;
+  const fc = [s.yT], lo = [s.yT], hi = [s.yT];
+  for(let h=1;h<=H;h++){
+    const pt = s.mu + Math.pow(s.phi,h)*(s.yT - s.mu);
+    const se = s.sd * Math.sqrt((1 - Math.pow(s.phi, 2*h))/(1 - s.phi*s.phi));
+    fc.push(pt); lo.push(pt - 1.96*se); hi.push(pt + 1.96*se);
+  }
+  const x0 = s.hist.length - 1;
+  $('l7-fan').innerHTML = lineChart({
+    series:[
+      {data:s.hist, color:C.a},
+      {data:fc, color:C.b, width:2.2, x0:x0, dots:2},
+      {data:new Array(x0 + H + 1).fill(s.mu), color:C.ghost, width:1, dash:'4 4'}
+    ],
+    band:{x0:x0, lo:lo, hi:hi},
+    n: x0 + H + 1, w:660, h:200,
+    vline:x0, vlabel:'T'
+  });
+  const sdY = s.sd/Math.sqrt(1 - s.phi*s.phi);
+  $('l7-readouts').innerHTML = `
+    <div class="readout"><div class="k">ÏƒÌ‚ at h = 1</div><div class="v">${r2(s.sd,2)}</div><div class="sub">just Ïƒ<sub>Îµ</sub></div></div>
+    <div class="readout"><div class="k">ÏƒÌ‚ at h = 3</div><div class="v">${r2(s.sd*Math.sqrt((1-Math.pow(s.phi,6))/(1-s.phi*s.phi)),2)}</div><div class="sub">Ïƒ<sub>Îµ</sub>âˆš((1âˆ’Ï†<sup>2h</sup>)/(1âˆ’Ï†Â²))</div></div>
+    <div class="readout"><div class="k">ÏƒÌ‚ as h â†’ âˆž</div><div class="v">${r2(sdY,2)}</div><div class="sub">= sd(y), the unconditional sd</div></div>
+    <div class="readout"><div class="k">Å· as h â†’ âˆž</div><div class="v">${s.mu}</div><div class="sub">= Î¼, the unconditional mean</div></div>`;
+  $('l7-part2').style.display = 'block';
+  renderChoices('l7-options', [
+    'The point forecast converges to Î¼ and the interval widens out to Â±1.96Â·sd(y)',
+    'The point forecast keeps drifting away from Î¼ while the interval stays the same width',
+    'Both the forecast and the interval shrink towards zero',
+    'The forecast stays at y<sub>T</sub> for ever â€” that is what "best guess" means'
+  ], 'checkL7b', 'wide');
+}
+
+function checkL7b(i){
+  if(state.l7.a2) return;
+  state.l7.a2 = true;
+  const ok = i === 0;
+  lockChoices('l7-options', 0, i);
+  const s = state.l7;
+  const note = ok ? award('l7', 100) : '';
+  setFeedback('l7-feedback2', ok,
+    `A stationary model forgets. Since Ï†<sup>h</sup> â†’ 0, the point forecast collapses onto Î¼ = ${s.mu}, and the 95%
+     interval widens from Â±1.96Ïƒ<sub>Îµ</sub> = Â±${r2(1.96*s.sd,1)} to Â±1.96Â·sd(y) = Â±${r2(1.96*s.sd/Math.sqrt(1-s.phi*s.phi),1)}.
+     Long-horizon forecasts from a stationary ARMA carry no information beyond the unconditional distribution â€”
+     your data only buys you the short horizon.
+     <br><br>Contrast the random walk of Level 5, where Å·<sub>T+h</sub> = y<sub>T</sub> for every h and the interval grows
+     like âˆšh without bound. Whether you difference changes the entire shape of the forecast â€” which is why getting
+     d right matters more than squeezing out one more AR term.` + note);
+  $('l7-next').style.display = 'inline-block';
+}
+
+/* ===========================================================
+   BOSS Â· full Boxâ€“Jenkins on a mystery series
+   =========================================================== */
+const BOSS_SPECS = [
+  { label:'ARIMA(1,1,0)', d:1, p:1, q:0, phis:[0.6], thetas:[],
+    fcHead:'The differences follow an AR(1) with Ï†Ì‚ = 0.6.',
+    fc(d){
+      const dy = d.yT - d.yT1, ans = d.yT + 0.6*dy;
+      return { ans,
+        box:`<span class="lbl">y<sub>T</sub> =</span> ${fx(d.yT)}<br><span class="lbl">y<sub>Tâˆ’1</sub> =</span> ${fx(d.yT1)}<br><span class="lbl">Ï†Ì‚ (on Î”y) =</span> 0.60`,
+        explain:`Î”y<sub>T</sub> = ${fx(d.yT)} âˆ’ ${fx(d.yT1)} = ${r2(dy,2)}, so Î”Å·<sub>T+1</sub> = 0.6 Ã— ${r2(dy,2)} = ${r2(0.6*dy,2)}.
+          Forecast the <em>level</em> by adding the change back: Å·<sub>T+1</sub> = y<sub>T</sub> + Î”Å·<sub>T+1</sub> = <b>${r2(ans,2)}</b>.` };
+    } },
+  { label:'ARIMA(0,1,1)', d:1, p:0, q:1, phis:[], thetas:[0.7],
+    fcHead:'The differences follow an MA(1) with Î¸Ì‚ = 0.7.',
+    fc(d){
+      const ans = d.yT + 0.7*d.eT;
+      return { ans,
+        box:`<span class="lbl">y<sub>T</sub> =</span> ${fx(d.yT)}<br><span class="lbl">last residual ÎµÌ‚<sub>T</sub> =</span> ${fx(d.eT)}<br><span class="lbl">Î¸Ì‚ (on Î”y) =</span> 0.70`,
+        explain:`Î”Å·<sub>T+1</sub> = Î¸Ì‚Â·ÎµÌ‚<sub>T</sub> = 0.7 Ã— ${fx(d.eT)} = ${r2(0.7*d.eT,2)}, so
+          Å·<sub>T+1</sub> = y<sub>T</sub> + ${r2(0.7*d.eT,2)} = <b>${r2(ans,2)}</b>. Every shock older than one period is
+          already forgotten. (This model is exponential smoothing written in ARIMA form.)` };
+    } },
+  { label:'ARIMA(2,0,0)', d:0, p:2, q:0, phis:[0.5,0.3], thetas:[],
+    fcHead:'A stationary AR(2) with Ï†Ì‚â‚ = 0.5, Ï†Ì‚â‚‚ = 0.3 around Î¼Ì‚ = 40.',
+    fc(d){
+      const ans = 40 + 0.5*(d.yT-40) + 0.3*(d.yT1-40);
+      return { ans,
+        box:`<span class="lbl">Î¼Ì‚ =</span> 40<br><span class="lbl">y<sub>T</sub> =</span> ${fx(d.yT)}<br><span class="lbl">y<sub>Tâˆ’1</sub> =</span> ${fx(d.yT1)}<br><span class="lbl">Ï†Ì‚â‚, Ï†Ì‚â‚‚ =</span> 0.50, 0.30`,
+        explain:`Å·<sub>T+1</sub> = Î¼ + Ï†â‚(y<sub>T</sub> âˆ’ Î¼) + Ï†â‚‚(y<sub>Tâˆ’1</sub> âˆ’ Î¼)
+          = 40 + 0.5(${r2(d.yT-40,2)}) + 0.3(${r2(d.yT1-40,2)}) = <b>${r2(ans,2)}</b>.
+          Note Ï†â‚ + Ï†â‚‚ = 0.8 &lt; 1 â€” the stationarity condition holds, so this forecast decays back to 40.` };
+    } },
+  { label:'ARIMA(0,0,2)', d:0, p:0, q:2, phis:[], thetas:[0.7,0.5],
+    fcHead:'A stationary MA(2) with Î¸Ì‚â‚ = 0.7, Î¸Ì‚â‚‚ = 0.5 around Î¼Ì‚ = 40.',
+    fc(d){
+      const ans = 40 + 0.7*d.eT + 0.5*d.eT1;
+      return { ans,
+        box:`<span class="lbl">Î¼Ì‚ =</span> 40<br><span class="lbl">ÎµÌ‚<sub>T</sub> =</span> ${fx(d.eT)}<br><span class="lbl">ÎµÌ‚<sub>Tâˆ’1</sub> =</span> ${fx(d.eT1)}<br><span class="lbl">Î¸Ì‚â‚, Î¸Ì‚â‚‚ =</span> 0.70, 0.50`,
+        explain:`Å·<sub>T+1</sub> = Î¼ + Î¸â‚ÎµÌ‚<sub>T</sub> + Î¸â‚‚ÎµÌ‚<sub>Tâˆ’1</sub>
+          = 40 + 0.7(${fx(d.eT)}) + 0.5(${fx(d.eT1)}) = <b>${r2(ans,2)}</b>.
+          Past <em>levels</em> never enter an MA forecast â€” only the last q residuals. Two steps out, the forecast is
+          already Î¼ + Î¸â‚‚ÎµÌ‚<sub>T</sub>; three steps out it is just Î¼.` };
+    } },
+  { label:'ARIMA(1,0,0)', d:0, p:1, q:0, phis:[0.75], thetas:[],
+    fcHead:'A stationary AR(1) with Ï†Ì‚ = 0.75 around Î¼Ì‚ = 40.',
+    fc(d){
+      const ans = 40 + 0.75*(d.yT-40);
+      return { ans,
+        box:`<span class="lbl">Î¼Ì‚ =</span> 40<br><span class="lbl">y<sub>T</sub> =</span> ${fx(d.yT)}<br><span class="lbl">Ï†Ì‚ =</span> 0.75`,
+        explain:`Å·<sub>T+1</sub> = Î¼ + Ï†(y<sub>T</sub> âˆ’ Î¼) = 40 + 0.75(${r2(d.yT-40,2)}) = <b>${r2(ans,2)}</b> â€”
+          exactly Level 7, with the deviation from Î¼ shrinking by 25% per step.` };
+    } },
+  { label:'ARIMA(0,1,0)', d:1, p:0, q:0, phis:[], thetas:[],
+    fcHead:'After differencing there is nothing left to model: the differences are white noise.',
+    fc(d){
+      return { ans: d.yT,
+        box:`<span class="lbl">y<sub>T</sub> =</span> ${fx(d.yT)}<br><span class="lbl">Î”y is white noise</span>`,
+        explain:`This is a pure random walk, so E[Î”y<sub>T+1</sub>] = 0 and the best forecast of <em>every</em> future
+          value is today's value: Å·<sub>T+1</sub> = y<sub>T</sub> = <b>${fx(d.yT)}</b>. Unlike the stationary cases there
+          is no Î¼ to revert to, and the forecast interval keeps widening with the horizon.` };
+    } }
+];
+
+function initBoss(){
+  const spec = pick(BOSS_SPECS);
+  const eps = normals(220 + BURN, rnd(1,9999), 1);
+  const stat = armaPath(eps, spec.phis, spec.thetas, 0);
+  const statObs = stat.slice(BURN), epsObs = eps.slice(BURN);
+  const obs = spec.d === 1 ? TS.integrate(statObs, 40, 0) : statObs.map(v => v + 40);
+  const T = obs.length - 1;
+  const data = {
+    yT: r2(obs[T],2), yT1: r2(obs[T-1],2),
+    eT: r2(epsObs[epsObs.length-1],2), eT1: r2(epsObs[epsObs.length-2],2)
+  };
+  state.boss = { spec, obs, statObs, data, step:0, correct:0 };
+  state.boss.steps = buildBossSteps();
+
+  $('boss-chart').innerHTML = lineChart({series:[{data:obs, color:C.a, width:1.6}], w:660, h:190});
+  $('boss-acf-lvl').innerHTML = stemChart({values:TS.acf(obs, 16).slice(1), sig:1.96/Math.sqrt(obs.length), w:660, h:170});
+  $('boss-steps').innerHTML = '';
+  $('boss-next').style.display = 'none';
+  resetHintbot('boss');
+  renderBossStep(0);
+}
+
+function bossStems(){
+  const spec = state.boss.spec;
+  const K = 12, sig = 1.96/Math.sqrt(250);
+  const acf = theoryACF({phis:spec.phis, thetas:spec.thetas}, K);
+  return `<div class="stem-grid">
+      <div class="panel"><div class="panel-label">ACF after differencing${spec.d ? '' : ' (none needed)'}</div>
+        ${stemChart({values:acf.slice(1), sig:sig, w:330, h:160})}</div>
+      <div class="panel"><div class="panel-label">PACF after differencing${spec.d ? '' : ' (none needed)'}</div>
+        ${stemChart({values:pacfFromACF(acf, K), sig:sig, w:330, h:160, color:C.bDark})}</div>
+    </div>`;
+}
+
+function buildBossSteps(){
+  const spec = state.boss.spec, data = state.boss.data;
+  const labelOpts = shuffle(
+    [spec.label].concat(shuffle(BOSS_SPECS.filter(s => s.label !== spec.label).map(s => s.label)).slice(0,3))
+  );
+  const f = spec.fc(data);
+  state.boss.fc = f;
+
+  return [
+    { tag:'Order of integration Â· d', type:'choice',
+      q:'Look at the level plot and its sample ACF above. How many times does this series need differencing?',
+      options:['d = 0 (already stationary)','d = 1','d = 2','d = 3'],
+      answer: spec.d,
+      explain: spec.d === 1
+        ? `<strong>d = 1.</strong> The level ACF starts near 1 and decays very slowly â€” a unit root. One difference
+           turns it into something with a stable mean and variance. (In practice you'd confirm with an ADF or KPSS test
+           rather than by eye, especially when the sample is short.)`
+        : `<strong>d = 0.</strong> The levels already revert: the ACF decays at a visible rate rather than clinging near
+           1, and the plot has a level it keeps returning to. Differencing here would be <em>over</em>-differencing â€”
+           remember the Ïâ‚ â‰ˆ âˆ’0.5 tell from Level 5.` },
+
+    { tag:'AR order Â· p', type:'choice',
+      q:'Here are the correlograms of the stationary series. Read off p.',
+      extra: bossStems(),
+      options:['p = 0','p = 1','p = 2','p = 3'],
+      answer: spec.p,
+      explain: `<strong>p = ${spec.p}.</strong> ` + (spec.p === 0
+        ? 'The PACF never cuts off cleanly â€” it just decays (or is empty). No AR terms.'
+        : `The PACF has ${spec.p} significant spike${spec.p>1?'s':''} and is inside the band from lag ${spec.p+1} onwards.
+           PACF cut-off â‡’ AR order.`) },
+
+    { tag:'MA order Â· q', type:'choice',
+      q:'Same two plots â€” now read off q.',
+      extra: bossStems(),
+      options:['q = 0','q = 1','q = 2','q = 3'],
+      answer: spec.q,
+      explain: `<strong>q = ${spec.q}.</strong> ` + (spec.q === 0
+        ? 'The ACF decays gradually instead of stopping dead, so there is no finite shock memory to model.'
+        : `The ACF is significant up to lag ${spec.q} and exactly zero after it â€” the finite-memory cut-off that
+           identifies an MA(${spec.q}).`) },
+
+    { tag:'Name the model', type:'choice',
+      q:'Put the three numbers together in Boxâ€“Jenkins notation.',
+      options: labelOpts,
+      answer: labelOpts.indexOf(spec.label),
+      explain: `<strong>${spec.label}</strong> â€” ARIMA(p, d, q) with p = ${spec.p}, d = ${spec.d}, q = ${spec.q}.
+        ${spec.fcHead}` },
+
+    { tag:'One-step forecast', type:'num',
+      q:'Last call: with the model estimated, forecast one period ahead.',
+      extra: `<div class="data-box">${f.box}</div>`,
+      answer: f.ans,
+      explain: f.explain }
+  ];
+}
+
+function renderBossStep(i){
+  const st = state.boss.steps[i];
+  const div = document.createElement('div');
+  div.className = 'boss-step';
+  div.id = 'boss-step-' + i;
+  div.innerHTML =
+    `<div class="boss-step-head">Step ${i+1} of 5 Â· ${st.tag}</div>
+     <p class="lead">${st.q}</p>
+     ${st.extra || ''}
+     ${st.type === 'choice'
+        ? `<div class="option-grid" id="boss-opts-${i}">${st.options.map((o,j) =>
+            `<div class="option-btn" onclick="bossChoice(${i},${j})">${o}</div>`).join('')}</div>`
+        : `<div class="input-row"><input type="number" step="0.01" class="num-input" id="boss-input-${i}" placeholder="Å·(T+1) = ?">
+             <button class="btn btn-primary" onclick="bossNum(${i})">Check</button></div>`}
+     <div class="feedback" id="boss-fb-${i}"></div>`;
+  $('boss-steps').appendChild(div);
+  state.boss.step = i;
+  resetHintbot('boss');
+}
+
+function bossAfter(i, ok){
+  const st = state.boss.steps[i];
+  if(ok) state.boss.correct++;
+  const note = ok ? award('boss' + i, 50) : '';
+  setFeedback('boss-fb-' + i, ok, st.explain + note);
+  $('boss-step-' + i).classList.add('done');
+  if(i < 4){
+    renderBossStep(i + 1);
+    $('boss-step-' + (i+1)).scrollIntoView({behavior:'smooth', block:'center'});
+  } else {
+    let bonus = '';
+    if(state.boss.correct === 5){ addScore(50); bonus = ' <strong>+50 clean-sweep bonus!</strong>'; }
+    const fb = document.createElement('div');
+    fb.className = 'feedback show correct';
+    fb.style.marginTop = '16px';
+    fb.innerHTML = `ðŸ Boss round done â€” ${state.boss.correct} of 5 calls correct.${bonus}
+      <br><br>That sequence <em>is</em> applied time-series econometrics: difference until stationary, let the
+      correlograms propose p and q, estimate, check the residuals are white, then iterate the model forward to forecast.`;
+    $('boss-steps').appendChild(fb);
+    $('boss-next').style.display = 'inline-block';
+    $('boss-hint-btn').disabled = true;
+  }
+}
+
+function bossChoice(i, j){
+  const st = state.boss.steps[i];
+  if(st.done) return;
+  st.done = true;
+  lockChoices('boss-opts-' + i, st.answer, j);
+  bossAfter(i, j === st.answer);
+}
+
+function bossNum(i){
+  const st = state.boss.steps[i];
+  if(st.done) return;
+  const g = parseFloat($('boss-input-' + i).value);
+  if(isNaN(g)){
+    const fb = $('boss-fb-' + i);
+    fb.className = 'feedback show incorrect';
+    fb.innerHTML = 'âŒ Enter a number first.';
+    return;
+  }
+  st.done = true;
+  $('boss-input-' + i).disabled = true;
+  bossAfter(i, approxEqual(g, st.answer, 0.06));
+}
+
+/* ===========================================================
+   HintBot content
+   =========================================================== */
+const HINT_GENERATORS = {
+  l1: () => {
+    const s = state.l1;
+    return [
+      'White noise has no memory: knowing today tells you nothing about tomorrow. Which panel never looks like it is <em>heading</em> anywhere?',
+      'Rule out the one that drifts far from where it started and never returns â€” that is the random walk. Then rule out the smooth one where each point is nearly equal to its neighbour â€” that is AR(1) with Ï† = 0.92.',
+      `It is panel ${s.letters[s.answer]}. And for any white noise, Ï<sub>k</sub> = 0 at every lag k â‰¥ 1.`
+    ];
+  },
+  l2: () => {
+    const s = state.l2;
+    return [
+      'In an AR(1) the share of a shock still present after h periods is Ï†<sup>h</sup>. "Half-life H" means exactly half is left after H periods.',
+      `So solve Ï†<sup>${s.H}</sup> = 0.5 for Ï†. The live half-life readout updates as you drag â€” tune until it reads ${s.H}.`,
+      `Ï† = 0.5<sup>1/${s.H}</sup> = ${r2(s.target,3)}.`
+    ];
+  },
+  l3: () => [
+    'AR(1) feeds yesterday\'s <em>level</em> forward, and that level already contains every past shock. MA(1) feeds yesterday\'s <em>shock</em> forward, and nothing older.',
+    'Fire the shock on each model and count the non-zero points after the spike. One of them literally hits zero; the other keeps multiplying by 0.7.',
+    'MA(1): exactly 1 period, then gone. AR(1) after 3 periods: 0.7Â³ â‰ˆ 0.34, so about 34% is left.'
+  ],
+  l4: () => {
+    const cur = state.l4.cur;
+    const acf = theoryACF(cur.made.spec, 12);
+    const pacf = pacfFromACF(acf, 12);
+    const sig = 1.96/Math.sqrt(250);
+    const lastACF = (() => { let L = 0; for(let k=1;k<=12;k++) if(Math.abs(acf[k]) > sig) L = k; return L; })();
+    const lastPACF = (() => { let L = 0; for(let k=0;k<12;k++) if(Math.abs(pacf[k]) > sig) L = k+1; return L; })();
+    return [
+      'Read the PACF first: an AR(p) goes silent after lag p. Then the ACF: an MA(q) goes silent after lag q. Whichever plot cuts off cleanly names the model.',
+      `In these plots the ACF last leaves the band at lag ${lastACF}, and the PACF at lag ${lastPACF}. The one that <em>stops</em> rather than fades is the informative one.`,
+      `It is ${cur.fam.label} (${cur.made.params}).`
+    ];
+  },
+  l5: () => [
+    'Stationary means the mean, variance and autocorrelations do not depend on <em>when</em> you look. Ask the plot: is there a level this series keeps coming back to?',
+    'An ACF that starts near 1 and is still high at lag 16 is the unit-root signature. One difference normally fixes it â€” and you can check: after differencing, the stems should fall inside the bands.',
+    'Not stationary, and d = 1. Then, if you difference a second time, Ïâ‚ drops to about âˆ’0.5 and the variance inflates â€” the over-differencing tell.'
+  ],
+  l6: () => {
+    const s = state.l6;
+    return [
+      'Match the correlogram, not the wiggles. Î¸ mostly shifts Ïâ‚; Ï† sets how slowly the whole profile decays after that (Ï<sub>k</sub> = Ï†Â·Ï<sub>kâˆ’1</sub> from lag 2 onwards).',
+      `Target Ïâ‚ = ${r2(s.targetACF[1],3)} and Ïâ‚‚ = ${r2(s.targetACF[2],3)}, so the decay factor is Ïâ‚‚/Ïâ‚ = ${r2(s.targetACF[2]/s.targetACF[1],3)} â€” and in an ARMA(1,1) that ratio <em>is</em> Ï†. Set Ï† there first, then dial Î¸ until Ïâ‚ lines up.`,
+      `True values: Ï† = ${s.phiT}, Î¸ = ${s.thT}.`
+    ];
+  },
+  l7: () => {
+    const s = state.l7;
+    return [
+      'Write the model in deviation form: (y<sub>t</sub> âˆ’ Î¼) = Ï†(y<sub>tâˆ’1</sub> âˆ’ Î¼) + Îµ<sub>t</sub>. The optimal forecast replaces every future Îµ with its expectation, which is 0.',
+      `So Å·<sub>T+h</sub> = Î¼ + Ï†<sup>h</sup>(y<sub>T</sub> âˆ’ Î¼). Here y<sub>T</sub> âˆ’ Î¼ = ${r2(s.yT - s.mu,2)}, and you need h = 1 and h = 3.`,
+      `Å·<sub>T+1</sub> = ${r2(s.f1,2)} and Å·<sub>T+3</sub> = ${r2(s.f3,2)}.`
+    ];
+  },
+  boss: () => {
+    const b = state.boss, spec = b.spec;
+    switch(b.step){
+      case 0: return [
+        'Only one question matters here: does the series have a level it reverts to, or does it wander? Check whether the level ACF clings near 1 across many lags.',
+        'A slowly-decaying, near-1 ACF â‡’ unit root â‡’ difference once. An ACF that decays at a clear geometric rate â‡’ already stationary â‡’ d = 0.',
+        `d = ${spec.d}.`
+      ];
+      case 1: return [
+        'p comes from the <strong>PACF</strong>: count the spikes before it falls inside the dashed band and stays there.',
+        'If the PACF never cuts off cleanly but the ACF does, then p = 0 and you are looking at a pure MA.',
+        `p = ${spec.p}.`
+      ];
+      case 2: return [
+        'q comes from the <strong>ACF</strong>: count the significant lags before it goes dead.',
+        'An ACF that decays smoothly without ever stopping means q = 0 â€” the memory is infinite, which is AR behaviour.',
+        `q = ${spec.q}.`
+      ];
+      case 3: return [
+        'The order inside the brackets is always (p, d, q) â€” AR order, differences, MA order.',
+        `You answered p = ${b.steps[1].answer}, d = ${b.steps[0].answer}, q = ${b.steps[2].answer}; now pick the matching label.`,
+        `It is ${spec.label}.`
+      ];
+      default: return [
+        'Forecast the stationary part first, then undo any differencing. Future shocks are set to zero; residuals you have already observed are not.',
+        spec.d === 1
+          ? 'With d = 1 you forecast Î”y, then add it to y<sub>T</sub> to get the level back.'
+          : 'With d = 0 you work directly in levels, measuring everything as a deviation from Î¼Ì‚ = 40.',
+        `Å·<sub>T+1</sub> = ${r2(b.fc.ans,2)}.`
+      ];
+    }
+  }
+};
+
+/* ===========================================================
+   RESULTS
+   =========================================================== */
+function showResults(){
+  $('endScore').textContent = SCORE;
+  $('endMax').textContent = TOTAL_POSSIBLE;
+  const pct = SCORE / TOTAL_POSSIBLE;
+  let stars = 1;
+  if(pct >= 0.85) stars = 3;
+  else if(pct >= 0.6) stars = 2;
+  $('endStars').textContent = 'â­'.repeat(stars) + 'â˜†'.repeat(3 - stars);
+}
+</script>
+</body>
+</html>

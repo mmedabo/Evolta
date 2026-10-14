@@ -6,7 +6,7 @@
 <title>Safe Harbor — Portfolio Hedging, From Scratch | Evolta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#faf7ee;
@@ -190,14 +190,15 @@
   <header>
     <div class="brand">
       <h1>Safe <span class="amp">&amp;</span> Sound <span class="bolt">🛡️</span></h1>
-      <div class="sub">Portfolio Hedging — from scratch · <span class="evolta">Evolta — learn · play · evolve</span></div>
+      <div class="sub" id="brandSub"></div>
     </div>
     <div class="topbar">
       <div class="clock" id="clock" style="display:none">
         <div class="month" id="monthLabel">—</div>
-        <div class="turn" id="turnLabel">Press start</div>
+        <div class="turn" id="turnLabel"></div>
       </div>
-      <a class="back-btn" href="TradingGamePortal.html">‹ All games</a>
+      <button class="back-btn" id="langToggle" type="button" style="cursor:pointer;margin-right:8px">中文</button>
+      <a class="back-btn" id="backAll" href="TradingGamePortal.html">‹ All games</a>
     </div>
   </header>
 
@@ -207,9 +208,9 @@
       <div class="acad-steps" id="acadSteps"></div>
       <div id="lessonContent"></div>
       <div class="acad-nav">
-        <button class="ghost-btn" id="backBtn" onclick="acadBack()" style="flex:none">‹ Back</button>
+        <button class="ghost-btn" id="backBtn" onclick="acadBack()" style="flex:none" data-i18n="nav_back">‹ Back</button>
         <div class="right">
-          <button class="ghost-btn" id="skipBtn" onclick="startGame()" style="flex:none">Skip to game ›</button>
+          <button class="ghost-btn" id="skipBtn" onclick="startGame()" style="flex:none" data-i18n="nav_skip">Skip to game ›</button>
           <button class="big-btn" id="nextBtn" onclick="acadNext()" style="width:auto;flex:none;padding:11px 26px">Next ›</button>
         </div>
       </div>
@@ -220,27 +221,21 @@
   <div id="game" class="grid hidden">
     <div>
       <div class="panel" id="newsPanel">
-        <h2><span class="dot"></span>Market Wire</h2>
-        <div id="newsBox">
-          <div class="news">
-            <div class="hl">You manage a $100,000 portfolio.</div>
-            <div class="src">Evolta Investment Desk</div>
-            <div class="ex">Over 10 rounds the market will throw shocks at your holdings. Buy <b>hedges</b> — insurance that pays off when things crash — to protect your downside, but mind the <b>premium</b> you pay for it. Press <b>Start</b> to see the first scenario.</div>
-          </div>
-        </div>
+        <h2><span class="dot"></span><span data-i18n="pn_wire">Market Wire</span></h2>
+        <div id="newsBox"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Your Holdings</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_hold">Your Holdings</span></h2>
         <table class="mkt">
-          <thead><tr><th>Sector</th><th style="text-align:right">Value</th><th style="text-align:right">Δ last</th></tr></thead>
+          <thead><tr><th data-i18n="th_sector">Sector</th><th style="text-align:right" data-i18n="th_value">Value</th><th style="text-align:right" data-i18n="th_last">Δ last</th></tr></thead>
           <tbody id="mktBody"></tbody>
         </table>
         <div class="hint" id="concHint"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Insurance Desk</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_desk">Insurance Desk</span></h2>
         <div class="act-grid" id="tradeGrid"></div>
         <div style="margin-top:14px">
           <button class="big-btn" id="advanceBtn" onclick="startOrAdvance()">▶ Start</button>
@@ -250,42 +245,35 @@
 
     <div>
       <div class="panel">
-        <h2><span class="dot"></span>Portfolio</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_port">Portfolio</span></h2>
         <div class="big-num" id="equityNum">$100.0k</div>
-        <div class="stat"><span class="k">Total return</span><span class="v" id="retVal">0.0%</span></div>
-        <div class="stat"><span class="k">Premium paid</span><span class="v" id="premVal">$0</span></div>
-        <div class="stat"><span class="k">Hedge payouts</span><span class="v" id="payVal">$0</span></div>
-        <div class="stat"><span class="k">Cash</span><span class="v" id="cashVal">$10.0k</span></div>
+        <div class="stat"><span class="k" data-i18n="k_return">Total return</span><span class="v" id="retVal">0.0%</span></div>
+        <div class="stat"><span class="k" data-i18n="k_prem">Premium paid</span><span class="v" id="premVal">$0</span></div>
+        <div class="stat"><span class="k" data-i18n="k_pay">Hedge payouts</span><span class="v" id="payVal">$0</span></div>
+        <div class="stat"><span class="k" data-i18n="k_cash">Cash</span><span class="v" id="cashVal">$10.0k</span></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Risk</h2>
-        <div class="stat"><span class="k tip" title="The largest peak-to-trough drop in your portfolio value so far. Lower is better.">Max drawdown</span><span class="v" id="ddVal">0.0%</span></div>
+        <h2><span class="dot"></span><span data-i18n="pn_risk">Risk</span></h2>
+        <div class="stat"><span class="k tip" data-i18n="k_dd" data-i18n-title="tip_dd">Max drawdown</span><span class="v" id="ddVal">0.0%</span></div>
         <div class="meter"><span id="riskBar" style="width:0%;background:var(--pos)"></span></div>
-        <div class="hint" id="riskHint">No drawdown yet. Capital intact.</div>
+        <div class="hint" id="riskHint"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Active Hedges</h2>
-        <div id="posBox"><div class="hint">No hedges in place for this round.</div></div>
+        <h2><span class="dot"></span><span data-i18n="pn_hedges">Active Hedges</span></h2>
+        <div id="posBox"></div>
       </div>
 
       <div class="panel" id="recapPanel" style="display:none">
-        <h2><span class="dot"></span>This Round — What Happened</h2>
+        <h2><span class="dot"></span><span data-i18n="pn_recap">This Round — What Happened</span></h2>
         <div id="recapBox"></div>
       </div>
 
       <div class="panel">
-        <h2><span class="dot"></span>Glossary</h2>
-        <div style="font-size:11px;color:var(--txt-dim);line-height:1.7">
-          <b style="color:var(--gold)">Exposure</b> how much you'd lose if a sector falls<br>
-          <b style="color:var(--gold)">Hedge</b> a position that gains when your portfolio loses<br>
-          <b style="color:var(--gold)">Put option</b> insurance that pays off if a price falls below a level<br>
-          <b style="color:var(--gold)">Premium</b> the upfront cost of a hedge — the "drag"<br>
-          <b style="color:var(--gold)">Diversification</b> spreading risk so no single shock sinks you<br>
-          <b style="color:var(--gold)">Drawdown</b> the worst peak-to-trough fall in your value
-        </div>
-        <div style="margin-top:12px"><button class="ghost-btn" onclick="openAcademy()" style="width:100%">↺ Replay the Academy</button></div>
+        <h2><span class="dot"></span><span data-i18n="pn_gloss">Glossary</span></h2>
+        <div style="font-size:11px;color:var(--txt-dim);line-height:1.7" id="glossBox"></div>
+        <div style="margin-top:12px"><button class="ghost-btn" onclick="openAcademy()" style="width:100%" data-i18n="replay_acad">↺ Replay the Academy</button></div>
       </div>
     </div>
   </div>
@@ -298,6 +286,356 @@
 /* =========================================================
    PART 1 — ACADEMY (teach hedging interactively)
    ========================================================= */
+
+/* ================= i18n ================= */
+const I18N={
+en:{
+  doc_title:'Safe & Sound — Portfolio Hedging | Evolta',
+  lang_other:'中文', lang_aria:'Switch to Chinese',
+  brand_sub:'Portfolio Hedging — from scratch · <span class="evolta">Evolta — learn · play · evolve</span>',
+  back_all:'‹ All games', press_start:'Press start',
+  round_n:n=>'Round '+n, round_of:n=>'of '+n,
+
+  nav_back:'‹ Back', nav_skip:'Skip to game ›', nav_next:'Next ›', nav_open:'Open the desk 🛡️',
+
+  pn_wire:'Market Wire', pn_hold:'Your Holdings', pn_desk:'Insurance Desk',
+  pn_port:'Portfolio', pn_risk:'Risk', pn_hedges:'Active Hedges',
+  pn_recap:'This Round — What Happened', pn_gloss:'Glossary',
+
+  intro_hl:'You manage a $100,000 portfolio.',
+  intro_src:'Evolta Investment Desk',
+  intro_ex:'Over 10 rounds the market will throw shocks at your holdings. Buy <b>hedges</b> — insurance that pays off when things crash — to protect your downside, but mind the <b>premium</b> you pay for it. Press <b>Start</b> to see the first scenario.',
+  reset_hl:'Fresh book. $100,000 to protect.',
+  reset_ex:'Press <b>Start</b> to see the first scenario.',
+
+  th_sector:'Sector', th_value:'Value', th_last:'Δ last',
+  k_return:'Total return', k_prem:'Premium paid', k_pay:'Hedge payouts', k_cash:'Cash',
+  k_dd:'Max drawdown', tip_dd:'The largest peak-to-trough drop in your portfolio value so far. Lower is better.',
+  no_hedges:'No hedges in place for this round.',
+  replay_acad:'↺ Replay the Academy',
+  btn_start:'▶ Start', btn_resolve:'▶ Resolve Round',
+
+  gloss:'<b style="color:var(--gold)">Exposure</b> how much you\'d lose if a sector falls<br><b style="color:var(--gold)">Hedge</b> a position that gains when your portfolio loses<br><b style="color:var(--gold)">Put option</b> insurance that pays off if a price falls below a level<br><b style="color:var(--gold)">Premium</b> the upfront cost of a hedge — the "drag"<br><b style="color:var(--gold)">Diversification</b> spreading risk so no single shock sinks you<br><b style="color:var(--gold)">Drawdown</b> the worst peak-to-trough fall in your value',
+
+  sec_tech:'Tech', sec_banks:'Banks', sec_energy:'Energy', sec_intl:'Intl',
+  cash_row:'Cash', cash_sub:'safe, no return',
+  insured:'🛡️ insured this round', unhedged:'unhedged',
+  what_means:'What it means:',
+
+  conc_high:c=>'<b>Concentration '+c+'%</b> in your biggest sector — a shock there would sting. Consider Rebalance or a put.',
+  conc_ok:c=>'Concentration '+c+'% in your biggest sector — reasonably balanced.',
+
+  tc_put:'Sector Put', tc_put_d:(d,pr)=>'Insure one sector. Caps its loss this round at about −'+d+'%. Costs '+pr+'% of that sector.',
+  tc_put_b:'Buy Put',
+  tc_idx:'Index Put', tc_idx_d:(d,pr,amt)=>'Insure the whole book against a broad crash. Caps total loss at about −'+d+'%. Costs '+pr+'% of stocks ('+amt+').',
+  tc_idx_b:'Buy Index Put',
+  tc_reb:'Rebalance', tc_reb_d:'Spread money evenly across sectors to cut concentration. Free — but you trim your winners.',
+  tc_reb_b:'Rebalance',
+  tc_cash:'Raise Cash', tc_cash_d:'Move 20% of each sector into safe cash. Lowers risk and upside — pure de-risking.',
+  tc_cash_b:'De-risk',
+  opt_prem:(n,amt)=>n+' — premium '+amt,
+
+  dd_none:'No drawdown yet. Capital intact.',
+  dd_shallow:v=>'Drawdown '+v+'% — shallow, well managed.',
+  dd_bumpy:v=>'Drawdown '+v+'% — getting bumpy.',
+  dd_deep:v=>'Drawdown '+v+'% — deep hole, hard to recover.',
+
+  tag_put:'Put', whole_book:'Whole book',
+  caps_sector:d=>'caps loss at −'+d+'% this round',
+  caps_book:d=>'caps total loss at −'+d+'% this round',
+
+  toast_start:'Press Start first.',
+  toast_insured:'Already insured this round.',
+  toast_nocash:'Not enough cash for that premium.',
+  toast_idx_have:'Index put already in place.',
+  toast_idx_nocash:'Not enough cash for the index put.',
+  toast_bought:(n,amt)=>'Bought '+n+' put — premium '+amt+'.',
+  toast_bought_idx:amt=>'Bought index put — premium '+amt+'.',
+  toast_reb:'Rebalanced to equal weights — concentration cut.',
+  toast_cash:amt=>'Raised '+amt+' to cash — exposure reduced.',
+
+  r_swing:'Portfolio swing', r_moves:'Sector moves:', r_put_paid:'(put paid)',
+  r_payouts:'Hedge payouts:', r_payouts_t:amt=>amt+' back from your insurance.',
+  r_unused:"Your hedges expired unused this round — that's the premium cost of protection.",
+
+  ev0_hl:'Tech earnings blow past estimates', ev0_src:'MarketWatch', ev0_ex:"A wave of strong results lifts technology stocks. Great if you're exposed to tech, little help elsewhere.",
+  ev1_hl:'Rate-hike fears trigger a tech selloff', ev1_src:'Bloomberg', ev1_ex:'Higher rates hit long-duration growth stocks hardest. Tech-heavy books feel it most.',
+  ev2_hl:'Regional banking stress spreads', ev2_src:'Reuters', ev2_ex:'Deposit flight and credit worries slam financials, with spillover into tech and international names.',
+  ev3_hl:'Central bank surprises with a rate cut', ev3_src:'FT', ev3_ex:'Cheaper money lifts almost everything, financials especially.',
+  ev4_hl:'Oil spikes on supply shock', ev4_src:'S&P Global', ev4_ex:'Energy rallies hard, but pricier oil pressures tech margins and import-heavy international names.',
+  ev5_hl:'Energy glut sends crude tumbling', ev5_src:'ICE', ev5_ex:'Oversupply craters energy stocks while the rest of the market shrugs.',
+  ev6_hl:'Emerging-market currency crisis', ev6_src:'WSJ', ev6_ex:'A sharp FX selloff hammers international holdings; modest ripple elsewhere.',
+  ev7_hl:'Broad risk-on rally lifts all sectors', ev7_src:'CNBC', ev7_ex:'Soft-landing optimism floats every boat. A good round to be fully invested.',
+  ev8_hl:'Global growth scare sparks a market crash', ev8_src:'Bloomberg', ev8_ex:'A across-the-board selloff. This is exactly what an index hedge is for.',
+  ev9_hl:'Sector rotation: out of tech, into energy', ev9_src:'Morgan Desk', ev9_ex:'Money rotates from growth to value and commodities. Winners and losers in the same breath.',
+  ev10_hl:'Goldilocks data: steady growth, cooling inflation', ev10_src:'FT', ev10_ex:'A gentle, broad uplift with no drama. Hedges will likely expire unused.',
+
+  l_kick:(i,n)=>'Academy · Lesson '+i+' of '+n,
+  l_kick3:'Academy · Lesson 3 of 5 · the key tool',
+  l_kick5:'Academy complete',
+
+  l0_ttl:'Owning things means risking things',
+  l0_lede:'When you hold stocks, you make money when they rise — but you also <b>lose</b> when they fall. Hedging is the art of keeping your upside while putting a floor under your downside. Think of it as <b>insurance for your portfolio</b>.',
+  l0_calm:'Calm market', l0_crash:'A crash hits',
+  l0_unprot:'unprotected: −38%', l0_hedged:'hedged: −12%',
+  l0_p1:'<b>You are a portfolio manager.</b> You hold a mix of sectors — tech, banks, energy, international stocks.',
+  l0_p2:'<b>Shocks are coming.</b> Earnings misses, rate hikes, oil spikes, crises — each hits different sectors.',
+  l0_p3:"<b>Your job isn't to predict every shock.</b> It's to size your insurance so a bad month dents you instead of sinking you.",
+  l0_tlab:'The core trade-off',
+  l0_ttxt:'Insurance costs money every round (the <b>premium</b>), but it pays off big in a crash. Too little and a crash wipes you out; too much and the premiums bleed your returns. The next lessons build your intuition.',
+
+  l1_ttl:'Exposure: where your money can bleed',
+  l1_lede:'Your portfolio is split across sectors. Each is an <b>exposure</b> — a place where bad news costs you. Click a shock and watch which bars shrink. Notice how a single concentrated bet can hurt the whole book.',
+  l1_tech:'📉 Tech selloff', l1_banks:'🏦 Bank crisis', l1_oil:'🛢️ Oil crash', l1_reset:'↺ Reset',
+  l1_total:v=>'Total portfolio: <b>$'+v+'k</b> in stocks',
+  l1_p1:"<b>Concentration is risk.</b> If most of your money sits in one sector, that sector's bad day is your disaster.",
+  l1_p2:'<b>Different shocks hit different sectors.</b> A bank crisis barely touches energy; an oil crash barely touches banks.',
+  l1_p3:"<b>Knowing your exposures</b> tells you what to insure. You hedge the things you can't afford to lose.",
+  l1_tlab:'Try this',
+  l1_ttxt:"Hit the same shock twice — the bar keeps shrinking. Real portfolios that don't manage concentration can lose half their value in one event. <b>Spreading out</b> and <b>insuring</b> are how you survive.",
+
+  l2_ttl:'A put option puts a floor under you',
+  l2_lede:'The classic hedge is a <b>put option</b>. It pays you back when the market falls past a chosen level — so your losses stop there. The orange line is your portfolio <b>without</b> a hedge; the green line is <b>with</b> one. Drag the coverage and watch the floor rise.',
+  l2_yret:'your return', l2_market:'market →', l2_unhedged:'unhedged', l2_floor:'hedged floor',
+  l2_cover:'Coverage',
+  l2_p1:'<b>Below the floor, the green line goes flat.</b> No matter how far the market drops, your losses stop — that\'s the protection.',
+  l2_p2:'<b>Above zero, the lines nearly overlap.</b> You keep almost all your upside; the hedge just costs a small premium.',
+  l2_p3:"<b>More coverage = higher floor</b>, but a bigger premium. You're buying peace of mind by the dollar.",
+  l2_tlab:'The shape that matters',
+  l2_ttxt:'A hedge bends your payoff: <b>capped losses, (almost) full gains</b>. That asymmetry — lose a little to avoid losing a lot — is the whole game.',
+  l2_read:(f,pr,note)=>'Floor at <b>'+f+'%</b> · premium drag <b>'+pr+'%</b>. '+note,
+  l2_cheap:'Cheap, but thin protection.',
+  l2_strong:'Strong floor — but the premium bites your gains.',
+  l2_bal:'Balanced cover.',
+
+  l3_ttl:"Insurance is a cost — until it isn't",
+  l3_lede:"Here's the catch beginners miss: in <b>calm</b> markets the hedge just costs you the premium and you'd have been better off without it. In a <b>crash</b>, the same hedge saves your portfolio. You can't tell in advance which round is which — so you size insurance you can live with either way.",
+  l3_unh:'Unhedged', l3_hed:'Hedged',
+  l3_crash:'📉 Crash round', l3_calm:'🌤️ Calm round',
+  l3_p1:'<b>Calm round:</b> the hedge expires worthless. The hedged book ends slightly lower — you "wasted" the premium.',
+  l3_p2:'<b>Crash round:</b> the put pays out and the hedged book barely flinches while the unhedged one craters.',
+  l3_p3:'<b>Over a long run</b> you pay many small premiums to avoid one ruinous loss. Survivors think in those terms.',
+  l3_tlab:'The mindset',
+  l3_ttxt:'Don\'t judge a hedge by a single calm round where it "lost." Judge your <b>whole season</b>: did you stay solvent and smooth through the shocks? That\'s what the debrief grades.',
+
+  l4_ttl:'Diversification: the only free lunch',
+  l4_lede:"You don't always need to buy insurance — sometimes you just spread out. If two holdings don't move together (low <b>correlation</b>), their ups and downs partly cancel, and your overall swings shrink for free. Drag the correlation and watch the combined risk bar.",
+  l4_a:'Asset A', l4_b:'Asset B', l4_combined:'Combined', l4_risk:'risk',
+  l4_p1:'<b>Correlation +1:</b> the two move in lockstep — combining them saves nothing.',
+  l4_p2:"<b>Correlation 0:</b> they're independent — combined risk already drops noticeably.",
+  l4_p3:'<b>Correlation −1:</b> perfect opposites — gains in one offset losses in the other. That\'s a natural hedge with no premium.',
+  l4_tlab:'Why it\'s "free"',
+  l4_ttxt:'Unlike a put, diversification costs no premium — you just hold uncorrelated things. In the game, <b>Rebalance</b> spreads your money evenly to cut concentration before a shock lands.',
+  l4_read:(c,v,note)=>'Correlation <b>'+c+'</b> → combined risk <b>'+v+'%</b> of a single asset. '+note,
+  l4_strong:'Strong natural hedge!', l4_nice:'Nice diversification benefit.', l4_little:'Little benefit — too similar.',
+
+  l5_ttl:"You're ready to manage the book",
+  l5_lede:"The four ideas you'll use every round:",
+  l5_p1:'<b>Exposure</b> — know which sectors can hurt you, and how much.',
+  l5_p2:'<b>Puts</b> — insurance that floors your losses while keeping upside, for a premium.',
+  l5_p3:'<b>Cost vs protection</b> — premiums drag in calm rounds and save you in crashes; size for both.',
+  l5_p4:'<b>Diversification</b> — spread out to cut risk for free before insuring the rest.',
+  l5_tlab:'Your job for 10 rounds',
+  l5_ttxt:'Start with <b>$100,000</b>. Each round, read the scenario, decide what to insure or rebalance, then resolve. Keep your <b>drawdown</b> shallow and your premiums sensible. A scored <b>debrief</b> grades your protection at the end — replay the Academy anytime from the Glossary.',
+
+  d_title:'Season Debrief', d_notes:'Desk notes', d_again:'↺ Manage Another Season',
+  d_final:'Final value', d_dd:'Max drawdown', d_crashes:'Crashes protected',
+  d_eff:'Hedge efficiency', d_prem:'Premium spent',
+  d_final_v:(v,r)=>v+' ('+r+')',
+  d_dd_v:(s,v)=>s+' — '+v+'% worst fall',
+  d_crash_v:(a,b)=>a+' covered / '+b+' taken bare',
+  d_eff_v:(s,x)=>s+' ('+x+'× payout/premium)',
+  d_prem_v:(v,pct)=>v+' ('+pct+'% of book)',
+  d_smooth:'Smooth', d_bumpy:'Bumpy', d_volatile:'Volatile',
+  d_paid:'Insurance paid for itself', d_reasonable:'Reasonable', d_heavy:'Premium-heavy',
+
+  c_strong:'Strong, steady result — you protected capital and still grew it.',
+  c_down:'You finished down. Check whether a crash caught you un-hedged, or premiums dragged too hard.',
+  c_unprot:n=>'You took '+n+' crash'+(n>1?'es':'')+' with no cover — an index put before broad selloffs would have softened those.',
+  c_prem:'You spent heavily on premiums. In calm runs that bleeds returns — insure the big risks, not every wiggle.',
+  c_unused:'Most of your hedges expired unused. Buying puts every round regardless of the setup is expensive over-insurance.',
+  c_dd:'Your drawdown ran deep. Rebalancing away from concentration and holding an index put through scary headlines keeps the holes shallow.',
+  c_noreb:'You never rebalanced — diversification is free risk reduction worth using before shocks.',
+  c_ok:'Balanced and disciplined. Next: trim unnecessary premiums in calm rounds to lift returns without taking on real risk.'
+},
+zh:{
+  doc_title:'稳中求胜 — 投资组合对冲 | Evolta',
+  lang_other:'EN', lang_aria:'切换到英文',
+  brand_sub:'投资组合对冲入门 · <span class="evolta">Evolta — 学习 · 探索 · 进化</span>',
+  back_all:'‹ 全部游戏', press_start:'点击开始',
+  round_n:n=>'第 '+n+' 回合', round_of:n=>'共 '+n+' 回合',
+
+  nav_back:'‹ 上一课', nav_skip:'跳过，直接开始 ›', nav_next:'下一课 ›', nav_open:'进入交易台 🛡️',
+
+  pn_wire:'市场快讯', pn_hold:'你的持仓', pn_desk:'保险柜台',
+  pn_port:'投资组合', pn_risk:'风险', pn_hedges:'当前对冲',
+  pn_recap:'本回合发生了什么', pn_gloss:'术语表',
+
+  intro_hl:'你管理着一个 10 万美元的投资组合。',
+  intro_src:'Evolta 投资部',
+  intro_ex:'接下来的 10 个回合里，市场会不断冲击你的持仓。买入<b>对冲</b>——一种在暴跌时才赔付的保险——来保护下行风险，但也要留意为此付出的<b>权利金</b>。点击<b>开始</b>查看第一个情景。',
+  reset_hl:'全新的一本账，10 万美元待守护。',
+  reset_ex:'点击<b>开始</b>查看第一个情景。',
+
+  th_sector:'板块', th_value:'市值', th_last:'上期涨跌',
+  k_return:'总回报', k_prem:'已付权利金', k_pay:'对冲赔付', k_cash:'现金',
+  k_dd:'最大回撤', tip_dd:'到目前为止组合从最高点到最低点的最大跌幅。越小越好。',
+  no_hedges:'本回合没有任何对冲。',
+  replay_acad:'↺ 重看教程',
+  btn_start:'▶ 开始', btn_resolve:'▶ 结算本回合',
+
+  gloss:'<b style="color:var(--gold)">敞口</b> 某个板块下跌时你会亏多少<br><b style="color:var(--gold)">对冲</b> 在组合亏钱时能赚钱的头寸<br><b style="color:var(--gold)">看跌期权</b> 价格跌破某一水平后开始赔付的保险<br><b style="color:var(--gold)">权利金</b> 买对冲的前期成本，也就是"损耗"<br><b style="color:var(--gold)">分散化</b> 分散风险，让任何单一冲击都打不沉你<br><b style="color:var(--gold)">回撤</b> 组合价值从高点到低点的最大跌幅',
+
+  sec_tech:'科技', sec_banks:'银行', sec_energy:'能源', sec_intl:'海外',
+  cash_row:'现金', cash_sub:'安全，但没有回报',
+  insured:'🛡️ 本回合已投保', unhedged:'未对冲',
+  what_means:'这意味着：',
+
+  conc_high:c=>'最大板块占比 <b>'+c+'%</b>——那里出事会很疼。可以考虑再平衡或买入看跌期权。',
+  conc_ok:c=>'最大板块占比 '+c+'%——分布还算均衡。',
+
+  tc_put:'板块看跌期权', tc_put_d:(d,pr)=>'为单个板块投保，把本回合的跌幅大致封在 −'+d+'% 以内。成本为该板块市值的 '+pr+'%。',
+  tc_put_b:'买入看跌期权',
+  tc_idx:'指数看跌期权', tc_idx_d:(d,pr,amt)=>'为整本账投保，防范全面暴跌，把总跌幅大致封在 −'+d+'% 以内。成本为股票市值的 '+pr+'%（'+amt+'）。',
+  tc_idx_b:'买入指数看跌期权',
+  tc_reb:'再平衡', tc_reb_d:'把资金在各板块之间均分，降低集中度。不花钱——但要削减你的盈利板块。',
+  tc_reb_b:'再平衡',
+  tc_cash:'提高现金', tc_cash_d:'把每个板块的 20% 换成现金。风险和上行空间同时降低——纯粹的降风险操作。',
+  tc_cash_b:'降风险',
+  opt_prem:(n,amt)=>n+' — 权利金 '+amt,
+
+  dd_none:'暂无回撤，本金完好。',
+  dd_shallow:v=>'回撤 '+v+'%——很浅，控制得不错。',
+  dd_bumpy:v=>'回撤 '+v+'%——开始颠簸了。',
+  dd_deep:v=>'回撤 '+v+'%——坑挖得很深，很难回本。',
+
+  tag_put:'看跌', whole_book:'整本账',
+  caps_sector:d=>'本回合跌幅封顶 −'+d+'%',
+  caps_book:d=>'本回合总跌幅封顶 −'+d+'%',
+
+  toast_start:'请先点击开始。',
+  toast_insured:'本回合已经投过保了。',
+  toast_nocash:'现金不足，付不起这笔权利金。',
+  toast_idx_have:'指数看跌期权已经买过了。',
+  toast_idx_nocash:'现金不足，买不了指数看跌期权。',
+  toast_bought:(n,amt)=>'已买入'+n+'看跌期权——权利金 '+amt+'。',
+  toast_bought_idx:amt=>'已买入指数看跌期权——权利金 '+amt+'。',
+  toast_reb:'已按等权重再平衡——集中度下降。',
+  toast_cash:amt=>'已换出 '+amt+' 现金——敞口下降。',
+
+  r_swing:'组合变动', r_moves:'各板块表现：', r_put_paid:'（期权已赔付）',
+  r_payouts:'对冲赔付：', r_payouts_t:amt=>'保险赔回 '+amt+'。',
+  r_unused:'本回合你的对冲没有派上用场——这就是保护所要付出的权利金成本。',
+
+  ev0_hl:'科技股财报大超预期', ev0_src:'MarketWatch', ev0_ex:'一批亮眼业绩推动科技股上涨。如果你在科技板块有敞口就很划算，其他板块基本沾不上光。',
+  ev1_hl:'加息担忧引发科技股抛售', ev1_src:'彭博', ev1_ex:'利率走高对久期长的成长股冲击最大。科技仓位重的账户感受最深。',
+  ev2_hl:'区域性银行风险蔓延', ev2_src:'路透', ev2_ex:'存款流失与信用担忧重创金融股，并外溢到科技和海外标的。',
+  ev3_hl:'央行意外降息', ev3_src:'金融时报', ev3_ex:'资金变便宜，几乎所有资产都受益，金融股尤其明显。',
+  ev4_hl:'供给冲击推动油价飙升', ev4_src:'标普全球', ev4_ex:'能源股大涨，但油价走高会挤压科技公司利润，也不利于依赖进口的海外标的。',
+  ev5_hl:'能源过剩导致原油暴跌', ev5_src:'洲际交易所', ev5_ex:'供给过剩把能源股砸出大坑，市场其余部分则不为所动。',
+  ev6_hl:'新兴市场货币危机', ev6_src:'华尔街日报', ev6_ex:'汇率急跌重创海外持仓，对其他板块只有轻微波及。',
+  ev7_hl:'全面风险偏好回升，各板块普涨', ev7_src:'CNBC', ev7_ex:'软着陆预期水涨船高。这种回合适合满仓。',
+  ev8_hl:'全球增长担忧引发市场暴跌', ev8_src:'彭博', ev8_ex:'全线抛售。这正是指数对冲存在的意义。',
+  ev9_hl:'板块轮动：资金撤出科技、涌入能源', ev9_src:'摩根交易台', ev9_ex:'资金从成长切换到价值与大宗商品。同一时刻有人欢喜有人愁。',
+  ev10_hl:'金发女孩数据：增长平稳、通胀回落', ev10_src:'金融时报', ev10_ex:'温和而全面的上涨，没有波澜。对冲这回合大概率会白买。',
+
+  l_kick:(i,n)=>'教程 · 第 '+i+' 课 / 共 '+n+' 课',
+  l_kick3:'教程 · 第 3 课 / 共 5 课 · 核心工具',
+  l_kick5:'教程完成',
+
+  l0_ttl:'持有资产，就是在承担风险',
+  l0_lede:'持有股票，涨的时候你赚钱——跌的时候你同样会<b>亏钱</b>。对冲这门手艺，是在保住上行空间的同时，给下行装一个底。可以把它理解成<b>投资组合的保险</b>。',
+  l0_calm:'平静的市场', l0_crash:'暴跌来袭',
+  l0_unprot:'无保护：−38%', l0_hedged:'已对冲：−12%',
+  l0_p1:'<b>你是投资组合经理。</b>你手上有科技、银行、能源、海外股票等多个板块。',
+  l0_p2:'<b>冲击一定会来。</b>业绩不及预期、加息、油价飙升、危机——每一种打击的板块都不一样。',
+  l0_p3:'<b>你的任务不是预测每一次冲击</b>，而是把保险买到合适的量，让糟糕的一个月只是让你受伤，而不是把你打沉。',
+  l0_tlab:'核心权衡',
+  l0_ttxt:'保险每回合都要花钱（<b>权利金</b>），但暴跌时能大赚一笔。买得太少，一次暴跌就能让你出局；买得太多，权利金又会不断侵蚀收益。接下来的几课会帮你建立这种手感。',
+
+  l1_ttl:'敞口：你的钱会从哪里流失',
+  l1_lede:'你的组合分散在多个板块，每一个都是一处<b>敞口</b>——坏消息会从那里让你亏钱。点一个冲击，看看哪些柱子会缩水。注意：一次过于集中的下注，足以拖累整本账。',
+  l1_tech:'📉 科技股抛售', l1_banks:'🏦 银行危机', l1_oil:'🛢️ 油价暴跌', l1_reset:'↺ 重置',
+  l1_total:v=>'股票总市值：<b>$'+v+'k</b>',
+  l1_p1:'<b>集中就是风险。</b>如果大部分钱都压在一个板块上，那个板块的坏日子就是你的灾难日。',
+  l1_p2:'<b>不同的冲击打击不同的板块。</b>银行危机几乎不碰能源；油价暴跌也基本不影响银行。',
+  l1_p3:'<b>清楚自己的敞口</b>，才知道该给什么上保险。你要对冲的，是那些你输不起的部分。',
+  l1_tlab:'试试看',
+  l1_ttxt:'把同一个冲击点两次——柱子会继续缩水。现实中不管理集中度的组合，可能在一次事件里损失一半价值。<b>分散</b>与<b>投保</b>，就是活下来的方式。',
+
+  l2_ttl:'看跌期权替你在下面装一块底板',
+  l2_lede:'最经典的对冲工具是<b>看跌期权</b>。当市场跌破某个约定水平后，它会开始赔付给你——亏损就此止住。橙色线是<b>没有</b>对冲的组合，绿色线是<b>有</b>对冲的。拖动保障比例，看看底板如何抬高。',
+  l2_yret:'你的回报', l2_market:'市场 →', l2_unhedged:'无对冲', l2_floor:'对冲后的底板',
+  l2_cover:'保障比例',
+  l2_p1:'<b>跌破底板后，绿线就走平了。</b>无论市场再跌多少，你的亏损都到此为止——这就是保护。',
+  l2_p2:'<b>在零轴以上，两条线几乎重合。</b>上行空间你几乎全部保留，对冲只多花了一点权利金。',
+  l2_p3:'<b>保障比例越高，底板越高</b>，但权利金也越贵。安心是按美元计价买来的。',
+  l2_tlab:'关键在于这个形状',
+  l2_ttxt:'对冲会把你的收益曲线掰弯：<b>亏损封顶，收益几乎不减</b>。这种不对称——亏一点点，换来不会亏一大笔——就是这门游戏的全部。',
+  l2_read:(f,pr,note)=>'底板在 <b>'+f+'%</b> · 权利金损耗 <b>'+pr+'%</b>。'+note,
+  l2_cheap:'便宜，但保护很薄。',
+  l2_strong:'底板很扎实——但权利金会啃掉不少收益。',
+  l2_bal:'保障比较均衡。',
+
+  l3_ttl:'保险是一项成本——直到它不是',
+  l3_lede:'新手常忽略的一点是：在<b>平静</b>的市场里，对冲只是白花权利金，不买反而更划算；而在<b>暴跌</b>里，同一份对冲能救下整个组合。你事先无法知道下一回合属于哪一种——所以要把保险买到两种情况下都能接受的量。',
+  l3_unh:'无对冲', l3_hed:'已对冲',
+  l3_crash:'📉 暴跌回合', l3_calm:'🌤️ 平静回合',
+  l3_p1:'<b>平静回合：</b>对冲到期作废。对冲后的账户略低一些——权利金"白花了"。',
+  l3_p2:'<b>暴跌回合：</b>看跌期权开始赔付，对冲后的账户几乎不动，而没对冲的那本已经塌了。',
+  l3_p3:'<b>拉长时间看</b>，你用许多笔小额权利金，换掉一次毁灭性的亏损。能活下来的人都是这么想的。',
+  l3_tlab:'心态',
+  l3_ttxt:'不要因为某一个平静回合"亏了"就否定对冲。要看<b>整个赛季</b>：你有没有在一连串冲击中保持偿付能力、走得足够平稳？复盘评分看的正是这一点。',
+
+  l4_ttl:'分散化：市场上唯一的免费午餐',
+  l4_lede:'你并不总需要买保险——有时候分散开就够了。如果两项持仓不同步涨跌（<b>相关性</b>低），它们的波动会部分互相抵消，整体起伏免费变小。拖动相关性，看看合并后的风险柱。',
+  l4_a:'资产 A', l4_b:'资产 B', l4_combined:'合并后', l4_risk:'风险',
+  l4_p1:'<b>相关性 +1：</b>两者完全同步——合在一起省不了任何风险。',
+  l4_p2:'<b>相关性 0：</b>彼此独立——合并后的风险已经明显下降。',
+  l4_p3:'<b>相关性 −1：</b>完全反向——一边的盈利抵消另一边的亏损。这是一种不花权利金的天然对冲。',
+  l4_tlab:'为什么说它"免费"',
+  l4_ttxt:'和看跌期权不同，分散化不需要付权利金——你只要持有彼此不相关的东西。在游戏里，<b>再平衡</b>会把钱均匀铺开，在冲击到来前降低集中度。',
+  l4_read:(c,v,note)=>'相关性 <b>'+c+'</b> → 合并风险为单一资产的 <b>'+v+'%</b>。'+note,
+  l4_strong:'非常好的天然对冲！', l4_nice:'分散化收益不错。', l4_little:'收效有限——两者太像了。',
+
+  l5_ttl:'你已经可以独立管理这本账了',
+  l5_lede:'每个回合你都会用到这四点：',
+  l5_p1:'<b>敞口</b>——清楚哪些板块会伤到你，以及伤多深。',
+  l5_p2:'<b>看跌期权</b>——用权利金换来"亏损封顶、上行保留"的保险。',
+  l5_p3:'<b>成本与保护的权衡</b>——权利金在平静回合是损耗，在暴跌回合是救命钱；要按两种情况一起定量。',
+  l5_p4:'<b>分散化</b>——先免费把风险摊薄，剩下的再买保险。',
+  l5_tlab:'接下来 10 个回合的任务',
+  l5_ttxt:'你从 <b>10 万美元</b>起步。每个回合读懂情景，决定给什么投保、要不要再平衡，然后结算。把<b>回撤</b>控制得浅一些，把权利金花得合理一些。最后会有一份带评分的<b>复盘</b>——教程随时可以从术语表重看。',
+
+  d_title:'赛季复盘', d_notes:'交易台点评', d_again:'↺ 再管理一个赛季',
+  d_final:'最终市值', d_dd:'最大回撤', d_crashes:'暴跌防护',
+  d_eff:'对冲效率', d_prem:'权利金支出',
+  d_final_v:(v,r)=>v+'（'+r+'）',
+  d_dd_v:(s,v)=>s+' — 最深跌幅 '+v+'%',
+  d_crash_v:(a,b)=>'有保护 '+a+' 次 / 裸奔 '+b+' 次',
+  d_eff_v:(s,x)=>s+'（赔付/权利金 '+x+' 倍）',
+  d_prem_v:(v,pct)=>v+'（占组合 '+pct+'%）',
+  d_smooth:'平稳', d_bumpy:'颠簸', d_volatile:'剧烈',
+  d_paid:'保险赚回了自己', d_reasonable:'还算合理', d_heavy:'权利金偏重',
+
+  c_strong:'表现稳健——既守住了本金，也实现了增长。',
+  c_down:'这一季收在亏损。要么是暴跌时你没有对冲，要么是权利金拖累太重。',
+  c_unprot:n=>'你有 '+n+' 次在完全没有保护的情况下扛下了暴跌——在全面抛售前买一份指数看跌期权，会缓和很多。',
+  c_prem:'你在权利金上花得很重。行情平静时这会持续侵蚀收益——只给真正的大风险上保险，不必对每一次小波动都投保。',
+  c_unused:'你买的对冲大多没派上用场。不看行情、每回合都买看跌期权，属于代价高昂的过度投保。',
+  c_dd:'你的回撤挖得很深。通过再平衡降低集中度，并在风声鹤唳时持有指数看跌期权，能让坑浅很多。',
+  c_noreb:'你一次都没有再平衡——分散化是免费的风险削减，值得在冲击到来前用上。',
+  c_ok:'配置均衡、操作有纪律。下一步：在平静回合削减不必要的权利金，在不增加实际风险的前提下提升收益。'
+}
+};
+let LANG=(function(){
+  const q=new URLSearchParams(location.search).get('lang');
+  if(q&&I18N[q])return q;
+  let v=null;try{v=localStorage.getItem('evolta_lang')}catch(e){}
+  return (v&&I18N[v])?v:'en';
+})();
+function t(k,...a){const v=I18N[LANG][k]!==undefined?I18N[LANG][k]:I18N.en[k];return typeof v==='function'?v(...a):v}
+
 let acadStep=0;
 const SECTORS=[
   {key:'tech',name:'Tech',color:'#3a86c8'},
@@ -315,7 +653,7 @@ function renderSteps(){
 function renderAcademy(){
   renderSteps(); LESSONS[acadStep]();
   document.getElementById('backBtn').style.visibility=acadStep===0?'hidden':'visible';
-  document.getElementById('nextBtn').textContent=acadStep===LESSONS.length-1?'Open the desk 🛡️':'Next ›';
+  document.getElementById('nextBtn').textContent=acadStep===LESSONS.length-1?t('nav_open'):t('nav_next');
   document.getElementById('skipBtn').style.display=acadStep===LESSONS.length-1?'none':'inline-block';
 }
 function acadNext(){ if(acadStep>=LESSONS.length-1){startGame();return;} acadStep++;renderAcademy();window.scrollTo({top:0,behavior:'smooth'}); }
@@ -329,36 +667,36 @@ function openAcademy(){
 
 function L0(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 1 of 5</div>
-    <div class="lesson-title">Owning things means risking things</div>
-    <p class="lesson-lede">When you hold stocks, you make money when they rise — but you also <b>lose</b> when they fall. Hedging is the art of keeping your upside while putting a floor under your downside. Think of it as <b>insurance for your portfolio</b>.</p>
+    <div class="lesson-kicker">${t('l_kick',1,5)}</div>
+    <div class="lesson-title">${t('l0_ttl')}</div>
+    <p class="lesson-lede">${t('l0_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 260" width="100%">
-          <text x="70" y="22" text-anchor="middle" font-size="10" fill="#6e6038">Calm market</text>
-          <text x="270" y="22" text-anchor="middle" font-size="10" fill="#6e6038">A crash hits</text>
+          <text x="70" y="22" text-anchor="middle" font-size="10" fill="#6e6038">${t('l0_calm')}</text>
+          <text x="270" y="22" text-anchor="middle" font-size="10" fill="#6e6038">${t('l0_crash')}</text>
           <line x1="20" y1="210" x2="340" y2="210" stroke="#e0d5bd" stroke-width="1.5"/>
           <rect x="40" y="70" width="60" height="140" rx="4" fill="#b8860b" opacity="0.8"/>
           <text x="70" y="62" text-anchor="middle" font-size="11" fill="#5a4a1f" font-weight="600">$100k</text>
           <rect x="160" y="70" width="60" height="140" rx="4" fill="#b8860b" opacity="0.25"/>
           <rect x="160" y="150" width="60" height="60" rx="4" fill="#c0392b" opacity="0.8"/>
           <text x="190" y="62" text-anchor="middle" font-size="11" fill="#c0392b" font-weight="600">$62k</text>
-          <text x="190" y="240" text-anchor="middle" font-size="9" fill="#a89868">unprotected: −38%</text>
+          <text x="190" y="240" text-anchor="middle" font-size="9" fill="#a89868">${t('l0_unprot')}</text>
           <rect x="280" y="70" width="40" height="140" rx="4" fill="#b8860b" opacity="0.25"/>
           <rect x="280" y="118" width="40" height="92" rx="4" fill="#1a7a4c" opacity="0.8"/>
           <text x="300" y="62" text-anchor="middle" font-size="11" fill="#1a7a4c" font-weight="600">$88k</text>
-          <text x="300" y="240" text-anchor="middle" font-size="9" fill="#1a7a4c">hedged: −12%</text>
+          <text x="300" y="240" text-anchor="middle" font-size="9" fill="#1a7a4c">${t('l0_hedged')}</text>
         </svg>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>You are a portfolio manager.</b> You hold a mix of sectors — tech, banks, energy, international stocks.</li>
-          <li><b>Shocks are coming.</b> Earnings misses, rate hikes, oil spikes, crises — each hits different sectors.</li>
-          <li><b>Your job isn't to predict every shock.</b> It's to size your insurance so a bad month dents you instead of sinking you.</li>
+          <li>${t('l0_p1')}</li>
+          <li>${t('l0_p2')}</li>
+          <li>${t('l0_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">The core trade-off</div>
-          <div class="txt">Insurance costs money every round (the <b>premium</b>), but it pays off big in a crash. Too little and a crash wipes you out; too much and the premiums bleed your returns. The next lessons build your intuition.</div>
+          <div class="lab">${t('l0_tlab')}</div>
+          <div class="txt">${t('l0_ttxt')}</div>
         </div>
       </div>
     </div>`;
@@ -367,9 +705,9 @@ function L0(){
 let expVals={tech:30,banks:25,energy:20,intl:15};
 function L1(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 2 of 5</div>
-    <div class="lesson-title">Exposure: where your money can bleed</div>
-    <p class="lesson-lede">Your portfolio is split across sectors. Each is an <b>exposure</b> — a place where bad news costs you. Click a shock and watch which bars shrink. Notice how a single concentrated bet can hurt the whole book.</p>
+    <div class="lesson-kicker">${t('l_kick',2,5)}</div>
+    <div class="lesson-title">${t('l1_ttl')}</div>
+    <p class="lesson-lede">${t('l1_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 240" width="100%" id="expSvg">
@@ -377,22 +715,22 @@ function L1(){
           <g id="expBars"></g>
         </svg>
         <div class="chip-row" style="margin-top:6px">
-          <div class="chip" onclick="expShock('tech')">📉 Tech selloff</div>
-          <div class="chip" onclick="expShock('banks')">🏦 Bank crisis</div>
-          <div class="chip" onclick="expShock('energy')">🛢️ Oil crash</div>
-          <div class="chip" onclick="expShock('reset')">↺ Reset</div>
+          <div class="chip" onclick="expShock('tech')">${t('l1_tech')}</div>
+          <div class="chip" onclick="expShock('banks')">${t('l1_banks')}</div>
+          <div class="chip" onclick="expShock('energy')">${t('l1_oil')}</div>
+          <div class="chip" onclick="expShock('reset')">${t('l1_reset')}</div>
         </div>
-        <div class="read-out" id="expRead" style="margin-top:10px">Total portfolio: <b>$90.0k</b> in stocks</div>
+        <div class="read-out" id="expRead" style="margin-top:10px"></div>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Concentration is risk.</b> If most of your money sits in one sector, that sector's bad day is your disaster.</li>
-          <li><b>Different shocks hit different sectors.</b> A bank crisis barely touches energy; an oil crash barely touches banks.</li>
-          <li><b>Knowing your exposures</b> tells you what to insure. You hedge the things you can't afford to lose.</li>
+          <li>${t('l1_p1')}</li>
+          <li>${t('l1_p2')}</li>
+          <li>${t('l1_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">Try this</div>
-          <div class="txt">Hit the same shock twice — the bar keeps shrinking. Real portfolios that don't manage concentration can lose half their value in one event. <b>Spreading out</b> and <b>insuring</b> are how you survive.</div>
+          <div class="lab">${t('l1_tlab')}</div>
+          <div class="txt">${t('l1_ttxt')}</div>
         </div>
       </div>
     </div>`;
@@ -410,7 +748,7 @@ function drawExp(){
   });
   document.getElementById('expBars').innerHTML=html;
   const tot=Object.values(expVals).reduce((a,b)=>a+b,0);
-  document.getElementById('expRead').innerHTML=`Total portfolio: <b>$${tot.toFixed(1)}k</b> in stocks`;
+  document.getElementById('expRead').innerHTML=t('l1_total',tot.toFixed(1));
 }
 function expShock(k){
   if(k==='reset'){expVals={tech:30,banks:25,energy:20,intl:15};}
@@ -423,36 +761,36 @@ function expShock(k){
 let putCover=60;
 function L2(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 3 of 5 · the key tool</div>
-    <div class="lesson-title">A put option puts a floor under you</div>
-    <p class="lesson-lede">The classic hedge is a <b>put option</b>. It pays you back when the market falls past a chosen level — so your losses stop there. The orange line is your portfolio <b>without</b> a hedge; the green line is <b>with</b> one. Drag the coverage and watch the floor rise.</p>
+    <div class="lesson-kicker">${t('l_kick3')}</div>
+    <div class="lesson-title">${t('l2_ttl')}</div>
+    <p class="lesson-lede">${t('l2_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 250" width="100%">
           <line x1="40" y1="20" x2="40" y2="210" stroke="#e0d5bd" stroke-width="1.5"/>
           <line x1="40" y1="115" x2="344" y2="115" stroke="#e0d5bd" stroke-width="1.5"/>
           <text x="348" y="118" text-anchor="end" font-size="8" fill="#a89868">0%</text>
-          <text x="40" y="16" text-anchor="middle" font-size="8" fill="#a89868">your return</text>
-          <text x="320" y="128" font-size="8" fill="#a89868">market →</text>
+          <text x="40" y="16" text-anchor="middle" font-size="8" fill="#a89868">${t('l2_yret')}</text>
+          <text x="320" y="128" font-size="8" fill="#a89868">${t('l2_market')}</text>
           <line x1="40" y1="205" x2="344" y2="25" stroke="#c0392b" stroke-width="2" opacity="0.55"/>
-          <text x="300" y="40" font-size="9" fill="#c0392b">unhedged</text>
+          <text x="300" y="40" font-size="9" fill="#c0392b">${t('l2_unhedged')}</text>
           <polyline id="hedgeLine" class="line-anim" fill="none" stroke="#1a7a4c" stroke-width="2.5" points=""/>
-          <text x="70" y="200" font-size="9" fill="#1a7a4c">hedged floor</text>
+          <text x="70" y="200" font-size="9" fill="#1a7a4c">${t('l2_floor')}</text>
         </svg>
         <div class="viz-controls">
-          <div class="ctrl-row"><label>Coverage</label><input type="range" min="0" max="100" value="60" id="coverSlider" oninput="updatePut(+this.value)"></div>
+          <div class="ctrl-row"><label>${t('l2_cover')}</label><input type="range" min="0" max="100" value="60" id="coverSlider" oninput="updatePut(+this.value)"></div>
           <div class="read-out" id="putRead"></div>
         </div>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Below the floor, the green line goes flat.</b> No matter how far the market drops, your losses stop — that's the protection.</li>
-          <li><b>Above zero, the lines nearly overlap.</b> You keep almost all your upside; the hedge just costs a small premium.</li>
-          <li><b>More coverage = higher floor</b>, but a bigger premium. You're buying peace of mind by the dollar.</li>
+          <li>${t('l2_p1')}</li>
+          <li>${t('l2_p2')}</li>
+          <li>${t('l2_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">The shape that matters</div>
-          <div class="txt">A hedge bends your payoff: <b>capped losses, (almost) full gains</b>. That asymmetry — lose a little to avoid losing a lot — is the whole game.</div>
+          <div class="lab">${t('l2_tlab')}</div>
+          <div class="txt">${t('l2_ttxt')}</div>
         </div>
       </div>
     </div>`;
@@ -473,21 +811,21 @@ function updatePut(c){
     pts.push(`${x.toFixed(1)},${Math.max(topY,Math.min(botY,y)).toFixed(1)}`);
   }
   document.getElementById('hedgeLine').setAttribute('points',pts.join(' '));
-  document.getElementById('putRead').innerHTML=`Floor at <b>${floorRet.toFixed(0)}%</b> · premium drag <b>${premium.toFixed(1)}%</b>. ${c<25?'Cheap, but thin protection.':c>80?'Strong floor — but the premium bites your gains.':'Balanced cover.'}`;
+  document.getElementById('putRead').innerHTML=t('l2_read',floorRet.toFixed(0),premium.toFixed(1),c<25?t('l2_cheap'):c>80?t('l2_strong'):t('l2_bal'));
 }
 
 let costScenario='crash';
 function L3(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 4 of 5</div>
-    <div class="lesson-title">Insurance is a cost — until it isn't</div>
-    <p class="lesson-lede">Here's the catch beginners miss: in <b>calm</b> markets the hedge just costs you the premium and you'd have been better off without it. In a <b>crash</b>, the same hedge saves your portfolio. You can't tell in advance which round is which — so you size insurance you can live with either way.</p>
+    <div class="lesson-kicker">${t('l_kick',4,5)}</div>
+    <div class="lesson-title">${t('l3_ttl')}</div>
+    <p class="lesson-lede">${t('l3_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 230" width="100%">
           <line x1="20" y1="190" x2="340" y2="190" stroke="#e0d5bd" stroke-width="1.5"/>
-          <text x="95" y="22" text-anchor="middle" font-size="10" fill="#6e6038">Unhedged</text>
-          <text x="255" y="22" text-anchor="middle" font-size="10" fill="#6e6038">Hedged</text>
+          <text x="95" y="22" text-anchor="middle" font-size="10" fill="#6e6038">${t('l3_unh')}</text>
+          <text x="255" y="22" text-anchor="middle" font-size="10" fill="#6e6038">${t('l3_hed')}</text>
           <rect id="barUn" class="bar-anim" x="60" y="60" width="70" height="130" rx="4" fill="#b8860b" opacity="0.8"/>
           <rect id="barHe" class="bar-anim" x="220" y="60" width="70" height="130" rx="4" fill="#1a7a4c" opacity="0.82"/>
           <text id="lblUn" x="95" y="52" text-anchor="middle" font-size="13" fill="#5a4a1f" font-weight="600">$100k</text>
@@ -495,19 +833,19 @@ function L3(){
           <text id="vCap" x="180" y="214" text-anchor="middle" font-size="10" fill="#6e6038"></text>
         </svg>
         <div class="chip-row" style="margin-top:6px">
-          <div class="chip" onclick="setScenario('crash')">📉 Crash round</div>
-          <div class="chip" onclick="setScenario('calm')">🌤️ Calm round</div>
+          <div class="chip" onclick="setScenario('crash')">${t('l3_crash')}</div>
+          <div class="chip" onclick="setScenario('calm')">${t('l3_calm')}</div>
         </div>
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Calm round:</b> the hedge expires worthless. The hedged book ends slightly lower — you "wasted" the premium.</li>
-          <li><b>Crash round:</b> the put pays out and the hedged book barely flinches while the unhedged one craters.</li>
-          <li><b>Over a long run</b> you pay many small premiums to avoid one ruinous loss. Survivors think in those terms.</li>
+          <li>${t('l3_p1')}</li>
+          <li>${t('l3_p2')}</li>
+          <li>${t('l3_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">The mindset</div>
-          <div class="txt">Don't judge a hedge by a single calm round where it "lost." Judge your <b>whole season</b>: did you stay solvent and smooth through the shocks? That's what the debrief grades.</div>
+          <div class="lab">${t('l3_tlab')}</div>
+          <div class="txt">${t('l3_ttxt')}</div>
         </div>
       </div>
     </div>`;
@@ -531,20 +869,20 @@ function setScenario(s){
 let corr=0.8;
 function L4(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy · Lesson 5 of 5</div>
-    <div class="lesson-title">Diversification: the only free lunch</div>
-    <p class="lesson-lede">You don't always need to buy insurance — sometimes you just spread out. If two holdings don't move together (low <b>correlation</b>), their ups and downs partly cancel, and your overall swings shrink for free. Drag the correlation and watch the combined risk bar.</p>
+    <div class="lesson-kicker">${t('l_kick',5,5)}</div>
+    <div class="lesson-title">${t('l4_ttl')}</div>
+    <p class="lesson-lede">${t('l4_lede')}</p>
     <div class="lesson-body">
       <div class="viz-box">
         <svg viewBox="0 0 360 230" width="100%">
           <line x1="20" y1="190" x2="340" y2="190" stroke="#e0d5bd" stroke-width="1.5"/>
           <rect x="50" y="60" width="55" height="130" rx="4" fill="#3a86c8" opacity="0.7"/>
-          <text x="77" y="52" text-anchor="middle" font-size="10" fill="#5a4a1f">Asset A</text>
+          <text x="77" y="52" text-anchor="middle" font-size="10" fill="#5a4a1f">${t('l4_a')}</text>
           <rect x="135" y="60" width="55" height="130" rx="4" fill="#b8860b" opacity="0.7"/>
-          <text x="162" y="52" text-anchor="middle" font-size="10" fill="#5a4a1f">Asset B</text>
+          <text x="162" y="52" text-anchor="middle" font-size="10" fill="#5a4a1f">${t('l4_b')}</text>
           <rect id="barCombo" class="bar-anim" x="245" y="60" width="70" height="130" rx="4" fill="#1a7a4c" opacity="0.85"/>
-          <text id="lblCombo" x="280" y="52" text-anchor="middle" font-size="11" fill="#1a7a4c" font-weight="600">risk</text>
-          <text x="280" y="214" text-anchor="middle" font-size="9.5" fill="#6e6038">Combined</text>
+          <text id="lblCombo" x="280" y="52" text-anchor="middle" font-size="11" fill="#1a7a4c" font-weight="600">${t('l4_risk')}</text>
+          <text x="280" y="214" text-anchor="middle" font-size="9.5" fill="#6e6038">${t('l4_combined')}</text>
         </svg>
         <div class="viz-controls">
           <div class="ctrl-row"><label>Correlation</label><input type="range" min="-100" max="100" value="80" id="corrSlider" oninput="updateCorr(+this.value)"></div>
@@ -553,13 +891,13 @@ function L4(){
       </div>
       <div>
         <ul class="lesson-points">
-          <li><b>Correlation +1:</b> the two move in lockstep — combining them saves nothing.</li>
-          <li><b>Correlation 0:</b> they're independent — combined risk already drops noticeably.</li>
-          <li><b>Correlation −1:</b> perfect opposites — gains in one offset losses in the other. That's a natural hedge with no premium.</li>
+          <li>${t('l4_p1')}</li>
+          <li>${t('l4_p2')}</li>
+          <li>${t('l4_p3')}</li>
         </ul>
         <div class="takeaway">
-          <div class="lab">Why it's "free"</div>
-          <div class="txt">Unlike a put, diversification costs no premium — you just hold uncorrelated things. In the game, <b>Rebalance</b> spreads your money evenly to cut concentration before a shock lands.</div>
+          <div class="lab">${t('l4_tlab')}</div>
+          <div class="txt">${t('l4_ttxt')}</div>
         </div>
       </div>
     </div>`;
@@ -573,23 +911,23 @@ function updateCorr(c){
   const r=document.getElementById('barCombo'); r.setAttribute('height',h); r.setAttribute('y',190-h);
   document.getElementById('lblCombo').setAttribute('y',190-h-6);
   document.getElementById('lblCombo').textContent=(vol*100).toFixed(0)+'%';
-  document.getElementById('corrRead').innerHTML=`Correlation <b>${corr.toFixed(2)}</b> → combined risk <b>${(vol*100).toFixed(0)}%</b> of a single asset. ${corr<-0.3?'Strong natural hedge!':corr<0.4?'Nice diversification benefit.':'Little benefit — too similar.'}`;
+  document.getElementById('corrRead').innerHTML=t('l4_read',corr.toFixed(2),(vol*100).toFixed(0),corr<-0.3?t('l4_strong'):corr<0.4?t('l4_nice'):t('l4_little'));
 }
 
 function L5(){
   document.getElementById('lessonContent').innerHTML=`
-    <div class="lesson-kicker">Academy complete</div>
-    <div class="lesson-title">You're ready to manage the book</div>
-    <p class="lesson-lede">The four ideas you'll use every round:</p>
+    <div class="lesson-kicker">${t('l_kick5')}</div>
+    <div class="lesson-title">${t('l5_ttl')}</div>
+    <p class="lesson-lede">${t('l5_lede')}</p>
     <ul class="lesson-points" style="max-width:64ch">
-      <li><b>Exposure</b> — know which sectors can hurt you, and how much.</li>
-      <li><b>Puts</b> — insurance that floors your losses while keeping upside, for a premium.</li>
-      <li><b>Cost vs protection</b> — premiums drag in calm rounds and save you in crashes; size for both.</li>
-      <li><b>Diversification</b> — spread out to cut risk for free before insuring the rest.</li>
+      <li>${t('l5_p1')}</li>
+      <li>${t('l5_p2')}</li>
+      <li>${t('l5_p3')}</li>
+      <li>${t('l5_p4')}</li>
     </ul>
     <div class="takeaway" style="max-width:64ch">
-      <div class="lab">Your job for 10 rounds</div>
-      <div class="txt">Start with <b>$100,000</b>. Each round, read the scenario, decide what to insure or rebalance, then resolve. Keep your <b>drawdown</b> shallow and your premiums sensible. A scored <b>debrief</b> grades your protection at the end — replay the Academy anytime from the Glossary.</div>
+      <div class="lab">${t('l5_tlab')}</div>
+      <div class="txt">${t('l5_ttxt')}</div>
     </div>`;
 }
 
@@ -612,64 +950,77 @@ function freshState(){
     premiumPaid:0, payoutReceived:0,
     hedges:{tech:false,banks:false,energy:false,intl:false,index:false},
     last:{tech:0,banks:0,energy:0,intl:0},
-    pendingEvent:null, recap:null,
+    pendingEvent:null, recap:null, newsMode:'intro',
     rebalances:0, crashesProtected:0, crashesUnprotected:0, hedgeRounds:0,
   };
 }
 const EVENTS=[
-  {hl:"Tech earnings blow past estimates",src:"MarketWatch",ex:"A wave of strong results lifts technology stocks. Great if you're exposed to tech, little help elsewhere.",ret:{tech:18,banks:3,energy:1,intl:4}},
-  {hl:"Rate-hike fears trigger a tech selloff",src:"Bloomberg",ex:"Higher rates hit long-duration growth stocks hardest. Tech-heavy books feel it most.",ret:{tech:-22,banks:-3,energy:-2,intl:-4},crash:'tech'},
-  {hl:"Regional banking stress spreads",src:"Reuters",ex:"Deposit flight and credit worries slam financials, with spillover into tech and international names.",ret:{tech:-6,banks:-25,energy:-2,intl:-8},crash:'banks'},
-  {hl:"Central bank surprises with a rate cut",src:"FT",ex:"Cheaper money lifts almost everything, financials especially.",ret:{tech:9,banks:14,energy:5,intl:7}},
-  {hl:"Oil spikes on supply shock",src:"S&P Global",ex:"Energy rallies hard, but pricier oil pressures tech margins and import-heavy international names.",ret:{tech:-5,banks:1,energy:20,intl:-4}},
-  {hl:"Energy glut sends crude tumbling",src:"ICE",ex:"Oversupply craters energy stocks while the rest of the market shrugs.",ret:{tech:2,banks:2,energy:-19,intl:1},crash:'energy'},
-  {hl:"Emerging-market currency crisis",src:"WSJ",ex:"A sharp FX selloff hammers international holdings; modest ripple elsewhere.",ret:{tech:-3,banks:-4,energy:-3,intl:-24},crash:'intl'},
-  {hl:"Broad risk-on rally lifts all sectors",src:"CNBC",ex:"Soft-landing optimism floats every boat. A good round to be fully invested.",ret:{tech:8,banks:7,energy:6,intl:9}},
-  {hl:"Global growth scare sparks a market crash",src:"Bloomberg",ex:"A across-the-board selloff. This is exactly what an index hedge is for.",ret:{tech:-16,banks:-15,energy:-13,intl:-17},crash:'index'},
-  {hl:"Sector rotation: out of tech, into energy",src:"Morgan Desk",ex:"Money rotates from growth to value and commodities. Winners and losers in the same breath.",ret:{tech:-8,banks:6,energy:11,intl:2}},
-  {hl:"Goldilocks data: steady growth, cooling inflation",src:"FT",ex:"A gentle, broad uplift with no drama. Hedges will likely expire unused.",ret:{tech:5,banks:4,energy:3,intl:5}},
+  {id:0,ret:{tech:18,banks:3,energy:1,intl:4}},
+  {id:1,ret:{tech:-22,banks:-3,energy:-2,intl:-4},crash:'tech'},
+  {id:2,ret:{tech:-6,banks:-25,energy:-2,intl:-8},crash:'banks'},
+  {id:3,ret:{tech:9,banks:14,energy:5,intl:7}},
+  {id:4,ret:{tech:-5,banks:1,energy:20,intl:-4}},
+  {id:5,ret:{tech:2,banks:2,energy:-19,intl:1},crash:'energy'},
+  {id:6,ret:{tech:-3,banks:-4,energy:-3,intl:-24},crash:'intl'},
+  {id:7,ret:{tech:8,banks:7,energy:6,intl:9}},
+  {id:8,ret:{tech:-16,banks:-15,energy:-13,intl:-17},crash:'index'},
+  {id:9,ret:{tech:-8,banks:6,energy:11,intl:2}},
+  {id:10,ret:{tech:5,banks:4,energy:3,intl:5}},
 ];
 function pickEvent(){ return EVENTS[Math.floor(Math.random()*EVENTS.length)]; }
+function newsHTML(){
+  if(S.newsMode==='event'&&S.pendingEvent){
+    const n=S.pendingEvent;
+    return '<div class="news"><div class="hl">'+t('ev'+n.id+'_hl')+'</div><div class="src">'+t('ev'+n.id+'_src')+'</div>'+
+           '<div class="ex"><b>'+t('what_means')+'</b> '+t('ev'+n.id+'_ex')+'</div></div>';
+  }
+  if(S.newsMode==='reset'){
+    return '<div class="news"><div class="hl">'+t('reset_hl')+'</div><div class="src">'+t('intro_src')+'</div>'+
+           '<div class="ex">'+t('reset_ex')+'</div></div>';
+  }
+  return '<div class="news"><div class="hl">'+t('intro_hl')+'</div><div class="src">'+t('intro_src')+'</div>'+
+         '<div class="ex">'+t('intro_ex')+'</div></div>';
+}
 
 function totalStocks(){ return S.val.tech+S.val.banks+S.val.energy+S.val.intl; }
 function equity(){ return totalStocks()+S.cash; }
 
 function buyPut(sector){
-  if(!S.started){toast("Press Start first.");return;}
-  if(S.hedges[sector]){toast("Already insured this round.");return;}
+  if(!S.started){toast(t('toast_start'));return;}
+  if(S.hedges[sector]){toast(t('toast_insured'));return;}
   const prem=S.val[sector]*PUT_PREM/100;
-  if(prem>S.cash){toast("Not enough cash for that premium.",true);return;}
+  if(prem>S.cash){toast(t('toast_nocash'),true);return;}
   S.cash-=prem; S.premiumPaid+=prem; S.hedges[sector]=true;
-  toast(`Bought ${sectorName(sector)} put — premium ${fmtUSD(prem)}.`); render();
+  toast(t('toast_bought',sectorName(sector),fmtUSD(prem))); render();
 }
 function buyIndexPut(){
-  if(!S.started){toast("Press Start first.");return;}
-  if(S.hedges.index){toast("Index put already in place.");return;}
+  if(!S.started){toast(t('toast_start'));return;}
+  if(S.hedges.index){toast(t('toast_idx_have'));return;}
   const prem=totalStocks()*IDX_PREM/100;
-  if(prem>S.cash){toast("Not enough cash for the index put.",true);return;}
+  if(prem>S.cash){toast(t('toast_idx_nocash'),true);return;}
   S.cash-=prem; S.premiumPaid+=prem; S.hedges.index=true;
-  toast(`Bought index put — premium ${fmtUSD(prem)}.`); render();
+  toast(t('toast_bought_idx',fmtUSD(prem))); render();
 }
 function rebalance(){
-  if(!S.started){toast("Press Start first.");return;}
+  if(!S.started){toast(t('toast_start'));return;}
   const tot=totalStocks(); const each=tot/4;
   S.val={tech:each,banks:each,energy:each,intl:each};
   S.rebalances++;
-  toast("Rebalanced to equal weights — concentration cut."); render();
+  toast(t('toast_reb')); render();
 }
 function raiseCash(){
-  if(!S.started){toast("Press Start first.");return;}
+  if(!S.started){toast(t('toast_start'));return;}
   // move 20% of each sector to cash (de-risk)
   let moved=0;
   for(const k of ['tech','banks','energy','intl']){ const m=S.val[k]*0.2; S.val[k]-=m; moved+=m; }
   S.cash+=moved;
-  toast(`Raised ${fmtUSD(moved)} to cash — exposure reduced.`); render();
+  toast(t('toast_cash',fmtUSD(moved))); render();
 }
-function sectorName(k){return {tech:'Tech',banks:'Banks',energy:'Energy',intl:'Intl'}[k];}
+function sectorName(k){return t('sec_'+k);}
 
 function startOrAdvance(){
   if(!S.started){ S.started=true; S.round=0; S.pendingEvent=pickEvent();
-    document.getElementById('advanceBtn').textContent="▶ Resolve Round"; render(); return; }
+    document.getElementById('advanceBtn').textContent=t('btn_resolve'); S.newsMode='event'; render(); return; }
   resolveRound();
 }
 function resolveRound(){
@@ -729,54 +1080,50 @@ function colorPL(n){return n>0?'up':n<0?'down':'flat';}
 function arrow(n){return n>0?'▲':n<0?'▼':'—';}
 
 function render(){
-  document.getElementById('monthLabel').textContent=S.started?`Round ${Math.min(S.round+1,ROUNDS)}`:"—";
-  document.getElementById('turnLabel').textContent=S.started?`of ${ROUNDS}`:"Press start";
+  document.getElementById('monthLabel').textContent=S.started?t('round_n',Math.min(S.round+1,ROUNDS)):"—";
+  document.getElementById('turnLabel').textContent=S.started?t('round_of',ROUNDS):t('press_start');
 
-  if(S.pendingEvent){const n=S.pendingEvent;
-    document.getElementById('newsBox').innerHTML=
-      `<div class="news"><div class="hl">${n.hl}</div><div class="src">${n.src}</div>
-       <div class="ex"><b>What it means:</b> ${n.ex}</div></div>`;}
+  document.getElementById('newsBox').innerHTML=newsHTML();
 
   // holdings table
   const rows=['tech','banks','energy','intl'].map(k=>{
     const v=S.val[k]; const ch=S.last[k];
-    return `<tr><td class="nm">${sectorName(k)}<small>${S.hedges[k]?'🛡️ insured this round':'unhedged'}</small></td>
-      <td class="px">${fmtUSD(v)}</td><td class="chg ${ch>0?'up':ch<0?'down':'flat'}">${ch?arrow(ch)+' '+Math.abs(ch).toFixed(0)+'%':'—'}</td></tr>`;
+    return '<tr><td class="nm">'+sectorName(k)+'<small>'+(S.hedges[k]?t('insured'):t('unhedged'))+'</small></td>'+
+      '<td class="px">'+fmtUSD(v)+'</td><td class="chg '+(ch>0?'up':ch<0?'down':'flat')+'">'+(ch?arrow(ch)+' '+Math.abs(ch).toFixed(0)+'%':'—')+'</td></tr>';
   }).join('');
   document.getElementById('mktBody').innerHTML=rows+
-    `<tr><td class="nm">Cash<small>safe, no return</small></td><td class="px">${fmtUSD(S.cash)}</td><td class="chg flat">—</td></tr>`;
+    '<tr><td class="nm">'+t('cash_row')+'<small>'+t('cash_sub')+'</small></td><td class="px">'+fmtUSD(S.cash)+'</td><td class="chg flat">—</td></tr>';
 
   // concentration hint
   const tot=totalStocks(); const top=Math.max(S.val.tech,S.val.banks,S.val.energy,S.val.intl);
   const conc=tot>0?top/tot*100:0;
   const ch=document.getElementById('concHint');
-  ch.innerHTML = conc>40?`<b>Concentration ${conc.toFixed(0)}%</b> in your biggest sector — a shock there would sting. Consider Rebalance or a put.`:
-    `Concentration ${conc.toFixed(0)}% in your biggest sector — reasonably balanced.`;
+  ch.innerHTML = conc>40?t('conc_high',conc.toFixed(0)):t('conc_ok',conc.toFixed(0));
 
   // insurance desk
   const tg=document.getElementById('tradeGrid');
-  const secOptions=['tech','banks','energy','intl'].map(k=>`<option value="${k}">${sectorName(k)} — premium ${fmtUSD(S.val[k]*PUT_PREM/100)}</option>`).join('');
+  const secOptions=['tech','banks','energy','intl'].map(k=>'<option value="'+k+'">'+t('opt_prem',sectorName(k),fmtUSD(S.val[k]*PUT_PREM/100))+'</option>').join('');
   tg.innerHTML=`
     <div class="trade-card">
-      <div class="tt">Sector Put</div>
-      <div class="td">Insure one sector. Caps its loss this round at about −${PUT_DEDUCT}%. Costs ${PUT_PREM}% of that sector.</div>
+      <div class="tt">${t('tc_put')}</div>
+      <div class="td">${t('tc_put_d',PUT_DEDUCT,PUT_PREM)}</div>
       <div class="qty-row"><select id="putSel">${secOptions}</select></div>
-      <div class="btn-row"><button class="buy" onclick="buyPut(document.getElementById('putSel').value)">Buy Put</button></div>
+      <div class="btn-row"><button class="buy" onclick="buyPut(document.getElementById('putSel').value)">${t('tc_put_b')}</button></div>
     </div>
     <div class="trade-card">
-      <div class="tt">Index Put</div>
-      <div class="td">Insure the whole book against a broad crash. Caps total loss at about −${IDX_DEDUCT}%. Costs ${IDX_PREM}% of stocks (${fmtUSD(totalStocks()*IDX_PREM/100)}).</div>
-      <div class="btn-row"><button class="buy" onclick="buyIndexPut()">Buy Index Put</button></div>
+      <div class="tt">${t('tc_idx')}</div>
+      <div class="td">${t('tc_idx_d',IDX_DEDUCT,IDX_PREM,fmtUSD(totalStocks()*IDX_PREM/100))}</div>
+      <div class="btn-row"><button class="buy" onclick="buyIndexPut()">${t('tc_idx_b')}</button></div>
     </div>
     <div class="trade-card">
-      <div class="tt">Rebalance</div>
-      <div class="td">Spread money evenly across sectors to cut concentration. Free — but you trim your winners.</div>
-      <div class="btn-row"><button onclick="rebalance()">Rebalance</button></div>
+      <div class="tt">${t('tc_reb')}</div>
+      <div class="td">${t('tc_reb_d')}</div>
+      <div class="btn-row"><button onclick="rebalance()">${t('tc_reb_b')}</button></div>
     </div>
     <div class="trade-card">
-      <div class="tt">Raise Cash</div>
-      <div class="td">Move 20% of each sector into safe cash. Lowers risk and upside — pure de-risking.</div>
-      <div class="btn-row"><button onclick="raiseCash()">De-risk</button></div>
+      <div class="tt">${t('tc_cash')}</div>
+      <div class="td">${t('tc_cash_d')}</div>
+      <div class="btn-row"><button onclick="raiseCash()">${t('tc_cash_b')}</button></div>
     </div>`;
 
   // portfolio sidebar
@@ -793,28 +1140,28 @@ function render(){
   const bar=document.getElementById('riskBar'); bar.style.width=Math.min(100,S.maxDD/30*100)+'%';
   bar.style.background=S.maxDD<8?'var(--pos)':S.maxDD<18?'var(--amber)':'var(--neg)';
   document.getElementById('riskHint').textContent=
-    S.maxDD<1?'No drawdown yet. Capital intact.':
-    S.maxDD<8?`Drawdown ${S.maxDD.toFixed(0)}% — shallow, well managed.`:
-    S.maxDD<18?`Drawdown ${S.maxDD.toFixed(0)}% — getting bumpy.`:
-    `Drawdown ${S.maxDD.toFixed(0)}% — deep hole, hard to recover.`;
+    S.maxDD<1?t('dd_none'):
+    S.maxDD<8?t('dd_shallow',S.maxDD.toFixed(0)):
+    S.maxDD<18?t('dd_bumpy',S.maxDD.toFixed(0)):
+    t('dd_deep',S.maxDD.toFixed(0));
 
   // active hedges
   const pb=document.getElementById('posBox'); let html='';
   ['tech','banks','energy','intl'].forEach(k=>{ if(S.hedges[k])
-    html+=`<div class="pos"><div class="pl"><span><span class="tag hedge">Put</span> ${sectorName(k)}</span><small>caps loss at −${PUT_DEDUCT}% this round</small></div></div>`;});
-  if(S.hedges.index) html+=`<div class="pos"><div class="pl"><span><span class="tag hedge">Put</span> Whole book</span><small>caps total loss at −${IDX_DEDUCT}% this round</small></div></div>`;
-  pb.innerHTML=html||'<div class="hint">No hedges in place for this round.</div>';
+    html+='<div class="pos"><div class="pl"><span><span class="tag hedge">'+t('tag_put')+'</span> '+sectorName(k)+'</span><small>'+t('caps_sector',PUT_DEDUCT)+'</small></div></div>';});
+  if(S.hedges.index) html+='<div class="pos"><div class="pl"><span><span class="tag hedge">'+t('tag_put')+'</span> '+t('whole_book')+'</span><small>'+t('caps_book',IDX_DEDUCT)+'</small></div></div>';
+  pb.innerHTML=html||'<div class="hint">'+t('no_hedges')+'</div>';
 
   // recap
   const rp=document.getElementById('recapPanel'), rb=document.getElementById('recapBox');
   if(S.recap){
     const r=S.recap; const swCls=colorPL(r.swing);
-    let h=`<div style="margin-bottom:10px"><span style="font-family:var(--mono);font-size:10px;color:var(--txt-faint);text-transform:uppercase;letter-spacing:.1em">Portfolio swing</span><br>
-      <span class="big-num ${swCls}" style="font-size:24px">${r.swing>=0?'+':''}${fmtUSD(r.swing)}</span></div>`;
-    h+=`<div style="font-size:11.5px;color:var(--txt-dim);line-height:1.7"><b style="color:var(--gold)">Sector moves:</b><br>`+
-      r.lines.map(l=>`· ${sectorName(l.k)} ${l.r>=0?'+':''}${l.r}%${(r.hedged[l.k]&&l.r<0)?' <span class="up">(put paid)</span>':''}`).join('<br>')+`</div>`;
-    if(r.payout>0) h+=`<div style="font-size:11.5px;border-top:1px solid var(--line);padding-top:8px;margin-top:8px"><b style="color:var(--gold)">Hedge payouts:</b> <span class="up">${fmtUSD(r.payout)}</span> back from your insurance.</div>`;
-    else if(Object.values(r.hedged).some(Boolean)) h+=`<div class="hint" style="margin-top:8px">Your hedges expired unused this round — that's the premium cost of protection.</div>`;
+    let h='<div style="margin-bottom:10px"><span style="font-family:var(--mono);font-size:10px;color:var(--txt-faint);text-transform:uppercase;letter-spacing:.1em">'+t('r_swing')+'</span><br>'+
+      '<span class="big-num '+swCls+'" style="font-size:24px">'+(r.swing>=0?'+':'')+fmtUSD(r.swing)+'</span></div>';
+    h+='<div style="font-size:11.5px;color:var(--txt-dim);line-height:1.7"><b style="color:var(--gold)">'+t('r_moves')+'</b><br>'+
+      r.lines.map(l=>'· '+sectorName(l.k)+' '+(l.r>=0?'+':'')+l.r+'%'+((r.hedged[l.k]&&l.r<0)?' <span class="up">'+t('r_put_paid')+'</span>':'')).join('<br>')+'</div>';
+    if(r.payout>0) h+='<div style="font-size:11.5px;border-top:1px solid var(--line);padding-top:8px;margin-top:8px"><b style="color:var(--gold)">'+t('r_payouts')+'</b> <span class="up">'+t('r_payouts_t',fmtUSD(r.payout))+'</span></div>';
+    else if(Object.values(r.hedged).some(Boolean)) h+='<div class="hint" style="margin-top:8px">'+t('r_unused')+'</div>';
     rb.innerHTML=h; rp.style.display='block';
   } else rp.style.display='none';
 }
@@ -835,56 +1182,83 @@ function endGame(){
   pts-=Math.max(0,(premPct-12)*1.5);
   pts=Math.max(0,Math.min(100,Math.round(pts)));
   const grade=pts>=85?'A':pts>=70?'B':pts>=55?'C':pts>=40?'D':'F';
-  const ddScore=S.maxDD<8?'Smooth':S.maxDD<18?'Bumpy':'Volatile';
-  const effScore=hedgeEff>=1.2?'Insurance paid for itself':hedgeEff>=0.6?'Reasonable':'Premium-heavy';
+  const ddScore=S.maxDD<8?t('d_smooth'):S.maxDD<18?t('d_bumpy'):t('d_volatile');
+  const effScore=hedgeEff>=1.2?t('d_paid'):hedgeEff>=0.6?t('d_reasonable'):t('d_heavy');
 
   const dbg=[
-    ['Final value', fmtUSD(eq)+` (${ret>=0?'+':''}${ret.toFixed(1)}%)`, ret>=0?'up':'down'],
-    ['Max drawdown', `${ddScore} — ${S.maxDD.toFixed(1)}% worst fall`, S.maxDD<8?'up':S.maxDD<18?'flat':'down'],
-    ['Crashes protected', `${S.crashesProtected} covered / ${S.crashesUnprotected} taken bare`, S.crashesUnprotected===0?'up':S.crashesProtected>=S.crashesUnprotected?'flat':'down'],
-    ['Hedge efficiency', `${effScore} (${(hedgeEff).toFixed(2)}× payout/premium)`, hedgeEff>=1?'up':'flat'],
-    ['Premium spent', `${fmtUSD(S.premiumPaid)} (${premPct.toFixed(1)}% of book)`, premPct<12?'up':'down'],
+    [t('d_final'), t('d_final_v',fmtUSD(eq),(ret>=0?'+':'')+ret.toFixed(1)+'%'), ret>=0?'up':'down'],
+    [t('d_dd'), t('d_dd_v',ddScore,S.maxDD.toFixed(1)), S.maxDD<8?'up':S.maxDD<18?'flat':'down'],
+    [t('d_crashes'), t('d_crash_v',S.crashesProtected,S.crashesUnprotected), S.crashesUnprotected===0?'up':S.crashesProtected>=S.crashesUnprotected?'flat':'down'],
+    [t('d_eff'), t('d_eff_v',effScore,hedgeEff.toFixed(2)), hedgeEff>=1?'up':'flat'],
+    [t('d_prem'), t('d_prem_v',fmtUSD(S.premiumPaid),premPct.toFixed(1)), premPct<12?'up':'down'],
   ];
   const coaching=coach(ret,S,hedgeEff,premPct);
   document.getElementById('modalInner').innerHTML=`
-    <h2>Season Debrief <span class="grade" style="background:${grade==='F'||grade==='D'?'var(--neg)':grade==='A'?'var(--pos)':'var(--gold)'}">${grade}</span></h2>
+    <h2>${t('d_title')} <span class="grade" style="background:${grade==='F'||grade==='D'?'var(--neg)':grade==='A'?'var(--pos)':'var(--gold)'}">${grade}</span></h2>
     <div class="score ${ret>=0?'up':'down'}">${pts}<span style="font-size:18px;color:var(--txt-dim)">/100</span></div>
     ${dbg.map(d=>`<div class="debrief-row"><span class="lbl">${d[0]}</span><span class="rating ${d[2]}">${d[1]}</span></div>`).join('')}
     <div style="margin-top:16px;padding:14px;background:var(--panel2);border-radius:8px;border-left:3px solid var(--gold)">
-      <div style="font-family:var(--disp);color:var(--gold);font-size:14px;margin-bottom:6px">Desk notes</div>
+      <div style="font-family:var(--disp);color:var(--gold);font-size:14px;margin-bottom:6px">${t('d_notes')}</div>
       <div style="color:var(--txt-dim);font-size:12px;line-height:1.65">${coaching}</div>
     </div>
-    <button class="big-btn" style="margin-top:18px" onclick="restart()">↺ Manage Another Season</button>`;
+    <button class="big-btn" style="margin-top:18px" onclick="restart()">${t('d_again')}</button>`;
   document.getElementById('modalBg').classList.add('show');
 }
 function coach(ret,s,eff,premPct){
   const n=[];
-  if(ret>10) n.push("Strong, steady result — you protected capital and still grew it.");
-  else if(ret<0) n.push("You finished down. Check whether a crash caught you un-hedged, or premiums dragged too hard.");
-  if(s.crashesUnprotected>0) n.push(`You took ${s.crashesUnprotected} crash${s.crashesUnprotected>1?'es':''} with no cover — an index put before broad selloffs would have softened those.`);
-  if(premPct>14) n.push("You spent heavily on premiums. In calm runs that bleeds returns — insure the big risks, not every wiggle.");
-  if(eff<0.5 && s.premiumPaid>0) n.push("Most of your hedges expired unused. Buying puts every round regardless of the setup is expensive over-insurance.");
-  if(s.maxDD>18) n.push("Your drawdown ran deep. Rebalancing away from concentration and holding an index put through scary headlines keeps the holes shallow.");
-  if(s.rebalances===0) n.push("You never rebalanced — diversification is free risk reduction worth using before shocks.");
-  if(n.length===0) n.push("Balanced and disciplined. Next: trim unnecessary premiums in calm rounds to lift returns without taking on real risk.");
-  return n.join(" ");
+  if(ret>10) n.push(t('c_strong'));
+  else if(ret<0) n.push(t('c_down'));
+  if(s.crashesUnprotected>0) n.push(t('c_unprot',s.crashesUnprotected));
+  if(premPct>14) n.push(t('c_prem'));
+  if(eff<0.5 && s.premiumPaid>0) n.push(t('c_unused'));
+  if(s.maxDD>18) n.push(t('c_dd'));
+  if(s.rebalances===0) n.push(t('c_noreb'));
+  if(n.length===0) n.push(t('c_ok'));
+  return n.join(' ');
 }
 function restart(){
   document.getElementById('modalBg').classList.remove('show');
   S=freshState();
-  document.getElementById('advanceBtn').textContent="▶ Start";
-  document.getElementById('newsBox').innerHTML=
-    `<div class="news"><div class="hl">Fresh book. $100,000 to protect.</div><div class="src">Evolta Investment Desk</div>
-     <div class="ex">Press <b>Start</b> to see the first scenario.</div></div>`;
+  document.getElementById('advanceBtn').textContent=t('btn_start');
+  S.newsMode='reset';
   render();
 }
 function startGame(){
   document.getElementById('academy').classList.add('hidden');
   document.getElementById('game').classList.remove('hidden');
   document.getElementById('clock').style.display='block';
-  S=freshState(); render(); window.scrollTo({top:0,behavior:'smooth'});
+  S=freshState(); document.getElementById('advanceBtn').textContent=t('btn_start'); render(); window.scrollTo({top:0,behavior:'smooth'});
 }
-renderAcademy();
+/* ================= LANGUAGE ================= */
+function applyLang(){
+  document.documentElement.lang=LANG==='zh'?'zh-CN':'en';
+  document.body.classList.toggle('lang-zh',LANG==='zh');
+  document.title=t('doc_title');
+  const tog=document.getElementById('langToggle');
+  tog.textContent=t('lang_other');
+  tog.setAttribute('aria-label',t('lang_aria'));
+
+  document.getElementById('brandSub').innerHTML=t('brand_sub');
+  document.getElementById('backAll').textContent=t('back_all');
+  document.getElementById('glossBox').innerHTML=t('gloss');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{el.title=t(el.dataset.i18nTitle)});
+
+  if(S){
+    document.getElementById('advanceBtn').textContent=S.started?t('btn_resolve'):t('btn_start');
+    render();
+  }else{
+    document.getElementById('turnLabel').textContent=t('press_start');
+  }
+  renderAcademy();
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG=LANG==='en'?'zh':'en';
+  try{localStorage.setItem('evolta_lang',LANG)}catch(e){}
+  applyLang();
+});
+
+applyLang();
 </script>
 </body>
 </html>

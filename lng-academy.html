@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Cargo — LNG Trading Academy | Evolta</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eef4f8;
+    --panel:#ffffff;
+    --panel2:#f2f7fa;
+    --line:#dde8ef;
+    --line2:#cbdce7;
+    /* Cryogenic palette */
+    --navy:#12354f;        /* primary arctic navy */
+    --navy-lt:#2c5a7c;
+    --teal:#0f7d8c;        /* ice teal */
+    --teal-lt:#3aa7b5;
+    --flame:#d9622b;       /* burner-tip accent */
+    --flame-lt:#e98a58;
+    --pos:#1a7a4c;
+    --neg:#c0392b;
+    --txt:#1c2f3d;
+    --txt-dim:#546b7c;
+    --txt-faint:#8ba0ae;
+    --mono:'IBM Plex Mono',monospace;
+    --sans:'Inter',-apple-system,sans-serif;
+    --disp:'Fraunces',serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:
+      radial-gradient(ellipse at 10% -5%, #ddeef7 0%, transparent 45%),
+      radial-gradient(ellipse at 95% 3%, #e8f2ee 0%, transparent 40%),
+      var(--bg);
+    color:var(--txt);
+    font-family:var(--sans);
+    font-size:13.5px;
+    line-height:1.55;
+    min-height:100vh;
+    padding:0 0 70px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+  header{
+    border-bottom:1px solid var(--line);
+    padding:28px 0 18px;margin-bottom:20px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  }
+  .brand h1{font-family:var(--disp);font-weight:500;font-size:40px;line-height:.95;letter-spacing:-.02em;color:var(--navy)}
+  .brand h1 .amp{color:var(--flame);font-style:italic}
+  .brand .sub{color:var(--txt-dim);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;margin-top:8px;font-family:var(--mono)}
+  .brand .evolta{color:var(--teal);font-weight:600}
+  .back-btn{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--txt-dim);text-decoration:none;border:1px solid var(--line2);border-radius:8px;padding:8px 13px;transition:.15s;white-space:nowrap}
+  .back-btn:hover{border-color:var(--teal);color:var(--teal)}
+
+  /* Voyage progress track */
+  .voyage{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 22px 14px;margin-bottom:18px;box-shadow:0 1px 2px rgba(18,53,79,.05)}
+  .voyage-track{position:relative;height:54px}
+  .voyage-line{position:absolute;left:2%;right:2%;top:18px;height:3px;background:var(--line2);border-radius:2px}
+  .voyage-fill{position:absolute;left:2%;top:18px;height:3px;background:linear-gradient(90deg,var(--teal),var(--flame));border-radius:2px;transition:width .6s ease}
+  .waypoint{position:absolute;top:10px;transform:translateX(-50%);text-align:center;cursor:pointer}
+  .waypoint .dot{width:18px;height:18px;border-radius:50%;background:var(--panel);border:2px solid var(--line2);margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--txt-faint);transition:.2s}
+  .waypoint.done .dot{background:var(--teal);border-color:var(--teal);color:#fff}
+  .waypoint .wp-label{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--txt-faint);margin-top:6px;text-transform:uppercase;white-space:nowrap}
+  .waypoint.done .wp-label{color:var(--teal)}
+  .ship{position:absolute;top:-8px;font-size:20px;transform:translateX(-50%);transition:left .6s ease;filter:drop-shadow(0 2px 3px rgba(18,53,79,.25))}
+  .voyage-caption{font-family:var(--mono);font-size:10px;color:var(--txt-faint);letter-spacing:.1em;text-transform:uppercase;margin-top:10px;text-align:center}
+
+  /* Chapter nav */
+  .chnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+  .chnav button{
+    font-family:var(--mono);font-size:11px;letter-spacing:.03em;
+    background:var(--panel);border:1px solid var(--line2);border-radius:9px;
+    padding:9px 14px;color:var(--txt-dim);cursor:pointer;transition:.15s;
+  }
+  .chnav button:hover{border-color:var(--teal);color:var(--teal)}
+  .chnav button.active{background:var(--navy);border-color:var(--navy);color:#fff}
+  .chnav button .tick{color:var(--pos);margin-left:5px}
+  .chnav button.active .tick{color:#8fe6b7}
+
+  .grid{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:18px;box-shadow:0 1px 2px rgba(18,53,79,.04),0 6px 22px rgba(15,125,140,.04)}
+  .panel h2{font-family:var(--mono);font-weight:500;font-size:11px;color:var(--txt-faint);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .panel h2 .dot{width:5px;height:5px;border-radius:50%;background:var(--flame)}
+  .panel h3.big{font-family:var(--disp);font-size:26px;font-weight:500;color:var(--navy);margin-bottom:10px;line-height:1.15}
+  .panel p{margin-bottom:10px;color:var(--txt)}
+  .panel p.dim{color:var(--txt-dim)}
+  .mentor{
+    display:flex;gap:12px;background:var(--panel2);border:1px solid var(--line);
+    border-left:3px solid var(--flame);border-radius:10px;padding:13px 15px;margin:14px 0;
+  }
+  .mentor .avatar{font-size:22px;line-height:1}
+  .mentor .who{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--flame);margin-bottom:3px}
+  .mentor p{margin:0;font-size:13px;color:var(--txt)}
+
+  .factrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+  .fact{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:center}
+  .fact .v{font-family:var(--mono);font-size:19px;font-weight:500;color:var(--navy)}
+  .fact .k{font-size:10.5px;color:var(--txt-dim);margin-top:3px}
+
+  /* Value chain */
+  .chain{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+  .chain .node{
+    flex:1;min-width:120px;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;
+    padding:12px 10px;text-align:center;cursor:pointer;transition:.15s;position:relative;
+  }
+  .chain .node:hover{border-color:var(--teal);transform:translateY(-2px)}
+  .chain .node.open{border-color:var(--navy);background:#eaf3f8}
+  .chain .node .ico{font-size:22px}
+  .chain .node .nm{font-weight:600;font-size:12px;margin-top:4px;color:var(--navy)}
+  .chain .node .cost{font-family:var(--mono);font-size:10px;color:var(--flame);margin-top:2px}
+  .node-detail{background:#eaf3f8;border:1px solid var(--line2);border-radius:10px;padding:14px 16px;margin:10px 0;display:none}
+  .node-detail.show{display:block}
+  .node-detail b{color:var(--navy)}
+
+  /* Games shared */
+  .game-zone{border:1px dashed var(--line2);border-radius:12px;padding:16px 18px;margin-top:16px;background:linear-gradient(180deg,#fdfefe, #f4f9fb)}
+  .game-zone h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+  .btn{
+    font-family:var(--mono);font-size:12px;background:var(--navy);color:#fff;border:none;border-radius:9px;
+    padding:10px 18px;cursor:pointer;transition:.15s;letter-spacing:.02em;
+  }
+  .btn:hover{background:var(--navy-lt)}
+  .btn.alt{background:var(--panel);color:var(--navy);border:1px solid var(--line2)}
+  .btn.alt:hover{border-color:var(--teal);color:var(--teal)}
+  .btn.flame{background:var(--flame)}
+  .btn.flame:hover{background:var(--flame-lt)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .chip{
+    display:inline-block;font-family:var(--mono);font-size:11.5px;background:var(--panel);
+    border:1px solid var(--line2);border-radius:8px;padding:8px 12px;margin:4px 4px 0 0;cursor:pointer;transition:.12s;user-select:none;
+  }
+  .chip:hover{border-color:var(--teal);color:var(--teal)}
+  .chip.used{opacity:.3;pointer-events:none}
+  .chip.right{background:#e3f4ea;border-color:var(--pos);color:var(--pos)}
+  .chip.wrong{background:#fbeae7;border-color:var(--neg);color:var(--neg)}
+  .slotrow{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+  .slot{
+    flex:1;min-width:105px;min-height:44px;border:1.5px dashed var(--line2);border-radius:9px;
+    display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--txt-faint);padding:6px;text-align:center;
+  }
+  .slot.filled{border-style:solid;border-color:var(--teal);color:var(--navy);background:#eef7f8}
+  .slot.bad{border-color:var(--neg);color:var(--neg);background:#fbeae7}
+  .feedback{font-size:12.5px;margin-top:10px;padding:10px 13px;border-radius:9px;display:none}
+  .feedback.show{display:block}
+  .feedback.good{background:#e3f4ea;color:var(--pos)}
+  .feedback.bad{background:#fbeae7;color:var(--neg)}
+  .feedback.info{background:#eaf3f8;color:var(--navy)}
+  .score-line{font-family:var(--mono);font-size:12px;color:var(--txt-dim);margin-top:8px}
+
+  /* quiz options */
+  .opt{display:block;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:11px 14px;margin:6px 0;cursor:pointer;font-size:13px;font-family:var(--sans);color:var(--txt);transition:.12s}
+  .opt:hover{border-color:var(--teal)}
+  .opt.right{background:#e3f4ea;border-color:var(--pos)}
+  .opt.wrong{background:#fbeae7;border-color:var(--neg)}
+  .opt:disabled{cursor:default}
+  .qhead{font-weight:600;color:var(--navy);margin:12px 0 4px}
+  .qmath{font-family:var(--mono);font-size:12px;background:var(--panel2);border-radius:8px;padding:10px 12px;margin-top:8px;color:var(--txt-dim);white-space:pre-line;display:none}
+  .qmath.show{display:block}
+
+  /* sliders */
+  .ctl{margin:10px 0}
+  .ctl label{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-dim);display:flex;justify-content:space-between}
+  .ctl label b{color:var(--navy);font-weight:500}
+  input[type=range]{width:100%;accent-color:var(--teal);margin-top:4px}
+  select,input[type=text]{font-family:var(--mono);font-size:12px;border:1px solid var(--line2);border-radius:8px;padding:8px 10px;background:var(--panel);color:var(--txt);outline:none}
+  select:focus,input[type=text]:focus{border-color:var(--teal)}
+
+  table.dtable{width:100%;border-collapse:collapse;margin:10px 0}
+  .dtable th{text-align:left;color:var(--txt-faint);font-weight:500;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;border-bottom:1px solid var(--line);font-family:var(--mono)}
+  .dtable td{padding:8px;border-bottom:1px solid var(--line);font-size:12.5px}
+  .dtable td.mono{font-family:var(--mono)}
+  .dtable tr:last-child td{border-bottom:none}
+  .dtable td.r,.dtable th.r{text-align:right}
+  .up{color:var(--pos)}.down{color:var(--neg)}
+
+  /* bar charts (world chapter) */
+  .chart{margin:16px 0}
+  .c-head{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:8px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+  .c-head b{color:var(--navy);font-weight:500}
+  .c-key{display:inline-block;width:9px;height:9px;border-radius:2px;background:#0c86a0;vertical-align:-1px;margin-right:4px}
+  .c-key.hi{background:var(--flame)}
+  .crow{display:grid;grid-template-columns:150px 1fr;gap:0 12px;padding:6px;border-radius:8px;align-items:start}
+  .crow:hover{background:var(--panel2)}
+  .crow .cl{font-size:12.5px;font-weight:600;color:var(--navy);text-align:right;line-height:1.3;padding-top:1px}
+  .ctrack{display:flex;align-items:center;height:16px;border-left:2px solid var(--line2);padding-left:1px}
+  .cbar{height:13px;border-radius:0 4px 4px 0;background:#0c86a0}
+  .cbar.hi{background:var(--flame)}
+  .cval{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--txt);margin-left:8px;white-space:nowrap}
+  .cnote{font-size:11px;color:var(--txt-dim);margin-top:3px}
+  @media(max-width:560px){.crow{grid-template-columns:1fr}.crow .cl{text-align:left;margin-bottom:2px}}
+
+  /* benchmark cards */
+  .bmk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+  .bmk{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+  .bmk .tag{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--navy)}
+  .bmk .px{font-family:var(--mono);font-size:13px;color:var(--flame);float:right}
+  .bmk .desc{font-size:11.5px;color:var(--txt-dim);margin-top:5px}
+
+  /* routes */
+  .routemap{background:#e9f2f7;border:1px solid var(--line);border-radius:12px;margin:12px 0 8px;overflow:hidden}
+  .routemap svg{display:block;width:100%;height:auto}
+  .routemap .route{fill:none;stroke-width:2.6;stroke-dasharray:9 6;stroke-linecap:round;animation:sail 26s linear infinite}
+  @keyframes sail{to{stroke-dashoffset:-300}}
+  .maplegend{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+  .maplegend .mchip{font-family:var(--mono);font-size:10.5px;color:var(--txt-dim);border:1px solid var(--line2);border-radius:8px;padding:6px 10px;display:flex;align-items:center;gap:7px}
+  .maplegend .mline{display:inline-block;width:18px;height:0;border-top:3px dashed}
+  .route-pick{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+  .route-pick .rbtn{flex:1;min-width:140px;background:var(--panel);border:1.5px solid var(--line2);border-radius:10px;padding:10px 12px;cursor:pointer;text-align:left;transition:.13s;font-family:var(--sans)}
+  .route-pick .rbtn:hover{border-color:var(--teal)}
+  .route-pick .rbtn.sel{border-color:var(--navy);background:#eaf3f8}
+  .route-pick .rbtn .rn{font-weight:600;font-size:12.5px;color:var(--navy)}
+  .route-pick .rbtn .rd{font-family:var(--mono);font-size:10.5px;color:var(--txt-dim);margin-top:2px}
+  .costout{font-family:var(--mono);font-size:13px;background:var(--panel2);border-radius:9px;padding:12px 14px;margin-top:10px;white-space:pre-line;color:var(--txt)}
+  .costout b{color:var(--flame);font-weight:500}
+
+  /* term sheet */
+  .termsheet{background:#fffdf6;border:1px solid #e8e0c8;border-radius:10px;padding:18px 20px;font-size:12.5px;margin:12px 0}
+  .termsheet .ts-head{font-family:var(--disp);font-size:17px;color:var(--navy);border-bottom:1px solid #e8e0c8;padding-bottom:8px;margin-bottom:10px}
+  .ts-line{padding:7px 8px;border-radius:7px;margin:2px 0;cursor:pointer;transition:.12s;border:1px solid transparent}
+  .ts-line:hover{background:#f4efdd}
+  .ts-line .ts-k{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);display:block}
+  .ts-line.flagged{border-color:var(--flame);background:#fdf0e8}
+  .ts-line.hit{border-color:var(--pos);background:#e3f4ea}
+  .ts-line.miss{border-color:var(--neg);background:#fbeae7}
+  .ts-line .why{display:none;font-size:11.5px;color:var(--txt-dim);margin-top:5px;border-top:1px dashed var(--line2);padding-top:5px}
+  .ts-line.reveal .why{display:block}
+
+  /* sidebar */
+  .badge-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .badge{border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center;background:var(--panel2);opacity:.45;transition:.3s}
+  .badge.earned{opacity:1;border-color:var(--teal);background:#eef7f8}
+  .badge .bico{font-size:22px}
+  .badge .bnm{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-dim);margin-top:4px}
+  .badge.earned .bnm{color:var(--teal)}
+  .gloss details{border-bottom:1px solid var(--line);padding:7px 2px}
+  .gloss details:last-child{border-bottom:none}
+  .gloss summary{cursor:pointer;font-family:var(--mono);font-size:11px;color:var(--navy);list-style:none;display:flex;justify-content:space-between}
+  .gloss summary::after{content:"+";color:var(--txt-faint)}
+  .gloss details[open] summary::after{content:"–"}
+  .gloss .gdef{font-size:11.5px;color:var(--txt-dim);padding:5px 0 3px}
+  .gloss .locked{color:var(--txt-faint);font-family:var(--mono);font-size:11px;padding:7px 2px;border-bottom:1px solid var(--line)}
+  .gloss .locked:last-child{border-bottom:none}
+
+  /* certificate */
+  .cert{border:3px double var(--navy);border-radius:12px;padding:26px 22px;text-align:center;background:linear-gradient(180deg,#fdfefe,#eef6f9);margin-top:14px}
+  .cert .c-ttl{font-family:var(--disp);font-size:26px;color:var(--navy)}
+  .cert .c-name{font-family:var(--disp);font-size:32px;color:var(--flame);margin:12px 0 4px;font-style:italic}
+  .cert .c-sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-dim);margin:6px 0}
+  .cert .c-badges{font-size:22px;letter-spacing:8px;margin:12px 0}
+  .locknote{font-family:var(--mono);font-size:11px;color:var(--txt-faint);background:var(--panel2);border-radius:9px;padding:11px 13px;margin-top:12px}
+
+  .chapter{display:none}
+  .chapter.active{display:block}
+  .kbd{font-family:var(--mono);background:var(--panel2);border:1px solid var(--line2);border-radius:5px;padding:1px 6px;font-size:11px}
+  .timer{font-family:var(--mono);font-size:26px;color:var(--flame);font-weight:500}
+  .capstone-cta{display:inline-block;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <h1>First <span class="amp">Cargo</span></h1>
+    <div class="sub">LNG Trading Academy · A junior trader onboarding voyage · Part of <span class="evolta">Evolta</span></div>
+  </div>
+  <div class="topbar"><a class="back-btn" href="index.html">← Back to Evolta</a></div>
+</header>
+
+<!-- Voyage progress -->
+<div class="voyage">
+  <div class="voyage-track" id="voyageTrack">
+    <div class="voyage-line"></div>
+    <div class="voyage-fill" id="voyageFill" style="width:0%"></div>
+    <div class="ship" id="shipIcon" style="left:2%">🚢</div>
+  </div>
+  <div class="voyage-caption" id="voyageCaption">Sabine Pass → your first delivered cargo · 0 / 8 badges earned</div>
+</div>
+
+<!-- Chapter nav -->
+<div class="chnav" id="chnav"></div>
+
+<div class="grid">
+<main>
+
+<!-- ============ CHAPTER 1 ============ -->
+<section class="chapter" id="molecule">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 1 · The Molecule</h2>
+    <h3 class="big">What is LNG, and why does anyone bother freezing gas?</h3>
+    <div class="mentor"><div class="avatar">🧭</div><div>
+      <div class="who">Mika · Senior LNG Trader, your mentor</div>
+      <p>Welcome to the desk. Before you touch a price screen, you need to understand the thing we trade. It's just natural gas — chilled to −162&nbsp;°C until it becomes a liquid. That one trick turns a pipeline commodity into a global, seaborne one. Your training cargo is the <i>Evolta Aurora</i>, a 174,000&nbsp;m³ carrier loading at Sabine Pass, Texas.</p>
+    </div></div>
+    <p>Natural gas is mostly <b>methane</b>. Cool it to <b>−162&nbsp;°C</b> and it condenses into a clear liquid that takes up <b>1/600th</b> of the space. That means a ship can carry the energy equivalent of a small country's daily gas demand — no pipeline required. LNG exists because <b>gas is cheap where it's produced and expensive where it's needed</b>, and the two places are often oceans apart.</p>
+    <div class="factrow">
+      <div class="fact"><div class="v">−162 °C</div><div class="k">liquefaction temperature</div></div>
+      <div class="fact"><div class="v">1 / 600</div><div class="k">volume vs. gaseous state</div></div>
+      <div class="fact"><div class="v">~90%+</div><div class="k">methane content (typical)</div></div>
+      <div class="fact"><div class="v">174,000 m³</div><div class="k">a standard modern cargo</div></div>
+    </div>
+    <p class="dim"><b>Click each stage</b> of the value chain below. The numbers matter — every dollar of cost here is a dollar off your trading margin later.</p>
+    <div class="chain" id="chainNodes"></div>
+    <div class="node-detail" id="chainDetail"></div>
+
+    <div class="game-zone">
+      <h4>⚓ Challenge 1 · Build the Chain</h4>
+      <p class="dim">Tap the stages <b>in order</b>, from the gas field to the customer. Then answer the spot-check questions.</p>
+      <div class="slotrow" id="ch1Slots"></div>
+      <div id="ch1Chips"></div>
+      <div style="margin-top:10px"><button class="btn alt" id="ch1Reset">Reset</button></div>
+      <div class="feedback" id="ch1Fb"></div>
+      <div id="ch1Quiz" style="display:none"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 2 · WORLD ============ -->
+<section class="chapter" id="world">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 2 · The Map</h2>
+    <h3 class="big">One market, three basins — the world you're about to trade</h3>
+    <div class="mentor"><div class="avatar">🧭</div><div>
+      <div class="who">Mika</div>
+      <p>You know what the molecule is. Now learn whose molecule it is. LNG went from a niche utility business to the world's swing energy market in one generation — and every price you'll ever quote carries that history inside it. Know the exporters, know the buyers, know why 2022 changed everything.</p>
+    </div></div>
+    <div class="factrow">
+      <div class="fact"><div class="v">~410 mt</div><div class="k">traded per year (≈2024)</div></div>
+      <div class="fact"><div class="v">3</div><div class="k">big exporters: US · Australia · Qatar</div></div>
+      <div class="fact"><div class="v">~35%</div><div class="k">traded spot / short-term</div></div>
+      <div class="fact"><div class="v">50+</div><div class="k">importing countries</div></div>
+    </div>
+
+    <p><b>Four eras got us here:</b></p>
+    <div class="bmk-grid">
+      <div class="bmk"><span class="px">1964</span><div class="tag">The Pioneers</div><div class="desc">First commercial cargo sails Algeria → Canvey Island, UK. LNG is an engineering marvel and a niche utility supply — rigid, point-to-point.</div></div>
+      <div class="bmk"><span class="px">1970s–2000s</span><div class="tag">The Pacific Century</div><div class="desc">Japan — an energy-hungry island with no pipelines — anchors the industry with 20-year, oil-indexed, take-or-pay contracts. Korea and Taiwan follow. These contracts finance Qatar, Australia and Southeast Asia's plants.</div></div>
+      <div class="bmk"><span class="px">2010s</span><div class="tag">The Shale Wave</div><div class="desc">US shale gas turns America into an exporter of <b>destination-free, HH-priced FOB cargoes</b> — the raw material of trading. Australia builds out, China starts buying, a real spot market and the JKM benchmark emerge.</div></div>
+      <div class="bmk"><span class="px">2022–</span><div class="tag">The Great Rewiring</div><div class="desc">Russia invades Ukraine; Europe loses most of its pipeline gas and pivots to LNG almost overnight. TTF prints all-time records, US cargoes swing the balance, and the Atlantic and Pacific basins become one connected market.</div></div>
+    </div>
+
+    <div class="chart" role="img" aria-label="Top LNG exporters, million tonnes per year, around 2024: United States 87, Australia 80, Qatar 78, Russia 33, Malaysia 27">
+      <div class="c-head"><b>Top exporters</b><span>mt / yr · ≈2024 · <span class="c-key hi"></span>where the tradable cargoes come from</span></div>
+      <div class="crow"><div class="cl">🇺🇸 United States</div><div>
+        <div class="ctrack"><div class="cbar hi" style="width:70%"></div><span class="cval">~87</span></div>
+        <div class="cnote">★ Flexible FOB, HH-linked, destination-free — the cargoes that actually get traded.</div></div></div>
+      <div class="crow"><div class="cl">🇦🇺 Australia</div><div>
+        <div class="ctrack"><div class="cbar" style="width:64%"></div><span class="cval">~80</span></div>
+        <div class="cnote">Point-to-point Pacific supply on long-term contracts; little spot flexibility.</div></div></div>
+      <div class="crow"><div class="cl">🇶🇦 Qatar</div><div>
+        <div class="ctrack"><div class="cbar" style="width:62%"></div><span class="cval">~78</span></div>
+        <div class="cnote">Lowest-cost producer, own mega-fleet, expanding aggressively; prefers long-term oil-indexed deals.</div></div></div>
+      <div class="crow"><div class="cl">🇷🇺 Russia</div><div>
+        <div class="ctrack"><div class="cbar" style="width:26%"></div><span class="cval">~33</span></div>
+        <div class="cnote">Yamal LNG (Arctic); sanctioned and discounted — politics is a price input.</div></div></div>
+      <div class="crow"><div class="cl">🇲🇾 Malaysia</div><div>
+        <div class="ctrack"><div class="cbar" style="width:22%"></div><span class="cval">~27</span></div>
+        <div class="cnote">Legacy Pacific supplier, mostly contracted to North Asia.</div></div></div>
+    </div>
+    <div class="chart" role="img" aria-label="Top LNG importers, million tonnes per year, around 2024: Europe over 100, China 79, Japan 66, South Korea 46, India 26">
+      <div class="c-head"><b>Top importers</b><span>mt / yr · ≈2024 · <span class="c-key hi"></span>the market that sets the floor</span></div>
+      <div class="crow"><div class="cl">🇪🇺 Europe</div><div>
+        <div class="ctrack"><div class="cbar hi" style="width:80%"></div><span class="cval">~100+</span></div>
+        <div class="cnote">★ The <b>balancing market</b>: deep storage and regas capacity absorb whatever Asia doesn't want — Europe sets the floor for flexible cargoes.</div></div></div>
+      <div class="crow"><div class="cl">🇨🇳 China</div><div>
+        <div class="ctrack"><div class="cbar" style="width:63%"></div><span class="cval">~79</span></div>
+        <div class="cnote">The swing growth buyer — resells cargoes when domestic demand is soft, hoovers them up when it isn't.</div></div></div>
+      <div class="crow"><div class="cl">🇯🇵 Japan</div><div>
+        <div class="ctrack"><div class="cbar" style="width:53%"></div><span class="cval">~66</span></div>
+        <div class="cnote">The original anchor buyer; nuclear restarts move its demand — and JKM.</div></div></div>
+      <div class="crow"><div class="cl">🇰🇷 South Korea</div><div>
+        <div class="ctrack"><div class="cbar" style="width:37%"></div><span class="cval">~46</span></div>
+        <div class="cnote">KOGAS is one of the world's largest single buyers; heavy winter seasonality.</div></div></div>
+      <div class="crow"><div class="cl">🇮🇳 India</div><div>
+        <div class="ctrack"><div class="cbar" style="width:21%"></div><span class="cval">~26</span></div>
+        <div class="cnote">Fiercely price-sensitive — disappears above ~$12–14/MMBtu, reappears below.</div></div></div>
+    </div>
+    <p class="dim" style="font-size:11px">Both charts share one scale, so exporter and importer bars compare directly. <span class="c-key hi"></span>Flame marks the two poles every flexible cargo trades between: US supply and the European floor.</p>
+
+    <p><b>The mental model:</b> two basins, one arbitrage. Pacific demand (Japan, Korea, China) prices off <b>JKM</b>; the Atlantic prices off <b>TTF</b>. Flexible cargoes — mostly US FOB — flow to whichever pays more after freight. Winter cold, storage levels, nuclear restarts, canal queues and heatwaves all trade through that single JKM–TTF spread. Demand peaks in <b>Northern-Hemisphere winter</b>; shoulder seasons (spring/autumn) are when cargoes go looking for a home.</p>
+
+    <div class="game-zone">
+      <h4>🌍 Challenge 2 · World Wise</h4>
+      <p class="dim">Five questions on the map you just studied. Score 4+ for the badge.</p>
+      <div id="worldGame"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 3 · UNITS ============ -->
+<section class="chapter" id="units">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 3 · The Language</h2>
+    <h3 class="big">Units — the fastest way to embarrass yourself on the desk</h3>
+    <div class="mentor"><div class="avatar">🧭</div><div>
+      <div class="who">Mika</div>
+      <p>Ships are measured in cubic metres of liquid, plants in tonnes, prices in dollars per MMBtu, and Europe quotes everything in euros per megawatt-hour. Mix them up and you'll misprice a cargo by millions. Every junior gets unit-tested in their first week — consider this yours.</p>
+    </div></div>
+    <p>The one that matters most: <b>prices are quoted in $/MMBtu</b> (million British thermal units — a unit of <i>energy</i>). Everything else gets converted into it.</p>
+    <div class="factrow">
+      <div class="fact"><div class="v">× 48.6</div><div class="k">tonnes LNG → MMBtu</div></div>
+      <div class="fact"><div class="v">× 600</div><div class="k">m³ LNG → m³ gas</div></div>
+      <div class="fact"><div class="v">× 0.45</div><div class="k">m³ LNG → tonnes</div></div>
+      <div class="fact"><div class="v">× 3.412</div><div class="k">MWh → MMBtu</div></div>
+    </div>
+    <p class="dim">To convert a European TTF price (€/MWh) to $/MMBtu: <span class="kbd">€/MWh ÷ 3.412 × EUR/USD</span>. So TTF at €34.10 with EUR/USD 1.10 ≈ <b>$11.00/MMBtu</b>.</p>
+
+    <h2 style="margin-top:20px"><span class="dot"></span>Interactive · Size your ship</h2>
+    <div class="ctl">
+      <label>Carrier size <b id="shipSizeLbl">174,000 m³</b></label>
+      <input type="range" id="shipSize" min="125" max="266" step="1" value="174">
+    </div>
+    <div class="ctl">
+      <label>Price marked at <b id="shipPxLbl">$10.00 / MMBtu</b></label>
+      <input type="range" id="shipPx" min="4" max="30" step="0.5" value="10">
+    </div>
+    <table class="dtable">
+      <tr><th>Tonnes of LNG</th><th>Energy (TBtu)</th><th>Gas equivalent</th><th class="r">Cargo value</th></tr>
+      <tr>
+        <td class="mono" id="cvT">—</td><td class="mono" id="cvB">—</td>
+        <td class="mono" id="cvG">—</td><td class="mono r" id="cvV" style="color:var(--flame)">—</td>
+      </tr>
+    </table>
+    <p class="dim" id="cvHomes"></p>
+
+    <div class="game-zone">
+      <h4>⚡ Challenge 2 · Unit Sprint</h4>
+      <p class="dim">60 seconds, rapid-fire conversions. Round numbers, desk speed. Score <b>6+</b> to earn your badge.</p>
+      <div style="display:flex;align-items:center;gap:18px;margin:8px 0">
+        <span class="timer" id="sprintTimer">60</span>
+        <span class="score-line">Score: <b id="sprintScore">0</b> · Best: <b id="sprintBest">0</b></span>
+        <button class="btn flame" id="sprintStart">Start Sprint</button>
+      </div>
+      <div id="sprintQ"></div>
+      <div class="feedback" id="sprintFb"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 3 ============ -->
+<section class="chapter" id="prices">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 4 · The Prices</h2>
+    <h3 class="big">Three hubs, one ocean of spread</h3>
+    <div class="mentor"><div class="avatar">🧭</div><div>
+      <div class="who">Mika</div>
+      <p>LNG trading is really <b>geography arbitrage</b>. The same molecule is worth different amounts in Texas, Rotterdam and Tokyo. Learn the three benchmarks, then learn the only equation on this desk that matters: the netback.</p>
+    </div></div>
+    <div class="bmk-grid">
+      <div class="bmk"><span class="px">$/MMBtu</span><div class="tag">Henry Hub</div><div class="desc">The US benchmark — a real pipeline junction in Louisiana. NYMEX futures. This is what US LNG plants <i>buy</i> gas against.</div></div>
+      <div class="bmk"><span class="px">€/MWh</span><div class="tag">TTF</div><div class="desc">The Title Transfer Facility — the Dutch virtual hub and Europe's price of gas. Deep, liquid, and where European LNG imports compete with pipeline gas and storage.</div></div>
+      <div class="bmk"><span class="px">$/MMBtu</span><div class="tag">JKM</div><div class="desc">The Japan-Korea Marker — Platts' assessment for spot cargoes <b>delivered into Northeast Asia</b>. The reference price for Asian spot LNG.</div></div>
+      <div class="bmk"><span class="px">% × Brent</span><div class="tag">Oil slope</div><div class="desc">Legacy long-term contracts price LNG as a percentage ("slope") of Brent crude — e.g. 13% slope × $80 Brent = $10.40/MMBtu.</div></div>
+    </div>
+    <p><b>What a US cargo costs you (FOB):</b> most US contracts charge <span class="kbd">115% × Henry Hub + liquefaction fee</span>. The 15% covers plant fuel; the fee (roughly $2.00–3.00) pays for the liquefaction train. That's your cost basis.</p>
+    <p><b>The netback:</b> take the delivered price at a destination, subtract the freight to get there. Whichever destination nets back the most is where the cargo <i>wants</i> to go:</p>
+    <div class="costout">margin(dest) = destination price − freight(dest) − <b>(1.15 × HH + liq fee)</b>
+If every destination is negative … you can cancel the cargo and just eat the fee.</div>
+
+    <div class="game-zone">
+      <h4>🎯 Challenge 3 · Spot the Arb</h4>
+      <p class="dim">Five market snapshots. For each: send the cargo to <b>Asia</b>, to <b>Europe</b>, or <b>cancel it</b>. Get 4/5 for the badge. Mika shows the math after every call.</p>
+      <div id="arbGame"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 4 ============ -->
+<section class="chapter" id="ship">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 5 · The Ship</h2>
+    <h3 class="big">Freight — where paper traders lose real money</h3>
+    <div class="mentor"><div class="avatar">🧭</div><div>
+      <div class="who">Mika</div>
+      <p>A cargo is only worth what it's worth <i>somewhere</i>, and getting it somewhere costs a ship. You pay the charter by the day — including the empty ballast leg home — plus canal tolls, port costs, and the cargo that literally evaporates on the way. Boil-off: about 0.10% of the cargo per day.</p>
+    </div></div>
+    <div class="factrow">
+      <div class="fact"><div class="v">~700</div><div class="k">LNG carriers worldwide</div></div>
+      <div class="fact"><div class="v">174,000 m³</div><div class="k">the modern workhorse ship</div></div>
+      <div class="fact"><div class="v">0.10%/day</div><div class="k">typical boil-off</div></div>
+      <div class="fact"><div class="v">$40k–300k+</div><div class="k">spot charter, $/day</div></div>
+    </div>
+    <p><b>Getting a ship.</b> Desks hire carriers two ways: a <b>spot (voyage) charter</b> for one trip, or a <b>time charter</b> for months or years at a fixed day-rate. Portfolio players keep a core time-chartered fleet and top up in the spot market — which is why spot rates explode every winter when everyone tops up at once. A ship fixed cheap in the summer is itself a trading position: when freight spikes, holding cheap shipping is as good as holding cargo.</p>
+    <p><b>Boil-off is fuel — and P&amp;L.</b> The ~0.10% of cargo that evaporates daily isn't purely lost: modern ships burn it as engine fuel instead of buying bunker oil. But every MMBtu that boils off is an MMBtu you can't sell at the destination, so long routes quietly shrink your cargo. Ships also keep a <b>heel</b> — a residual pool of LNG after discharge — to stay cold for the next loading; run the tanks warm and you pay for a "cool-down" cargo.</p>
+    <div class="routemap">
+      <svg viewBox="0 0 900 380" role="img" aria-label="World map showing three routes from Sabine Pass to Tokyo: via Panama across the Pacific, via Suez, and via the Cape of Good Hope">
+        <defs>
+          <linearGradient id="ocean" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#d3e7f3"/><stop offset="1" stop-color="#e3f0f8"/>
+          </linearGradient>
+        </defs>
+        <rect width="900" height="380" fill="url(#ocean)"/>
+        <g stroke="#ffffff" stroke-width="1" opacity=".35">
+          <line x1="90" y1="0" x2="90" y2="380"/><line x1="180" y1="0" x2="180" y2="380"/><line x1="270" y1="0" x2="270" y2="380"/><line x1="360" y1="0" x2="360" y2="380"/><line x1="450" y1="0" x2="450" y2="380"/><line x1="540" y1="0" x2="540" y2="380"/><line x1="630" y1="0" x2="630" y2="380"/><line x1="720" y1="0" x2="720" y2="380"/><line x1="810" y1="0" x2="810" y2="380"/>
+          <line x1="0" y1="63" x2="900" y2="63"/><line x1="0" y1="126" x2="900" y2="126"/><line x1="0" y1="189" x2="900" y2="189"/><line x1="0" y1="252" x2="900" y2="252"/><line x1="0" y1="315" x2="900" y2="315"/>
+        </g>
+        <g fill="#bcd6c4" stroke="#a6c6b1" stroke-width="1">
+          <path d="M75,35 L250,38 C268,60 262,92 240,105 C232,112 222,116 215,121 L200,128 C215,140 235,158 251,168 L246,172 C222,152 198,140 185,128 C150,115 110,90 90,60 C80,48 75,40 75,35 Z"/>
+          <path d="M258,178 C292,182 308,212 298,246 C288,286 272,314 258,320 C244,306 234,264 238,224 C242,198 248,182 258,178 Z"/>
+          <path d="M320,25 C345,18 370,25 372,42 C360,55 335,52 322,40 Z"/>
+          <path d="M470,30 C488,22 505,28 508,42 C498,52 480,50 470,40 Z"/>
+          <path d="M430,62 C455,48 492,50 512,62 C520,72 516,84 505,90 C488,98 468,96 455,92 C444,86 432,74 430,62 Z"/>
+          <path d="M438,108 C472,98 512,104 528,124 C540,148 532,186 518,222 C508,252 498,270 487,274 C472,268 456,232 448,192 C442,160 434,128 438,108 Z"/>
+          <path d="M535,110 C552,104 568,112 572,126 C566,140 552,146 540,138 C534,128 533,118 535,110 Z"/>
+          <path d="M520,58 C560,36 640,30 710,40 C760,48 805,62 818,80 C824,94 812,104 780,110 C760,120 748,134 732,142 C716,150 700,154 688,162 C676,172 660,186 648,178 C620,164 600,150 585,140 C565,128 545,118 536,106 C528,96 520,76 520,58 Z"/>
+          <path d="M596,138 C614,148 620,168 610,190 C600,182 590,160 590,146 C592,140 594,138 596,138 Z"/>
+          <ellipse cx="683" cy="209" rx="12" ry="5"/><ellipse cx="706" cy="214" rx="13" ry="5"/><ellipse cx="730" cy="210" rx="10" ry="4"/>
+          <path d="M792,82 C802,92 806,108 799,124 C792,130 788,120 787,104 C786,92 788,84 792,82 Z"/>
+          <path d="M700,242 C742,230 782,242 792,266 C786,292 748,302 718,293 C700,283 692,262 700,242 Z"/>
+          <ellipse cx="812" cy="300" rx="7" ry="12"/>
+        </g>
+        <path class="route" stroke="#d9622b" d="M215,121 C224,148 236,164 251,169 C210,178 120,166 2,150"/>
+        <path class="route" stroke="#d9622b" d="M898,148 C860,134 826,118 799,106"/>
+        <path class="route" stroke="#0c86a0" d="M215,121 C300,92 380,92 436,104 C470,112 505,108 531,119 C545,132 552,158 575,176 C605,196 660,198 709,188 C750,178 780,142 799,106"/>
+        <path class="route" stroke="#2c5a7c" d="M215,121 C260,190 380,265 490,272 C570,277 655,232 709,188 C750,177 782,140 799,106"/>
+        <g font-family="IBM Plex Mono,monospace">
+          <rect x="209" y="115" width="9" height="9" fill="#12354f"/>
+          <circle cx="799" cy="106" r="5.5" fill="#12354f"/>
+          <circle cx="251" cy="169" r="4.5" fill="#d9622b" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="531" cy="119" r="4.5" fill="#0c86a0" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="490" cy="272" r="4.5" fill="#2c5a7c" stroke="#fff" stroke-width="1.5"/>
+          <text x="150" y="108" font-size="13" fill="#12354f" font-weight="bold">Sabine Pass</text>
+          <text x="812" y="98" font-size="13" fill="#12354f" font-weight="bold">Tokyo</text>
+          <text x="262" y="163" font-size="11" fill="#b0491a">Panama</text>
+          <text x="543" y="112" font-size="11" fill="#08616f">Suez</text>
+          <text x="452" y="290" font-size="11" fill="#2c5a7c">Cape of Good Hope</text>
+          <text x="12" y="140" font-size="10.5" fill="#b0491a">← crosses the Pacific…</text>
+          <text x="893" y="168" font-size="10.5" fill="#b0491a" text-anchor="end">…and arrives from the east</text>
+          <text x="450" y="348" font-size="10" fill="#8ba0ae" text-anchor="middle">Same start, same finish — three oceans apart. The Panama route splits where it crosses the antimeridian.</text>
+        </g>
+      </svg>
+    </div>
+    <div class="maplegend">
+      <span class="mchip"><span class="mline" style="border-color:#d9622b"></span>Panama · 9,200 nm · ~20 days</span>
+      <span class="mchip"><span class="mline" style="border-color:#0c86a0"></span>Suez · 14,100 nm · ~31 days</span>
+      <span class="mchip"><span class="mline" style="border-color:#2c5a7c"></span>Cape · 15,700 nm · ~34 days</span>
+      <span class="mchip">⚓ ~19 knots laden · you pay the ballast leg home too</span>
+    </div>
+    <p><b>Freight is the arb's gatekeeper.</b> The JKM–TTF spread only pays if it's wider than the <i>difference</i> in freight between the two destinations. When charter rates spike, distant arbs slam shut first — the world literally gets bigger. That's why a freight view is a price view: every $10k/day on the charter is roughly $0.11/MMBtu on a 20-day route.</p>
+    <table class="dtable">
+      <tr><th style="width:170px">Iron rule of freight</th><th>Why it moves money</th></tr>
+      <tr><td class="mono">Round trip, always</td><td>The ship sails home empty (the <b>ballast leg</b>) and you pay for every day of it. Quoted "days" double before they hit your P&amp;L.</td></tr>
+      <tr><td class="mono">Anchor days = sea days</td><td>A ship queuing at Panama burns charter and boil-off with zero miles gained. Congestion reprices routes, not just schedules.</td></tr>
+      <tr><td class="mono">Boil-off is priced at destination</td><td>Cargo lost en route would have been sold at the delivered price — cost it at JKM, not at your cheap FOB basis.</td></tr>
+      <tr><td class="mono">Speed is a trade</td><td>Steaming faster burns more boil-off but catches a backwardated market before it fades; slow-steaming does the reverse. Laden speed is chosen by the curve, not the captain.</td></tr>
+    </table>
+
+    <h2 style="margin-top:6px"><span class="dot"></span>Interactive · Voyage cost calculator</h2>
+    <div class="route-pick" id="routePick"></div>
+    <div class="ctl">
+      <label>Charter rate <b id="charterLbl">$80,000 / day</b></label>
+      <input type="range" id="charterRate" min="40" max="300" step="5" value="80">
+    </div>
+    <div class="ctl">
+      <label>Boil-off <b id="boilLbl">0.10% of cargo / day</b></label>
+      <input type="range" id="boilRate" min="5" max="15" step="1" value="10">
+    </div>
+    <div class="costout" id="routeCost">—</div>
+
+    <div class="game-zone">
+      <h4>🗺️ Challenge 4 · Route Call</h4>
+      <p class="dim">Three live scenarios. Pick the cheapest way to Tokyo each time — the market will try to trick you. 2/3 for the badge.</p>
+      <div id="routeGame"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 5 ============ -->
+<section class="chapter" id="contract">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 6 · The Contract</h2>
+    <h3 class="big">Reading an SPA without falling asleep (or getting robbed)</h3>
+    <div class="mentor"><div class="avatar">🧭</div><div>
+      <div class="who">Mika</div>
+      <p>Cargoes trade on contracts, and five lines of an SPA move more money than the other fifty pages combined. Learn where risk hides: <b>who pays freight</b> (FOB vs DES), <b>when the ship may arrive</b> (laycan), <b>what late costs</b> (demurrage), <b>whether you can divert</b> (destination clauses), and <b>how much you must lift</b> (take-or-pay).</p>
+    </div></div>
+    <table class="dtable">
+      <tr><th style="width:120px">Term</th><th>What it really means for you</th></tr>
+      <tr><td class="mono">FOB</td><td>Free On Board — you take title at the loading port. <b>You arrange and pay the ship</b>, and you keep destination freedom.</td></tr>
+      <tr><td class="mono">DES / DAP</td><td>Delivered Ex-Ship — seller delivers to a named port. Freight is their problem, <b>optionality is theirs too</b>.</td></tr>
+      <tr><td class="mono">Laycan</td><td>The agreed arrival window for the ship. Miss it and the counterparty can walk — or charge you.</td></tr>
+      <tr><td class="mono">Demurrage</td><td>The daily penalty when your ship waits at berth beyond allowed laytime. Real money: $50–150k/day.</td></tr>
+      <tr><td class="mono">Take-or-pay</td><td>Buy the contracted volume or pay for it anyway. The clause that made LNG projects financeable — and buyers regretful.</td></tr>
+      <tr><td class="mono">Destination clause</td><td>Restricts where the cargo may go. Every restriction you accept is an option you gave away for free.</td></tr>
+    </table>
+    <p class="dim"><b>US cancellation math:</b> US FOB contracts let you cancel a lifting (usually ~2 months ahead). You still pay the liquefaction fee — so cancel only when your best margin is worse than eating the fee.</p>
+
+    <div class="game-zone">
+      <h4>🖊️ Challenge 5 · Red Pen</h4>
+      <p class="dim">Below is the term sheet a counterparty just sent for your <i>Evolta Aurora</i> cargo. Five of its ten clauses would cost you money or optionality. <b>Flag exactly five lines</b>, then grade your markup. 4/5 for the badge.</p>
+      <div class="termsheet" id="redpenSheet">
+        <div class="ts-head">TERM SHEET — Sale &amp; Purchase of one (1) LNG Cargo</div>
+      </div>
+      <div style="margin-top:8px">
+        <span class="score-line">Flagged: <b id="rpCount">0</b> / 5</span>
+        <button class="btn" id="rpGrade" style="margin-left:12px" disabled>Grade my markup</button>
+        <button class="btn alt" id="rpReset">Reset</button>
+      </div>
+      <div class="feedback" id="rpFb"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 7 · PAPER ============ -->
+<section class="chapter" id="paper">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 7 · The Paper</h2>
+    <h3 class="big">Derivatives — trading the price without the ship</h3>
+    <div class="mentor"><div class="avatar">🧭</div><div>
+      <div class="who">Mika</div>
+      <p>Physical cargoes are lumpy, slow and worth $40 million each. Paper is instant, sliceable and settles in cash. Every real LNG desk lives in both worlds at once: <b>physical</b> to move molecules and capture the arb, <b>paper</b> to lock prices in the weeks while the ship is still at sea. If you only remember one thing: a hedge doesn't make you money — it makes your physical profit <i>survive</i>.</p>
+    </div></div>
+
+    <table class="dtable">
+      <tr><th>Instrument</th><th>Where</th><th>What it does for you</th></tr>
+      <tr><td class="mono">Henry Hub futures</td><td class="mono">NYMEX</td><td>Locks your US feedgas cost — the "1.15 × HH" leg of your basis.</td></tr>
+      <tr><td class="mono">TTF futures</td><td class="mono">ICE</td><td>The deepest gas contract on Earth. Locks a European sale price.</td></tr>
+      <tr><td class="mono">JKM swaps / futures</td><td class="mono">ICE / CME</td><td>Cash-settled against Platts JKM assessments. Locks an Asian sale price — no molecules involved.</td></tr>
+      <tr><td class="mono">Freight futures (FFAs)</td><td class="mono">Baltic routes</td><td>Locks the charter rate, so a freight spike can't eat your arb.</td></tr>
+    </table>
+    <p class="dim">All of these are <b>cash-settled</b>: at expiry you exchange the difference between your trade price and the settlement index. Nobody shows up with a ship.</p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>A hedge, in one worked example</h2>
+    <div class="costout">Week 1  You own a 3.7M MMBtu cargo for January. JKM Jan trades $12.00.
+        You SELL 3.7M MMBtu of Jan JKM futures @ $12.00.
+Week 6  Mild winter — JKM Jan has fallen to $9.50.
+        Physical: cargo now sells at $9.50  →  −$2.50 × 3.7M = <b>−$9.25M</b> vs plan
+        Paper: buy futures back at $9.50   →  +$2.50 × 3.7M = <b>+$9.25M</b>
+        Net: ≈ $0. You locked $12.00 the day you hedged. Boring — which is the point.</div>
+    <p>Sell paper when you're <b>long</b> physical (you own a cargo). Buy paper when you're <b>short</b> physical (you've promised a fixed-price cargo you don't own yet). The paper position is always the mirror of the physical one.</p>
+
+    <h2 style="margin-top:18px"><span class="dot"></span>The forward curve</h2>
+    <table class="dtable">
+      <tr><th>JKM curve</th><th class="r">Oct</th><th class="r">Nov</th><th class="r">Dec</th><th class="r">Jan</th><th class="r">Feb</th><th class="r">Apr</th></tr>
+      <tr><td class="mono">$/MMBtu</td><td class="mono r">11.20</td><td class="mono r">11.90</td><td class="mono r">12.80</td><td class="mono r" style="color:var(--flame)">13.10</td><td class="mono r">12.60</td><td class="mono r">10.40</td></tr>
+    </table>
+    <p class="dim">The winter bump is LNG's heartbeat. Rising months ahead = <b>contango</b>; falling months ahead = <b>backwardation</b>. The curve tells you what the market will pay you <i>today</i> for delivery in any future month — it's the price you hedge against, not the spot headline.</p>
+
+    <p><b>Two things that bite juniors:</b></p>
+    <p>① <b>Basis risk</b> — hedging with a different index than your exposure. Sell TTF paper against an Asia-bound cargo and you're no longer betting on price, you're betting on the <b>JKM–TTF spread</b>. Sometimes that's a deliberate trade; it should never be an accident.</p>
+    <p>② <b>Margin</b> — futures are marked to market daily. If the market moves against your paper (even while your physical gains the same amount!), the exchange calls cash <i>today</i>. Desks die of margin calls while being right. Know your credit line.</p>
+
+    <div class="game-zone">
+      <h4>📄 Challenge 7 · Lock It In</h4>
+      <p class="dim">Five desk situations. Choose the right paper move. 4+ for the badge.</p>
+      <div id="paperGame"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 8 · CAPSTONE ============ -->
+<section class="chapter" id="capstone">
+  <div class="panel">
+    <h2><span class="dot"></span>Chapter 8 · The Capstone</h2>
+    <h3 class="big">First Cargo — 12 weeks, one cargo, your call</h3>
+    <div class="mentor"><div class="avatar">🧭</div><div>
+      <div class="who">Mika</div>
+      <p>Everything so far was a warm-up. Now you own the <i>Evolta Aurora</i>'s cargo — 3.7 TBtu, FOB Sabine Pass. Over twelve weeks you'll watch prices move, take news as it comes, choose Europe or Asia, fix your freight, and hedge with JKM and TTF paper. At the end we'll settle your P&amp;L and I'll grade the whole voyage. Don't sail unhedged into a typhoon forecast — that's all the advice you get for free.</p>
+    </div></div>
+    <div class="factrow">
+      <div class="fact"><div class="v">3.7 TBtu</div><div class="k">your cargo</div></div>
+      <div class="fact"><div class="v">12 weeks</div><div class="k">turn-based simulation</div></div>
+      <div class="fact"><div class="v">JKM + TTF</div><div class="k">paper hedging</div></div>
+      <div class="fact"><div class="v">A – F</div><div class="k">Mika grades you</div></div>
+    </div>
+    <div id="capstoneStatus"></div>
+    <a class="capstone-cta" href="lng-first-cargo.html"><button class="btn flame" style="font-size:14px;padding:13px 26px">🚢 Launch the First Cargo Simulator</button></a>
+    <p class="dim" style="margin-top:10px">Your result is saved automatically. Come back here afterwards to collect your final badge and Desk Pass.</p>
+
+    <div id="certZone"></div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ SIDEBAR ============ -->
+<aside>
+  <div class="panel">
+    <h2><span class="dot"></span>Badges</h2>
+    <div class="badge-grid" id="badgeGrid"></div>
+  </div>
+  <div class="panel">
+    <h2><span class="dot"></span>Desk Notebook</h2>
+    <p class="dim" style="font-size:11.5px">Terms appear here as you meet them. Open a chapter to unlock its entries.</p>
+    <div class="gloss" id="glossary"></div>
+  </div>
+</aside>
+</div>
+</div>
+
+<script>
+/* ================= STATE ================= */
+const LS_KEY='evoltaLngAcademy';
+let S={visited:{},badges:{},best:{sprint:0},name:''};
+try{const raw=localStorage.getItem(LS_KEY);if(raw)S={...S,...JSON.parse(raw)}}catch(e){}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(S))}catch(e){}}
+
+const CHAPTERS=[
+  {id:'molecule',nav:'1 · Molecule',wp:'Molecule',badge:{ico:'🧊',nm:'Chain Master'}},
+  {id:'world',nav:'2 · Map',wp:'Map',badge:{ico:'🌍',nm:'World Wise'}},
+  {id:'units',nav:'3 · Language',wp:'Units',badge:{ico:'⚡',nm:'Unit Sprinter'}},
+  {id:'prices',nav:'4 · Prices',wp:'Prices',badge:{ico:'🎯',nm:'Arb Spotter'}},
+  {id:'ship',nav:'5 · Ship',wp:'Freight',badge:{ico:'🗺️',nm:'Voyage Planner'}},
+  {id:'contract',nav:'6 · Contract',wp:'Contract',badge:{ico:'🖊️',nm:'Red Pen'}},
+  {id:'paper',nav:'7 · Paper',wp:'Paper',badge:{ico:'📄',nm:'Paper Trader'}},
+  {id:'capstone',nav:'8 · Capstone',wp:'Delivery',badge:{ico:'🏅',nm:'Desk Pass'}},
+];
+const NCH=CHAPTERS.length;
+
+const GLOSSARY={
+  molecule:[
+    ['LNG','Liquefied natural gas — methane cooled to −162 °C, shrinking to 1/600th of its gaseous volume so it can travel by ship.'],
+    ['Liquefaction train','One production line of an LNG export plant. Trains are the unit of capacity — "a 5 mtpa train".'],
+    ['Regasification','Warming LNG back into gas at the import terminal before it enters the local pipeline grid.'],
+    ['Burner tip','Slang for final consumption — the power plant, boiler or stove where the molecule is actually used.'],
+  ],
+  world:[
+    ['mtpa','Million tonnes per annum — how plant capacity and country trade volumes are measured. World trade ≈ 410 mt/yr.'],
+    ['Basin','The Atlantic (prices off TTF) and Pacific (prices off JKM) halves of the market, connected by flexible cargoes.'],
+    ['Portfolio player','A firm (Shell, TotalEnergies, trading houses…) holding supply, ships and sales across many countries — trading the whole system, not one route.'],
+    ['Spot vs term','Term = multi-year contracts that finance plants. Spot = single cargoes traded freely (~35% of the market, and growing).'],
+    ['Balancing market','Europe: enough storage and regas capacity to absorb whatever Asia doesn\'t take — it sets the floor price for flexible cargoes.'],
+  ],
+  units:[
+    ['MMBtu','One million British thermal units — the energy unit LNG prices are quoted in ($/MMBtu).'],
+    ['TBtu','A trillion Btu = 1,000,000 MMBtu. A standard cargo is ~3.5–3.8 TBtu.'],
+    ['Tonne of LNG','≈ 48.6 MMBtu of energy and ≈ 2.2 m³ of liquid. Plants and long-term contracts speak in tonnes.'],
+    ['Heel','The small amount of LNG kept on board after discharge to keep tanks cold for the next loading.'],
+  ],
+  prices:[
+    ['Henry Hub','US gas benchmark (NYMEX). US LNG feedgas cost is typically 115% × HH.'],
+    ['TTF','Dutch virtual trading hub — Europe\'s gas benchmark, quoted in €/MWh.'],
+    ['JKM','Platts Japan-Korea Marker — the spot price of cargoes delivered into Northeast Asia.'],
+    ['Netback','Destination price minus the freight to get there. Cargoes flow to the highest netback.'],
+    ['Slope','The percentage of Brent used to price oil-indexed LNG contracts (e.g. 13% × Brent).'],
+  ],
+  ship:[
+    ['Charter rate','The daily cost of hiring an LNG carrier. Spot rates swing from $40k to $300k+/day with the season.'],
+    ['Ballast leg','The empty return voyage. You pay for it too — freight math is round-trip.'],
+    ['Boil-off','Cargo that evaporates in transit (~0.10%/day), used as ship fuel or simply lost value.'],
+    ['Canal transit','Panama (~$0.9M round trip) and Suez tolls buy shortcuts; the Cape is free but slow.'],
+  ],
+  contract:[
+    ['FOB','Free On Board — buyer lifts at the load port, pays freight, keeps destination freedom.'],
+    ['DES / DAP','Delivered Ex-Ship — seller delivers to a named port and keeps the shipping optionality.'],
+    ['Laycan','The layday/cancelling window in which the ship must arrive to load or discharge.'],
+    ['Demurrage','Per-day compensation when a ship is delayed at berth beyond allowed laytime.'],
+    ['Take-or-pay','Obligation to pay for contracted volume whether or not you take it.'],
+    ['Destination clause','Contract restriction on where a cargo may be delivered — a free option surrendered.'],
+  ],
+  paper:[
+    ['Futures / swap','Exchange-traded, cash-settled contracts on an index (HH, TTF, JKM). The difference between trade price and settlement changes hands — no molecules.'],
+    ['Forward curve','Today\'s prices for every future delivery month. LNG\'s curve bumps up every winter.'],
+    ['Contango','Later months priced above nearer months. Opposite: backwardation.'],
+    ['Margin call','Daily cash the exchange demands when your futures position loses value — even if an offsetting physical position gained.'],
+    ['FFA','Forward Freight Agreement — a derivative on charter rates, used to lock shipping costs.'],
+  ],
+  capstone:[
+    ['Paper vs physical','Physical = the actual cargo. Paper = futures/swaps (JKM, TTF) used to lock prices without moving molecules.'],
+    ['Hedge ratio','Share of your physical exposure covered by paper. 0% = full price risk, 100% = locked in.'],
+    ['Basis risk','Hedging one price (say TTF) while your exposure is another (JKM). The spread between them is still your problem.'],
+  ],
+};
+
+/* ================= NAV / PROGRESS ================= */
+const chnav=document.getElementById('chnav');
+CHAPTERS.forEach((c,i)=>{
+  const b=document.createElement('button');
+  b.id='nav-'+c.id;
+  b.innerHTML=c.nav+'<span class="tick" style="display:none">✓</span>';
+  b.onclick=()=>showChapter(c.id);
+  chnav.appendChild(b);
+});
+function showChapter(id){
+  document.querySelectorAll('.chapter').forEach(el=>el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.chnav button').forEach(el=>el.classList.remove('active'));
+  document.getElementById('nav-'+id).classList.add('active');
+  if(!S.visited[id]){S.visited[id]=true;save();renderGlossary();}
+  if(id==='capstone')refreshCapstone();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function badgeCount(){return CHAPTERS.filter(c=>S.badges[c.id]).length}
+function renderProgress(){
+  const track=document.getElementById('voyageTrack');
+  track.querySelectorAll('.waypoint').forEach(el=>el.remove());
+  CHAPTERS.forEach((c,i)=>{
+    const x=2+ (96*(i+1)/NCH);
+    const wp=document.createElement('div');
+    wp.className='waypoint'+(S.badges[c.id]?' done':'');
+    wp.style.left=x+'%';
+    wp.innerHTML='<div class="dot">'+(S.badges[c.id]?'✓':(i+1))+'</div><div class="wp-label">'+c.wp+'</div>';
+    wp.onclick=()=>showChapter(c.id);
+    track.appendChild(wp);
+  });
+  const n=badgeCount();
+  const pct=2+96*n/NCH;
+  document.getElementById('voyageFill').style.width=(pct-2)+'%';
+  document.getElementById('shipIcon').style.left=pct+'%';
+  document.getElementById('voyageCaption').textContent=
+    n===NCH?'Cargo delivered — Desk Pass earned. Welcome to the desk. 🏅'
+    :'Sabine Pass → your first delivered cargo · '+n+' / '+NCH+' badges earned';
+  CHAPTERS.forEach(c=>{
+    document.querySelector('#nav-'+c.id+' .tick').style.display=S.badges[c.id]?'inline':'none';
+  });
+  const bg=document.getElementById('badgeGrid');bg.innerHTML='';
+  CHAPTERS.forEach(c=>{
+    bg.innerHTML+='<div class="badge'+(S.badges[c.id]?' earned':'')+'"><div class="bico">'+c.badge.ico+'</div><div class="bnm">'+c.badge.nm+'</div></div>';
+  });
+}
+function earnBadge(id){
+  if(S.badges[id])return;
+  S.badges[id]=true;save();renderProgress();
+  if(badgeCount()===NCH)refreshCapstone();
+}
+function renderGlossary(){
+  const g=document.getElementById('glossary');g.innerHTML='';
+  CHAPTERS.forEach((c,i)=>{
+    const terms=GLOSSARY[c.id]||[];
+    if(S.visited[c.id]){
+      terms.forEach(([k,v])=>{
+        g.innerHTML+='<details><summary>'+k+'</summary><div class="gdef">'+v+'</div></details>';
+      });
+    }else{
+      g.innerHTML+='<div class="locked">🔒 '+terms.length+' terms — open Chapter '+(i+1)+'</div>';
+    }
+  });
+}
+
+/* ================= CHAPTER 1 ================= */
+const STAGES=[
+  {nm:'Upstream',ico:'🛢️',cost:'gas cost: HH-linked',d:'<b>Upstream — producing the gas.</b> Wells and gathering systems. In the US, export plants buy feedgas at prices linked to Henry Hub. Feedgas is the single biggest cost in a US cargo: 115% × HH (the extra 15% is the gas the plant burns to run itself).'},
+  {nm:'Pipeline',ico:'🔩',cost:'~$0.2–0.5/MMBtu',d:'<b>Pipeline — getting gas to the coast.</b> Feedgas pipelines connect producing basins to the liquefaction plant. Cheap per unit, but capacity is contracted years ahead.'},
+  {nm:'Liquefaction',ico:'❄️',cost:'fee ~$2.0–3.0/MMBtu',d:'<b>Liquefaction — the expensive magic.</b> Giant refrigeration "trains" chill gas to −162 °C. Plants cost billions, so offtakers pay a fixed fee per MMBtu whether they lift or not. This fee is why cancelled US cargoes still hurt.'},
+  {nm:'Shipping',ico:'🚢',cost:'~$0.5–2.5/MMBtu',d:'<b>Shipping — the moving warehouse.</b> Insulated carriers (125,000–266,000 m³) sail cargoes across oceans, losing ~0.10%/day to boil-off. Freight cost decides which arbitrage windows are actually open.'},
+  {nm:'Regas',ico:'🔥',cost:'~$0.3–0.5/MMBtu',d:'<b>Regasification — back to gas.</b> Import terminals warm the liquid back into gas and send it into the grid. Terminal slots are booked capacity — having one is an option on the market behind it.'},
+  {nm:'End user',ico:'🏭',cost:'pays the bill',d:'<b>The burner tip.</b> Power stations, factories, heating. Their willingness to pay — versus coal, renewables, nuclear restarts, the weather — ultimately sets JKM and TTF.'},
+];
+let ch1Placed=[];
+(function initCh1(){
+  const wrap=document.getElementById('chainNodes'),detail=document.getElementById('chainDetail');
+  STAGES.forEach((s,i)=>{
+    const n=document.createElement('div');n.className='node';
+    n.innerHTML='<div class="ico">'+s.ico+'</div><div class="nm">'+s.nm+'</div><div class="cost">'+s.cost+'</div>';
+    n.onclick=()=>{
+      document.querySelectorAll('.chain .node').forEach(x=>x.classList.remove('open'));
+      n.classList.add('open');detail.innerHTML=s.d;detail.classList.add('show');
+    };
+    wrap.appendChild(n);
+  });
+  buildCh1Game();
+})();
+function buildCh1Game(){
+  const slots=document.getElementById('ch1Slots'),chips=document.getElementById('ch1Chips');
+  slots.innerHTML='';chips.innerHTML='';ch1Placed=[];
+  document.getElementById('ch1Fb').className='feedback';
+  document.getElementById('ch1Quiz').style.display='none';
+  STAGES.forEach((s,i)=>{const sl=document.createElement('div');sl.className='slot';sl.textContent=(i+1);slots.appendChild(sl)});
+  const order=[...STAGES.keys()].sort(()=>Math.random()-.5);
+  order.forEach(i=>{
+    const c=document.createElement('span');c.className='chip';c.textContent=STAGES[i].ico+' '+STAGES[i].nm;
+    c.onclick=()=>{
+      if(c.classList.contains('used'))return;
+      const pos=ch1Placed.length;
+      ch1Placed.push(i);c.classList.add('used');
+      const sl=slots.children[pos];
+      sl.textContent=STAGES[i].ico+' '+STAGES[i].nm;
+      if(i===pos){sl.className='slot filled'}else{sl.className='slot bad'}
+      if(ch1Placed.length===6)checkCh1();
+    };
+    chips.appendChild(c);
+  });
+}
+document.getElementById('ch1Reset').onclick=buildCh1Game;
+function checkCh1(){
+  const ok=ch1Placed.every((v,i)=>v===i);
+  const fb=document.getElementById('ch1Fb');
+  if(ok){
+    fb.className='feedback show good';
+    fb.innerHTML='⚓ Chain built. Now three spot-checks from Mika:';
+    renderCh1Quiz();
+  }else{
+    fb.className='feedback show bad';
+    fb.innerHTML='Not quite — follow the molecule: it\'s produced, piped, frozen, shipped, re-gasified, burned. Hit <b>Reset</b> and go again.';
+  }
+}
+const CH1QUIZ=[
+  {q:'LNG is natural gas cooled to…',a:['−162 °C',' −62 °C','−262 °C','0 °C'],c:0,x:'−162 °C — just below methane\'s boiling point at atmospheric pressure.'},
+  {q:'Liquefying gas shrinks its volume by roughly…',a:['600×','6×','60×','6,000×'],c:0,x:'1/600th — which is the entire reason ships can carry it economically.'},
+  {q:'Why does LNG exist as a business?',a:['Gas prices differ hugely between regions pipelines can\'t connect','Liquid gas burns hotter','Ships are cheaper than pipelines everywhere','Gas can\'t be stored otherwise'],c:0,x:'It\'s geography arbitrage: cheap gas in Texas or Qatar, expensive demand in Tokyo or Rotterdam.'},
+];
+let ch1QuizDone=0;
+function renderCh1Quiz(){
+  ch1QuizDone=0;
+  const z=document.getElementById('ch1Quiz');z.style.display='block';z.innerHTML='';
+  CH1QUIZ.forEach((item,qi)=>{
+    const d=document.createElement('div');
+    d.innerHTML='<div class="qhead">'+(qi+1)+'. '+item.q+'</div>';
+    item.a.forEach((opt,oi)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=opt;
+      b.onclick=()=>{
+        d.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+        if(oi===item.c){b.classList.add('right')}else{b.classList.add('wrong');d.querySelectorAll('.opt')[item.c].classList.add('right')}
+        const ex=document.createElement('div');ex.className='qmath show';ex.textContent=item.x;d.appendChild(ex);
+        ch1QuizDone++;
+        if(ch1QuizDone===CH1QUIZ.length){
+          earnBadge('molecule');
+          const fb=document.getElementById('ch1Fb');
+          fb.className='feedback show good';
+          fb.innerHTML='🧊 <b>Badge earned: Chain Master.</b> Mika: "Good. Now let\'s look at whose molecules these are." → Chapter 2 · The Map';
+        }
+      };
+      d.appendChild(b);
+    });
+    z.appendChild(d);
+  });
+}
+
+/* ================= CHAPTER 2 ================= */
+function fmtN(x){return x.toLocaleString('en-US',{maximumFractionDigits:0})}
+function updCargoCalc(){
+  const kM3=+document.getElementById('shipSize').value;      // thousand m³
+  const px=+document.getElementById('shipPx').value;
+  const m3=kM3*1000, t=m3*0.45, mmbtu=t*48.6, gasM3=m3*600;
+  document.getElementById('shipSizeLbl').textContent=fmtN(m3)+' m³';
+  document.getElementById('shipPxLbl').textContent='$'+px.toFixed(2)+' / MMBtu';
+  document.getElementById('cvT').textContent=fmtN(t)+' t';
+  document.getElementById('cvB').textContent=(mmbtu/1e6).toFixed(2)+' TBtu';
+  document.getElementById('cvG').textContent=(gasM3/1e6).toFixed(0)+' million m³';
+  document.getElementById('cvV').textContent='$'+(mmbtu*px/1e6).toFixed(1)+'M';
+  const homes=Math.round(mmbtu/60/1000)*1000; // ~60 MMBtu heats a home for a year
+  document.getElementById('cvHomes').innerHTML='That one ship holds enough energy to heat roughly <b>'+fmtN(homes)+' homes for a year</b> — and at this price the cargo is worth <b>$'+(mmbtu*px/1e6).toFixed(0)+' million</b>. This is why unit mistakes end careers.';
+}
+document.getElementById('shipSize').oninput=updCargoCalc;
+document.getElementById('shipPx').oninput=updCargoCalc;
+updCargoCalc();
+
+/* Unit Sprint */
+const SPRINT_TEMPLATES=[
+  ()=>{const t=[50,60,70,80,90][r5()];const ans=(t*1000*48.6/1e6);
+    return q(t+',000 tonnes of LNG ≈ how much energy?',ans.toFixed(1)+' TBtu',[(ans*10).toFixed(1)+' TBtu',(ans/10).toFixed(2)+' TBtu',(ans*2.2).toFixed(1)+' TBtu'])},
+  ()=>{const m=[140,160,174,180][r4()];const ans=m*1000*0.45;
+    return q('A '+m+',000 m³ cargo weighs about…',fmtN(ans)+' t',[fmtN(ans*2.2)+' t',fmtN(ans/4.5)+' t',fmtN(m*1000)+' t'])},
+  ()=>{const m=[150,160,170,180][r4()];const ans=m*600/1000;
+    return q(m+',000 m³ of LNG becomes how much gas?','~'+ans.toFixed(0)+' million m³',['~'+(ans*10).toFixed(0)+' million m³','~'+(ans/10).toFixed(1)+' million m³','~'+(m*0.6).toFixed(0)+' thousand m³'])},
+  ()=>{const e=[30,34,38,42][r4()];const fx=1.10;const ans=e/3.412*fx;
+    return q('TTF at €'+e+'/MWh, EUR/USD 1.10 → $/MMBtu?','$'+ans.toFixed(1),['$'+(e*3.412*fx).toFixed(0),'$'+(e*fx).toFixed(1),'$'+(ans*2).toFixed(1)])},
+  ()=>{const b=[3.5,3.7,3.8][r3()];const p=[8,10,12,15][r4()];const ans=b*p;
+    return q('A '+b+' TBtu cargo at $'+p+'/MMBtu is worth…','$'+ans.toFixed(1)+'M',['$'+(ans*10).toFixed(0)+'M','$'+(ans/10).toFixed(2)+'M','$'+(b+p).toFixed(1)+'M'])},
+  ()=>{const mw=[500,1000,2000][r3()];const ans=mw*3.412;
+    return q(fmtN(mw)+' MWh of gas-fired output needs about…',fmtN(ans)+' MMBtu',[fmtN(mw/3.412)+' MMBtu',fmtN(ans*10)+' MMBtu',fmtN(mw)+' MMBtu'])},
+];
+function r3(){return Math.floor(Math.random()*3)}
+function r4(){return Math.floor(Math.random()*4)}
+function r5(){return Math.floor(Math.random()*5)}
+function q(text,correct,wrong){return{text,correct,wrong}}
+let sprintTime=0,sprintScore=0,sprintTicker=null;
+document.getElementById('sprintBest').textContent=S.best.sprint||0;
+document.getElementById('sprintStart').onclick=startSprint;
+function startSprint(){
+  sprintTime=60;sprintScore=0;
+  document.getElementById('sprintScore').textContent='0';
+  document.getElementById('sprintFb').className='feedback';
+  document.getElementById('sprintStart').disabled=true;
+  clearInterval(sprintTicker);
+  sprintTicker=setInterval(()=>{
+    sprintTime--;document.getElementById('sprintTimer').textContent=sprintTime;
+    if(sprintTime<=0)endSprint();
+  },1000);
+  document.getElementById('sprintTimer').textContent=60;
+  nextSprintQ();
+}
+function nextSprintQ(){
+  const t=SPRINT_TEMPLATES[Math.floor(Math.random()*SPRINT_TEMPLATES.length)]();
+  const z=document.getElementById('sprintQ');z.innerHTML='<div class="qhead">'+t.text+'</div>';
+  const opts=[t.correct,...t.wrong].sort(()=>Math.random()-.5);
+  opts.forEach(o=>{
+    const b=document.createElement('button');b.className='opt';b.textContent=o;
+    b.onclick=()=>{
+      if(sprintTime<=0)return;
+      if(o===t.correct){sprintScore++;document.getElementById('sprintScore').textContent=sprintScore}
+      else{b.classList.add('wrong')}
+      nextSprintQ();
+    };
+    z.appendChild(b);
+  });
+}
+function endSprint(){
+  clearInterval(sprintTicker);
+  document.getElementById('sprintQ').innerHTML='';
+  document.getElementById('sprintStart').disabled=false;
+  if(sprintScore>(S.best.sprint||0)){S.best.sprint=sprintScore;save();document.getElementById('sprintBest').textContent=sprintScore}
+  const fb=document.getElementById('sprintFb');
+  if(sprintScore>=6){
+    earnBadge('units');
+    fb.className='feedback show good';
+    fb.innerHTML='⚡ <b>'+sprintScore+' correct — badge earned: Unit Sprinter.</b> Mika: "You\'ll do. Next: learn what those numbers are worth in three different cities."';
+  }else{
+    fb.className='feedback show bad';
+    fb.innerHTML=sprintScore+' correct. You need 6+. The four factors on the cards above are all you need — burn them in and go again.';
+  }
+}
+
+/* ================= CHAPTER 3 ================= */
+const ARB_ROUNDS=[
+  {hh:2.60,liq:2.50,jkm:11.00,ttf:9.00,frA:1.90,frE:0.80,
+   note:'A quiet Tuesday. Nothing exotic — just do the math.'},
+  {hh:3.40,liq:2.50,jkm:8.90,ttf:8.70,frA:2.30,frE:0.70,
+   note:'Panama congestion has pushed Asia freight to $2.30.'},
+  {hh:4.80,liq:2.50,jkm:7.60,ttf:7.30,frA:1.80,frE:0.75,
+   note:'A US cold snap has spiked Henry Hub. Destination prices haven\'t moved.'},
+  {hh:2.90,liq:2.50,jkm:13.40,ttf:12.90,frA:2.60,frE:0.85,
+   note:'Winter. Both basins are bidding — and freight to Asia is expensive.'},
+  {hh:3.10,liq:2.50,jkm:10.80,ttf:8.40,frA:2.00,frE:0.70,
+   note:'A Japanese nuclear outage extension just hit the wires.'},
+];
+let arbIdx=0,arbScore=0;
+function arbBest(r){
+  const basis=1.15*r.hh+r.liq;
+  const a=r.jkm-r.frA-basis, e=r.ttf-r.frE-basis;
+  if(a<0&&e<0)return{best:'cancel',a,e,basis};
+  return{best:a>=e?'asia':'europe',a,e,basis};
+}
+function renderArb(){
+  const z=document.getElementById('arbGame');
+  if(arbIdx>=ARB_ROUNDS.length){
+    const pass=arbScore>=4;
+    z.innerHTML='<div class="feedback show '+(pass?'good':'bad')+'">'+
+      (pass?'🎯 <b>'+arbScore+'/5 — badge earned: Arb Spotter.</b> Mika: "Netbacks are muscle memory now. Time to talk about ships."'
+           :arbScore+'/5. Mika: "Rebuild the habit: cost basis first — 1.15 × HH + fee — then subtract freight from each destination." ')+
+      '</div><button class="btn alt" onclick="arbIdx=0;arbScore=0;renderArb()" style="margin-top:8px">Play again</button>';
+    if(pass)earnBadge('prices');
+    return;
+  }
+  const r=ARB_ROUNDS[arbIdx];
+  z.innerHTML=
+    '<div class="score-line">Round '+(arbIdx+1)+' / 5 · Score '+arbScore+'</div>'+
+    '<p class="dim" style="margin:6px 0">'+r.note+'</p>'+
+    '<table class="dtable"><tr><th>Henry Hub</th><th>Liq. fee</th><th>JKM (Asia)</th><th>TTF (Europe, $)</th><th>Freight → Asia</th><th>Freight → Europe</th></tr>'+
+    '<tr><td class="mono">$'+r.hh.toFixed(2)+'</td><td class="mono">$'+r.liq.toFixed(2)+'</td><td class="mono">$'+r.jkm.toFixed(2)+'</td><td class="mono">$'+r.ttf.toFixed(2)+'</td><td class="mono">$'+r.frA.toFixed(2)+'</td><td class="mono">$'+r.frE.toFixed(2)+'</td></tr></table>'+
+    '<div id="arbBtns">'+
+    '<button class="opt" onclick="answerArb(\'asia\')">🚢 Ship to Asia (sell vs JKM)</button>'+
+    '<button class="opt" onclick="answerArb(\'europe\')">🚢 Ship to Europe (sell vs TTF)</button>'+
+    '<button class="opt" onclick="answerArb(\'cancel\')">✖ Cancel the cargo (eat the liq fee)</button>'+
+    '</div><div class="qmath" id="arbMath"></div><div id="arbNext"></div>';
+}
+function answerArb(choice){
+  const r=ARB_ROUNDS[arbIdx],res=arbBest(r);
+  const ok=choice===res.best;if(ok)arbScore++;
+  document.querySelectorAll('#arbBtns .opt').forEach(b=>{b.disabled=true});
+  const btns=document.querySelectorAll('#arbBtns .opt');
+  const map={asia:0,europe:1,cancel:2};
+  btns[map[choice]].classList.add(ok?'right':'wrong');
+  if(!ok)btns[map[res.best]].classList.add('right');
+  const m=document.getElementById('arbMath');
+  m.className='qmath show';
+  m.textContent=
+    'Cost basis  = 1.15 × '+r.hh.toFixed(2)+' + '+r.liq.toFixed(2)+' = $'+res.basis.toFixed(2)+'\n'+
+    'Asia margin = '+r.jkm.toFixed(2)+' − '+r.frA.toFixed(2)+' − '+res.basis.toFixed(2)+' = $'+res.a.toFixed(2)+'/MMBtu\n'+
+    'Eur. margin = '+r.ttf.toFixed(2)+' − '+r.frE.toFixed(2)+' − '+res.basis.toFixed(2)+' = $'+res.e.toFixed(2)+'/MMBtu\n'+
+    (res.best==='cancel'?'Both negative → cancelling loses least (only the sunk fee).':'Best netback: '+(res.best==='asia'?'Asia':'Europe')+'.');
+  document.getElementById('arbNext').innerHTML='<button class="btn" style="margin-top:10px" onclick="arbIdx++;renderArb()">'+(arbIdx===4?'See result':'Next round →')+'</button>';
+}
+renderArb();
+
+/* ================= CHAPTER 4 ================= */
+const ROUTES=[
+  {id:'panama',nm:'Panama Canal',nmiles:9200,days:20,canal:0.45,desc:'9,200 nm · ~20 days · toll ~$450k each way'},
+  {id:'suez',nm:'Suez Canal',nmiles:14100,days:31,canal:0.50,desc:'14,100 nm · ~31 days · toll ~$500k each way'},
+  {id:'cape',nm:'Cape of Good Hope',nmiles:15700,days:34,canal:0,desc:'15,700 nm · ~34 days · no tolls'},
+];
+let selRoute='panama';
+(function initRoutes(){
+  const rp=document.getElementById('routePick');
+  ROUTES.forEach(r=>{
+    const b=document.createElement('button');b.className='rbtn'+(r.id===selRoute?' sel':'');b.id='rb-'+r.id;
+    b.innerHTML='<div class="rn">'+r.nm+'</div><div class="rd">'+r.desc+'</div>';
+    b.onclick=()=>{selRoute=r.id;document.querySelectorAll('.route-pick .rbtn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');updRouteCost()};
+    rp.appendChild(b);
+  });
+})();
+function routeCostCalc(r,charterK,boilBps,waitDays,canalPremium){
+  const days=r.days+(waitDays||0);
+  const charter=2*days*charterK*1000;             // round trip, $
+  const canal=2*(r.canal+(canalPremium||0))*1e6;  // both transits
+  const port=300000;
+  const boil=days*(boilBps/10000)*3700000*10;     // cargo MMBtu × ~$10 value
+  const total=charter+canal+port+boil;
+  return{days,charter,canal,port,boil,total,perMMBtu:total/3700000};
+}
+function updRouteCost(){
+  const charterK=+document.getElementById('charterRate').value;
+  const boil=+document.getElementById('boilRate').value; // basis points /day
+  document.getElementById('charterLbl').textContent='$'+fmtN(charterK*1000)+' / day';
+  document.getElementById('boilLbl').textContent='0.'+(boil<10?'0':'')+boil+'% of cargo / day';
+  const r=ROUTES.find(x=>x.id===selRoute);
+  const c=routeCostCalc(r,charterK,boil,0,0);
+  document.getElementById('routeCost').innerHTML=
+    r.nm+' · '+c.days+' days one-way, charged round-trip\n'+
+    'Charter  2 × '+c.days+'d × $'+fmtN(charterK*1000)+'  = $'+(c.charter/1e6).toFixed(2)+'M\n'+
+    'Canal tolls (both transits)      = $'+(c.canal/1e6).toFixed(2)+'M\n'+
+    'Port costs                       = $'+(c.port/1e6).toFixed(2)+'M\n'+
+    'Boil-off (~$10/MMBtu value lost) = $'+(c.boil/1e6).toFixed(2)+'M\n'+
+    '────────────────────────────────\nTotal ≈ $'+(c.total/1e6).toFixed(1)+'M  →  <b>$'+c.perMMBtu.toFixed(2)+' per MMBtu</b> on a 3.7 TBtu cargo';
+}
+document.getElementById('charterRate').oninput=updRouteCost;
+document.getElementById('boilRate').oninput=updRouteCost;
+updRouteCost();
+
+const ROUTE_SCEN=[
+  {t:'Calm seas',charter:80,
+   d:'Charter market is normal at $80k/day. No queues, no drama. Which route to Tokyo?',
+   mod:{panama:{wait:0,prem:0},suez:{wait:0,prem:0},cape:{wait:0,prem:0}},ans:'panama',
+   x:'With no queue, Panama\'s 20 days beat everything — day count dominates freight math.'},
+  {t:'The queue',charter:80,
+   d:'Dry season: the Panama Canal is rationing slots. Expect a 25-day wait at anchor (ship on hire the whole time). Charter still $80k/day.',
+   mod:{panama:{wait:25,prem:0},suez:{wait:0,prem:0},cape:{wait:0,prem:0}},ans:'suez',
+   x:'25 days at anchor costs you charter AND boil-off with zero miles gained. Suez\'s toll is cheap by comparison.'},
+  {t:'Chokepoint chaos',charter:80,
+   d:'Geopolitics: Suez transits suspended for LNG. Panama is auctioning scarce slots at a $3.0M premium per transit. Charter $80k/day.',
+   mod:{panama:{wait:0,prem:3.0},suez:{wait:999,prem:0},cape:{wait:0,prem:0}},ans:'cape',
+   x:'A $6M round-trip premium buys a lot of sailing days. The long free route wins when the shortcuts are held ransom.'},
+];
+let rsIdx=0,rsScore=0;
+function renderRouteGame(){
+  const z=document.getElementById('routeGame');
+  if(rsIdx>=ROUTE_SCEN.length){
+    const pass=rsScore>=2;
+    z.innerHTML='<div class="feedback show '+(pass?'good':'bad')+'">'+
+      (pass?'🗺️ <b>'+rsScore+'/3 — badge earned: Voyage Planner.</b> Mika: "Ships sorted. Now the paperwork that can sink you."'
+           :rsScore+'/3. Mika: "Total cost = days × charter + tolls + boil-off. Days at anchor count too."')+
+      '</div><button class="btn alt" onclick="rsIdx=0;rsScore=0;renderRouteGame()" style="margin-top:8px">Play again</button>';
+    if(pass)earnBadge('ship');
+    return;
+  }
+  const s=ROUTE_SCEN[rsIdx];
+  let html='<div class="score-line">Scenario '+(rsIdx+1)+' / 3 · <b>'+s.t+'</b></div><p class="dim" style="margin:6px 0">'+s.d+'</p><div id="rsBtns">';
+  ROUTES.forEach(r=>{
+    const blocked=s.mod[r.id].wait===999;
+    html+='<button class="opt" '+(blocked?'disabled':'')+' onclick="answerRoute(\''+r.id+'\')">'+r.nm+(blocked?' — CLOSED':'')+'</button>';
+  });
+  html+='</div><div class="qmath" id="rsMath"></div><div id="rsNext"></div>';
+  z.innerHTML=html;
+}
+function answerRoute(id){
+  const s=ROUTE_SCEN[rsIdx];
+  const ok=id===s.ans;if(ok)rsScore++;
+  document.querySelectorAll('#rsBtns .opt').forEach(b=>b.disabled=true);
+  const idx={panama:0,suez:1,cape:2};
+  const btns=document.querySelectorAll('#rsBtns .opt');
+  btns[idx[id]].classList.add(ok?'right':'wrong');
+  if(!ok)btns[idx[s.ans]].classList.add('right');
+  let lines='';
+  ROUTES.forEach(r=>{
+    const m=s.mod[r.id];
+    if(m.wait===999){lines+=r.nm.padEnd(20)+' closed\n';return}
+    const c=routeCostCalc(r,s.charter,10,m.wait,m.prem);
+    lines+=(r.nm+':').padEnd(22)+'$'+c.perMMBtu.toFixed(2)+'/MMBtu  ('+(c.total/1e6).toFixed(1)+'M, '+c.days+'d)\n';
+  });
+  const el=document.getElementById('rsMath');el.className='qmath show';
+  el.textContent=lines+'\n'+s.x;
+  document.getElementById('rsNext').innerHTML='<button class="btn" style="margin-top:10px" onclick="rsIdx++;renderRouteGame()">'+(rsIdx===2?'See result':'Next scenario →')+'</button>';
+}
+renderRouteGame();
+
+/* ================= CHAPTER 5 ================= */
+const TS_LINES=[
+  {k:'Seller / Buyer',v:'Meridian LNG Trading DMCC / [You], for one (1) cargo ex Evolta Aurora.',bad:false,
+   why:'Standard identification — nothing hiding here.'},
+  {k:'Delivery term',v:'DES Futtsu, Japan. Title and risk pass at the discharge port flange.',bad:true,
+   why:'💸 You priced this deal FOB — under DES, YOU carry the ship, the weather and 20+ days of price risk to Japan. Freight and risk allocation just moved ~$7M without a price change.'},
+  {k:'Quantity',v:'3.7 TBtu ± 10%, at Seller\'s option.',bad:true,
+   why:'💸 A ±10% tolerance at the SELLER\'s option is a free volume option you just wrote them: they deliver more when prices favour them, less when they don\'t.'},
+  {k:'Price',v:'14.5% × Brent (3-0-1), no price review for the term of the agreement.',bad:true,
+   why:'💸 A 14.5% slope is expensive (market slopes run ~11.5–13%), and "no price review" locks you in even if the market structurally shifts.'},
+  {k:'Laycan',v:'Arrival window 10–13 March, narrowing to 24 hours by Seller\'s notice.',bad:false,
+   why:'A 4-day laycan narrowing by notice is normal operational practice.'},
+  {k:'Demurrage',v:'USD 25,000 per day, payable by Seller if berth is unavailable.',bad:true,
+   why:'💸 $25k/day is far below a real charter rate (~$80k+). If their berth is busy, your ship waits at your expense minus a token. Demurrage should approximate your actual daily cost.'},
+  {k:'Destination',v:'Buyer shall not divert, resell or re-deliver the cargo outside Japan without Seller\'s written consent.',bad:true,
+   why:'💸 A hard destination clause kills the diversion option that IS the value of LNG trading. If Europe spikes mid-voyage, you must watch the money sail past.'},
+  {k:'Quality',v:'GHV between 1,090 and 1,160 Btu/scf; within JKTC standard specifications.',bad:false,
+   why:'Standard Japanese-market gas quality spec.'},
+  {k:'Force majeure',v:'Standard industry form, including plant outage at load port.',bad:false,
+   why:'Normal — FM at the liquefaction plant is a standard carve-out.'},
+  {k:'Governing law',v:'English law; arbitration in London under LCIA rules.',bad:false,
+   why:'The industry default. Nothing to flag.'},
+];
+let rpFlags=new Set(),rpGraded=false;
+(function initRedPen(){
+  const sheet=document.getElementById('redpenSheet');
+  TS_LINES.forEach((l,i)=>{
+    const d=document.createElement('div');d.className='ts-line';d.id='ts-'+i;
+    d.innerHTML='<span class="ts-k">'+l.k+'</span>'+l.v+'<div class="why">'+l.why+'</div>';
+    d.onclick=()=>{
+      if(rpGraded)return;
+      if(rpFlags.has(i)){rpFlags.delete(i);d.classList.remove('flagged')}
+      else if(rpFlags.size<5){rpFlags.add(i);d.classList.add('flagged')}
+      document.getElementById('rpCount').textContent=rpFlags.size;
+      document.getElementById('rpGrade').disabled=rpFlags.size!==5;
+    };
+    sheet.appendChild(d);
+  });
+})();
+document.getElementById('rpGrade').onclick=()=>{
+  rpGraded=true;let hits=0;
+  TS_LINES.forEach((l,i)=>{
+    const el=document.getElementById('ts-'+i);
+    el.classList.add('reveal');
+    if(l.bad&&rpFlags.has(i)){el.classList.add('hit');hits++}
+    else if(l.bad&&!rpFlags.has(i)){el.classList.add('miss')}
+    else if(!l.bad&&rpFlags.has(i)){el.classList.add('miss')}
+  });
+  const fb=document.getElementById('rpFb');
+  if(hits>=4){
+    earnBadge('contract');
+    fb.className='feedback show good';
+    fb.innerHTML='🖊️ <b>'+hits+'/5 traps found — badge earned: Red Pen.</b> Mika: "Never sign the first draft. One classroom stop left: the paper market."';
+  }else{
+    fb.className='feedback show bad';
+    fb.innerHTML=hits+'/5. Read the reveals above — the pattern is always the same: who pays freight, who holds options, and what late costs. Hit Reset to re-mark.';
+  }
+  document.getElementById('rpGrade').disabled=true;
+};
+document.getElementById('rpReset').onclick=()=>{
+  rpFlags.clear();rpGraded=false;
+  TS_LINES.forEach((l,i)=>{document.getElementById('ts-'+i).className='ts-line'});
+  document.getElementById('rpCount').textContent='0';
+  document.getElementById('rpGrade').disabled=true;
+  document.getElementById('rpFb').className='feedback';
+};
+
+/* ================= GENERIC CHAPTER QUIZ (World & Paper) ================= */
+function runQuiz(containerId,questions,passScore,badgeId,passMsg,failMsg){
+  let idx=0,score=0;
+  const z=document.getElementById(containerId);
+  function render(){
+    if(idx>=questions.length){
+      const pass=score>=passScore;
+      z.innerHTML='<div class="feedback show '+(pass?'good':'bad')+'">'+
+        (pass?'<b>'+score+'/'+questions.length+' — '+passMsg+'</b>':score+'/'+questions.length+'. '+failMsg)+
+        '</div><button class="btn alt" style="margin-top:8px" id="'+containerId+'Again">Play again</button>';
+      document.getElementById(containerId+'Again').onclick=()=>{idx=0;score=0;render()};
+      if(pass)earnBadge(badgeId);
+      return;
+    }
+    const item=questions[idx];
+    z.innerHTML='<div class="score-line">Question '+(idx+1)+' / '+questions.length+' · Score '+score+'</div>'+
+      '<div class="qhead">'+item.q+'</div>';
+    const order=item.a.map((t,i)=>i).sort(()=>Math.random()-.5);
+    order.forEach(oi=>{
+      const b=document.createElement('button');b.className='opt';b.innerHTML=item.a[oi];
+      b.onclick=()=>{
+        z.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+        const ok=oi===item.c;if(ok)score++;
+        b.classList.add(ok?'right':'wrong');
+        if(!ok)z.querySelectorAll('.opt').forEach(x=>{if(x.textContent===item.a[item.c].replace(/<[^>]*>/g,''))x.classList.add('right')});
+        const ex=document.createElement('div');ex.className='qmath show';ex.textContent=item.x;z.appendChild(ex);
+        const nx=document.createElement('button');nx.className='btn';nx.style.marginTop='10px';
+        nx.textContent=idx===questions.length-1?'See result':'Next →';
+        nx.onclick=()=>{idx++;render()};z.appendChild(nx);
+      };
+      z.appendChild(b);
+    });
+  }
+  render();
+}
+
+/* World Wise */
+runQuiz('worldGame',[
+  {q:'Which three countries dominate LNG exports today?',
+   a:['United States, Australia, Qatar','Russia, Norway, Iran','United States, Japan, China','Qatar, Algeria, Indonesia'],c:0,
+   x:'US, Australia and Qatar each ship roughly 80 mt/yr — together over half the market. (Japan and China are the big BUYERS.)'},
+  {q:'Which country effectively built the LNG industry as its anchor buyer?',
+   a:['Japan','Germany','United Kingdom','India'],c:0,
+   x:'Japan — an industrial island with no gas pipelines. Its 20-year oil-indexed take-or-pay contracts financed almost every early liquefaction plant.'},
+  {q:'Why are US cargoes the ones traders love?',
+   a:['They\'re FOB, Henry Hub-priced and destination-free — pure optionality','They\'re always the cheapest gas','US ships are faster','They\'re exempt from canal fees'],c:0,
+   x:'A US FOB cargo can go wherever the netback is best. That freedom is exactly what a trading desk monetizes.'},
+  {q:'What is Europe\'s role in the global LNG system since 2022?',
+   a:['The balancing market — its storage and regas capacity absorb whatever Asia doesn\'t take','A major exporter','A closed market that bans spot cargoes','Irrelevant — Europe only uses pipeline gas'],c:0,
+   x:'After losing Russian pipeline gas, Europe became the market of last resort for flexible cargoes. TTF sets the floor for the JKM–TTF arbitrage.'},
+  {q:'When does global LNG demand peak?',
+   a:['Northern-Hemisphere winter','August, for air-conditioning only','It\'s flat all year','During canal maintenance season'],c:0,
+   x:'Winter heating in North Asia and Europe is the demand heartbeat — hence the winter bump in every forward curve. (Summer cooling is the smaller, second bump.)'},
+],4,'world','Badge earned: World Wise. Mika: "Now you know the board. Next, the numbers on the pieces."',
+ 'Mika: "Reread the two league tables and the four eras — the map is memorization, no shortcuts."');
+
+/* Lock It In */
+runQuiz('paperGame',[
+  {q:'You own an unsold cargo deliverable in January and worry prices will fall. The paper move?',
+   a:['Sell January JKM futures now','Buy January JKM futures now','Sell the cargo at any price immediately','Do nothing — hope is a strategy'],c:0,
+   x:'Long physical → sell paper. If the market falls, futures profit offsets the cargo\'s lost value. You locked today\'s price.'},
+  {q:'You just sold a fixed-price January cargo to a buyer — but you haven\'t secured supply yet. Your exposure and fix?',
+   a:['You\'re short — buy futures (or the cargo) before prices rise','You\'re long — sell futures','No exposure until the ship loads','Sell more cargoes to average in'],c:0,
+   x:'Promising a fixed price without owning the goods is a short position. A rally hurts you until you buy the cargo or the paper.'},
+  {q:'Your Asia-bound cargo is hedged with TTF paper (JKM was illiquid that day). JKM and TTF both rise $2. Net result?',
+   a:['≈ zero — physical gained, paper lost the same; the spread held','You lose on both legs','You gain on both legs','The hedge is void'],c:0,
+   x:'You were running basis risk — exposure to the JKM–TTF spread. The spread didn\'t move, so you were fine. If JKM had risen alone, you\'d have KEPT that gain; if TTF rose alone, you\'d have lost. Know which spread you own.'},
+  {q:'Cargo: 3.7M MMBtu. You hedged 50% by selling JKM at $12.00. At delivery JKM is $10.00. Versus your $12 plan, the net is…',
+   a:['−$3.7M (physical −$7.4M, paper +$3.7M)','$0 — you were hedged','−$7.4M — hedges don\'t help','+$3.7M profit'],c:0,
+   x:'Half-hedged means half-protected: physical loses 2.00 × 3.7M = $7.4M vs plan; paper wins 2.00 × 1.85M = $3.7M. Hedge ratio is a dial, not a switch.'},
+  {q:'The curve: Jan $13.10, Apr $10.40. A trader calls the Jan → Apr shape…',
+   a:['Backwardation','Contango','A margin call','Basis risk'],c:0,
+   x:'Nearer month above later month = backwardation. LNG curves are usually backwardated coming out of winter and in contango going into it.'},
+],4,'paper','Badge earned: Paper Trader. Mika: "Physical moves molecules, paper moves risk. You\'re ready for the Aurora."',
+ 'Mika: "Re-read the worked example. Long physical → sell paper. Short physical → buy paper. Everything else is arithmetic."');
+
+/* ================= CAPSTONE + CERT ================= */
+function refreshCapstone(){
+  let cap=null;
+  try{const raw=localStorage.getItem('evoltaLngCapstone');if(raw)cap=JSON.parse(raw)}catch(e){}
+  const st=document.getElementById('capstoneStatus');
+  if(cap&&cap.completed){
+    if(!S.badges.capstone){earnBadge('capstone')}
+    st.innerHTML='<div class="feedback show good" style="margin-bottom:14px">🏅 <b>Capstone complete.</b> Grade: <b>'+cap.grade+'</b> · Final P&amp;L: <b>'+cap.pnlLabel+'</b> · '+ (cap.date||'') +'. Replay any time to beat it.</div>';
+  }else{
+    st.innerHTML='<div class="locknote">⏳ Not completed yet. Finish the simulator and your grade appears here automatically.</div>';
+  }
+  renderCert(cap);
+}
+function renderCert(cap){
+  const z=document.getElementById('certZone');
+  if(badgeCount()===NCH){
+    const name=S.name||'';
+    z.innerHTML=
+      '<div class="cert"><div class="c-sub">Evolta · LNG Trading Academy</div>'+
+      '<div class="c-ttl">Desk Pass — Junior LNG Trader</div>'+
+      '<div class="c-name">'+(name?name:'____________')+'</div>'+
+      '<div class="c-sub">has delivered their First Cargo · '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+(cap&&cap.grade?' · Capstone grade '+cap.grade:'')+'</div>'+
+      '<div class="c-badges">🧊 🌍 ⚡ 🎯 🗺️ 🖊️ 📄 🏅</div>'+
+      '<div style="margin-top:6px"><input type="text" id="certName" placeholder="Type your name" value="'+name.replace(/"/g,'&quot;')+'" style="text-align:center"> '+
+      '<button class="btn alt" onclick="S.name=document.getElementById(\'certName\').value;save();refreshCapstone()">Sign it</button></div></div>';
+  }else{
+    z.innerHTML='<div class="locknote" style="margin-top:14px">🔒 The Desk Pass certificate unlocks when all eight badges are earned ('+badgeCount()+'/'+NCH+' so far).</div>';
+  }
+}
+window.addEventListener('focus',()=>{if(document.getElementById('capstone').classList.contains('active'))refreshCapstone()});
+
+/* ================= BOOT ================= */
+renderProgress();
+renderGlossary();
+showChapter('molecule');
+refreshCapstone();
+</script>
+</body>
+</html>

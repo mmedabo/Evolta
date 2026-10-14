@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>REVERSI — Flip Chess</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg-deep: #080810;
@@ -26,7 +26,7 @@
 body{
   background:var(--bg-deep);
   color:var(--text-primary);
-  font-family:'Crimson Pro',Georgia,serif;
+  font-family:'Crimson Pro','Noto Serif SC',Georgia,serif;
   min-height:100vh;
   display:flex;
   flex-direction:column;
@@ -47,7 +47,7 @@ body::before{
 /* ── HEADER ── */
 header{text-align:center}
 header h1{
-  font-family:'Cinzel',serif;
+  font-family:'Cinzel','Noto Serif SC',serif;
   font-size:clamp(1.8rem,4vw,2.8rem);
   font-weight:900;
   letter-spacing:0.35em;
@@ -76,7 +76,7 @@ header h1{
   padding:14px 16px;
 }
 .card-title{
-  font-family:'Cinzel',serif;
+  font-family:'Cinzel','Noto Serif SC',serif;
   font-size:.55rem;letter-spacing:.38em;
   color:var(--gold);opacity:.65;
   text-transform:uppercase;
@@ -94,7 +94,7 @@ header h1{
 .s-disc.w{background:radial-gradient(circle at 33% 28%,#fff,#c0b8a8);border:1px solid #bbb;box-shadow:0 3px 10px rgba(0,0,0,.5)}
 .s-info{flex:1}
 .s-label{font-size:.6rem;color:var(--text-muted);letter-spacing:.2em;text-transform:uppercase}
-.s-val{font-family:'Cinzel',serif;font-size:1.6rem;font-weight:600;color:var(--text-primary);line-height:1;transition:color .3s}
+.s-val{font-family:'Cinzel','Noto Serif SC',serif;font-size:1.6rem;font-weight:600;color:var(--text-primary);line-height:1;transition:color .3s}
 .score-row.active .s-val{color:var(--gold)}
 .score-row.active .s-disc.b{box-shadow:0 0 16px rgba(201,168,76,.5)}
 .score-row.active .s-disc.w{box-shadow:0 0 16px rgba(201,168,76,.5)}
@@ -108,7 +108,7 @@ header h1{
 }
 .turn-disc-lg.b{background:radial-gradient(circle at 33% 28%,#3c3c60,#090912);border:1px solid #2a2a3e;box-shadow:0 4px 16px rgba(0,0,0,.8)}
 .turn-disc-lg.w{background:radial-gradient(circle at 33% 28%,#fff,#c0b8a8);border:1px solid #bbb;box-shadow:0 4px 16px rgba(0,0,0,.5)}
-.turn-lbl{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.22em;color:var(--gold);text-transform:uppercase}
+.turn-lbl{font-family:'Cinzel','Noto Serif SC',serif;font-size:.68rem;letter-spacing:.22em;color:var(--gold);text-transform:uppercase}
 .turn-sub{font-size:.8rem;color:var(--text-muted);margin-top:2px}
 
 /* ── AI ── */
@@ -130,7 +130,7 @@ header h1{
   padding:7px 10px;background:transparent;
   border:1px solid rgba(201,168,76,.18);border-radius:4px;
   color:var(--text-muted);
-  font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.22em;
+  font-family:'Cinzel','Noto Serif SC',serif;font-size:.62rem;letter-spacing:.22em;
   cursor:pointer;text-transform:uppercase;transition:all .2s;
 }
 .diff-btn:hover{border-color:var(--gold);color:var(--gold)}
@@ -141,7 +141,7 @@ header h1{
 .btn-gold{
   padding:9px;background:linear-gradient(135deg,var(--gold-dark),var(--gold));
   border:none;border-radius:5px;color:#120e00;
-  font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.28em;font-weight:700;
+  font-family:'Cinzel','Noto Serif SC',serif;font-size:.68rem;letter-spacing:.28em;font-weight:700;
   cursor:pointer;text-transform:uppercase;transition:all .2s;
 }
 .btn-gold:hover{filter:brightness(1.18);transform:translateY(-1px)}
@@ -149,7 +149,7 @@ header h1{
   padding:8px;background:transparent;
   border:1px solid rgba(201,168,76,.25);border-radius:5px;
   color:var(--text-muted);
-  font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.22em;
+  font-family:'Cinzel','Noto Serif SC',serif;font-size:.62rem;letter-spacing:.22em;
   cursor:pointer;text-transform:uppercase;transition:all .2s;
 }
 .btn-ghost:hover{color:var(--gold);border-color:var(--gold)}
@@ -160,10 +160,28 @@ header h1{
   background:transparent;
   border:1px solid rgba(201,168,76,.25);border-radius:5px;
   color:var(--text-muted);
-  font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.22em;
+  font-family:'Cinzel','Noto Serif SC',serif;font-size:.62rem;letter-spacing:.22em;
   text-transform:uppercase;text-decoration:none;transition:all .2s;
 }
 .back-btn:hover{color:var(--gold);border-color:var(--gold)}
+.lang-btn{
+  display:inline-block;
+  padding:8px 16px;margin-left:8px;
+  background:transparent;
+  border:1px solid rgba(201,168,76,.25);border-radius:5px;
+  color:var(--text-muted);
+  font-family:'Cinzel','Noto Serif SC',serif;font-size:.62rem;letter-spacing:.22em;
+  text-transform:uppercase;cursor:pointer;transition:all .2s;
+}
+.lang-btn:hover{color:var(--gold);border-color:var(--gold)}
+
+/* Cinzel carries no CJK. The wide tracking it was chosen for reads as broken
+   spacing once glyphs fall through to Noto Serif SC, so ease it off. */
+.lang-zh .subtitle,.lang-zh .ornament,.lang-zh .card-title,
+.lang-zh .turn-lbl,.lang-zh .turn-sub,.lang-zh .diff-btn,
+.lang-zh .back-btn,.lang-zh .lang-btn,.lang-zh .status-bar,
+.lang-zh .ai-status-text,.lang-zh .go-sub,.lang-zh .tut-step-lbl{letter-spacing:.08em}
+.lang-zh header h1{letter-spacing:.16em}
 
 /* ── LOG ── */
 .log-scroll{
@@ -185,7 +203,7 @@ header h1{
 }
 .lbl-row .c-lbl{
   text-align:center;
-  font-family:'Cinzel',serif;font-size:.58rem;
+  font-family:'Cinzel','Noto Serif SC',serif;font-size:.58rem;
   color:var(--text-muted);letter-spacing:.08em;
 }
 .board-outer{display:flex;gap:0}
@@ -195,7 +213,7 @@ header h1{
 }
 .r-lbl{
   height:58px;display:flex;align-items:center;justify-content:center;
-  font-family:'Cinzel',serif;font-size:.58rem;color:var(--text-muted);
+  font-family:'Cinzel','Noto Serif SC',serif;font-size:.58rem;color:var(--text-muted);
 }
 
 /* ── BOARD ── */
@@ -286,7 +304,7 @@ header h1{
 }
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 .go-title{
-  font-family:'Cinzel',serif;font-size:2rem;font-weight:900;letter-spacing:.3em;
+  font-family:'Cinzel','Noto Serif SC',serif;font-size:2rem;font-weight:900;letter-spacing:.3em;
   background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   text-align:center;
@@ -312,7 +330,7 @@ header h1{
   box-shadow:0 0 100px rgba(0,0,0,.95),0 0 0 1px rgba(201,168,76,.05),inset 0 1px 0 rgba(201,168,76,.08);
 }
 .tut-top{width:100%;display:flex;flex-direction:column;align-items:center;gap:9px}
-.tut-step-lbl{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.44em;color:var(--gold);opacity:.55;text-transform:uppercase}
+.tut-step-lbl{font-family:'Cinzel','Noto Serif SC',serif;font-size:.52rem;letter-spacing:.44em;color:var(--gold);opacity:.55;text-transform:uppercase}
 .tut-progress{width:200px;height:2px;background:rgba(201,168,76,.1);border-radius:1px;overflow:hidden}
 .tut-bar{height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold));border-radius:1px;transition:width .5s cubic-bezier(.4,0,.2,1)}
 .tut-content{
@@ -321,7 +339,7 @@ header h1{
   gap:18px;text-align:center;
 }
 .tut-ttl{
-  font-family:'Cinzel',serif;font-size:clamp(1rem,2.4vw,1.38rem);
+  font-family:'Cinzel','Noto Serif SC',serif;font-size:clamp(1rem,2.4vw,1.38rem);
   font-weight:700;letter-spacing:.24em;color:var(--gold);
   text-transform:uppercase;line-height:1.3;
 }
@@ -335,7 +353,7 @@ header h1{
   position:absolute;top:14px;right:18px;
   background:none;border:none;color:var(--text-muted);
   font-size:.57rem;letter-spacing:.3em;cursor:pointer;
-  font-family:'Cinzel',serif;text-transform:uppercase;transition:color .2s;
+  font-family:'Cinzel','Noto Serif SC',serif;text-transform:uppercase;transition:color .2s;
 }
 .tut-skip:hover{color:var(--gold)}
 /* mini board */
@@ -367,25 +385,26 @@ header h1{
 <!-- ── TUTORIAL OVERLAY ── -->
 <div id="tut-overlay" class="hidden">
   <div class="tut-box">
-    <button class="tut-skip" onclick="closeTutorial()">Skip ✕</button>
+    <button class="tut-skip" id="tutSkip" onclick="closeTutorial()"></button>
     <div class="tut-top">
-      <div class="tut-step-lbl" id="tut-step-lbl">Step 1 of 6</div>
+      <div class="tut-step-lbl" id="tut-step-lbl"></div>
       <div class="tut-progress"><div class="tut-bar" id="tut-bar" style="width:16.6%"></div></div>
     </div>
     <div class="tut-content" id="tut-content"></div>
     <div class="tut-nav">
-      <button class="btn-ghost" id="tut-prev-btn" onclick="tutPrev()" disabled style="padding:9px 18px;font-size:.6rem">← Back</button>
-      <button class="btn-gold" id="tut-next-btn" onclick="tutNext()" style="padding:9px 24px">Next →</button>
+      <button class="btn-ghost" id="tut-prev-btn" onclick="tutPrev()" disabled style="padding:9px 18px;font-size:.6rem"></button>
+      <button class="btn-gold" id="tut-next-btn" onclick="tutNext()" style="padding:9px 24px"></button>
     </div>
   </div>
 </div>
 
 <a class="back-btn" href="index.html">&larr; Evolta</a>
+<button class="lang-btn" id="langToggle" type="button">中文</button>
 
 <header>
-  <h1>Reversi</h1>
-  <div class="ornament">◆ Flip Chess ◆</div>
-  <div class="subtitle">A Game of Positional Dominance</div>
+  <h1 data-i18n="title">Reversi</h1>
+  <div class="ornament" data-i18n="ornament">◆ Flip Chess ◆</div>
+  <div class="subtitle" data-i18n="subtitle">A Game of Positional Dominance</div>
 </header>
 
 <div class="game-wrap">
@@ -393,19 +412,19 @@ header h1{
   <!-- LEFT PANEL -->
   <div class="panel">
     <div class="card">
-      <div class="card-title">Score</div>
+      <div class="card-title" data-i18n="c_score">Score</div>
       <div class="score-block">
         <div class="score-row active" id="sr-b">
           <div class="s-disc b"></div>
           <div class="s-info">
-            <div class="s-label">You (Black)</div>
+            <div class="s-label" data-i18n="you_black">You (Black)</div>
             <div class="s-val" id="sv-b">2</div>
           </div>
         </div>
         <div class="score-row" id="sr-w">
           <div class="s-disc w"></div>
           <div class="s-info">
-            <div class="s-label">AI (White)</div>
+            <div class="s-label" data-i18n="ai_white">AI (White)</div>
             <div class="s-val" id="sv-w">2</div>
           </div>
         </div>
@@ -413,22 +432,22 @@ header h1{
     </div>
 
     <div class="card">
-      <div class="card-title">Current Turn</div>
+      <div class="card-title" data-i18n="c_turn">Current Turn</div>
       <div class="turn-body">
         <div class="turn-disc-lg b" id="turn-disc"></div>
-        <div class="turn-lbl" id="turn-lbl">Your Move</div>
-        <div class="turn-sub" id="turn-sub">Black</div>
+        <div class="turn-lbl" id="turn-lbl"></div>
+        <div class="turn-sub" id="turn-sub"></div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">AI Status</div>
+      <div class="card-title" data-i18n="c_ai">AI Status</div>
       <div class="ai-body">
         <div class="thinking" id="thinking-ind">
           <div class="dots"><span></span><span></span><span></span></div>
-          Thinking
+          <span data-i18n="thinking">Thinking</span>
         </div>
-        <div class="ai-status-text" id="ai-status-txt">Awaiting your move</div>
+        <div class="ai-status-text" id="ai-status-txt"></div>
       </div>
     </div>
   </div>
@@ -447,36 +466,36 @@ header h1{
       </div>
       <div class="board" id="board"></div>
     </div>
-    <div class="status-bar" id="status-bar">Place your piece on a highlighted square</div>
+    <div class="status-bar" id="status-bar"></div>
     <div class="ai-think-bar" id="ai-think-bar">
       <div class="dots"><span></span><span></span><span></span></div>
-      AI is calculating the best move
+      <span data-i18n="ai_calc">AI is calculating the best move</span>
     </div>
   </div>
 
   <!-- RIGHT PANEL -->
   <div class="panel">
     <div class="card">
-      <div class="card-title">Difficulty</div>
+      <div class="card-title" data-i18n="c_diff">Difficulty</div>
       <div class="diff-btns">
-        <button class="diff-btn" onclick="setDiff(this,2)">Novice (2-ply)</button>
-        <button class="diff-btn on" onclick="setDiff(this,4)">Adept (4-ply)</button>
-        <button class="diff-btn" onclick="setDiff(this,6)">Master (6-ply)</button>
+        <button class="diff-btn" onclick="setDiff(this,2)" data-i18n="d_novice">Novice (2-ply)</button>
+        <button class="diff-btn on" onclick="setDiff(this,4)" data-i18n="d_adept">Adept (4-ply)</button>
+        <button class="diff-btn" onclick="setDiff(this,6)" data-i18n="d_master">Master (6-ply)</button>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Actions</div>
+      <div class="card-title" data-i18n="c_actions">Actions</div>
       <div class="act-btns">
-        <button class="btn-gold" onclick="newGame()">New Game</button>
-        <button class="btn-ghost" onclick="toggleHints()">Toggle Hints</button>
-        <button class="btn-ghost" onclick="undoMove()">Undo Move</button>
-        <button class="btn-ghost" onclick="showTutorial()" style="border-color:rgba(201,168,76,.4);color:rgba(201,168,76,.7)">Learn Rules</button>
+        <button class="btn-gold" onclick="newGame()" data-i18n="a_new">New Game</button>
+        <button class="btn-ghost" onclick="toggleHints()" data-i18n="a_hints">Toggle Hints</button>
+        <button class="btn-ghost" onclick="undoMove()" data-i18n="a_undo">Undo Move</button>
+        <button class="btn-ghost" onclick="showTutorial()" style="border-color:rgba(201,168,76,.4);color:rgba(201,168,76,.7)" data-i18n="a_rules">Learn Rules</button>
       </div>
     </div>
 
     <div class="card" style="flex:1;min-height:160px">
-      <div class="card-title">Move Log</div>
+      <div class="card-title" data-i18n="c_log">Move Log</div>
       <div class="log-scroll" id="move-log"></div>
     </div>
   </div>
@@ -484,6 +503,117 @@ header h1{
 </div>
 
 <script>
+// ─────────────── i18n ───────────────
+const I18N={
+en:{
+  doc_title:'REVERSI — Flip Chess',
+  lang_other:'中文', lang_aria:'Switch to Chinese',
+  title:'Reversi', ornament:'◆ Flip Chess ◆',
+  subtitle:'A Game of Positional Dominance',
+
+  c_score:'Score', you_black:'You (Black)', ai_white:'AI (White)',
+  c_turn:'Current Turn', c_ai:'AI Status', c_diff:'Difficulty',
+  c_actions:'Actions', c_log:'Move Log',
+
+  your_move:'Your Move', ai_thinking:'AI Thinking',
+  black:'Black', white:'White',
+  thinking:'Thinking',
+  ai_calc:'AI is calculating the best move',
+  ai_await:'Awaiting your move',
+  ai_optimal:'Calculating optimal move…',
+  status_place:'Place your piece on a highlighted square',
+  skip_you:'No moves for you — AI goes again',
+  skip_ai:'No moves for AI — Your turn',
+
+  d_novice:'Novice (2-ply)', d_adept:'Adept (4-ply)', d_master:'Master (6-ply)',
+  a_new:'New Game', a_hints:'Toggle Hints', a_undo:'Undo Move', a_rules:'Learn Rules',
+
+  log_you:(sq,n)=>`You → ${sq}  (+${n})`,
+  log_ai:(sq,n)=>`AI  → ${sq}  (+${n})`,
+
+  win_title:'Victory!', lose_title:'Defeated', draw_title:'Draw',
+  win_sub:(b,w)=>`You win — Black ${b}  vs  White ${w}`,
+  lose_sub:(w,b)=>`AI wins — White ${w}  vs  Black ${b}`,
+  draw_sub:(b,w)=>`${b} — ${w}  ·  Perfectly balanced`,
+  play_again:'Play Again',
+
+  t_skip:'Skip ✕', t_back:'← Back', t_next:'Next →', t_play:'Play Now ▶',
+  t_step:(i,n)=>`Step ${i} of ${n}`,
+
+  t0_ttl:'Welcome', t0_sub:'to Reversi · Flip Chess',
+  t0_desc:'A classic game of <b>strategic placement</b> and <b>territorial control</b>.<br>Learn the rules in 5 quick steps, then challenge the AI.',
+  t1_ttl:'The Board',
+  t1_desc:'The game is played on an <b>8 × 8 grid</b> of 64 squares.<br>You play as <b>Black ●</b> · The AI plays as <b>White ○</b>.<br>Black always moves first.',
+  t2_ttl:'Starting Setup',
+  t2_desc:'<b>White</b> and <b>Black</b> each begin with <b>2 pieces</b> arranged diagonally in the center.<br>Watch them fall into position ↑',
+  t3_ttl:'Making a Move',
+  t3_legend:'● Green dots show all legal moves',
+  t3_desc:'You may only place a piece on a square that <b>flanks</b> at least one opponent piece in a straight line — horizontal, vertical, or diagonal.',
+  t4_ttl:'Capturing Pieces',
+  t4_desc:'A <b>Black</b> piece lands on the highlighted square — sandwiching the <b>White</b> piece above it between two Black pieces.<br>That White piece <b>flips to Black!</b>',
+  t5_ttl:'How to Win',
+  t5_you:'You · Black', t5_ai:'AI · White', t5_vs:'vs', t5_wins:'♛  Black Wins!',
+  t5_desc:'The game ends when the board is <b>full</b> or neither player can move.<br>The player with the <b>most pieces wins</b>.<br>Pro tip: <b>capture the corners</b> — they can never be flipped!'
+},
+zh:{
+  doc_title:'黑白棋 — 翻转棋',
+  lang_other:'EN', lang_aria:'切换到英文',
+  title:'黑白棋', ornament:'◆ 翻转棋 ◆',
+  subtitle:'一盘关于位置与掌控的对弈',
+
+  c_score:'比分', you_black:'你（黑棋）', ai_white:'AI（白棋）',
+  c_turn:'当前回合', c_ai:'AI 状态', c_diff:'难度',
+  c_actions:'操作', c_log:'棋谱记录',
+
+  your_move:'轮到你了', ai_thinking:'AI 思考中',
+  black:'黑棋', white:'白棋',
+  thinking:'思考中',
+  ai_calc:'AI 正在计算最佳落子',
+  ai_await:'等待你落子',
+  ai_optimal:'正在计算最优解…',
+  status_place:'请落子在高亮的格子上',
+  skip_you:'你无子可下——由 AI 连走',
+  skip_ai:'AI 无子可下——轮到你',
+
+  d_novice:'入门（2 层搜索）', d_adept:'进阶（4 层搜索）', d_master:'高手（6 层搜索）',
+  a_new:'重新开局', a_hints:'显示/隐藏提示', a_undo:'悔棋', a_rules:'学习规则',
+
+  log_you:(sq,n)=>`你 → ${sq}  （翻 ${n}）`,
+  log_ai:(sq,n)=>`AI → ${sq}  （翻 ${n}）`,
+
+  win_title:'你赢了！', lose_title:'惜败', draw_title:'平局',
+  win_sub:(b,w)=>`你获胜 — 黑 ${b}  比  白 ${w}`,
+  lose_sub:(w,b)=>`AI 获胜 — 白 ${w}  比  黑 ${b}`,
+  draw_sub:(b,w)=>`${b} — ${w}  ·  势均力敌`,
+  play_again:'再来一局',
+
+  t_skip:'跳过 ✕', t_back:'← 上一步', t_next:'下一步 →', t_play:'开始对弈 ▶',
+  t_step:(i,n)=>`第 ${i} 步 / 共 ${n} 步`,
+
+  t0_ttl:'欢迎', t0_sub:'来玩黑白棋 · 翻转棋',
+  t0_desc:'一款讲究<b>落子位置</b>与<b>地盘争夺</b>的经典棋类。<br>用 5 步快速学会规则，然后向 AI 发起挑战。',
+  t1_ttl:'棋盘',
+  t1_desc:'棋盘是 <b>8 × 8</b> 共 64 格。<br>你执<b>黑棋 ●</b>，AI 执<b>白棋 ○</b>。<br>黑棋永远先行。',
+  t2_ttl:'初始摆法',
+  t2_desc:'开局时<b>黑棋</b>和<b>白棋</b>各有 <b>2 枚</b>，在棋盘中央交叉斜放。<br>看它们落到位 ↑',
+  t3_ttl:'如何落子',
+  t3_legend:'● 绿点标出所有合法落子点',
+  t3_desc:'只能落在能够<b>夹住</b>对方至少一枚棋子的格子上——横向、纵向或斜向成一直线均可。',
+  t4_ttl:'吃子规则',
+  t4_desc:'一枚<b>黑棋</b>落在高亮格上，把上方那枚<b>白棋</b>夹在两枚黑棋之间。<br>那枚白棋就会<b>翻成黑棋</b>！',
+  t5_ttl:'如何取胜',
+  t5_you:'你 · 黑棋', t5_ai:'AI · 白棋', t5_vs:'比', t5_wins:'♛  黑棋获胜！',
+  t5_desc:'当棋盘<b>下满</b>，或双方都无子可下时，对局结束。<br><b>棋子多的一方获胜</b>。<br>小技巧：<b>抢占四个角</b>——角上的棋子永远不会被翻转！'
+}
+};
+let LANG=(function(){
+  const q=new URLSearchParams(location.search).get('lang');
+  if(q&&I18N[q])return q;
+  let s=null;try{s=localStorage.getItem('evolta_lang')}catch(e){}
+  return (s&&I18N[s])?s:'en';
+})();
+function t(k,...a){const v=I18N[LANG][k]!==undefined?I18N[LANG][k]:I18N.en[k];return typeof v==='function'?v(...a):v}
+
 // ─────────────── CONSTANTS ───────────────
 const EMPTY=0,BLACK=1,WHITE=2;
 const DIRS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
@@ -503,6 +633,8 @@ const W=[
 // ─────────────── STATE ───────────────
 let board,currentPlayer,aiDepth=4,showHints=true,gameOver=false;
 let lastMove=null,moveHistory=[],logCount=0;
+// Log entries are stored structurally so a language switch can re-render them.
+let logEntries=[];
 
 // ─────────────── CORE LOGIC ───────────────
 function initBoard(){
@@ -698,14 +830,14 @@ function updateScoreUI(){
 function updateTurnUI(){
   const disc=document.getElementById('turn-disc');
   disc.className='turn-disc-lg '+(currentPlayer===BLACK?'b':'w');
-  document.getElementById('turn-lbl').textContent=currentPlayer===BLACK?'Your Move':'AI Thinking';
-  document.getElementById('turn-sub').textContent=currentPlayer===BLACK?'Black':'White';
+  document.getElementById('turn-lbl').textContent=currentPlayer===BLACK?t('your_move'):t('ai_thinking');
+  document.getElementById('turn-sub').textContent=currentPlayer===BLACK?t('black'):t('white');
 }
 
 function setThinking(on){
   document.getElementById('thinking-ind').classList.toggle('on',on);
   document.getElementById('ai-think-bar').classList.toggle('on',on);
-  document.getElementById('ai-status-txt').textContent=on?'Calculating optimal move…':'Awaiting your move';
+  document.getElementById('ai-status-txt').textContent=on?t('ai_optimal'):t('ai_await');
 }
 
 function setStatus(msg,hi=false){
@@ -714,15 +846,21 @@ function setStatus(msg,hi=false){
   el.className='status-bar'+(hi?' hi':'');
 }
 
-function addLog(txt,isAI){
-  logCount++;
+function addLog(sq,flips,isAI){
+  logEntries.push({sq,flips,isAI});
+  renderLog();
+}
+function renderLog(){
   const log=document.getElementById('move-log');
-  const div=document.createElement('div');div.className='log-entry';
-  const sp=document.createElement('span');sp.className=isAI?'ai-mv':'mv';
-  sp.textContent=`${logCount}. `;
-  div.appendChild(sp);
-  div.appendChild(document.createTextNode(txt));
-  log.appendChild(div);
+  log.innerHTML='';
+  logEntries.forEach((e,i)=>{
+    const div=document.createElement('div');div.className='log-entry';
+    const sp=document.createElement('span');sp.className=e.isAI?'ai-mv':'mv';
+    sp.textContent=(i+1)+'. ';
+    div.appendChild(sp);
+    div.appendChild(document.createTextNode(t(e.isAI?'log_ai':'log_you',e.sq,e.flips)));
+    log.appendChild(div);
+  });
   log.scrollTop=log.scrollHeight;
 }
 
@@ -736,7 +874,7 @@ function onCellClick(r,c){
   moveHistory.push({board:board.map(row=>[...row]),lastMove:[...( lastMove||[])],currentPlayer});
   board=applyMove(board,r,c,BLACK);
   lastMove=[r,c];
-  addLog(`You → ${COLS[c]}${r+1}  (+${flips.length})`,false);
+  addLog(COLS[c]+(r+1),flips.length,false);
 
   // Animate then advance
   animatePlace(r,c,BLACK,flips,()=>{
@@ -752,11 +890,11 @@ function advance(player){
   if(!moves.length){
     const other=player===BLACK?WHITE:BLACK;
     if(!getLegal(board,other).length){endGame();return;}
-    const skipMsg=player===BLACK?'No moves for you — AI goes again':'No moves for AI — Your turn';
+    const skipMsg=player===BLACK?t('skip_you'):t('skip_ai');
     setStatus(skipMsg,true);
     updateTurnUI();
     setTimeout(()=>{
-      setStatus('Place your piece on a highlighted square');
+      setStatus(t('status_place'));
       advance(other);
     },1600);
     return;
@@ -773,7 +911,7 @@ function advance(player){
       moveHistory.push({board:board.map(row=>[...row]),lastMove:[...(lastMove||[])],currentPlayer});
       board=applyMove(board,r,c,WHITE);
       lastMove=move;
-      addLog(`AI  → ${COLS[c]}${r+1}  (+${flips.length})`,true);
+      addLog(COLS[c]+(r+1),flips.length,true);
       animatePlace(r,c,WHITE,flips,()=>{
         render();
         advance(BLACK);
@@ -781,24 +919,29 @@ function advance(player){
     },300+Math.random()*300);
   }else{
     render();
-    setStatus('Place your piece on a highlighted square');
+    setStatus(t('status_place'));
   }
 }
 
 function endGame(){
   gameOver=true;render();
+  drawEndOverlay();
+}
+function drawEndOverlay(){
   const{black,white}=countPieces(board);
   let title,sub;
-  if(black>white){title='Victory!';sub=`You win — Black ${black}  vs  White ${white}`;}
-  else if(white>black){title='Defeated';sub=`AI wins — White ${white}  vs  Black ${black}`;}
-  else{title='Draw';sub=`${black} — ${white}  ·  Perfectly balanced`;}
+  if(black>white){title=t('win_title');sub=t('win_sub',black,white);}
+  else if(white>black){title=t('lose_title');sub=t('lose_sub',white,black);}
+  else{title=t('draw_title');sub=t('draw_sub',black,white);}
 
   const boardEl=document.getElementById('board');
+  const prev=boardEl.querySelector('.go-overlay');
+  if(prev)prev.remove();
   const ov=document.createElement('div');ov.className='go-overlay';
   ov.innerHTML=`
     <div class="go-title">${title}</div>
     <div class="go-sub">${sub}</div>
-    <button class="btn-gold" style="margin-top:10px;padding:10px 24px" onclick="newGame()">Play Again</button>
+    <button class="btn-gold" style="margin-top:10px;padding:10px 24px" onclick="newGame()">${t('play_again')}</button>
   `;
   boardEl.appendChild(ov);
 }
@@ -809,8 +952,8 @@ function newGame(){
   currentPlayer=BLACK;
   initBoard();buildBoardDOM();
   setThinking(false);
-  document.getElementById('move-log').innerHTML='';
-  setStatus('Place your piece on a highlighted square');
+  logEntries=[];renderLog();
+  setStatus(t('status_place'));
   render();
 }
 
@@ -828,9 +971,8 @@ function undoMove(){
   const s=moveHistory.pop();
   board=s.board;lastMove=s.lastMove.length?s.lastMove:null;
   currentPlayer=BLACK;gameOver=false;
-  logCount=Math.max(0,logCount-2);
-  const log=document.getElementById('move-log');
-  for(let i=0;i<2;i++)if(log.lastChild)log.removeChild(log.lastChild);
+  logEntries=logEntries.slice(0,Math.max(0,logEntries.length-2));
+  renderLog();
   buildBoardDOM();render();
 }
 
@@ -855,13 +997,13 @@ const TUT_CONTENT=[
       <div class="td bk" style="width:66px;height:66px;animation:float-bk 2.8s ease-in-out infinite;transform:rotate(-8deg)"></div>
       <div class="td wh" style="width:66px;height:66px;animation:float-wh 2.8s ease-in-out .4s infinite;transform:rotate(8deg)"></div>
     </div>
-    <div class="tut-ttl" style="font-size:1.55rem;letter-spacing:.32em">Welcome</div>
-    <div style="font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.38em;color:var(--gold-dark);text-transform:uppercase;margin-top:-10px">to Reversi · Flip Chess</div>
-    <div class="tut-desc">A classic game of <b>strategic placement</b> and <b>territorial control</b>.<br>Learn the rules in 5 quick steps, then challenge the AI.</div>
+    <div class="tut-ttl" style="font-size:1.55rem;letter-spacing:.32em">${t('t0_ttl')}</div>
+    <div style="font-family:'Cinzel','Noto Serif SC',serif;font-size:.56rem;letter-spacing:.38em;color:var(--gold-dark);text-transform:uppercase;margin-top:-10px">${t('t0_sub')}</div>
+    <div class="tut-desc">${t('t0_desc')}</div>
   `,
   // 1 — The Board
   ()=>`
-    <div class="tut-ttl">The Board</div>
+    <div class="tut-ttl">${t('t1_ttl')}</div>
     ${(()=>{
       let h='';
       for(let r=0;r<8;r++)for(let c=0;c<8;c++){
@@ -870,11 +1012,11 @@ const TUT_CONTENT=[
       }
       return `<div class="mb" style="grid-template-columns:repeat(8,20px)">${h}</div>`;
     })()}
-    <div class="tut-desc">The game is played on an <b>8 × 8 grid</b> of 64 squares.<br>You play as <b>Black ●</b> · The AI plays as <b>White ○</b>.<br>Black always moves first.</div>
+    <div class="tut-desc">${t('t1_desc')}</div>
   `,
   // 2 — Starting Setup
   ()=>`
-    <div class="tut-ttl">Starting Setup</div>
+    <div class="tut-ttl">${t('t2_ttl')}</div>
     ${mb(6,6,38,(r,c)=>{
       const d={};
       d['2,2']=['wh',.1]; d['2,3']=['bk',.3]; d['3,2']=['bk',.5]; d['3,3']=['wh',.7];
@@ -882,11 +1024,11 @@ const TUT_CONTENT=[
       if(d[k])return td(d[k][0],28,`animation:drop-in .45s ${d[k][1]}s cubic-bezier(.34,1.56,.64,1) both`);
       return '';
     })}
-    <div class="tut-desc"><b>White</b> and <b>Black</b> each begin with <b>2 pieces</b> arranged diagonally in the center.<br>Watch them fall into position ↑</div>
+    <div class="tut-desc">${t('t2_desc')}</div>
   `,
   // 3 — Legal Moves
   ()=>`
-    <div class="tut-ttl">Making a Move</div>
+    <div class="tut-ttl">${t('t3_ttl')}</div>
     ${mb(5,5,42,(r,c)=>{
       if(r===1&&c===1)return td('wh',32);
       if(r===1&&c===2)return td('bk',32);
@@ -897,12 +1039,12 @@ const TUT_CONTENT=[
       if(r===3&&c===0)return td('ht',20);
       return '';
     })}
-    <div style="font-size:.72rem;letter-spacing:.12em;color:rgba(72,196,100,.85);margin-top:-4px">● Green dots show all legal moves</div>
-    <div class="tut-desc">You may only place a piece on a square that <b>flanks</b> at least one opponent piece in a straight line — horizontal, vertical, or diagonal.</div>
+    <div style="font-size:.72rem;letter-spacing:.12em;color:rgba(72,196,100,.85);margin-top:-4px">${t('t3_legend')}</div>
+    <div class="tut-desc">${t('t3_desc')}</div>
   `,
   // 4 — Capturing
   ()=>`
-    <div class="tut-ttl">Capturing Pieces</div>
+    <div class="tut-ttl">${t('t4_ttl')}</div>
     <div id="tut-flip-wrap">
       ${mb(5,5,42,(r,c)=>{
         if(r===1&&c===1)return `<div class="td wh" id="tf-wh" style="width:32px;height:32px"></div>`;
@@ -913,26 +1055,26 @@ const TUT_CONTENT=[
         return '';
       })}
     </div>
-    <div class="tut-desc" id="tut-flip-txt">A <b>Black</b> piece lands on the highlighted square — sandwiching the <b>White</b> piece above it between two Black pieces.<br>That White piece <b>flips to Black!</b></div>
+    <div class="tut-desc" id="tut-flip-txt">${t('t4_desc')}</div>
   `,
   // 5 — Win Condition
   ()=>`
-    <div class="tut-ttl">How to Win</div>
+    <div class="tut-ttl">${t('t5_ttl')}</div>
     <div style="display:flex;gap:32px;align-items:center">
       <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
         <div class="td bk" style="width:50px;height:50px;animation:count-up .5s .1s both"></div>
-        <div style="font-family:'Cinzel',serif;font-size:2rem;font-weight:700;color:var(--text-primary);animation:count-up .5s .25s both">34</div>
-        <div style="font-size:.58rem;letter-spacing:.28em;color:var(--text-muted);text-transform:uppercase">You · Black</div>
+        <div style="font-family:'Cinzel','Noto Serif SC',serif;font-size:2rem;font-weight:700;color:var(--text-primary);animation:count-up .5s .25s both">34</div>
+        <div style="font-size:.58rem;letter-spacing:.28em;color:var(--text-muted);text-transform:uppercase">${t('t5_you')}</div>
       </div>
-      <div style="font-family:'Cinzel',serif;font-size:1rem;color:var(--gold-dark);margin-top:-20px">vs</div>
+      <div style="font-family:'Cinzel','Noto Serif SC',serif;font-size:1rem;color:var(--gold-dark);margin-top:-20px">${t('t5_vs')}</div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
         <div class="td wh" style="width:50px;height:50px;animation:count-up .5s .1s both"></div>
-        <div style="font-family:'Cinzel',serif;font-size:2rem;font-weight:700;color:var(--text-primary);animation:count-up .5s .4s both">30</div>
-        <div style="font-size:.58rem;letter-spacing:.28em;color:var(--text-muted);text-transform:uppercase">AI · White</div>
+        <div style="font-family:'Cinzel','Noto Serif SC',serif;font-size:2rem;font-weight:700;color:var(--text-primary);animation:count-up .5s .4s both">30</div>
+        <div style="font-size:.58rem;letter-spacing:.28em;color:var(--text-muted);text-transform:uppercase">${t('t5_ai')}</div>
       </div>
     </div>
-    <div style="font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;animation:count-up .6s .6s both">♛  Black Wins!</div>
-    <div class="tut-desc">The game ends when the board is <b>full</b> or neither player can move.<br>The player with the <b>most pieces wins</b>.<br>Pro tip: <b>capture the corners</b> — they can never be flipped!</div>
+    <div style="font-family:'Cinzel','Noto Serif SC',serif;font-size:.8rem;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;animation:count-up .6s .6s both">${t('t5_wins')}</div>
+    <div class="tut-desc">${t('t5_desc')}</div>
   `,
 ];
 
@@ -977,9 +1119,11 @@ function tutPrev(){
 function renderTutStep(){
   const pct=((tStep+1)/TSTEPS*100).toFixed(1);
   document.getElementById('tut-bar').style.width=pct+'%';
-  document.getElementById('tut-step-lbl').textContent=`Step ${tStep+1} of ${TSTEPS}`;
+  document.getElementById('tut-step-lbl').textContent=t('t_step',tStep+1,TSTEPS);
   document.getElementById('tut-prev-btn').disabled=tStep===0;
-  document.getElementById('tut-next-btn').textContent=tStep===TSTEPS-1?'Play Now ▶':'Next →';
+  document.getElementById('tut-next-btn').textContent=tStep===TSTEPS-1?t('t_play'):t('t_next');
+  document.getElementById('tut-prev-btn').textContent=t('t_back');
+  document.getElementById('tutSkip').textContent=t('t_skip');
   const box=document.getElementById('tut-content');
   box.style.opacity='0';box.style.transform='translateY(10px)';
   setTimeout(()=>{
@@ -992,8 +1136,35 @@ function renderTutStep(){
   },160);
 }
 
+// ─────────────── LANGUAGE ───────────────
+function applyLang(){
+  document.documentElement.lang=LANG==='zh'?'zh-CN':'en';
+  document.body.classList.toggle('lang-zh',LANG==='zh');
+  document.title=t('doc_title');
+  const tog=document.getElementById('langToggle');
+  tog.textContent=t('lang_other');
+  tog.setAttribute('aria-label',t('lang_aria'));
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});
+
+  updateTurnUI();
+  setThinking(document.getElementById('thinking-ind').classList.contains('on'));
+  renderLog();
+  // The status bar may be showing a transient skip message; only the resting
+  // text is safe to regenerate.
+  const sb=document.getElementById('status-bar');
+  if(!sb.classList.contains('hi'))setStatus(t('status_place'));
+  if(gameOver)drawEndOverlay();
+  if(!document.getElementById('tut-overlay').classList.contains('hidden'))renderTutStep();
+}
+document.getElementById('langToggle').addEventListener('click',()=>{
+  LANG=LANG==='en'?'zh':'en';
+  try{localStorage.setItem('evolta_lang',LANG)}catch(e){}
+  applyLang();
+});
+
 // ─────────────── INIT ───────────────
 newGame();
+applyLang();
 // Show tutorial on first visit
 try{if(!localStorage.getItem('reversi-tut-seen'))showTutorial();}catch(e){showTutorial();}
 </script>

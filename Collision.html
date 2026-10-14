@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Momentum & Energy Lab</title>
+<title>Momentum &amp; Energy Lab</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Ma+Shan+Zheng&display=swap');
 
 :root{
   --paper:#F5F6F1;
@@ -17,20 +17,33 @@
   --highlight:#FFE066;
   --panel:#FFFFFF;
   --panel-edge:#DCE1DA;
+
+  /* CJK glyphs fall through to Noto Sans SC per-character; Latin stays on the original face */
+  --sans:'Inter','Noto Sans SC',sans-serif;
+  --mono:'JetBrains Mono','Noto Sans SC',monospace;
+  --hand:'Kalam','Noto Sans SC',cursive;
+  --hand-title:'Kalam','Ma Shan Zheng',cursive;
 }
 *{box-sizing:border-box;}
 body{
   margin:0;
   background:var(--paper);
-  font-family:'Inter',sans-serif;
+  font-family:var(--sans);
   color:var(--ink);
   min-height:100vh;
   padding:24px 16px 60px;
 }
 .wrap{max-width:920px;margin:0 auto;}
 
+.top-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
 .back-btn{
-  font-family:'JetBrains Mono',monospace;
+  font-family:var(--mono);
   font-size:12px;
   letter-spacing:.03em;
   color:#5b6270;
@@ -39,27 +52,43 @@ body{
   border-radius:6px;
   padding:6px 12px;
   display:inline-block;
-  margin-bottom:14px;
   transition:.15s;
 }
 .back-btn:hover{background:var(--ink);color:#fff;}
 
+.lang-toggle{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.03em;
+  color:#5b6270;
+  background:var(--panel);
+  border:1.5px solid var(--ink);
+  border-radius:6px;
+  padding:6px 12px;
+  cursor:pointer;
+  margin:0;
+  transition:.15s;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.lang-toggle:hover{background:var(--ink);color:#fff;}
+
 .title-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:4px;}
 h1{
-  font-family:'Kalam',cursive;
+  font-family:var(--hand-title);
   font-size:34px;
   margin:0;
   font-weight:700;
   transform:rotate(-0.6deg);
 }
 .subtitle{
-  font-family:'Kalam',cursive;
+  font-family:var(--hand);
   font-size:16px;
   color:#5b6270;
 }
 .score-badge{
   margin-left:auto;
-  font-family:'JetBrains Mono',monospace;
+  font-family:var(--mono);
   font-size:14px;
   background:linear-gradient(120deg, var(--highlight) 0%, var(--highlight) 100%);
   background-repeat:no-repeat;
@@ -70,7 +99,7 @@ h1{
 
 .tabs{display:flex;gap:8px;margin:18px 0 16px;flex-wrap:wrap;}
 .tab{
-  font-family:'Kalam',cursive;
+  font-family:var(--hand);
   font-size:17px;
   padding:8px 18px;
   border:2px solid var(--ink);
@@ -114,7 +143,7 @@ canvas{
   margin-bottom:12px;
 }
 .panel-label{
-  font-family:'Kalam',cursive;
+  font-family:var(--hand);
   font-size:15px;
   margin:0 0 8px;
   color:#444;
@@ -122,7 +151,7 @@ canvas{
 .given-row{
   display:flex;
   justify-content:space-between;
-  font-family:'JetBrains Mono',monospace;
+  font-family:var(--mono);
   font-size:13.5px;
   padding:2px 0;
 }
@@ -132,12 +161,12 @@ canvas{
 
 .predict-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .predict-row label{
-  font-family:'JetBrains Mono',monospace;
+  font-family:var(--mono);
   font-size:13.5px;
   min-width:70px;
 }
 .predict-row input{
-  font-family:'JetBrains Mono',monospace;
+  font-family:var(--mono);
   font-size:14px;
   width:90px;
   padding:5px 7px;
@@ -146,7 +175,7 @@ canvas{
 }
 
 button{
-  font-family:'Kalam',cursive;
+  font-family:var(--hand);
   font-size:15px;
   border:2px solid var(--ink);
   background:var(--panel);
@@ -163,7 +192,7 @@ button:disabled{opacity:0.4;cursor:not-allowed;}
 
 .diff-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
 .diff-btn{
-  font-family:'JetBrains Mono',monospace;
+  font-family:var(--mono);
   font-size:12.5px;
   padding:5px 10px;
   border:1.5px solid var(--ink);
@@ -176,7 +205,7 @@ button:disabled{opacity:0.4;cursor:not-allowed;}
 .diff-btn.active{background:var(--ink);color:#fff;}
 
 .feedback{
-  font-family:'Kalam',cursive;
+  font-family:var(--hand);
   font-size:16px;
   padding:10px 12px;
   border-radius:6px;
@@ -184,7 +213,7 @@ button:disabled{opacity:0.4;cursor:not-allowed;}
   min-height:24px;
 }
 .hint-box{
-  font-family:'JetBrains Mono',monospace;
+  font-family:var(--mono);
   font-size:12.5px;
   line-height:1.6;
   background:#FDF7E3;
@@ -206,7 +235,7 @@ button.hint-btn:hover{background:#FBEDBF;}
 .legend{
   display:flex;
   gap:14px;
-  font-family:'JetBrains Mono',monospace;
+  font-family:var(--mono);
   font-size:11.5px;
   margin-top:6px;
   color:#666;
@@ -216,6 +245,10 @@ button.hint-btn:hover{background:#FBEDBF;}
 .legend .b::before{color:var(--marker-red);}
 .legend .ke::before{color:#E08A2B;}
 .legend .pe::before{color:var(--marker-green);}
+
+/* Chinese labels run wider than the English abbreviations */
+.lang-zh .predict-row label{min-width:96px;}
+.lang-zh .hint-box{line-height:1.75;}
 
 @keyframes impact-shake{
   0%{transform:translate(0,0);}
@@ -233,6 +266,7 @@ canvas.shake{animation:impact-shake 0.35s ease;}
   .subtitle{font-size:14px;}
   .tab{font-size:15px;padding:7px 14px;}
   .predict-row label{min-width:60px;font-size:12.5px;}
+  .lang-zh .predict-row label{min-width:84px;}
   .board{padding:14px;}
 }
 </style>
@@ -240,7 +274,10 @@ canvas.shake{animation:impact-shake 0.35s ease;}
 <body>
 <div class="wrap">
 
-  <a class="back-btn" href="index.html">&larr; Evolta</a>
+  <div class="top-row">
+    <a class="back-btn" href="index.html">&larr; Evolta</a>
+    <button class="lang-toggle" id="langToggle" type="button">中文</button>
+  </div>
 
   <div class="title-row">
     <h1 id="mainTitle">Momentum Lab</h1>
@@ -248,8 +285,8 @@ canvas.shake{animation:impact-shake 0.35s ease;}
   </div>
 
   <div class="tabs" id="tabsRow">
-    <div class="tab active" id="tabMomentum">Momentum</div>
-    <div class="tab" id="tabEnergy">Energy</div>
+    <div class="tab active" id="tabMomentum" data-i18n="tab_momentum">Momentum</div>
+    <div class="tab" id="tabEnergy" data-i18n="tab_energy">Energy</div>
   </div>
 
   <div class="board">
@@ -262,17 +299,17 @@ canvas.shake{animation:impact-shake 0.35s ease;}
       <div class="diff-row" id="diffRow"></div>
 
       <div class="panel-section">
-        <p class="panel-label">Given</p>
+        <p class="panel-label" data-i18n="label_given">Given</p>
         <div id="givenBox"></div>
       </div>
 
       <div class="panel-section">
-        <p class="panel-label">Your prediction</p>
+        <p class="panel-label" data-i18n="label_predict">Your prediction</p>
         <div id="predictBox"></div>
         <div class="hint-box" id="hintBox"></div>
-        <button class="primary" id="checkBtn">Check &amp; Run</button>
-        <button class="hint-btn" id="hintBtn">Hint</button>
-        <button id="newBtn">New Problem</button>
+        <button class="primary" id="checkBtn" data-i18n="btn_check">Check &amp; Run</button>
+        <button class="hint-btn" id="hintBtn" data-i18n="btn_hint">Hint</button>
+        <button id="newBtn" data-i18n="btn_new">New Problem</button>
       </div>
 
       <div class="feedback neutral" id="feedback">Set your prediction, then hit Check &amp; Run.</div>
@@ -282,6 +319,176 @@ canvas.shake{animation:impact-shake 0.35s ease;}
 </div>
 
 <script>
+// ============================================================
+//  i18n
+//  Strings with interpolated values are stored as functions so
+//  word order stays free across languages.
+// ============================================================
+const I18N = {
+  en: {
+    doc_title:        'Momentum & Energy Lab',
+    lang_other:       '中文',
+    lang_aria:        'Switch to Chinese',
+
+    title_momentum:   'Momentum Lab',
+    title_energy:     'Energy Lab',
+    tab_momentum:     'Momentum',
+    tab_energy:       'Energy',
+
+    label_given:      'Given',
+    label_predict:    'Your prediction',
+    btn_check:        'Check & Run',
+    btn_hint:         'Hint',
+    btn_new:          'New Problem',
+
+    score:            (s,a) => `${s} / ${a} correct`,
+    feedback_start:   'Set your prediction, then hit Check & Run.',
+
+    diff_easy:        'Easy',
+    diff_hard:        'Hard',
+    diff_2d:          '2D',
+    diff_lvl1:        'Level 1',
+    diff_lvl2:        'Level 2',
+    diff_lvl3:        'Level 3',
+
+    legend_a:         'object A',
+    legend_b:         'object B',
+    legend_pe:        'PE',
+    legend_ke:        'KE',
+
+    given_equal_mass: 'equal mass',
+    given_b_rest:     'B at rest',
+    given_v0_a:       'v₀ (A, before)',
+    given_theta1:     "θ₁ (A's angle after)",
+    given_collision:  'collision:',
+    coll_elastic:     'elastic',
+    coll_inelastic:   'perfectly inelastic',
+    coll_elastic2d:   'elastic, top-down 2D',
+    given_h0:         'start height h₀',
+    given_v0:         'launch speed v₀',
+    given_h2:         'second hill h₂',
+    given_frictionless:'frictionless ramp',
+
+    predict_maxh:     'max h (m)',
+    predict_speed:    'speed (m/s)',
+
+    hint_why:         'Why:',
+    hint_plugged:     'Plugged in:',
+    hint_2d_head:     'Equal-mass elastic collision, target at rest — a classic result: the two paths end up perpendicular (θ₁+θ₂=90°):',
+    hint_el_head:     'Elastic collision — both quantities are conserved:',
+    hint_el_momentum: 'Momentum:',
+    hint_el_ke:       'KE:',
+    hint_el_general:  'Overall formula (solving that system):',
+    hint_inel_head:   'Perfectly inelastic — objects stick together, only momentum is conserved:',
+    hint_inel_general:"Overall formula (solving for v'):",
+    hint_e_bottom:    'Energy conservation: PE at top → KE at bottom (m cancels):',
+    hint_e_peak:      'Energy conservation: KE at launch → PE at peak (m cancels):',
+    hint_e_hill:      'Energy conservation between start height and second hill:',
+
+    res_2d_ok:        (a,b,c) => `Nailed it — v₁' = ${a} m/s, v₂' = ${b} m/s, θ₂ = ${c}°.`,
+    res_2d_no:        (a,b,c) => `Not quite. Actual: v₁' = ${a} m/s, v₂' = ${b} m/s, θ₂ = ${c}°.`,
+    res_el_ok:        (a,b)   => `Nailed it — v₁' = ${a}, v₂' = ${b} m/s.`,
+    res_el_no:        (a,b)   => `Not quite. Actual: v₁' = ${a} m/s, v₂' = ${b} m/s.`,
+    res_inel_ok:      v => `Nailed it — combined v' = ${v} m/s.`,
+    res_inel_no:      v => `Not quite. Actual combined v' = ${v} m/s.`,
+    res_h_ok:         h => `Nailed it — max height = ${h} m.`,
+    res_h_no:         h => `Not quite. Actual max height = ${h} m.`,
+    res_v_ok:         v => `Nailed it — speed = ${v} m/s.`,
+    res_v_no:         v => `Not quite. Actual speed = ${v} m/s.`,
+
+    canvas_speed:     v => `speed ≈ ${v} m/s`,
+    canvas_combined:  v => `v' (combined) = ${v} m/s`
+  },
+
+  zh: {
+    doc_title:        '动量与能量实验室',
+    lang_other:       'EN',
+    lang_aria:        '切换到英文',
+
+    title_momentum:   '动量实验室',
+    title_energy:     '能量实验室',
+    tab_momentum:     '动量',
+    tab_energy:       '能量',
+
+    label_given:      '已知条件',
+    label_predict:    '你的预测',
+    btn_check:        '检验并运行',
+    btn_hint:         '提示',
+    btn_new:          '换一题',
+
+    score:            (s,a) => `${s} / ${a} 正确`,
+    feedback_start:   '填入你的预测，然后点击"检验并运行"。',
+
+    diff_easy:        '简单',
+    diff_hard:        '困难',
+    diff_2d:          '二维',
+    diff_lvl1:        '第 1 关',
+    diff_lvl2:        '第 2 关',
+    diff_lvl3:        '第 3 关',
+
+    legend_a:         '物体 A',
+    legend_b:         '物体 B',
+    legend_pe:        '势能',
+    legend_ke:        '动能',
+
+    given_equal_mass: '质量相等',
+    given_b_rest:     'B 初始静止',
+    given_v0_a:       'v₀（A 碰前）',
+    given_theta1:     'θ₁（A 碰后偏角）',
+    given_collision:  '碰撞类型：',
+    coll_elastic:     '弹性碰撞',
+    coll_inelastic:   '完全非弹性碰撞',
+    coll_elastic2d:   '弹性碰撞（俯视二维）',
+    given_h0:         '初始高度 h₀',
+    given_v0:         '发射速度 v₀',
+    given_h2:         '第二个坡顶 h₂',
+    given_frictionless:'光滑轨道（无摩擦）',
+
+    predict_maxh:     '最大高度 (m)',
+    predict_speed:    '速度 (m/s)',
+
+    hint_why:         '为什么：',
+    hint_plugged:     '代入数值：',
+    hint_2d_head:     '等质量弹性碰撞、被撞物初始静止 —— 经典结论：碰后两者的速度方向互相垂直（θ₁+θ₂=90°）：',
+    hint_el_head:     '弹性碰撞 —— 动量与动能同时守恒：',
+    hint_el_momentum: '动量守恒：',
+    hint_el_ke:       '动能守恒：',
+    hint_el_general:  '联立求解后的通式：',
+    hint_inel_head:   '完全非弹性碰撞 —— 两物体碰后粘在一起，只有动量守恒：',
+    hint_inel_general:"解出 v' 的通式：",
+    hint_e_bottom:    '机械能守恒：顶端的重力势能 → 底端的动能（质量 m 可约去）：',
+    hint_e_peak:      '机械能守恒：出发时的动能 → 最高点的重力势能（质量 m 可约去）：',
+    hint_e_hill:      '初始高度与第二个坡顶之间的机械能守恒：',
+
+    res_2d_ok:        (a,b,c) => `答对了 —— v₁' = ${a} m/s，v₂' = ${b} m/s，θ₂ = ${c}°。`,
+    res_2d_no:        (a,b,c) => `还差一点。正确答案：v₁' = ${a} m/s，v₂' = ${b} m/s，θ₂ = ${c}°。`,
+    res_el_ok:        (a,b)   => `答对了 —— v₁' = ${a} m/s，v₂' = ${b} m/s。`,
+    res_el_no:        (a,b)   => `还差一点。正确答案：v₁' = ${a} m/s，v₂' = ${b} m/s。`,
+    res_inel_ok:      v => `答对了 —— 碰后共同速度 v' = ${v} m/s。`,
+    res_inel_no:      v => `还差一点。碰后共同速度 v' = ${v} m/s。`,
+    res_h_ok:         h => `答对了 —— 最大高度 = ${h} m。`,
+    res_h_no:         h => `还差一点。实际最大高度 = ${h} m。`,
+    res_v_ok:         v => `答对了 —— 速度 = ${v} m/s。`,
+    res_v_no:         v => `还差一点。实际速度 = ${v} m/s。`,
+
+    canvas_speed:     v => `速度 ≈ ${v} m/s`,
+    canvas_combined:  v => `v'（共同速度）= ${v} m/s`
+  }
+};
+
+let LANG = (function(){
+  const q = new URLSearchParams(location.search).get('lang');
+  if(q && I18N[q]) return q;
+  const saved = localStorage.getItem('evolta_lang');
+  if(saved && I18N[saved]) return saved;
+  return 'en';
+})();
+
+function t(key, ...args){
+  const v = I18N[LANG][key] !== undefined ? I18N[LANG][key] : I18N.en[key];
+  return typeof v === 'function' ? v(...args) : v;
+}
+
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const G = 9.8;
@@ -293,6 +500,8 @@ let score = 0, attempts = 0;
 let anim = null; // active animation state
 let phase = 'setup'; // 'setup' | 'running' | 'result'
 let problem = null;
+let lastFeedback = { key:'feedback_start', args:[] }; // re-rendered on language switch
+let hintWhy = false;
 
 const scoreBadge = document.getElementById('scoreBadge');
 const givenBox = document.getElementById('givenBox');
@@ -305,9 +514,57 @@ const legend = document.getElementById('legend');
 const mainTitle = document.getElementById('mainTitle');
 const tabMomentum = document.getElementById('tabMomentum');
 const tabEnergy = document.getElementById('tabEnergy');
+const langToggle = document.getElementById('langToggle');
 
 function rand(min, max){ return Math.round(Math.random()*(max-min))+min; }
 function rnd1(x){ return Math.round(x*10)/10; }
+
+// ---------- LANGUAGE SWITCHING ----------
+function applyStaticI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    el.textContent = t(el.dataset.i18n);
+  });
+}
+
+function setLang(lang){
+  if(!I18N[lang] || lang === LANG) return;
+  LANG = lang;
+  localStorage.setItem('evolta_lang', lang);
+  applyLang();
+}
+
+function applyLang(){
+  document.documentElement.lang = LANG === 'zh' ? 'zh-CN' : 'en';
+  document.body.classList.toggle('lang-zh', LANG === 'zh');
+  document.title = t('doc_title');
+  langToggle.textContent = t('lang_other');
+  langToggle.setAttribute('aria-label', t('lang_aria'));
+
+  applyStaticI18n();
+  mainTitle.textContent = mode === 'momentum' ? t('title_momentum') : t('title_energy');
+  scoreBadge.textContent = t('score', score, attempts);
+  renderDiffRow();
+
+  // Preserve anything already typed across the re-render
+  const typed = ['p1','p2','p3'].map(id=>{
+    const el = document.getElementById(id);
+    return el ? el.value : null;
+  });
+  renderProblemUI();
+  typed.forEach((v,i)=>{
+    if(v === null || v === '') return;
+    const el = document.getElementById('p'+(i+1));
+    if(el) el.value = v;
+  });
+
+  feedback.textContent = t(lastFeedback.key, ...lastFeedback.args);
+  if(hintBox.classList.contains('show')) renderHint();
+
+  // Only the pre-run frame is safe to regenerate; a finished run keeps its overlay.
+  if(phase === 'setup') drawStatic();
+}
+
+langToggle.addEventListener('click', ()=> setLang(LANG === 'en' ? 'zh' : 'en'));
 
 // ---------- MODE TABS ----------
 function switchMode(newMode){
@@ -317,7 +574,7 @@ function switchMode(newMode){
   mode = newMode;
   tabMomentum.classList.toggle('active', mode==='momentum');
   tabEnergy.classList.toggle('active', mode==='energy');
-  mainTitle.textContent = mode==='momentum' ? 'Momentum Lab' : 'Energy Lab';
+  mainTitle.textContent = mode==='momentum' ? t('title_momentum') : t('title_energy');
   renderDiffRow();
   newProblem();
 }
@@ -326,15 +583,15 @@ tabEnergy.addEventListener('click', ()=>switchMode('energy'));
 
 // ---------- DIFFICULTY UI ----------
 const levelConfig = {
-  momentum: [ {d:1, label:'Easy'}, {d:2, label:'Hard'}, {d:3, label:'2D'} ],
-  energy:   [ {d:1, label:'Level 1'}, {d:2, label:'Level 2'}, {d:3, label:'Level 3'} ]
+  momentum: [ {d:1, key:'diff_easy'}, {d:2, key:'diff_hard'}, {d:3, key:'diff_2d'} ],
+  energy:   [ {d:1, key:'diff_lvl1'}, {d:2, key:'diff_lvl2'}, {d:3, key:'diff_lvl3'} ]
 };
 function renderDiffRow(){
   diffRow.innerHTML = '';
-  levelConfig[mode].forEach(({d,label})=>{
+  levelConfig[mode].forEach(({d,key})=>{
     const b = document.createElement('div');
     b.className = 'diff-btn' + (difficulty[mode]===d ? ' active' : '');
-    b.textContent = label;
+    b.textContent = t(key);
     b.onclick = ()=>{
       if(difficulty[mode] === d) { renderDiffRow(); return; }
       difficulty[mode]=d;
@@ -414,6 +671,18 @@ function solveEnergy(p){
 }
 
 // ---------- PROBLEM SETUP / RENDER GIVEN + PREDICT INPUTS ----------
+function renderProblemUI(){
+  if(mode==='momentum'){
+    renderMomentumGiven();
+    renderMomentumPredict();
+    legend.innerHTML = `<span class="a">${t('legend_a')}</span><span class="b">${t('legend_b')}</span>`;
+  } else {
+    renderEnergyGiven();
+    renderEnergyPredict();
+    legend.innerHTML = `<span class="pe">${t('legend_pe')}</span><span class="ke">${t('legend_ke')}</span>`;
+  }
+}
+
 function newProblem(forceNew){
   phase = 'setup';
   anim = null;
@@ -428,18 +697,12 @@ function newProblem(forceNew){
     problem = genEnergyProblem();
     store[difficulty[mode]] = problem;
   }
-  if(mode==='momentum'){
-    renderMomentumGiven();
-    renderMomentumPredict();
-    legend.innerHTML = '<span class="a">object A</span><span class="b">object B</span>';
-  } else {
-    renderEnergyGiven();
-    renderEnergyPredict();
-    legend.innerHTML = '<span class="pe">PE</span><span class="ke">KE</span>';
-  }
+  renderProblemUI();
   feedback.className = 'feedback neutral';
-  feedback.textContent = 'Set your prediction, then hit Check & Run.';
+  lastFeedback = { key:'feedback_start', args:[] };
+  feedback.textContent = t('feedback_start');
   checkBtn.disabled = false;
+  hintWhy = false;
   hintBox.classList.remove('show');
   hintBox.innerHTML = '';
   drawStatic();
@@ -451,10 +714,10 @@ function renderMomentumGiven(){
   if(problem.type==='elastic2d'){
     const {m1,v0,theta1} = problem;
     givenBox.innerHTML = `
-      <div class="given-row"><span class="a">m₁ = m₂ = ${m1} kg</span><span class="neutral">equal mass</span></div>
-      <div class="given-row"><span class="a">v₀ (A, before) = ${v0} m/s</span><span class="b">B at rest</span></div>
-      <div class="given-row"><span class="neutral">θ₁ (A's angle after) = ${theta1}°</span></div>
-      <div class="given-row"><span class="neutral">collision:</span><span class="neutral">elastic, top-down 2D</span></div>
+      <div class="given-row"><span class="a">m₁ = m₂ = ${m1} kg</span><span class="neutral">${t('given_equal_mass')}</span></div>
+      <div class="given-row"><span class="a">${t('given_v0_a')} = ${v0} m/s</span><span class="b">${t('given_b_rest')}</span></div>
+      <div class="given-row"><span class="neutral">${t('given_theta1')} = ${theta1}°</span></div>
+      <div class="given-row"><span class="neutral">${t('given_collision')}</span><span class="neutral">${t('coll_elastic2d')}</span></div>
     `;
     return;
   }
@@ -462,7 +725,7 @@ function renderMomentumGiven(){
   givenBox.innerHTML = `
     <div class="given-row"><span class="a">m₁ = ${m1} kg</span><span class="a">v₁ = ${v1} m/s</span></div>
     <div class="given-row"><span class="b">m₂ = ${m2} kg</span><span class="b">v₂ = ${v2} m/s</span></div>
-    <div class="given-row"><span class="neutral">collision:</span><span class="neutral">${type==='elastic'?'elastic':'perfectly inelastic'}</span></div>
+    <div class="given-row"><span class="neutral">${t('given_collision')}</span><span class="neutral">${type==='elastic'?t('coll_elastic'):t('coll_inelastic')}</span></div>
   `;
 }
 function renderMomentumPredict(){
@@ -485,21 +748,21 @@ function renderMomentumPredict(){
 }
 function renderEnergyGiven(){
   if(problem.kind==='speedAtBottom'){
-    givenBox.innerHTML = `<div class="given-row"><span class="neutral">start height h₀ = ${problem.h0} m</span></div>
-      <div class="given-row"><span class="neutral">frictionless ramp</span></div>`;
+    givenBox.innerHTML = `<div class="given-row"><span class="neutral">${t('given_h0')} = ${problem.h0} m</span></div>
+      <div class="given-row"><span class="neutral">${t('given_frictionless')}</span></div>`;
   } else if(problem.kind==='heightFromSpeed'){
-    givenBox.innerHTML = `<div class="given-row"><span class="neutral">launch speed v₀ = ${problem.v0} m/s</span></div>
-      <div class="given-row"><span class="neutral">frictionless ramp</span></div>`;
+    givenBox.innerHTML = `<div class="given-row"><span class="neutral">${t('given_v0')} = ${problem.v0} m/s</span></div>
+      <div class="given-row"><span class="neutral">${t('given_frictionless')}</span></div>`;
   } else {
-    givenBox.innerHTML = `<div class="given-row"><span class="neutral">start height h₀ = ${problem.h0} m</span></div>
-      <div class="given-row"><span class="neutral">second hill h₂ = ${problem.h2} m</span></div>`;
+    givenBox.innerHTML = `<div class="given-row"><span class="neutral">${t('given_h0')} = ${problem.h0} m</span></div>
+      <div class="given-row"><span class="neutral">${t('given_h2')} = ${problem.h2} m</span></div>`;
   }
 }
 function renderEnergyPredict(){
   if(problem.kind==='heightFromSpeed'){
-    predictBox.innerHTML = `<div class="predict-row"><label>max h (m)</label><input type="number" step="0.1" id="p1"></div>`;
+    predictBox.innerHTML = `<div class="predict-row"><label>${t('predict_maxh')}</label><input type="number" step="0.1" id="p1"></div>`;
   } else {
-    predictBox.innerHTML = `<div class="predict-row"><label>speed (m/s)</label><input type="number" step="0.1" id="p1"></div>`;
+    predictBox.innerHTML = `<div class="predict-row"><label>${t('predict_speed')}</label><input type="number" step="0.1" id="p1"></div>`;
   }
 }
 
@@ -508,15 +771,16 @@ const hintBox = document.getElementById('hintBox');
 const hintBtn = document.getElementById('hintBtn');
 
 function buildHint(){
+  const plugged = `<div class="formula">${t('hint_plugged')}</div>`;
   if(mode==='momentum'){
     if(problem.type==='elastic2d'){
-      const {m1,v0,theta1} = problem;
+      const {v0,theta1} = problem;
       return `
-        <div class="formula">Equal-mass elastic collision, target at rest — a classic result: the two paths end up perpendicular (θ₁+θ₂=90°):</div>
+        <div class="formula">${t('hint_2d_head')}</div>
         v₁' = v₀ cos θ₁<br>
         v₂' = v₀ sin θ₁<br>
         θ₂ = 90° − θ₁<br><br>
-        <div class="formula">Plugged in:</div>
+        ${plugged}
         v₁' = ${v0} × cos(${theta1}°)<br>
         v₂' = ${v0} × sin(${theta1}°)<br>
         θ₂ = 90° − ${theta1}°
@@ -525,59 +789,64 @@ function buildHint(){
     const {m1,m2,v1,v2,type} = problem;
     if(type==='elastic'){
       return `
-        <div class="formula">Elastic collision — both quantities are conserved:</div>
-        Momentum: m₁v₁ + m₂v₂ = m₁v₁' + m₂v₂'<br>
-        KE: ½m₁v₁² + ½m₂v₂² = ½m₁v₁'² + ½m₂v₂'²<br><br>
-        <div class="formula">Plugged in:</div>
+        <div class="formula">${t('hint_el_head')}</div>
+        ${t('hint_el_momentum')} m₁v₁ + m₂v₂ = m₁v₁' + m₂v₂'<br>
+        ${t('hint_el_ke')} ½m₁v₁² + ½m₂v₂² = ½m₁v₁'² + ½m₂v₂'²<br><br>
+        ${plugged}
         (${m1})(${v1}) + (${m2})(${v2}) = (${m1})v₁' + (${m2})v₂'<br>
         ½(${m1})(${v1})² + ½(${m2})(${v2})² = ½(${m1})v₁'² + ½(${m2})v₂'²<br><br>
-        <div class="formula">Overall formula (solving that system):</div>
+        <div class="formula">${t('hint_el_general')}</div>
         v₁' = [(m₁−m₂)v₁ + 2m₂v₂] / (m₁+m₂)<br>
         v₂' = [(m₂−m₁)v₂ + 2m₁v₁] / (m₁+m₂)<br><br>
-        <div class="formula">Plugged in:</div>
+        ${plugged}
         v₁' = [(${m1}−${m2})(${v1}) + 2(${m2})(${v2})] / (${m1}+${m2})<br>
         v₂' = [(${m2}−${m1})(${v2}) + 2(${m1})(${v1})] / (${m1}+${m2})
       `;
     } else {
       return `
-        <div class="formula">Perfectly inelastic — objects stick together, only momentum is conserved:</div>
-        Momentum: m₁v₁ + m₂v₂ = (m₁+m₂)v'<br><br>
-        <div class="formula">Plugged in:</div>
+        <div class="formula">${t('hint_inel_head')}</div>
+        ${t('hint_el_momentum')} m₁v₁ + m₂v₂ = (m₁+m₂)v'<br><br>
+        ${plugged}
         (${m1})(${v1}) + (${m2})(${v2}) = (${m1}+${m2})v'<br><br>
-        <div class="formula">Overall formula (solving for v'):</div>
+        <div class="formula">${t('hint_inel_general')}</div>
         v' = (m₁v₁ + m₂v₂) / (m₁+m₂)<br><br>
-        <div class="formula">Plugged in:</div>
+        ${plugged}
         v' = (${m1}×${v1} + ${m2}×${v2}) / (${m1}+${m2})
       `;
     }
   } else {
     if(problem.kind==='speedAtBottom'){
       return `
-        <div class="formula">Energy conservation: PE at top → KE at bottom (m cancels):</div>
+        <div class="formula">${t('hint_e_bottom')}</div>
         v = √(2 g h₀)<br><br>
-        <div class="formula">Plugged in:</div>
+        ${plugged}
         v = √(2 × 9.8 × ${problem.h0})
       `;
     } else if(problem.kind==='heightFromSpeed'){
       return `
-        <div class="formula">Energy conservation: KE at launch → PE at peak (m cancels):</div>
+        <div class="formula">${t('hint_e_peak')}</div>
         h = v₀² / (2g)<br><br>
-        <div class="formula">Plugged in:</div>
+        ${plugged}
         h = ${problem.v0}² / (2 × 9.8)
       `;
     } else {
       return `
-        <div class="formula">Energy conservation between start height and second hill:</div>
+        <div class="formula">${t('hint_e_hill')}</div>
         v = √(2 g (h₀ − h₂))<br><br>
-        <div class="formula">Plugged in:</div>
+        ${plugged}
         v = √(2 × 9.8 × (${problem.h0} − ${problem.h2}))
       `;
     }
   }
 }
 
+function renderHint(){
+  const why = hintWhy ? `<div class="formula">${t('hint_why')}</div>` : '';
+  hintBox.innerHTML = why + buildHint();
+}
+
 hintBtn.addEventListener('click', ()=>{
-  hintBox.innerHTML = buildHint();
+  renderHint();
   hintBox.classList.toggle('show');
 });
 
@@ -586,7 +855,7 @@ checkBtn.addEventListener('click', ()=>{
   if(phase!=='setup' || attempts_lock) return;
   attempts_lock = true;
   attempts++;
-  let correct = false, msg = '';
+  let correct = false, fb = null;
   if(mode==='momentum'){
     const sol = solveMomentum(problem);
     const p1 = parseFloat(document.getElementById('p1').value);
@@ -597,19 +866,16 @@ checkBtn.addEventListener('click', ()=>{
       const ok2 = Math.abs(p2 - sol.v2f) <= 0.3;
       const ok3 = Math.abs(p3 - sol.theta2) <= 3;
       correct = ok1 && ok2 && ok3;
-      msg = correct ? `Nailed it — v₁' = ${sol.v1f} m/s, v₂' = ${sol.v2f} m/s, θ₂ = ${sol.theta2}°.`
-                    : `Not quite. Actual: v₁' = ${sol.v1f} m/s, v₂' = ${sol.v2f} m/s, θ₂ = ${sol.theta2}°.`;
+      fb = { key: correct ? 'res_2d_ok' : 'res_2d_no', args:[sol.v1f, sol.v2f, sol.theta2] };
     } else if(problem.type==='elastic'){
       const p2 = parseFloat(document.getElementById('p2').value);
       const ok1 = Math.abs(p1 - sol.v1f) <= 0.3;
       const ok2 = Math.abs(p2 - sol.v2f) <= 0.3;
       correct = ok1 && ok2;
-      msg = correct ? `Nailed it — v₁' = ${sol.v1f}, v₂' = ${sol.v2f} m/s.`
-                    : `Not quite. Actual: v₁' = ${sol.v1f} m/s, v₂' = ${sol.v2f} m/s.`;
+      fb = { key: correct ? 'res_el_ok' : 'res_el_no', args:[sol.v1f, sol.v2f] };
     } else {
       correct = Math.abs(p1 - sol.vf) <= 0.3;
-      msg = correct ? `Nailed it — combined v' = ${sol.vf} m/s.`
-                    : `Not quite. Actual combined v' = ${sol.vf} m/s.`;
+      fb = { key: correct ? 'res_inel_ok' : 'res_inel_no', args:[sol.vf] };
     }
     startMomentumAnim(sol);
   } else {
@@ -617,20 +883,22 @@ checkBtn.addEventListener('click', ()=>{
     const p1 = parseFloat(document.getElementById('p1').value);
     if(problem.kind==='heightFromSpeed'){
       correct = Math.abs(p1 - sol.h) <= 0.3;
-      msg = correct ? `Nailed it — max height = ${sol.h} m.` : `Not quite. Actual max height = ${sol.h} m.`;
+      fb = { key: correct ? 'res_h_ok' : 'res_h_no', args:[sol.h] };
     } else {
       correct = Math.abs(p1 - sol.v) <= 0.3;
-      msg = correct ? `Nailed it — speed = ${sol.v} m/s.` : `Not quite. Actual speed = ${sol.v} m/s.`;
+      fb = { key: correct ? 'res_v_ok' : 'res_v_no', args:[sol.v] };
     }
     startEnergyAnim(sol);
   }
   if(correct) score++;
-  scoreBadge.textContent = `${score} / ${attempts} correct`;
+  scoreBadge.textContent = t('score', score, attempts);
   feedback.className = 'feedback ' + (correct?'correct':'wrong');
-  feedback.textContent = msg;
+  lastFeedback = fb;
+  feedback.textContent = t(fb.key, ...fb.args);
   checkBtn.disabled = true;
   if(!correct){
-    hintBox.innerHTML = '<div class="formula">Why:</div>' + buildHint();
+    hintWhy = true;
+    renderHint();
     hintBox.classList.add('show');
   }
 });
@@ -803,7 +1071,7 @@ function finishMomentumAnim(sol){
   if(problem.type==='elastic'){
     ctx.fillText(`v₁' = ${sol.v1f} m/s     v₂' = ${sol.v2f} m/s`, W/2, 300);
   } else {
-    ctx.fillText(`v' (combined) = ${sol.vf} m/s`, W/2, 300);
+    ctx.fillText(t('canvas_combined', sol.vf), W/2, 300);
   }
   ctx.textAlign = 'left';
 }
@@ -939,12 +1207,14 @@ function drawEnergyFrame(ballX){
   ctx.strokeStyle = '#20242B'; ctx.lineWidth=1.5;
   ctx.strokeRect(barX, barTop, barW, barH);
   ctx.strokeRect(barX+barW+6, barTop, barW, barH);
-  ctx.font = '600 11px JetBrains Mono'; ctx.fillStyle='#20242B'; ctx.textAlign='center';
-  ctx.fillText('PE', barX+barW/2, barTop+barH+16);
-  ctx.fillText('KE', barX+barW+6+barW/2, barTop+barH+16);
+  ctx.font = `600 11px ${LANG==='zh' ? "'Noto Sans SC', sans-serif" : 'JetBrains Mono'}`;
+  ctx.fillStyle='#20242B'; ctx.textAlign='center';
+  ctx.fillText(t('legend_pe'), barX+barW/2, barTop+barH+16);
+  ctx.fillText(t('legend_ke'), barX+barW+6+barW/2, barTop+barH+16);
 
-  ctx.font = '600 12px JetBrains Mono'; ctx.textAlign='left'; ctx.fillStyle='#20242B';
-  ctx.fillText(`speed ≈ ${rnd1(Math.sqrt(2*G*curKE))} m/s`, padX, 24);
+  ctx.font = `600 12px ${LANG==='zh' ? "'Noto Sans SC', sans-serif" : 'JetBrains Mono'}`;
+  ctx.textAlign='left'; ctx.fillStyle='#20242B';
+  ctx.fillText(t('canvas_speed', rnd1(Math.sqrt(2*G*curKE))), padX, 24);
   ctx.textAlign='left';
 }
 
@@ -963,6 +1233,14 @@ function startEnergyAnim(){
 }
 
 // ---------- INIT ----------
+document.documentElement.lang = LANG === 'zh' ? 'zh-CN' : 'en';
+document.body.classList.toggle('lang-zh', LANG === 'zh');
+document.title = t('doc_title');
+langToggle.textContent = t('lang_other');
+langToggle.setAttribute('aria-label', t('lang_aria'));
+applyStaticI18n();
+mainTitle.textContent = t('title_momentum');
+scoreBadge.textContent = t('score', score, attempts);
 renderDiffRow();
 newProblem();
 </script>
