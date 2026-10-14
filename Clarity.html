@@ -223,6 +223,17 @@
         .copy-btn { position: absolute; top: 12px; right: 12px; background: #333; color: #fff; border: none; border-radius: 5px; padding: 6px 12px; font-size: 11px; letter-spacing: 0.5px; cursor: pointer; font-family: inherit; }
         .copy-btn:hover { background: #444; }
 
+        .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+        .tab { padding: 8px 14px; font-size: 13px; border: 1px solid #e5e5e5; border-radius: 999px; background: #fff; cursor: pointer; font-family: inherit; color: #555; transition: all 0.15s; }
+        .tab:hover { border-color: #2c2c2c; }
+        .tab.active { background: #2c2c2c; color: #fff; border-color: #2c2c2c; }
+        .tab-panel { display: none; background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; font-size: 13.5px; color: #555; }
+        .tab-panel.active { display: block; }
+        .tab-panel p { margin: 0 0 12px; }
+        .tab-panel p:last-child { margin-bottom: 0; }
+        .tab-panel strong { color: #2c2c2c; display: block; margin-bottom: 3px; font-size: 13px; }
+        .tab-panel code { background: #ececec; padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+
         .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .mini-card { border: 1px solid #eee; border-radius: 8px; padding: 14px; }
         .mini-card h4 { font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; }
@@ -326,7 +337,32 @@
 
         <div class="m-section">
             <h3>Adopt it in your AI work</h3>
-            <p class="lead" style="margin-bottom:14px;">Paste this into a system prompt, a custom instruction, or an agent's style file.</p>
+            <p class="lead" style="margin-bottom:14px;">Pick your tool. Copy the prompt. Paste it where shown. It then shapes every answer.</p>
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('claude', this)">Claude</button>
+                <button class="tab" onclick="switchTab('chatgpt', this)">ChatGPT</button>
+                <button class="tab" onclick="switchTab('gemini', this)">Gemini</button>
+                <button class="tab" onclick="switchTab('cursor', this)">Cursor / Copilot</button>
+            </div>
+
+            <div class="tab-panel active" id="tab-claude">
+                <p><strong>Claude Project</strong>Open your project. Click the settings icon. Find “Instructions”. Paste the prompt. Save.</p>
+                <p><strong>Claude Code</strong>Add the prompt to a <code>CLAUDE.md</code> file in your repository.</p>
+                <p><strong>Claude Skill</strong>Save the prompt as the skill's instructions. Claude loads it for matching tasks.</p>
+            </div>
+            <div class="tab-panel" id="tab-chatgpt">
+                <p><strong>Custom instructions</strong>Open Settings. Select “Personalization”. Open “Custom instructions”. Paste the prompt under “How would you like ChatGPT to respond?”. Save.</p>
+                <p><strong>A reusable GPT</strong>Create a Custom GPT. Paste the prompt into the “Instructions” field.</p>
+            </div>
+            <div class="tab-panel" id="tab-gemini">
+                <p><strong>A Gem</strong>Open the Gem manager. Create a new Gem. Paste the prompt into “Instructions”. Save the Gem.</p>
+                <p><strong>Saved info</strong>Open Settings, then “Saved info”. Add the prompt as a standing instruction.</p>
+            </div>
+            <div class="tab-panel" id="tab-cursor">
+                <p><strong>Cursor</strong>Create a file named <code>.cursorrules</code> in your project root. Paste the prompt. Save.</p>
+                <p><strong>GitHub Copilot</strong>Create <code>.github/copilot-instructions.md</code>. Paste the prompt. Save.</p>
+            </div>
+
             <div class="prompt-box" id="promptText"><button class="copy-btn" onclick="copyPrompt()">Copy</button>Write at about 80% of the ASD-STE100 Simplified Technical English standard.
 - One instruction per sentence. Procedural sentences: 20 words or fewer.
 - Use active voice. Use the imperative for steps.
@@ -672,6 +708,13 @@ function renderBA() {
 }
 
 /* ---------- Method ---------- */
+function switchTab(name, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+}
+
 function copyPrompt() {
     const text = document.getElementById('promptText').textContent.replace(/^Copy/, '').trim();
     navigator.clipboard.writeText(text).then(() => {
