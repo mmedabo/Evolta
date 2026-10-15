@@ -7,35 +7,33 @@
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --navy: #0c1824;
-    --navy2: #122230;
-    --paper: #f6f1e3;
-    --paper2: #efe7d2;
-    --line: #ddd2b4;
-    --ink: #1b1813;
-    --ink-soft: #5c5647;
-    --ink-faint: #8a8372;
-    --orange: #e8611c;
-    --yellow: #f2c200;
-    --green: #1f9d57;
-    --red: #d6392f;
-    --sky: #6fb6e8;
+    --bg: #f3efe6;
+    --card: #ffffff;
+    --paper: #faf8f2;
+    --line: #e7e1d4;
+    --ink: #232019;
+    --ink-soft: #615c50;
+    --ink-faint: #9a9384;
+    --accent: #2f6d86;
+    --accent-soft: #e9f1f4;
+    --green: #2a8a53;
+    --green-soft: #ecf7f0;
+    --red: #c6473d;
+    --red-soft: #fbeeec;
+    --warn: #b9770e;
+    --warn-soft: #fdf3e0;
   }
 
   html { scroll-behavior: smooth; }
 
   body {
     font-family: 'DM Sans', sans-serif;
-    background: var(--navy);
-    background-image:
-      radial-gradient(circle at 50% -10%, rgba(111,182,232,0.14), transparent 55%),
-      repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 44px),
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 44px);
+    background: var(--bg);
     color: var(--ink);
     min-height: 100vh;
     display: flex;
@@ -45,313 +43,284 @@
     line-height: 1.6;
   }
 
-  .manual {
+  .card {
     width: 100%;
-    max-width: 580px;
-    background: var(--paper);
-    border-radius: 4px;
-    box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 2px 0 rgba(255,255,255,0.4) inset;
-    position: relative;
+    max-width: 560px;
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(60,50,30,0.1);
+    border-top: 4px solid var(--accent);
     overflow: hidden;
   }
+  .pad { padding: 32px 30px 36px; }
 
-  /* hazard tape strip */
-  .hazard { height: 10px; background: repeating-linear-gradient(45deg, var(--yellow) 0 16px, #1c1a15 16px 32px); }
-
-  .pad { padding: 30px 30px 36px; }
-
-  /* manual cover header */
-  .cover { border-bottom: 2px dashed var(--line); padding-bottom: 18px; margin-bottom: 26px; }
-  .cover-top { display: flex; justify-content: space-between; align-items: flex-start; }
-  .eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--orange); font-weight: 500; }
-  .cover h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 52px; letter-spacing: 2px; line-height: 0.95; text-transform: uppercase; margin: 6px 0 4px; }
-  .cover-sub { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--ink-soft); }
-  .tailtag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--ink-faint); text-align: right; line-height: 1.7; border: 1px solid var(--line); border-radius: 3px; padding: 6px 9px; background: var(--paper2); }
-  .tailtag b { color: var(--ink); }
+  /* header */
+  .head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .head h1 { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 34px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .head .plane { color: var(--accent); font-size: 20px; }
+  .subtitle { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 24px; }
 
   .screen { display: none; }
-  .screen.active { display: block; animation: fadeUp 0.4s ease both; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .screen.active { display: block; animation: fadeUp 0.35s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-  .lead { color: var(--ink-soft); font-size: 15px; font-weight: 300; margin-bottom: 26px; }
+  .lead { color: var(--ink-soft); font-size: 15px; font-weight: 300; margin-bottom: 20px; }
   .lead strong { font-weight: 600; color: var(--ink); }
 
-  /* menu — hangar bays */
-  .menu { display: flex; flex-direction: column; gap: 12px; }
-  .bay {
-    display: flex; align-items: center; gap: 16px;
-    padding: 18px 20px; border: 1.5px solid var(--line); border-radius: 5px;
-    background: var(--paper2); cursor: pointer; width: 100%; text-align: left;
-    font-family: inherit; transition: all 0.18s; color: var(--ink);
-  }
-  .bay:hover { border-color: var(--orange); transform: translateX(3px); box-shadow: -4px 0 0 var(--orange); }
-  .bay-num { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700; color: var(--orange); min-width: 30px; }
-  .bay-body { flex: 1; }
-  .bay-title { font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
-  .bay-desc { font-size: 13px; color: var(--ink-soft); font-weight: 300; }
-  .bay-arrow { font-size: 20px; color: var(--ink-faint); transition: transform 0.18s; }
-  .bay:hover .bay-arrow { transform: translateX(4px); color: var(--orange); }
+  /* did-you-know */
+  .curio-home { background: var(--accent-soft); border-radius: 10px; padding: 16px 18px; margin-bottom: 24px; position: relative; }
+  .curio-home .tag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
+  .curio-home p { font-size: 14px; color: var(--ink); margin-top: 6px; min-height: 42px; }
+  .curio-more { position: absolute; top: 14px; right: 14px; background: none; border: none; color: var(--accent); cursor: pointer; font-size: 16px; font-family: inherit; }
+  .curio-more:hover { transform: rotate(90deg); transition: transform 0.2s; }
 
-  .btn-back { background: none; border: none; font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: var(--ink-faint); cursor: pointer; padding: 0; margin-bottom: 20px; text-transform: uppercase; }
-  .btn-back:hover { color: var(--orange); }
-
-  .btn-primary {
-    font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
-    background: var(--orange); color: #fff; border: none; border-radius: 4px; padding: 15px 22px; cursor: pointer;
-    transition: all 0.18s; width: 100%;
+  /* menu */
+  .menu { display: flex; flex-direction: column; gap: 11px; }
+  .item {
+    display: flex; align-items: center; gap: 16px; padding: 16px 18px;
+    border: 1px solid var(--line); border-radius: 9px; background: var(--paper);
+    cursor: pointer; width: 100%; text-align: left; font-family: inherit; color: var(--ink); transition: all 0.17s;
   }
-  .btn-primary:hover { background: #cf5415; }
+  .item:hover { border-color: var(--accent); background: #fff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(60,50,30,0.07); }
+  .item-icon { font-size: 22px; min-width: 26px; text-align: center; }
+  .item-body { flex: 1; }
+  .item-title { font-family: 'Oswald', sans-serif; font-size: 17px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; }
+  .item-desc { font-size: 13px; color: var(--ink-soft); font-weight: 300; }
+  .item-arrow { color: var(--ink-faint); transition: transform 0.17s; }
+  .item:hover .item-arrow { transform: translateX(4px); color: var(--accent); }
+
+  .btn-back { background: none; border: none; font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: var(--ink-faint); cursor: pointer; padding: 0; margin-bottom: 18px; }
+  .btn-back:hover { color: var(--accent); }
+
+  .btn-primary { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 14px 20px; cursor: pointer; transition: all 0.17s; width: 100%; }
+  .btn-primary:hover { background: #255a6f; }
   .btn-primary:active { transform: translateY(1px); }
-  .btn-line { background: var(--paper2); color: var(--ink); border: 1.5px solid var(--line); }
-  .btn-line:hover { border-color: var(--ink); background: var(--paper); }
+  .btn-line { background: var(--paper); color: var(--ink); border: 1px solid var(--line); }
+  .btn-line:hover { border-color: var(--accent); background: #fff; }
 
-  /* inspection top bar */
-  .inspbar { display: flex; justify-content: space-between; align-items: center; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px; }
-  .inspbar b { color: var(--ink); font-size: 13px; }
+  /* play top bar */
+  .topbar { display: flex; justify-content: space-between; align-items: center; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 10px; }
+  .topbar b { color: var(--ink); }
+  .streak { color: var(--warn); }
+  .streak.hide { visibility: hidden; }
 
-  /* runway progress */
-  .runway { position: relative; height: 26px; background: #2b2b2b; border-radius: 4px; margin-bottom: 24px; overflow: hidden; border: 1px solid #000; }
-  .runway::before { content: ""; position: absolute; top: 50%; left: 8px; right: 8px; height: 2px; transform: translateY(-50%); background: repeating-linear-gradient(90deg, var(--yellow) 0 14px, transparent 14px 28px); opacity: 0.8; }
-  .runway-plane { position: absolute; top: 50%; transform: translateY(-50%); font-size: 18px; transition: left 0.5s cubic-bezier(0.4,0,0.2,1); left: 0; filter: drop-shadow(0 0 3px rgba(0,0,0,0.6)); }
+  .track { position: relative; height: 6px; background: var(--line); border-radius: 6px; margin-bottom: 24px; }
+  .fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--accent); border-radius: 6px; transition: width 0.4s ease; width: 0; }
+  .fill .plane { position: absolute; right: -9px; top: -8px; font-size: 15px; color: var(--accent); }
 
-  .rule-tag { display: inline-flex; align-items: center; gap: 7px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; font-weight: 500; }
-  .rule-tag::before { content: "▸"; }
+  .rule-tag { display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); border-radius: 5px; padding: 4px 9px; margin-bottom: 13px; }
+  .q-task { font-family: 'Oswald', sans-serif; font-size: 21px; font-weight: 600; letter-spacing: 0.2px; margin-bottom: 4px; text-transform: uppercase; }
+  .q-prompt { color: var(--ink-soft); font-size: 14px; margin-bottom: 18px; }
 
-  .q-task { font-family: 'Oswald', sans-serif; font-size: 23px; font-weight: 600; letter-spacing: 0.3px; margin-bottom: 5px; text-transform: uppercase; }
-  .q-prompt { color: var(--ink-soft); font-size: 14px; margin-bottom: 20px; }
-
-  /* option manual pages */
-  .options { display: flex; flex-direction: column; gap: 12px; }
-  .option {
-    position: relative; padding: 16px 18px; border: 1.5px solid var(--line); border-radius: 5px;
-    cursor: pointer; background: #fffdf7; font-size: 14.5px; line-height: 1.55; transition: all 0.16s; overflow: hidden;
-  }
-  .option::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--line); transition: background 0.16s; }
-  .option:hover { border-color: var(--orange); transform: translateX(2px); }
-  .option:hover::before { background: var(--orange); }
-  .option.correct { border-color: var(--green); background: #f0faf3; }
-  .option.correct::before { background: var(--green); }
-  .option.wrong { border-color: var(--red); background: #fcefee; }
-  .option.wrong::before { background: var(--red); }
+  /* options */
+  .options { display: flex; flex-direction: column; gap: 11px; }
+  .option { position: relative; padding: 15px 17px; border: 1px solid var(--line); border-radius: 9px; cursor: pointer; background: var(--paper); font-size: 14.5px; line-height: 1.55; transition: all 0.15s; }
+  .option:hover { border-color: var(--accent); background: #fff; }
+  .option.correct { border-color: var(--green); background: var(--green-soft); }
+  .option.wrong { border-color: var(--red); background: var(--red-soft); }
   .option.disabled { pointer-events: none; }
   .option.dim { opacity: 0.55; }
 
-  /* rubber stamp */
-  .stamp {
-    position: absolute; top: 50%; right: 14px; transform: translateY(-50%) rotate(-11deg) scale(1.6);
-    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1.5px;
-    border: 3px solid; border-radius: 5px; padding: 3px 9px; text-transform: uppercase; opacity: 0;
-    pointer-events: none; text-shadow: 0 0 1px currentColor;
-  }
-  .stamp.show { animation: thunk 0.32s cubic-bezier(0.3,1.4,0.5,1) forwards; }
-  @keyframes thunk { 0% { opacity: 0; transform: translateY(-50%) rotate(-11deg) scale(1.9); } 60% { opacity: 1; } 100% { opacity: 0.92; transform: translateY(-50%) rotate(-11deg) scale(1); } }
+  .stamp { position: absolute; top: 50%; right: 12px; transform: translateY(-50%) rotate(-8deg) scale(1.3); font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 1px; border: 2px solid; border-radius: 5px; padding: 2px 7px; text-transform: uppercase; opacity: 0; pointer-events: none; }
+  .stamp.show { animation: thunk 0.28s cubic-bezier(0.3,1.3,0.5,1) forwards; }
+  @keyframes thunk { 0% { opacity: 0; transform: translateY(-50%) rotate(-8deg) scale(1.6); } 60% { opacity: 1; } 100% { opacity: 0.9; transform: translateY(-50%) rotate(-8deg) scale(1); } }
   .stamp.approved { color: var(--green); }
   .stamp.rejected { color: var(--red); }
 
-  /* spot game */
-  .spot-sentence {
-    font-family: 'DM Mono', monospace; font-size: 16px; line-height: 2.2; padding: 20px;
-    background: #fffdf7; border: 1.5px solid var(--line); border-radius: 6px; margin-bottom: 10px;
-  }
-  .word { cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: all 0.12s; border-bottom: 2px solid transparent; }
-  .word:hover { background: var(--paper2); }
-  .word.picked { background: var(--yellow); border-bottom-color: #b8930a; }
-  .word.hit { background: #c9f0d6; border-bottom-color: var(--green); }
-  .word.miss { background: #fcdcd9; border-bottom-color: var(--red); }
+  /* spot */
+  .guess { margin-bottom: 14px; }
+  .guess-label { font-size: 13px; color: var(--ink-soft); margin-bottom: 8px; }
+  .guess-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+  .chip { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 500; color: var(--ink); transition: all 0.14s; }
+  .chip:hover { border-color: var(--accent); }
+  .chip.sel { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .chip.locked { pointer-events: none; }
+
+  .spot-sentence { font-size: 17px; line-height: 2.1; padding: 18px; background: var(--paper); border: 1px solid var(--line); border-radius: 9px; margin-bottom: 9px; }
+  .word { cursor: pointer; padding: 2px 4px; border-radius: 5px; transition: all 0.12s; border-bottom: 2px solid transparent; }
+  .word:hover { background: #eee9dc; }
+  .word.picked { background: #fce9a8; border-bottom-color: var(--warn); }
+  .word.hit { background: #c9ecd5; border-bottom-color: var(--green); }
+  .word.miss { background: #f7d5d1; border-bottom-color: var(--red); }
   .word.falsepick { background: #eee; border-bottom-color: var(--ink-faint); text-decoration: line-through; opacity: 0.7; }
   .word.locked { pointer-events: none; }
-  .hint { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink-faint); margin-bottom: 18px; }
+  .hint { font-size: 12.5px; color: var(--ink-faint); margin-bottom: 16px; }
 
-  .feedback { margin-top: 18px; padding: 15px 16px; border-radius: 6px; font-size: 14px; position: relative; }
-  .feedback.good { background: #eef9f1; border-left: 4px solid var(--green); }
-  .feedback.bad { background: #fdeeec; border-left: 4px solid var(--red); }
-  .feedback .ctrl { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: block; margin-bottom: 5px; }
-  .feedback b { color: var(--ink); }
-  .feedback .fix { margin-top: 11px; font-family: 'DM Mono', monospace; font-size: 13px; background: var(--navy); color: #d7e6c7; padding: 10px 12px; border-radius: 5px; white-space: pre-line; }
-  .feedback .fix::before { content: "CLEAR → "; color: var(--green); }
+  .feedback { margin-top: 16px; padding: 14px 16px; border-radius: 9px; font-size: 14px; }
+  .feedback.good { background: var(--green-soft); border-left: 3px solid var(--green); }
+  .feedback.bad { background: var(--red-soft); border-left: 3px solid var(--red); }
+  .feedback .title { font-weight: 600; color: var(--ink); }
+  .feedback .guessline { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+  .feedback .fix { margin-top: 10px; font-family: 'DM Mono', monospace; font-size: 13px; background: #2c2a24; color: #d9ecc8; padding: 9px 11px; border-radius: 6px; white-space: pre-line; }
+  .feedback .fix b { color: var(--green); }
 
-  .next-btn { margin-top: 18px; }
+  /* curiosity reveal */
+  details.curio { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 10px; }
+  details.curio summary { cursor: pointer; font-size: 13px; font-weight: 500; color: var(--accent); list-style: none; display: flex; align-items: center; gap: 6px; }
+  details.curio summary::-webkit-details-marker { display: none; }
+  details.curio summary::before { content: "💡"; }
+  details.curio summary::after { content: "▾"; margin-left: auto; transition: transform 0.2s; }
+  details.curio[open] summary::after { transform: rotate(180deg); }
+  details.curio p { font-size: 13.5px; color: var(--ink-soft); margin-top: 8px; line-height: 1.6; }
+
+  .next-btn { margin-top: 16px; }
   .hidden { display: none; }
 
-  /* results — certificate */
-  .cert { text-align: center; border: 3px double var(--orange); border-radius: 6px; padding: 26px 22px; background: var(--paper2); position: relative; margin-bottom: 22px; }
-  .cert-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint); }
-  .cert-title { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin: 4px 0 2px; }
-  .cert-plane { font-size: 34px; margin: 8px 0; display: inline-block; animation: takeoff 1.1s ease-out 0.3s both; }
-  @keyframes takeoff { 0% { transform: translate(-60px,20px) rotate(0); opacity: 0; } 100% { transform: translate(0,0) rotate(-18deg); opacity: 1; } }
-  .cert-rank { font-family: 'Oswald', sans-serif; font-size: 34px; font-weight: 700; color: var(--orange); letter-spacing: 1px; text-transform: uppercase; }
+  /* results */
+  .cert { text-align: center; border: 2px solid var(--line); border-radius: 11px; padding: 26px 22px; background: var(--paper); margin-bottom: 20px; }
+  .cert-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+  .cert-plane { font-size: 30px; margin: 10px 0 6px; display: inline-block; color: var(--accent); animation: takeoff 1s ease-out 0.25s both; }
+  @keyframes takeoff { 0% { transform: translate(-40px,14px); opacity: 0; } 100% { transform: translate(0,0) rotate(-16deg); opacity: 1; } }
+  .cert-rank { font-family: 'Oswald', sans-serif; font-size: 30px; font-weight: 600; color: var(--accent); letter-spacing: 0.5px; text-transform: uppercase; }
   .cert-score { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
-  .cert-verdict { font-size: 14px; color: var(--ink-soft); margin-top: 14px; padding: 0 6px; }
-  .cert-stamp { position: absolute; top: 14px; right: 12px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1px; color: var(--green); border: 3px solid var(--green); border-radius: 5px; padding: 3px 8px; transform: rotate(-12deg); opacity: 0.9; text-transform: uppercase; }
+  .cert-verdict { font-size: 14px; color: var(--ink-soft); margin-top: 14px; }
 
-  /* before/after — hangar */
-  .ba-card { border: 1.5px solid var(--line); border-radius: 7px; overflow: hidden; margin-bottom: 20px; background: #fffdf7; }
-  .ba-head { font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; padding: 13px 16px; background: var(--navy2); color: var(--paper); }
+  /* before/after */
+  .ba-card { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 18px; }
+  .ba-head { font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; padding: 12px 16px; background: var(--paper); border-bottom: 1px solid var(--line); }
   .ba-body { display: grid; grid-template-columns: 1fr 1fr; }
   .ba-col { padding: 15px 16px; font-size: 13.5px; }
-  .ba-col.before { border-right: 1.5px solid var(--line); background: #fbf1ef; }
-  .ba-col.after { background: #f1f8f2; }
-  .ba-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; font-weight: 500; display: inline-block; padding: 3px 8px; border-radius: 3px; }
-  .ba-label.before { color: #fff; background: var(--red); }
-  .ba-label.after { color: #fff; background: var(--green); }
+  .ba-col.before { border-right: 1px solid var(--line); background: var(--red-soft); }
+  .ba-col.after { background: var(--green-soft); }
+  .ba-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 9px; font-weight: 600; display: inline-block; padding: 3px 8px; border-radius: 4px; color: #fff; }
+  .ba-label.before { background: var(--red); }
+  .ba-label.after { background: var(--green); }
   .ba-col p { color: var(--ink-soft); margin: 0; }
-  .ba-col ol { margin: 0; padding-left: 18px; color: var(--ink); }
-  .ba-col ol li { margin-bottom: 6px; }
-  .ba-warn { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--ink); margin-bottom: 9px; padding: 5px 8px; border-radius: 3px; background: repeating-linear-gradient(45deg, var(--yellow) 0 10px, #1c1a15 10px 20px); position: relative; }
-  .ba-warn span { background: var(--yellow); padding: 1px 5px; border-radius: 2px; }
-  .ba-stats { display: flex; flex-wrap: wrap; gap: 7px; padding: 12px 16px; border-top: 1.5px dashed var(--line); }
-  .ba-stat { font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--ink-soft); background: var(--paper2); border-radius: 5px; padding: 6px 10px; }
+  .ba-col ol { margin: 0; padding-left: 17px; color: var(--ink); }
+  .ba-col ol li { margin-bottom: 5px; }
+  .ba-warn { font-size: 12px; font-weight: 500; color: var(--warn); background: var(--warn-soft); border: 1px solid #e9cf9a; border-radius: 5px; padding: 6px 9px; margin-bottom: 9px; }
+  .ba-stats { display: flex; flex-wrap: wrap; gap: 7px; padding: 12px 16px; border-top: 1px dashed var(--line); }
+  .ba-stat { font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--ink-soft); background: var(--paper); border-radius: 6px; padding: 5px 9px; }
   .ba-stat b { color: var(--ink); }
-  .ba-stat .ar { color: var(--orange); }
+  .ba-stat .ar { color: var(--accent); }
 
-  /* method — checklist + manual */
+  /* method */
   .m-section { margin-bottom: 26px; }
-  .m-head { font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
-  .m-head::before { content: ""; width: 20px; height: 3px; background: var(--orange); }
+  .m-head { font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 13px; display: flex; align-items: center; gap: 9px; }
+  .m-head::before { content: ""; width: 18px; height: 3px; background: var(--accent); border-radius: 3px; }
   .check { list-style: none; }
-  .check li { position: relative; padding: 11px 0 11px 36px; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--ink); }
+  .check li { position: relative; padding: 10px 0 10px 34px; border-bottom: 1px solid var(--line); font-size: 14px; }
   .check li:last-child { border-bottom: none; }
-  .check li::before { content: "✓"; position: absolute; left: 0; top: 9px; width: 24px; height: 24px; border: 2px solid var(--green); color: var(--green); border-radius: 4px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .check li::before { content: "✓"; position: absolute; left: 0; top: 8px; width: 22px; height: 22px; border: 2px solid var(--green); color: var(--green); border-radius: 5px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
-  .tabs { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
-  .tab { font-family: 'DM Mono', monospace; padding: 8px 14px; font-size: 12px; letter-spacing: 0.04em; border: 1.5px solid var(--line); border-radius: 4px; background: var(--paper2); cursor: pointer; color: var(--ink-soft); transition: all 0.15s; }
-  .tab:hover { border-color: var(--orange); }
-  .tab.active { background: var(--navy2); color: var(--paper); border-color: var(--navy2); }
-  .tab-panel { display: none; background: #fffdf7; border: 1.5px solid var(--line); border-radius: 6px; padding: 15px 16px; margin-bottom: 12px; font-size: 13.5px; color: var(--ink-soft); }
+  .tabs { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 13px; }
+  .tab { font-family: 'DM Mono', monospace; padding: 8px 13px; font-size: 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--paper); cursor: pointer; color: var(--ink-soft); transition: all 0.15s; }
+  .tab:hover { border-color: var(--accent); }
+  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tab-panel { display: none; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; font-size: 13.5px; color: var(--ink-soft); }
   .tab-panel.active { display: block; }
-  .tab-panel p { margin: 0 0 12px; }
+  .tab-panel p { margin: 0 0 11px; }
   .tab-panel p:last-child { margin-bottom: 0; }
-  .tab-panel strong { color: var(--ink); display: block; margin-bottom: 3px; font-size: 13px; font-family: 'Oswald', sans-serif; letter-spacing: 0.3px; text-transform: uppercase; }
-  .tab-panel code { font-family: 'DM Mono', monospace; background: var(--paper2); padding: 1px 5px; border-radius: 3px; font-size: 12.5px; color: var(--ink); }
+  .tab-panel strong { color: var(--ink); display: block; margin-bottom: 3px; font-size: 12px; font-family: 'Oswald', sans-serif; letter-spacing: 0.3px; text-transform: uppercase; }
+  .tab-panel code { font-family: 'DM Mono', monospace; background: #ece6d8; padding: 1px 5px; border-radius: 4px; font-size: 12.5px; color: var(--ink); }
 
-  .clearance { position: relative; background: var(--navy); border-radius: 6px; padding: 16px; padding-top: 38px; }
-  .clearance-label { position: absolute; top: 10px; left: 14px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; color: var(--sky); text-transform: uppercase; }
-  .clearance pre { font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.7; color: #e8e2d0; white-space: pre-wrap; margin: 0; }
-  .copy-btn { position: absolute; top: 8px; right: 8px; font-family: 'DM Mono', monospace; background: var(--orange); color: #fff; border: none; border-radius: 4px; padding: 6px 12px; font-size: 11px; letter-spacing: 0.06em; cursor: pointer; text-transform: uppercase; }
-  .copy-btn:hover { background: #cf5415; }
+  .prompt-box { position: relative; background: #2c2a24; border-radius: 9px; padding: 16px; padding-top: 34px; }
+  .prompt-box .lbl { position: absolute; top: 10px; left: 14px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #8fb9c6; text-transform: uppercase; }
+  .prompt-box pre { font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.7; color: #e6e0cf; white-space: pre-wrap; margin: 0; }
+  .copy-btn { position: absolute; top: 8px; right: 8px; font-family: 'DM Mono', monospace; background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 11px; cursor: pointer; }
+  .copy-btn:hover { background: #255a6f; }
 
   .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .mini-card { border: 1.5px solid var(--line); border-radius: 6px; padding: 14px; background: #fffdf7; }
-  .mini-card h4 { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; }
+  .mini-card { border: 1px solid var(--line); border-radius: 8px; padding: 14px; background: var(--paper); }
+  .mini-card h4 { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 9px; }
   .mini-card.use h4 { color: var(--green); }
   .mini-card.skip h4 { color: var(--red); }
   .mini-card ul { list-style: none; font-size: 13px; color: var(--ink-soft); }
   .mini-card li { padding: 4px 0; }
-  .mini-card li::before { content: "—"; color: var(--ink-faint); margin-right: 8px; }
+  .mini-card li::before { content: "—"; color: var(--ink-faint); margin-right: 7px; }
 
-  .note { background: var(--paper2); border-left: 4px solid var(--orange); padding: 14px 16px; font-size: 13.5px; color: var(--ink-soft); border-radius: 0 6px 6px 0; }
+  .note { background: var(--paper); border-left: 3px solid var(--accent); padding: 13px 15px; font-size: 13.5px; color: var(--ink-soft); border-radius: 0 7px 7px 0; }
   .note b { color: var(--ink); }
-  .note .ctrl { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); display: block; margin-bottom: 6px; }
+  .note .tag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 5px; }
 
   @media (max-width: 520px) {
-    .pad { padding: 24px 20px 30px; }
-    .cover h1 { font-size: 42px; }
+    .pad { padding: 26px 20px 30px; }
     .ba-body { grid-template-columns: 1fr; }
-    .ba-col.before { border-right: none; border-bottom: 1.5px solid var(--line); }
+    .ba-col.before { border-right: none; border-bottom: 1px solid var(--line); }
     .cols2 { grid-template-columns: 1fr; }
-    .tailtag { display: none; }
   }
 </style>
 </head>
 <body>
-<div class="manual">
-  <div class="hazard"></div>
+<div class="card">
   <div class="pad">
-
-    <div class="cover">
-      <div class="cover-top">
-        <div>
-          <div class="eyebrow">Flight Manual · ASD-STE100</div>
-          <h1>Clarity</h1>
-          <div class="cover-sub">write like an aircraft manual</div>
-        </div>
-        <div class="tailtag">REG <b>STE-100</b><br>REV <b>1</b><br>STATUS <b>DRAFT</b></div>
-      </div>
-    </div>
+    <div class="head"><h1>Clarity</h1><span class="plane">✈</span></div>
+    <div class="subtitle">write like an aircraft manual · ASD-STE100</div>
 
     <!-- HOME -->
     <div class="screen active" id="home">
       <p class="lead">
         Aircraft mechanics write with a standard called <strong>ASD-STE100 Simplified Technical English</strong>.
-        They have used it since the 1980s. It makes an instruction mean one thing only.
-        Step into the hangar. Learn to clear a manual for takeoff, then borrow the rules for your AI.
+        It makes an instruction mean one thing only. Learn it by playing, then borrow the rules for your AI.
       </p>
+      <div class="curio-home">
+        <span class="tag">Did you know?</span>
+        <button class="curio-more" onclick="nextFact()" title="Another fact">↻</button>
+        <p id="fact"></p>
+      </div>
       <div class="menu">
-        <button class="bay" onclick="show('play'); startGame()">
-          <span class="bay-num">01</span>
-          <span class="bay-body">
-            <span class="bay-title">Inspection</span>
-            <span class="bay-desc">Stamp bad instructions. Clear the fog. Earn your wings.</span>
-          </span>
-          <span class="bay-arrow">→</span>
+        <button class="item" onclick="show('play'); startGame()">
+          <span class="item-icon">🔍</span>
+          <span class="item-body"><span class="item-title">Play</span><span class="item-desc">Spot the fog, pick the clear line, build a streak.</span></span>
+          <span class="item-arrow">→</span>
         </button>
-        <button class="bay" onclick="show('ba')">
-          <span class="bay-num">02</span>
-          <span class="bay-body">
-            <span class="bay-title">The Hangar</span>
-            <span class="bay-desc">Grounded vs. cleared — the same instruction, both ways.</span>
-          </span>
-          <span class="bay-arrow">→</span>
+        <button class="item" onclick="show('ba')">
+          <span class="item-icon">⇄</span>
+          <span class="item-body"><span class="item-title">Before &amp; After</span><span class="item-desc">The same instruction, bloated vs. clear.</span></span>
+          <span class="item-arrow">→</span>
         </button>
-        <button class="bay" onclick="show('method')">
-          <span class="bay-num">03</span>
-          <span class="bay-body">
-            <span class="bay-title">The Manual</span>
-            <span class="bay-desc">The checklist, the clearance to file, and how to adopt it.</span>
-          </span>
-          <span class="bay-arrow">→</span>
+        <button class="item" onclick="show('method')">
+          <span class="item-icon">📋</span>
+          <span class="item-body"><span class="item-title">The Method</span><span class="item-desc">The 6 rules, the prompt, and how to adopt it.</span></span>
+          <span class="item-arrow">→</span>
         </button>
       </div>
     </div>
 
     <!-- PLAY -->
     <div class="screen" id="play">
-      <button class="btn-back" onclick="show('home')">◂ Hangar</button>
-      <div class="inspbar">
-        <span>Inspection Log · Page <b id="roundNum">1</b>/<span id="roundTotal">8</span></span>
-        <span>Airworthiness <b id="scoreNum">0</b></span>
+      <button class="btn-back" onclick="show('home')">← Menu</button>
+      <div class="topbar">
+        <span>Round <b id="roundNum">1</b>/<span id="roundTotal">8</span></span>
+        <span class="streak hide" id="streak">🔥 streak <b id="streakNum">0</b></span>
+        <span>Score <b id="scoreNum">0</b></span>
       </div>
-      <div class="runway"><div class="runway-plane" id="plane">✈</div></div>
+      <div class="track"><div class="fill" id="fill"><span class="plane">✈</span></div></div>
       <div id="roundBody"></div>
       <div id="roundFeedback"></div>
-      <button class="btn-primary next-btn hidden" id="nextBtn" onclick="nextRound()">Next Page →</button>
+      <button class="btn-primary next-btn hidden" id="nextBtn" onclick="nextRound()">Next →</button>
     </div>
 
     <!-- RESULTS -->
     <div class="screen" id="results">
       <div class="cert">
-        <div class="cert-stamp" id="certStamp">Cleared</div>
-        <div class="cert-eyebrow">Certificate of Airworthiness</div>
-        <div class="cert-title">Inspection Complete</div>
+        <div class="cert-eyebrow">Inspection complete</div>
         <div class="cert-plane">✈</div>
         <div class="cert-rank" id="rank">Cadet</div>
-        <div class="cert-score"><span id="finalScore">0</span> / <span id="maxScore">800</span> airworthiness points</div>
+        <div class="cert-score"><span id="finalScore">0</span> / <span id="maxScore">800</span> points · best streak <span id="bestStreak">0</span></div>
         <div class="cert-verdict" id="verdict"></div>
       </div>
       <div class="menu">
-        <button class="btn-primary" onclick="startGame(); show('play')">Re-inspect</button>
-        <button class="btn-primary btn-line" onclick="show('method')">File your clearance →</button>
-        <button class="btn-primary btn-line" onclick="show('home')">Hangar</button>
+        <button class="btn-primary" onclick="startGame(); show('play')">Play again</button>
+        <button class="btn-primary btn-line" onclick="show('method')">Adopt it in your AI →</button>
+        <button class="btn-primary btn-line" onclick="show('home')">Menu</button>
       </div>
     </div>
 
     <!-- BEFORE / AFTER -->
     <div class="screen" id="ba">
-      <button class="btn-back" onclick="show('home')">◂ Hangar</button>
-      <p class="lead">
-        The content barely changes. The <strong>form</strong> changes. Fog lifts.
-        One action goes on one line. A warning comes before the step it guards.
-      </p>
+      <button class="btn-back" onclick="show('home')">← Menu</button>
+      <p class="lead">The content barely changes. The <strong>form</strong> changes. Hedge words go. One action goes on one line. A warning comes before the step.</p>
       <div id="baContent"></div>
       <button class="btn-primary" onclick="show('method')">How do I get this? →</button>
     </div>
 
     <!-- METHOD -->
     <div class="screen" id="method">
-      <button class="btn-back" onclick="show('home')">◂ Hangar</button>
+      <button class="btn-back" onclick="show('home')">← Menu</button>
 
       <div class="m-section">
-        <div class="m-head">Pre-flight checklist · the 6 rules</div>
+        <div class="m-head">The 6 rules</div>
         <ul class="check">
           <li>Write one instruction per sentence.</li>
           <li>Keep procedural sentences to 20 words or fewer.</li>
@@ -363,90 +332,77 @@
       </div>
 
       <div class="m-section">
-        <div class="m-head">File your clearance</div>
-        <p class="lead" style="margin-bottom:14px;">Pick your tool. Copy the clearance. Paste it where shown. It then shapes every answer.</p>
+        <div class="m-head">Adopt it in your AI</div>
+        <p class="lead" style="margin-bottom:13px;">Pick your tool. Copy the prompt. Paste it where shown. It then shapes every answer.</p>
         <div class="tabs">
           <button class="tab active" onclick="switchTab('claude', this)">Claude</button>
           <button class="tab" onclick="switchTab('chatgpt', this)">ChatGPT</button>
           <button class="tab" onclick="switchTab('gemini', this)">Gemini</button>
           <button class="tab" onclick="switchTab('cursor', this)">Cursor / Copilot</button>
         </div>
-
         <div class="tab-panel active" id="tab-claude">
-          <p><strong>Claude Project</strong>Open your project. Click the settings icon. Find “Instructions”. Paste the clearance. Save.</p>
-          <p><strong>Claude Code</strong>Add the clearance to a <code>CLAUDE.md</code> file in your repository.</p>
-          <p><strong>Claude Skill</strong>Save the clearance as the skill's instructions. Claude loads it for matching tasks.</p>
+          <p><strong>Claude Project</strong>Open your project. Click the settings icon. Find “Instructions”. Paste the prompt. Save.</p>
+          <p><strong>Claude Code</strong>Add the prompt to a <code>CLAUDE.md</code> file in your repository.</p>
+          <p><strong>Claude Skill</strong>Save the prompt as the skill's instructions. Claude loads it for matching tasks.</p>
         </div>
         <div class="tab-panel" id="tab-chatgpt">
-          <p><strong>Custom instructions</strong>Open Settings. Select “Personalization”. Open “Custom instructions”. Paste the clearance under “How would you like ChatGPT to respond?”. Save.</p>
-          <p><strong>A reusable GPT</strong>Create a Custom GPT. Paste the clearance into the “Instructions” field.</p>
+          <p><strong>Custom instructions</strong>Open Settings. Select “Personalization”. Open “Custom instructions”. Paste the prompt under “How would you like ChatGPT to respond?”. Save.</p>
+          <p><strong>A reusable GPT</strong>Create a Custom GPT. Paste the prompt into the “Instructions” field.</p>
         </div>
         <div class="tab-panel" id="tab-gemini">
-          <p><strong>A Gem</strong>Open the Gem manager. Create a new Gem. Paste the clearance into “Instructions”. Save the Gem.</p>
-          <p><strong>Saved info</strong>Open Settings, then “Saved info”. Add the clearance as a standing instruction.</p>
+          <p><strong>A Gem</strong>Open the Gem manager. Create a new Gem. Paste the prompt into “Instructions”. Save the Gem.</p>
+          <p><strong>Saved info</strong>Open Settings, then “Saved info”. Add the prompt as a standing instruction.</p>
         </div>
         <div class="tab-panel" id="tab-cursor">
-          <p><strong>Cursor</strong>Create a file named <code>.cursorrules</code> in your project root. Paste the clearance. Save.</p>
-          <p><strong>GitHub Copilot</strong>Create <code>.github/copilot-instructions.md</code>. Paste the clearance. Save.</p>
+          <p><strong>Cursor</strong>Create a file named <code>.cursorrules</code> in your project root. Paste the prompt. Save.</p>
+          <p><strong>GitHub Copilot</strong>Create <code>.github/copilot-instructions.md</code>. Paste the prompt. Save.</p>
         </div>
-
-        <div class="clearance">
-          <span class="clearance-label">⬢ Clearance · ASD-STE100</span>
+        <div class="prompt-box">
+          <span class="lbl">Prompt · ASD-STE100</span>
           <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
           <pre id="promptText"></pre>
         </div>
       </div>
 
       <div class="m-section">
-        <div class="m-head">Flight conditions</div>
+        <div class="m-head">Where to use it</div>
         <div class="cols2">
           <div class="mini-card use">
-            <h4>Cleared for</h4>
-            <ul>
-              <li>Step-by-step guides and how-tos</li>
-              <li>Checklists and procedures</li>
-              <li>Output another tool must read</li>
-              <li>Readers who use English as a second language</li>
-            </ul>
+            <h4>Use it for</h4>
+            <ul><li>Step-by-step guides</li><li>Checklists and procedures</li><li>Output a tool must read</li><li>Readers using English as a second language</li></ul>
           </div>
           <div class="mini-card skip">
-            <h4>Keep grounded</h4>
-            <ul>
-              <li>Marketing and sales copy</li>
-              <li>Analysis that weighs trade-offs</li>
-              <li>Creative writing</li>
-              <li>Casual conversation</li>
-            </ul>
+            <h4>Skip it for</h4>
+            <ul><li>Marketing and sales copy</li><li>Analysis that weighs trade-offs</li><li>Creative writing</li><li>Casual conversation</li></ul>
           </div>
         </div>
       </div>
 
       <div class="m-section">
-        <div class="m-head">Note to crew</div>
-        <p class="note" style="margin-bottom:12px;">
-          <span class="ctrl">The bigger win</span>
+        <div class="m-head">Good to know</div>
+        <p class="note" style="margin-bottom:11px;">
+          <span class="tag">The bigger win</span>
           Most people use these rules to clean up what the AI <b>writes</b>. The larger gain is in what the AI <b>reads</b>.
-          If an assistant answers from your notes or docs, write those in the same style. One name per thing and one claim per sentence help it find the right passage.
+          If an assistant answers from your notes or docs, write those the same way. One name per thing and one claim per sentence help it find the right passage.
         </p>
         <p class="note">
-          <span class="ctrl">Two limits</span>
+          <span class="tag">Two limits</span>
           The model copies the standard. It does not check every word against the official dictionary.
           <b>Short sentences do not make a wrong answer right.</b> They only make a wrong answer easy to spot.
         </p>
       </div>
 
       <div class="menu">
-        <button class="btn-primary" onclick="show('play'); startGame()">Run an inspection →</button>
-        <button class="btn-primary btn-line" onclick="show('home')">Hangar</button>
+        <button class="btn-primary" onclick="show('play'); startGame()">Play →</button>
+        <button class="btn-primary btn-line" onclick="show('home')">Menu</button>
       </div>
     </div>
 
   </div>
-  <div class="hazard"></div>
 </div>
 
 <script>
-/* ---------- Clearance text ---------- */
+/* ---------- Prompt ---------- */
 const PROMPT = `Write at about 80% of the ASD-STE100 Simplified Technical English standard.
 - One instruction per sentence. Procedural sentences: 20 words or fewer.
 - Use active voice. Use the imperative for steps.
@@ -455,94 +411,83 @@ const PROMPT = `Write at about 80% of the ASD-STE100 Simplified Technical Englis
 - Put warnings and cautions before the step they apply to.
 - Keep standard technical terms and acronyms.`;
 
+/* ---------- Curiosity facts ---------- */
+const FACTS = [
+  "It went viral as an “Andrej Karpathy prompt.” He popularised it — but the standard is 1980s aerospace, not his.",
+  "ASD-STE100 was built for aircraft mechanics, many reading English as a second language, where one misread line could cost a life.",
+  "The standard allows about 900 general words, each with one approved meaning. “Follow” means go behind. It never means obey.",
+  "You don't need the official dictionary. The model already learned the standard, so one short line carries the whole rulebook.",
+  "The “80%” matters: strict STE reads stiff. 80% keeps the structure and drops the parts that make normal writing awkward.",
+  "STE has no word for “etc.” If a list matters, you write every item. No reader is left guessing what you left out."
+];
+let factIdx = Math.floor(Math.random() * FACTS.length);
+function nextFact() { factIdx = (factIdx + 1) % FACTS.length; document.getElementById('fact').textContent = FACTS[factIdx]; }
+
 /* ---------- Content ---------- */
 const CHOOSE = [
   {
-    task: "Make French press coffee",
-    prompt: "Two manual pages. One is airworthy. Stamp the clear one.",
-    rule: "One action per sentence",
+    task: "Make French press coffee", prompt: "One of these can go straight into a kitchen. Which one?", rule: "One action per sentence",
     options: [
       { t: "Add 30 g of coffee to the press. Pour 500 ml of water at 95°C. Wait 4 minutes. Press the plunger down slowly.", ok: true },
       { t: "You'll generally want to add roughly the right amount of coffee, then pour in some hot water and wait a bit before you press it down.", ok: false }
     ],
-    why: "The clear version puts one action in each sentence. Exact amounts replace 'roughly' and 'a bit'. No fog remains."
+    why: "The clear version puts one action in each sentence. Exact amounts replace 'roughly' and 'a bit'.",
+    curio: "This is how checklists work. Airlines and surgeons put one action per line so a tired reader never loses their place mid-sentence."
   },
   {
-    task: "Reset a Wi-Fi router",
-    prompt: "Which page handles the risk correctly?",
-    rule: "Warning before the step",
+    task: "Reset a Wi-Fi router", prompt: "Both warn you. Only one warns you in time.", rule: "Warning before the step",
     options: [
       { t: "Warning: You lose internet for 2 minutes. Hold the Reset button for 10 seconds. Release the button. Wait for the power light to turn green.", ok: true },
       { t: "Hold the reset button until it restarts. You might lose your connection for a while, by the way.", ok: false }
     ],
-    why: "The warning comes before the step, not as an afterthought. The step uses an exact time, not 'a while'."
+    why: "The warning comes before the step, not after. The step uses an exact time, not 'a while'.",
+    curio: "Aircraft manuals always put the warning first. A warning placed after the step is a warning the reader meets one second too late."
   },
   {
-    task: "Charge an e-scooter",
-    prompt: "Which page is easier to follow?",
-    rule: "One term for one thing",
+    task: "Charge an e-scooter", prompt: "One of these never makes you guess. Which?", rule: "One term for one thing",
     options: [
       { t: "Connect the charger to the scooter. The battery light blinks while the battery charges. The light turns green when the battery is full.", ok: true },
       { t: "Plug the charger into the power pack. The battery light blinks while the cell fills up, and the unit is done when it stops.", ok: false }
     ],
-    why: "The battery stays the 'battery'. 'power pack', 'cell' and 'unit' make the reader guess if these are the same thing."
+    why: "The battery stays the 'battery'. 'power pack', 'cell' and 'unit' make you guess if these are the same thing.",
+    curio: "The standard ships a 900-word dictionary where each word has exactly one meaning. One name per thing is also why a search never misses."
   },
   {
-    task: "Hang a picture frame",
-    prompt: "Which page can you act on?",
-    rule: "Exact values, not vague ones",
+    task: "Hang a picture frame", prompt: "One you can act on. One you have to interpret.", rule: "Exact values, not vague ones",
     options: [
       { t: "Measure 150 cm from the floor. Mark the wall with a pencil. Hammer the nail into the mark.", ok: true },
       { t: "Kind of measure where you want it, somewhere around eye level, then put a nail roughly there.", ok: false }
     ],
-    why: "Exact numbers replace 'somewhere' and 'roughly'. Each sentence is one action you can do."
+    why: "Exact numbers replace 'somewhere' and 'roughly'. Each sentence is one action you can do.",
+    curio: "Vague words hide a decision. “Around eye level” is a different height for a 150 cm reader and a 190 cm reader. “150 cm” is the same for both."
   },
   {
-    task: "Answer: does this charger fit my laptop?",
-    prompt: "The honest answer is partly uncertain. Which page is airworthy?",
-    rule: "Do not hedge — isolate the uncertainty",
+    task: "Does this charger fit my laptop?", prompt: "The true answer is partly uncertain. Which one is honest and clear?", rule: "Isolate the uncertainty",
     options: [
       { t: "This charger fits the laptop port. I am not sure it supplies enough power. Check the wattage on the label.", ok: true },
       { t: "This charger could maybe work, but it might not really supply enough power in some cases, possibly.", ok: false }
     ],
-    why: "Uncertainty is real, so keep it. But put it in one clear sentence. Do not smear 'maybe' across the whole answer."
+    why: "Uncertainty is real, so keep it — but in one clear sentence. Don't smear 'maybe' across the whole answer.",
+    curio: "This is the rule most people skip. Don't ban uncertainty, isolate it. “I am not sure” in its own sentence is information; scattered “maybe” is just noise."
   }
 ];
 
 const SPOT = [
-  { task: "Restart a frozen app", tokens: [["This",0],["could",1],["potentially",1],["help",0],["in",0],["some",1],["cases,",0],["so",0],["you",0],["may",1],["want",0],["to",0],["restart",0],["the",0],["app.",0]], fix: "Restart the app." },
-  { task: "Check a loose cable", tokens: [["You",0],["might",1],["want",0],["to",0],["possibly",1],["check",0],["the",0],["cable,",0],["although",0],["it",0],["could",1],["be",0],["fine.",0]], fix: "Check the cable. If it is loose, push it in." },
-  { task: "Water a plant", tokens: [["Generally",1],["speaking,",0],["you",0],["should",0],["probably",1],["water",0],["it",0],["roughly",1],["once",0],["a",0],["week,",0],["depending.",1]], fix: "Water the plant once a week. Give it 200 ml of water." },
-  { task: "Save your work", tokens: [["It's",0],["usually",1],["a",0],["good",0],["idea",0],["to",0],["kind",1],["of",0],["save",0],["your",0],["work",0],["fairly",1],["often,",0],["just",1],["to",0],["be",0],["safe.",0]], fix: "Save your work every 10 minutes." },
-  { task: "Update software", tokens: [["You",0],["may",1],["possibly",1],["need",0],["to",0],["perhaps",1],["update",0],["the",0],["software",0],["if",0],["issues",0],["seem",1],["to",0],["arise.",0]], fix: "Update the software now. The update fixes known errors." }
+  { task: "Restart a frozen app", tokens: [["This",0],["could",1],["potentially",1],["help",0],["in",0],["some",1],["cases,",0],["so",0],["you",0],["may",1],["want",0],["to",0],["restart",0],["the",0],["app.",0]], fix: "Restart the app.", curio: "Cut every hedge here and the instruction is still 100% true — just 3 words instead of 15." },
+  { task: "Check a loose cable", tokens: [["You",0],["might",1],["want",0],["to",0],["possibly",1],["check",0],["the",0],["cable,",0],["although",0],["it",0],["could",1],["be",0],["fine.",0]], fix: "Check the cable. If it is loose, push it in.", curio: "“Might”, “could”, “possibly” are a model's comfort blanket. Strip them and you can finally judge whether the advice is right." },
+  { task: "Water a plant", tokens: [["Generally",1],["speaking,",0],["you",0],["should",0],["probably",1],["water",0],["it",0],["roughly",1],["once",0],["a",0],["week,",0],["depending.",1]], fix: "Water the plant once a week. Give it 200 ml of water.", curio: "One hedge can hide a missing fact. “Roughly once a week” dodges the real question: how much water?" },
+  { task: "Save your work", tokens: [["It's",0],["usually",1],["a",0],["good",0],["idea",0],["to",0],["kind",1],["of",0],["save",0],["your",0],["work",0],["fairly",1],["often,",0],["just",1],["to",0],["be",0],["safe.",0]], fix: "Save your work every 10 minutes.", curio: "Readers skim. Every “usually” and “fairly” is a word their eyes must wade through to reach the verb." },
+  { task: "Update software", tokens: [["You",0],["may",1],["possibly",1],["need",0],["to",0],["perhaps",1],["update",0],["the",0],["software",0],["if",0],["issues",0],["seem",1],["to",0],["arise.",0]], fix: "Update the software now. The update fixes known errors.", curio: "Pile up enough “may / perhaps / seem” and a firm instruction reads like a shrug. The facts didn't change — the tone buried them." }
 ];
 
 const BA = [
-  {
-    topic: "Make French press coffee",
-    before: "If you want coffee, you'll generally want to add roughly the right amount of grounds — maybe a few scoops — and pour in hot water that isn't too hot, then let it sit for a bit before you slowly press the plunger down, more or less.",
-    warn: null,
-    after: ["Add 30 g of coffee to the press.", "Pour 500 ml of water at 95°C.", "Wait 4 minutes.", "Press the plunger down slowly."],
-    stats: [["Fog words", "6", "0"], ["Structure", "1 sentence", "4 steps"], ["Amounts", "“a few scoops”", "“30 g”"]]
-  },
-  {
-    topic: "Set up a Wi-Fi router",
-    before: "To get online, you should probably plug everything in and wait a while for the lights to do their thing, and then you can maybe connect your phone once it seems ready, assuming nothing goes wrong.",
-    warn: "Keep the router away from water.",
-    after: ["Connect the router to the wall socket.", "Connect the router to the modem with the grey cable.", "Wait 2 minutes for the power light to turn green.", "On your phone, open Wi-Fi settings.", "Select the network name on the router label.", "Enter the password on the router label."],
-    stats: [["Fog words", "5", "0"], ["Safety warning", "none", "before step 1"], ["Steps", "implied", "6 numbered"]]
-  },
-  {
-    topic: "Repot a plant",
-    before: "When the plant seems a bit too big, you might want to move it to a somewhat larger pot with some fresh soil, watering it a little afterward, more or less when it looks dry.",
-    warn: null,
-    after: ["Choose a pot 5 cm wider than the old pot.", "Fill the new pot one-third with fresh soil.", "Lift the plant out of the old pot.", "Place the plant in the new pot.", "Add soil around the roots.", "Water the plant with 200 ml of water."],
-    stats: [["Fog words", "5", "0"], ["Sizes", "“somewhat larger”", "“5 cm wider”"], ["Steps", "1 sentence", "6 steps"]]
-  }
+  { topic: "Make French press coffee", before: "If you want coffee, you'll generally want to add roughly the right amount of grounds — maybe a few scoops — and pour in hot water that isn't too hot, then let it sit for a bit before you slowly press the plunger down, more or less.", warn: null, after: ["Add 30 g of coffee to the press.", "Pour 500 ml of water at 95°C.", "Wait 4 minutes.", "Press the plunger down slowly."], stats: [["Hedge words","6","0"],["Structure","1 sentence","4 steps"],["Amounts","“a few scoops”","“30 g”"]] },
+  { topic: "Set up a Wi-Fi router", before: "To get online, you should probably plug everything in and wait a while for the lights to do their thing, and then you can maybe connect your phone once it seems ready, assuming nothing goes wrong.", warn: "Keep the router away from water.", after: ["Connect the router to the wall socket.", "Connect the router to the modem with the grey cable.", "Wait 2 minutes for the power light to turn green.", "On your phone, open Wi-Fi settings.", "Select the network name on the router label.", "Enter the password on the router label."], stats: [["Hedge words","5","0"],["Safety warning","none","before step 1"],["Steps","implied","6 numbered"]] },
+  { topic: "Repot a plant", before: "When the plant seems a bit too big, you might want to move it to a somewhat larger pot with some fresh soil, watering it a little afterward, more or less when it looks dry.", warn: null, after: ["Choose a pot 5 cm wider than the old pot.", "Fill the new pot one-third with fresh soil.", "Lift the plant out of the old pot.", "Place the plant in the new pot.", "Add soil around the roots.", "Water the plant with 200 ml of water."], stats: [["Hedge words","5","0"],["Sizes","“somewhat larger”","“5 cm wider”"],["Steps","1 sentence","6 steps"]] }
 ];
 
 /* ---------- State ---------- */
-let rounds = [], idx = 0, score = 0;
+let rounds = [], idx = 0, score = 0, streak = 0, bestStreak = 0, guess = null;
 const ROUND_COUNT = 8, POINTS = 100;
 
 function show(id) {
@@ -551,21 +496,12 @@ function show(id) {
   window.scrollTo(0, 0);
   if (id === 'ba') renderBA();
 }
-
-function shuffle(a) {
-  a = a.slice();
-  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-  return a;
-}
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
 /* ---------- Game ---------- */
 function startGame() {
-  const pool = shuffle([
-    ...CHOOSE.map(c => ({ type: 'choose', data: c })),
-    ...SPOT.map(s => ({ type: 'spot', data: s }))
-  ]);
-  rounds = pool.slice(0, ROUND_COUNT);
-  idx = 0; score = 0;
+  rounds = shuffle([...CHOOSE.map(c => ({ type: 'choose', data: c })), ...SPOT.map(s => ({ type: 'spot', data: s }))]).slice(0, ROUND_COUNT);
+  idx = 0; score = 0; streak = 0; bestStreak = 0;
   document.getElementById('roundTotal').textContent = rounds.length;
   document.getElementById('maxScore').textContent = rounds.length * POINTS;
   renderRound();
@@ -573,14 +509,22 @@ function startGame() {
 
 function renderRound() {
   const r = rounds[idx];
+  guess = null;
   document.getElementById('roundNum').textContent = idx + 1;
   document.getElementById('scoreNum').textContent = score;
-  document.getElementById('plane').style.left = 'calc(' + (idx / rounds.length * 100) + '% - ' + (idx / rounds.length * 18) + 'px)';
+  updateStreak();
+  document.getElementById('fill').style.width = (idx / rounds.length * 100) + '%';
   document.getElementById('roundFeedback').innerHTML = '';
   const nb = document.getElementById('nextBtn');
   nb.classList.add('hidden');
-  nb.textContent = (idx + 1 < rounds.length) ? 'Next Page →' : 'Finish inspection →';
+  nb.textContent = (idx + 1 < rounds.length) ? 'Next →' : 'See results →';
   if (r.type === 'choose') renderChoose(r.data); else renderSpot(r.data);
+}
+
+function updateStreak() {
+  const el = document.getElementById('streak');
+  document.getElementById('streakNum').textContent = streak;
+  el.classList.toggle('hide', streak < 2);
 }
 
 function renderChoose(d) {
@@ -599,31 +543,47 @@ function pickChoose(el) {
   document.querySelectorAll('#opts .option').forEach(o => {
     o.classList.add('disabled');
     const st = o.querySelector('.stamp');
-    if (o.dataset.ok === 'true') { o.classList.add('correct'); st.textContent = 'Approved'; st.classList.add('approved', 'show'); }
-    else { o.classList.add('wrong'); if (o === el) { st.textContent = 'Rejected'; st.classList.add('rejected', 'show'); } else { o.classList.add('dim'); } }
+    if (o.dataset.ok === 'true') { o.classList.add('correct'); st.textContent = 'Clear'; st.classList.add('approved', 'show'); }
+    else { o.classList.add('wrong'); if (o === el) { st.textContent = 'Foggy'; st.classList.add('rejected', 'show'); } else { o.classList.add('dim'); } }
   });
-  if (correct) { score += POINTS; document.getElementById('scoreNum').textContent = score; }
+  if (correct) { score += POINTS; streak++; } else { streak = 0; }
+  bestStreak = Math.max(bestStreak, streak);
+  document.getElementById('scoreNum').textContent = score;
+  updateStreak();
   const d = rounds[idx].data;
-  showFeedback(correct, correct ? 'Cleared for takeoff.' : 'Grounded.', d.why);
+  showFeedback(correct, correct ? 'Clear.' : 'That one is foggy.', d.why, null, null, d.curio);
 }
 
 function renderSpot(d) {
+  const maxGuess = Math.min(6, d.tokens.length);
   document.getElementById('roundBody').innerHTML = `
     <div class="rule-tag">Rule · No hedging</div>
     <div class="q-task">${d.task}</div>
-    <div class="q-prompt">Fog on the runway. Tap every weasel word, then call it in.</div>
+    <div class="guess">
+      <div class="guess-label">First, a hunch: how many hedge words are hiding here?</div>
+      <div class="guess-chips" id="guessChips">
+        ${Array.from({length: maxGuess}, (_, n) => `<button class="chip" onclick="pickGuess(${n}, this)">${n}</button>`).join('')}
+      </div>
+    </div>
+    <div class="q-prompt">Now tap every hedge word, then submit.</div>
     <div class="spot-sentence" id="spot">
       ${d.tokens.map((t, i) => `<span class="word" data-i="${i}" onclick="toggleWord(this)">${t[0]}</span>`).join(' ')}
     </div>
-    <p class="hint">Weasel words: could, might, may, maybe, possibly, perhaps, generally, usually, roughly, probably, seem.</p>
-    <button class="btn-primary" id="spotSubmit" onclick="submitSpot()">Call it in</button>`;
+    <p class="hint">Hedge words: could, might, may, maybe, possibly, perhaps, generally, usually, roughly, probably, seem.</p>
+    <button class="btn-primary" id="spotSubmit" onclick="submitSpot()">Submit</button>`;
 }
 
+function pickGuess(n, el) {
+  guess = n;
+  document.querySelectorAll('#guessChips .chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
 function toggleWord(el) { el.classList.toggle('picked'); }
 
 function submitSpot() {
   const d = rounds[idx].data;
   document.getElementById('spotSubmit').classList.add('hidden');
+  document.querySelectorAll('#guessChips .chip').forEach(c => c.classList.add('locked'));
   let hits = 0, falsePicks = 0;
   const totalBad = d.tokens.filter(t => t[1] === 1).length;
   document.querySelectorAll('#spot .word').forEach(w => {
@@ -636,91 +596,71 @@ function submitSpot() {
   });
   const gained = Math.max(0, Math.round((hits - falsePicks) / totalBad * POINTS));
   score += gained;
+  if (gained >= POINTS) { streak++; } else { streak = 0; }
+  bestStreak = Math.max(bestStreak, streak);
   document.getElementById('scoreNum').textContent = score;
+  updateStreak();
   const good = gained >= POINTS;
-  const msg = good ? `Skies clear. All fog cleared. +${gained}` : `${hits}/${totalBad} cleared, ${falsePicks} false call. +${gained}`;
-  showFeedback(good, msg, 'Rewrite the line clean:', d.fix);
+  const title = good ? 'Clear skies.' : `${hits}/${totalBad} found, ${falsePicks} wrong.`;
+  const guessLine = (guess !== null) ? `You guessed ${guess} · there were ${totalBad}.` : `There were ${totalBad} hedge words.`;
+  showFeedback(good, title, `+${gained} points`, 'Clean version:', d.fix, d.curio, guessLine);
 }
 
-function showFeedback(good, title, body, fix) {
+function showFeedback(good, title, body, fixLabel, fix, curio, guessLine) {
   document.getElementById('roundFeedback').innerHTML = `
     <div class="feedback ${good ? 'good' : 'bad'}">
-      <span class="ctrl">Ground Control</span>
-      <b>${title}</b> ${body}
-      ${fix ? `<div class="fix">${fix}</div>` : ''}
+      <span class="title">${title}</span> ${body}
+      ${guessLine ? `<div class="guessline">${guessLine}</div>` : ''}
+      ${fix ? `<div class="fix"><b>${fixLabel}</b> ${fix}</div>` : ''}
+      ${curio ? `<details class="curio"><summary>Why this works</summary><p>${curio}</p></details>` : ''}
     </div>`;
   document.getElementById('nextBtn').classList.remove('hidden');
 }
 
-function nextRound() {
-  idx++;
-  if (idx < rounds.length) renderRound(); else endGame();
-}
+function nextRound() { idx++; if (idx < rounds.length) renderRound(); else endGame(); }
 
 function endGame() {
   const max = rounds.length * POINTS, pct = score / max;
   document.getElementById('finalScore').textContent = score;
+  document.getElementById('bestStreak').textContent = bestStreak;
   document.getElementById('rank').textContent = rankName(pct);
   document.getElementById('verdict').textContent = verdictText(pct);
-  const stamp = document.getElementById('certStamp');
-  const cleared = pct >= 0.65;
-  stamp.textContent = cleared ? 'Cleared' : 'Re-inspect';
-  stamp.style.color = cleared ? 'var(--green)' : 'var(--red)';
-  stamp.style.borderColor = cleared ? 'var(--green)' : 'var(--red)';
   show('results');
 }
-
-function rankName(pct) {
-  if (pct >= 0.9) return "Chief Inspector";
-  if (pct >= 0.65) return "Captain";
-  if (pct >= 0.4) return "First Officer";
-  return "Cadet";
-}
+function rankName(pct) { return pct >= 0.9 ? "Chief Inspector" : pct >= 0.65 ? "Captain" : pct >= 0.4 ? "First Officer" : "Cadet"; }
 function verdictText(pct) {
-  if (pct >= 0.9) return "You stamp manuals like a pro. One action, one line, zero fog.";
-  if (pct >= 0.65) return "Steady hands. You spot the fog and clear the right page most of the time.";
-  if (pct >= 0.4) return "You are off the ground. Read The Manual, then re-inspect.";
-  return "Back to ground school. The 6-rule checklist makes the next run much easier.";
+  if (pct >= 0.9) return "You spot fog a mile off. One action, one line, zero hedging.";
+  if (pct >= 0.65) return "Steady hands. You clear the right line most of the time.";
+  if (pct >= 0.4) return "You're off the ground. Read The Method, then play again.";
+  return "Start with The Method. The 6 rules make the next run much easier.";
 }
 
-/* ---------- Hangar (before/after) ---------- */
+/* ---------- Before / After ---------- */
 function renderBA() {
   document.getElementById('baContent').innerHTML = BA.map(b => `
     <div class="ba-card">
       <div class="ba-head">${b.topic}</div>
       <div class="ba-body">
-        <div class="ba-col before">
-          <span class="ba-label before">Grounded</span>
-          <p>${b.before}</p>
-        </div>
-        <div class="ba-col after">
-          <span class="ba-label after">Cleared</span>
-          ${b.warn ? `<div class="ba-warn"><span>⚠ Warning: ${b.warn}</span></div>` : ''}
-          <ol>${b.after.map(s => `<li>${s}</li>`).join('')}</ol>
-        </div>
+        <div class="ba-col before"><span class="ba-label before">Before</span><p>${b.before}</p></div>
+        <div class="ba-col after"><span class="ba-label after">After</span>${b.warn ? `<div class="ba-warn">⚠ Warning: ${b.warn}</div>` : ''}<ol>${b.after.map(s => `<li>${s}</li>`).join('')}</ol></div>
       </div>
-      <div class="ba-stats">
-        ${b.stats.map(s => `<span class="ba-stat">${s[0]}: <b>${s[1]}</b> <span class="ar">→</span> <b>${s[2]}</b></span>`).join('')}
-      </div>
+      <div class="ba-stats">${b.stats.map(s => `<span class="ba-stat">${s[0]}: <b>${s[1]}</b> <span class="ar">→</span> <b>${s[2]}</b></span>`).join('')}</div>
     </div>`).join('');
 }
 
-/* ---------- Manual (method) ---------- */
+/* ---------- Method ---------- */
 function switchTab(name, btn) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
 }
-
 function copyPrompt(btn) {
-  navigator.clipboard.writeText(PROMPT).then(() => {
-    btn.textContent = 'Copied ✓';
-    setTimeout(() => btn.textContent = 'Copy', 1600);
-  }).catch(() => {});
+  navigator.clipboard.writeText(PROMPT).then(() => { btn.textContent = 'Copied ✓'; setTimeout(() => btn.textContent = 'Copy', 1600); }).catch(() => {});
 }
 
 document.getElementById('promptText').textContent = PROMPT;
+document.getElementById('fact').textContent = FACTS[factIdx];
 </script>
 </body>
 </html>
