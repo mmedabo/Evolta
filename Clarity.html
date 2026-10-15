@@ -1,728 +1,726 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clarity — Write Like an Aircraft Manual</title>
-    <link rel="icon" type="image/png" href="logo.png">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clarity — Write Like an Aircraft Manual</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #faf9f6;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 24px 16px 48px;
-            color: #2c2c2c;
-            line-height: 1.6;
-        }
+  :root {
+    --navy: #0c1824;
+    --navy2: #122230;
+    --paper: #f6f1e3;
+    --paper2: #efe7d2;
+    --line: #ddd2b4;
+    --ink: #1b1813;
+    --ink-soft: #5c5647;
+    --ink-faint: #8a8372;
+    --orange: #e8611c;
+    --yellow: #f2c200;
+    --green: #1f9d57;
+    --red: #d6392f;
+    --sky: #6fb6e8;
+  }
 
-        .container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            max-width: 560px;
-            width: 100%;
-            padding: 36px;
-        }
+  html { scroll-behavior: smooth; }
 
-        h1 {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 600;
-            letter-spacing: -0.8px;
-            margin-bottom: 6px;
-        }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    background-image:
+      radial-gradient(circle at 50% -10%, rgba(111,182,232,0.14), transparent 55%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 44px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 44px);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 28px 16px 60px;
+    line-height: 1.6;
+  }
 
-        .subtitle {
-            text-align: center;
-            color: #888;
-            font-size: 13px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 28px;
-        }
+  .manual {
+    width: 100%;
+    max-width: 580px;
+    background: var(--paper);
+    border-radius: 4px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 2px 0 rgba(255,255,255,0.4) inset;
+    position: relative;
+    overflow: hidden;
+  }
 
-        .screen { display: none; }
-        .screen.active { display: block; }
+  /* hazard tape strip */
+  .hazard { height: 10px; background: repeating-linear-gradient(45deg, var(--yellow) 0 16px, #1c1a15 16px 32px); }
 
-        .lead {
-            color: #555;
-            font-size: 15px;
-            font-weight: 300;
-            margin-bottom: 28px;
-        }
-        .lead strong { font-weight: 600; color: #2c2c2c; }
+  .pad { padding: 30px 30px 36px; }
 
-        .menu { display: flex; flex-direction: column; gap: 12px; }
+  /* manual cover header */
+  .cover { border-bottom: 2px dashed var(--line); padding-bottom: 18px; margin-bottom: 26px; }
+  .cover-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--orange); font-weight: 500; }
+  .cover h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 52px; letter-spacing: 2px; line-height: 0.95; text-transform: uppercase; margin: 6px 0 4px; }
+  .cover-sub { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--ink-soft); }
+  .tailtag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--ink-faint); text-align: right; line-height: 1.7; border: 1px solid var(--line); border-radius: 3px; padding: 6px 9px; background: var(--paper2); }
+  .tailtag b { color: var(--ink); }
 
-        .btn {
-            padding: 16px;
-            font-size: 15px;
-            font-weight: 500;
-            border: 1px solid #e5e5e5;
-            border-radius: 7px;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: white;
-            color: #2c2c2c;
-            text-align: left;
-            font-family: inherit;
-            width: 100%;
-        }
-        .btn small {
-            display: block;
-            font-size: 13px;
-            opacity: 0.55;
-            font-weight: 400;
-            margin-top: 3px;
-        }
-        .btn:hover { background: #f5f5f5; border-color: #2c2c2c; }
-        .btn:active { transform: scale(0.99); }
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeUp 0.4s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .btn-primary { background: #2c2c2c; color: white; border-color: #2c2c2c; text-align: center; }
-        .btn-primary:hover { background: #1a1a1a; border-color: #1a1a1a; }
+  .lead { color: var(--ink-soft); font-size: 15px; font-weight: 300; margin-bottom: 26px; }
+  .lead strong { font-weight: 600; color: var(--ink); }
 
-        .btn-ghost {
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 13px;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            padding: 8px 0;
-            font-family: inherit;
-            margin-bottom: 16px;
-        }
-        .btn-ghost:hover { color: #2c2c2c; }
+  /* menu — hangar bays */
+  .menu { display: flex; flex-direction: column; gap: 12px; }
+  .bay {
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px 20px; border: 1.5px solid var(--line); border-radius: 5px;
+    background: var(--paper2); cursor: pointer; width: 100%; text-align: left;
+    font-family: inherit; transition: all 0.18s; color: var(--ink);
+  }
+  .bay:hover { border-color: var(--orange); transform: translateX(3px); box-shadow: -4px 0 0 var(--orange); }
+  .bay-num { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700; color: var(--orange); min-width: 30px; }
+  .bay-body { flex: 1; }
+  .bay-title { font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .bay-desc { font-size: 13px; color: var(--ink-soft); font-weight: 300; }
+  .bay-arrow { font-size: 20px; color: var(--ink-faint); transition: transform 0.18s; }
+  .bay:hover .bay-arrow { transform: translateX(4px); color: var(--orange); }
 
-        /* Play screen */
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-        }
-        .pill {
-            font-size: 11px;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-            color: #999;
-        }
-        .pill b { color: #2c2c2c; font-size: 13px; }
+  .btn-back { background: none; border: none; font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: var(--ink-faint); cursor: pointer; padding: 0; margin-bottom: 20px; text-transform: uppercase; }
+  .btn-back:hover { color: var(--orange); }
 
-        .progress-bar { height: 4px; background: #eee; border-radius: 4px; overflow: hidden; margin-bottom: 22px; }
-        .progress-fill { height: 100%; background: #2c2c2c; transition: width 0.3s; width: 0; }
+  .btn-primary {
+    font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    background: var(--orange); color: #fff; border: none; border-radius: 4px; padding: 15px 22px; cursor: pointer;
+    transition: all 0.18s; width: 100%;
+  }
+  .btn-primary:hover { background: #cf5415; }
+  .btn-primary:active { transform: translateY(1px); }
+  .btn-line { background: var(--paper2); color: var(--ink); border: 1.5px solid var(--line); }
+  .btn-line:hover { border-color: var(--ink); background: var(--paper); }
 
-        .rule-tag {
-            display: inline-block;
-            font-size: 11px;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-            color: #2c2c2c;
-            background: #f0f1f3;
-            border: 1px solid rgba(0,0,0,0.06);
-            border-radius: 999px;
-            padding: 5px 12px;
-            margin-bottom: 14px;
-        }
-        .q-task { font-size: 18px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.3px; }
-        .q-prompt { color: #666; font-size: 14px; margin-bottom: 20px; }
+  /* inspection top bar */
+  .inspbar { display: flex; justify-content: space-between; align-items: center; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px; }
+  .inspbar b { color: var(--ink); font-size: 13px; }
 
-        .options { display: flex; flex-direction: column; gap: 10px; }
-        .option {
-            padding: 16px;
-            border: 1px solid #e5e5e5;
-            border-radius: 7px;
-            cursor: pointer;
-            background: #fafafa;
-            font-size: 14px;
-            transition: all 0.15s;
-        }
-        .option:hover { border-color: #2c2c2c; background: #fff; }
-        .option.correct { border-color: #28a745; background: #e9f7ee; cursor: default; }
-        .option.wrong { border-color: #d63031; background: #fdecec; cursor: default; }
-        .option.disabled { pointer-events: none; opacity: 0.6; }
+  /* runway progress */
+  .runway { position: relative; height: 26px; background: #2b2b2b; border-radius: 4px; margin-bottom: 24px; overflow: hidden; border: 1px solid #000; }
+  .runway::before { content: ""; position: absolute; top: 50%; left: 8px; right: 8px; height: 2px; transform: translateY(-50%); background: repeating-linear-gradient(90deg, var(--yellow) 0 14px, transparent 14px 28px); opacity: 0.8; }
+  .runway-plane { position: absolute; top: 50%; transform: translateY(-50%); font-size: 18px; transition: left 0.5s cubic-bezier(0.4,0,0.2,1); left: 0; filter: drop-shadow(0 0 3px rgba(0,0,0,0.6)); }
 
-        /* Spot game */
-        .spot-sentence {
-            font-size: 18px;
-            line-height: 2.1;
-            padding: 20px;
-            background: #fafafa;
-            border-radius: 8px;
-            border: 1px solid #eee;
-            margin-bottom: 8px;
-        }
-        .word {
-            cursor: pointer;
-            padding: 2px 3px;
-            border-radius: 4px;
-            transition: background 0.12s;
-            border-bottom: 2px dashed transparent;
-        }
-        .word:hover { background: #eee; }
-        .word.picked { background: #fff3cd; border-bottom-color: #c9a227; }
-        .word.hit { background: #e9f7ee; border-bottom-color: #28a745; }
-        .word.miss { background: #fdecec; border-bottom-color: #d63031; }
-        .word.falsepick { background: #f0f0f0; border-bottom-color: #999; text-decoration: line-through; }
-        .word.locked { pointer-events: none; }
-        .hint { font-size: 13px; color: #999; margin-bottom: 18px; }
+  .rule-tag { display: inline-flex; align-items: center; gap: 7px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; font-weight: 500; }
+  .rule-tag::before { content: "▸"; }
 
-        .feedback {
-            margin-top: 18px;
-            padding: 14px 16px;
-            border-radius: 7px;
-            font-size: 14px;
-        }
-        .feedback.good { background: #e9f7ee; color: #176b33; }
-        .feedback.bad { background: #fdecec; color: #8a1f22; }
-        .feedback b { display: block; margin-bottom: 4px; }
-        .feedback .fix { margin-top: 10px; font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; background: rgba(255,255,255,0.6); padding: 8px 10px; border-radius: 5px; white-space: pre-line; }
+  .q-task { font-family: 'Oswald', sans-serif; font-size: 23px; font-weight: 600; letter-spacing: 0.3px; margin-bottom: 5px; text-transform: uppercase; }
+  .q-prompt { color: var(--ink-soft); font-size: 14px; margin-bottom: 20px; }
 
-        .next-btn { margin-top: 18px; }
-        .hidden { display: none; }
+  /* option manual pages */
+  .options { display: flex; flex-direction: column; gap: 12px; }
+  .option {
+    position: relative; padding: 16px 18px; border: 1.5px solid var(--line); border-radius: 5px;
+    cursor: pointer; background: #fffdf7; font-size: 14.5px; line-height: 1.55; transition: all 0.16s; overflow: hidden;
+  }
+  .option::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--line); transition: background 0.16s; }
+  .option:hover { border-color: var(--orange); transform: translateX(2px); }
+  .option:hover::before { background: var(--orange); }
+  .option.correct { border-color: var(--green); background: #f0faf3; }
+  .option.correct::before { background: var(--green); }
+  .option.wrong { border-color: var(--red); background: #fcefee; }
+  .option.wrong::before { background: var(--red); }
+  .option.disabled { pointer-events: none; }
+  .option.dim { opacity: 0.55; }
 
-        /* Results */
-        .score-display { font-size: 60px; font-weight: 600; text-align: center; letter-spacing: -2px; margin: 10px 0 2px; }
-        .score-sub { text-align: center; color: #999; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; }
-        .verdict { text-align: center; font-size: 15px; color: #444; margin-bottom: 24px; padding: 0 10px; }
+  /* rubber stamp */
+  .stamp {
+    position: absolute; top: 50%; right: 14px; transform: translateY(-50%) rotate(-11deg) scale(1.6);
+    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1.5px;
+    border: 3px solid; border-radius: 5px; padding: 3px 9px; text-transform: uppercase; opacity: 0;
+    pointer-events: none; text-shadow: 0 0 1px currentColor;
+  }
+  .stamp.show { animation: thunk 0.32s cubic-bezier(0.3,1.4,0.5,1) forwards; }
+  @keyframes thunk { 0% { opacity: 0; transform: translateY(-50%) rotate(-11deg) scale(1.9); } 60% { opacity: 1; } 100% { opacity: 0.92; transform: translateY(-50%) rotate(-11deg) scale(1); } }
+  .stamp.approved { color: var(--green); }
+  .stamp.rejected { color: var(--red); }
 
-        /* Before / After */
-        .ba-card { border: 1px solid #eee; border-radius: 9px; overflow: hidden; margin-bottom: 22px; }
-        .ba-head { padding: 14px 16px; font-weight: 600; font-size: 15px; background: #fafafa; border-bottom: 1px solid #eee; }
-        .ba-body { display: grid; grid-template-columns: 1fr 1fr; }
-        .ba-col { padding: 16px; font-size: 13.5px; }
-        .ba-col.before { border-right: 1px solid #eee; background: #fff8f8; }
-        .ba-col.after { background: #f6fbf7; }
-        .ba-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
-        .ba-label.before { color: #c0392b; }
-        .ba-label.after { color: #1e8449; }
-        .ba-col p { color: #555; margin: 0; }
-        .ba-col ol { margin: 0; padding-left: 18px; color: #333; }
-        .ba-col ol li { margin-bottom: 6px; }
-        .ba-warn { color: #b9770e; font-weight: 600; margin-bottom: 8px; font-size: 12.5px; }
-        .ba-stats { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 16px; border-top: 1px solid #eee; background: #fff; }
-        .ba-stat { font-size: 12px; color: #555; background: #f3f3f3; border-radius: 6px; padding: 6px 10px; }
-        .ba-stat b { color: #2c2c2c; }
-        .arrow { color: #999; }
+  /* spot game */
+  .spot-sentence {
+    font-family: 'DM Mono', monospace; font-size: 16px; line-height: 2.2; padding: 20px;
+    background: #fffdf7; border: 1.5px solid var(--line); border-radius: 6px; margin-bottom: 10px;
+  }
+  .word { cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: all 0.12s; border-bottom: 2px solid transparent; }
+  .word:hover { background: var(--paper2); }
+  .word.picked { background: var(--yellow); border-bottom-color: #b8930a; }
+  .word.hit { background: #c9f0d6; border-bottom-color: var(--green); }
+  .word.miss { background: #fcdcd9; border-bottom-color: var(--red); }
+  .word.falsepick { background: #eee; border-bottom-color: var(--ink-faint); text-decoration: line-through; opacity: 0.7; }
+  .word.locked { pointer-events: none; }
+  .hint { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink-faint); margin-bottom: 18px; }
 
-        /* Method */
-        .m-section { margin-bottom: 26px; }
-        .m-section h3 { font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; color: #999; margin-bottom: 12px; font-weight: 600; }
-        .rules { list-style: none; }
-        .rules li { padding: 10px 0 10px 28px; border-bottom: 1px solid #f0f0f0; font-size: 14px; position: relative; color: #333; }
-        .rules li:before { content: counter(r); counter-increment: r; position: absolute; left: 0; top: 10px; width: 20px; height: 20px; background: #2c2c2c; color: #fff; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
-        .rules { counter-reset: r; }
-        .rules li:last-child { border-bottom: none; }
+  .feedback { margin-top: 18px; padding: 15px 16px; border-radius: 6px; font-size: 14px; position: relative; }
+  .feedback.good { background: #eef9f1; border-left: 4px solid var(--green); }
+  .feedback.bad { background: #fdeeec; border-left: 4px solid var(--red); }
+  .feedback .ctrl { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: block; margin-bottom: 5px; }
+  .feedback b { color: var(--ink); }
+  .feedback .fix { margin-top: 11px; font-family: 'DM Mono', monospace; font-size: 13px; background: var(--navy); color: #d7e6c7; padding: 10px 12px; border-radius: 5px; white-space: pre-line; }
+  .feedback .fix::before { content: "CLEAR → "; color: var(--green); }
 
-        .prompt-box { position: relative; background: #1a1a1a; color: #e8e8e8; border-radius: 8px; padding: 18px; font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.7; white-space: pre-wrap; }
-        .copy-btn { position: absolute; top: 12px; right: 12px; background: #333; color: #fff; border: none; border-radius: 5px; padding: 6px 12px; font-size: 11px; letter-spacing: 0.5px; cursor: pointer; font-family: inherit; }
-        .copy-btn:hover { background: #444; }
+  .next-btn { margin-top: 18px; }
+  .hidden { display: none; }
 
-        .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-        .tab { padding: 8px 14px; font-size: 13px; border: 1px solid #e5e5e5; border-radius: 999px; background: #fff; cursor: pointer; font-family: inherit; color: #555; transition: all 0.15s; }
-        .tab:hover { border-color: #2c2c2c; }
-        .tab.active { background: #2c2c2c; color: #fff; border-color: #2c2c2c; }
-        .tab-panel { display: none; background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; font-size: 13.5px; color: #555; }
-        .tab-panel.active { display: block; }
-        .tab-panel p { margin: 0 0 12px; }
-        .tab-panel p:last-child { margin-bottom: 0; }
-        .tab-panel strong { color: #2c2c2c; display: block; margin-bottom: 3px; font-size: 13px; }
-        .tab-panel code { background: #ececec; padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+  /* results — certificate */
+  .cert { text-align: center; border: 3px double var(--orange); border-radius: 6px; padding: 26px 22px; background: var(--paper2); position: relative; margin-bottom: 22px; }
+  .cert-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint); }
+  .cert-title { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin: 4px 0 2px; }
+  .cert-plane { font-size: 34px; margin: 8px 0; display: inline-block; animation: takeoff 1.1s ease-out 0.3s both; }
+  @keyframes takeoff { 0% { transform: translate(-60px,20px) rotate(0); opacity: 0; } 100% { transform: translate(0,0) rotate(-18deg); opacity: 1; } }
+  .cert-rank { font-family: 'Oswald', sans-serif; font-size: 34px; font-weight: 700; color: var(--orange); letter-spacing: 1px; text-transform: uppercase; }
+  .cert-score { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+  .cert-verdict { font-size: 14px; color: var(--ink-soft); margin-top: 14px; padding: 0 6px; }
+  .cert-stamp { position: absolute; top: 14px; right: 12px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1px; color: var(--green); border: 3px solid var(--green); border-radius: 5px; padding: 3px 8px; transform: rotate(-12deg); opacity: 0.9; text-transform: uppercase; }
 
-        .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .mini-card { border: 1px solid #eee; border-radius: 8px; padding: 14px; }
-        .mini-card h4 { font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; }
-        .mini-card.use h4 { color: #1e8449; }
-        .mini-card.skip h4 { color: #c0392b; }
-        .mini-card ul { list-style: none; font-size: 13px; color: #555; }
-        .mini-card li { padding: 4px 0; }
-        .mini-card li:before { content: "—"; color: #bbb; margin-right: 8px; }
+  /* before/after — hangar */
+  .ba-card { border: 1.5px solid var(--line); border-radius: 7px; overflow: hidden; margin-bottom: 20px; background: #fffdf7; }
+  .ba-head { font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; padding: 13px 16px; background: var(--navy2); color: var(--paper); }
+  .ba-body { display: grid; grid-template-columns: 1fr 1fr; }
+  .ba-col { padding: 15px 16px; font-size: 13.5px; }
+  .ba-col.before { border-right: 1.5px solid var(--line); background: #fbf1ef; }
+  .ba-col.after { background: #f1f8f2; }
+  .ba-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; font-weight: 500; display: inline-block; padding: 3px 8px; border-radius: 3px; }
+  .ba-label.before { color: #fff; background: var(--red); }
+  .ba-label.after { color: #fff; background: var(--green); }
+  .ba-col p { color: var(--ink-soft); margin: 0; }
+  .ba-col ol { margin: 0; padding-left: 18px; color: var(--ink); }
+  .ba-col ol li { margin-bottom: 6px; }
+  .ba-warn { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--ink); margin-bottom: 9px; padding: 5px 8px; border-radius: 3px; background: repeating-linear-gradient(45deg, var(--yellow) 0 10px, #1c1a15 10px 20px); position: relative; }
+  .ba-warn span { background: var(--yellow); padding: 1px 5px; border-radius: 2px; }
+  .ba-stats { display: flex; flex-wrap: wrap; gap: 7px; padding: 12px 16px; border-top: 1.5px dashed var(--line); }
+  .ba-stat { font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--ink-soft); background: var(--paper2); border-radius: 5px; padding: 6px 10px; }
+  .ba-stat b { color: var(--ink); }
+  .ba-stat .ar { color: var(--orange); }
 
-        .note { background: #fafafa; border-left: 3px solid #2c2c2c; padding: 14px 16px; font-size: 13.5px; color: #555; border-radius: 0 6px 6px 0; }
-        .note b { color: #2c2c2c; }
+  /* method — checklist + manual */
+  .m-section { margin-bottom: 26px; }
+  .m-head { font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .m-head::before { content: ""; width: 20px; height: 3px; background: var(--orange); }
+  .check { list-style: none; }
+  .check li { position: relative; padding: 11px 0 11px 36px; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--ink); }
+  .check li:last-child { border-bottom: none; }
+  .check li::before { content: "✓"; position: absolute; left: 0; top: 9px; width: 24px; height: 24px; border: 2px solid var(--green); color: var(--green); border-radius: 4px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
-        @media (max-width: 520px) {
-            .container { padding: 24px; }
-            h1 { font-size: 24px; }
-            .ba-body { grid-template-columns: 1fr; }
-            .ba-col.before { border-right: none; border-bottom: 1px solid #eee; }
-            .cols2 { grid-template-columns: 1fr; }
-        }
-    </style>
+  .tabs { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+  .tab { font-family: 'DM Mono', monospace; padding: 8px 14px; font-size: 12px; letter-spacing: 0.04em; border: 1.5px solid var(--line); border-radius: 4px; background: var(--paper2); cursor: pointer; color: var(--ink-soft); transition: all 0.15s; }
+  .tab:hover { border-color: var(--orange); }
+  .tab.active { background: var(--navy2); color: var(--paper); border-color: var(--navy2); }
+  .tab-panel { display: none; background: #fffdf7; border: 1.5px solid var(--line); border-radius: 6px; padding: 15px 16px; margin-bottom: 12px; font-size: 13.5px; color: var(--ink-soft); }
+  .tab-panel.active { display: block; }
+  .tab-panel p { margin: 0 0 12px; }
+  .tab-panel p:last-child { margin-bottom: 0; }
+  .tab-panel strong { color: var(--ink); display: block; margin-bottom: 3px; font-size: 13px; font-family: 'Oswald', sans-serif; letter-spacing: 0.3px; text-transform: uppercase; }
+  .tab-panel code { font-family: 'DM Mono', monospace; background: var(--paper2); padding: 1px 5px; border-radius: 3px; font-size: 12.5px; color: var(--ink); }
+
+  .clearance { position: relative; background: var(--navy); border-radius: 6px; padding: 16px; padding-top: 38px; }
+  .clearance-label { position: absolute; top: 10px; left: 14px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; color: var(--sky); text-transform: uppercase; }
+  .clearance pre { font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.7; color: #e8e2d0; white-space: pre-wrap; margin: 0; }
+  .copy-btn { position: absolute; top: 8px; right: 8px; font-family: 'DM Mono', monospace; background: var(--orange); color: #fff; border: none; border-radius: 4px; padding: 6px 12px; font-size: 11px; letter-spacing: 0.06em; cursor: pointer; text-transform: uppercase; }
+  .copy-btn:hover { background: #cf5415; }
+
+  .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mini-card { border: 1.5px solid var(--line); border-radius: 6px; padding: 14px; background: #fffdf7; }
+  .mini-card h4 { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; }
+  .mini-card.use h4 { color: var(--green); }
+  .mini-card.skip h4 { color: var(--red); }
+  .mini-card ul { list-style: none; font-size: 13px; color: var(--ink-soft); }
+  .mini-card li { padding: 4px 0; }
+  .mini-card li::before { content: "—"; color: var(--ink-faint); margin-right: 8px; }
+
+  .note { background: var(--paper2); border-left: 4px solid var(--orange); padding: 14px 16px; font-size: 13.5px; color: var(--ink-soft); border-radius: 0 6px 6px 0; }
+  .note b { color: var(--ink); }
+  .note .ctrl { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); display: block; margin-bottom: 6px; }
+
+  @media (max-width: 520px) {
+    .pad { padding: 24px 20px 30px; }
+    .cover h1 { font-size: 42px; }
+    .ba-body { grid-template-columns: 1fr; }
+    .ba-col.before { border-right: none; border-bottom: 1.5px solid var(--line); }
+    .cols2 { grid-template-columns: 1fr; }
+    .tailtag { display: none; }
+  }
+</style>
 </head>
 <body>
-<div class="container">
-    <h1>Clarity</h1>
-    <div class="subtitle">write like an aircraft manual</div>
+<div class="manual">
+  <div class="hazard"></div>
+  <div class="pad">
+
+    <div class="cover">
+      <div class="cover-top">
+        <div>
+          <div class="eyebrow">Flight Manual · ASD-STE100</div>
+          <h1>Clarity</h1>
+          <div class="cover-sub">write like an aircraft manual</div>
+        </div>
+        <div class="tailtag">REG <b>STE-100</b><br>REV <b>1</b><br>STATUS <b>DRAFT</b></div>
+      </div>
+    </div>
 
     <!-- HOME -->
     <div class="screen active" id="home">
-        <p class="lead">
-            Aircraft mechanics write with a standard called <strong>ASD-STE100 Simplified Technical English</strong>.
-            They have used it since the 1980s. It makes an instruction mean one thing only.
-            You can borrow the same rules to make AI output clear and easy to act on.
-        </p>
-        <div class="menu">
-            <button class="btn" onclick="show('play'); startGame()">
-                Play
-                <small>Learn the 6 rules by fixing everyday instructions.</small>
-            </button>
-            <button class="btn" onclick="show('ba')">
-                Before &amp; After
-                <small>See the same instruction with and without the method.</small>
-            </button>
-            <button class="btn" onclick="show('method')">
-                The Method
-                <small>The rules, the copy-paste prompt, and how to adopt it.</small>
-            </button>
-        </div>
+      <p class="lead">
+        Aircraft mechanics write with a standard called <strong>ASD-STE100 Simplified Technical English</strong>.
+        They have used it since the 1980s. It makes an instruction mean one thing only.
+        Step into the hangar. Learn to clear a manual for takeoff, then borrow the rules for your AI.
+      </p>
+      <div class="menu">
+        <button class="bay" onclick="show('play'); startGame()">
+          <span class="bay-num">01</span>
+          <span class="bay-body">
+            <span class="bay-title">Inspection</span>
+            <span class="bay-desc">Stamp bad instructions. Clear the fog. Earn your wings.</span>
+          </span>
+          <span class="bay-arrow">→</span>
+        </button>
+        <button class="bay" onclick="show('ba')">
+          <span class="bay-num">02</span>
+          <span class="bay-body">
+            <span class="bay-title">The Hangar</span>
+            <span class="bay-desc">Grounded vs. cleared — the same instruction, both ways.</span>
+          </span>
+          <span class="bay-arrow">→</span>
+        </button>
+        <button class="bay" onclick="show('method')">
+          <span class="bay-num">03</span>
+          <span class="bay-body">
+            <span class="bay-title">The Manual</span>
+            <span class="bay-desc">The checklist, the clearance to file, and how to adopt it.</span>
+          </span>
+          <span class="bay-arrow">→</span>
+        </button>
+      </div>
     </div>
 
     <!-- PLAY -->
     <div class="screen" id="play">
-        <button class="btn-ghost" onclick="show('home')">← Menu</button>
-        <div class="topbar">
-            <div class="pill">Round <b id="roundNum">1</b>/<span id="roundTotal">8</span></div>
-            <div class="pill">Score <b id="scoreNum">0</b></div>
-        </div>
-        <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-        <div id="roundBody"></div>
-        <div id="roundFeedback"></div>
-        <button class="btn btn-primary next-btn hidden" id="nextBtn" onclick="nextRound()">Next →</button>
+      <button class="btn-back" onclick="show('home')">◂ Hangar</button>
+      <div class="inspbar">
+        <span>Inspection Log · Page <b id="roundNum">1</b>/<span id="roundTotal">8</span></span>
+        <span>Airworthiness <b id="scoreNum">0</b></span>
+      </div>
+      <div class="runway"><div class="runway-plane" id="plane">✈</div></div>
+      <div id="roundBody"></div>
+      <div id="roundFeedback"></div>
+      <button class="btn-primary next-btn hidden" id="nextBtn" onclick="nextRound()">Next Page →</button>
     </div>
 
     <!-- RESULTS -->
     <div class="screen" id="results">
-        <div class="score-display" id="finalScore">0</div>
-        <div class="score-sub">out of <span id="maxScore">800</span> points</div>
-        <p class="verdict" id="verdict"></p>
-        <div class="menu">
-            <button class="btn btn-primary" onclick="startGame(); show('play')">Play Again</button>
-            <button class="btn" onclick="show('method')">See The Method →</button>
-            <button class="btn" onclick="show('home')">Menu</button>
-        </div>
+      <div class="cert">
+        <div class="cert-stamp" id="certStamp">Cleared</div>
+        <div class="cert-eyebrow">Certificate of Airworthiness</div>
+        <div class="cert-title">Inspection Complete</div>
+        <div class="cert-plane">✈</div>
+        <div class="cert-rank" id="rank">Cadet</div>
+        <div class="cert-score"><span id="finalScore">0</span> / <span id="maxScore">800</span> airworthiness points</div>
+        <div class="cert-verdict" id="verdict"></div>
+      </div>
+      <div class="menu">
+        <button class="btn-primary" onclick="startGame(); show('play')">Re-inspect</button>
+        <button class="btn-primary btn-line" onclick="show('method')">File your clearance →</button>
+        <button class="btn-primary btn-line" onclick="show('home')">Hangar</button>
+      </div>
     </div>
 
     <!-- BEFORE / AFTER -->
     <div class="screen" id="ba">
-        <button class="btn-ghost" onclick="show('home')">← Menu</button>
-        <p class="lead">
-            The content barely changes. The <strong>form</strong> changes.
-            Hedge words go. One action goes in one sentence. A warning comes before the step.
-        </p>
-        <div id="baContent"></div>
-        <button class="btn btn-primary" onclick="show('method')">How do I get this? →</button>
+      <button class="btn-back" onclick="show('home')">◂ Hangar</button>
+      <p class="lead">
+        The content barely changes. The <strong>form</strong> changes. Fog lifts.
+        One action goes on one line. A warning comes before the step it guards.
+      </p>
+      <div id="baContent"></div>
+      <button class="btn-primary" onclick="show('method')">How do I get this? →</button>
     </div>
 
     <!-- METHOD -->
     <div class="screen" id="method">
-        <button class="btn-ghost" onclick="show('home')">← Menu</button>
+      <button class="btn-back" onclick="show('home')">◂ Hangar</button>
 
-        <div class="m-section">
-            <h3>The 6 rules</h3>
-            <ol class="rules">
-                <li>Write one instruction per sentence.</li>
-                <li>Keep procedural sentences to 20 words or fewer.</li>
-                <li>Use the active voice. Use the imperative for steps.</li>
-                <li>Use one term for one thing. Do not use synonyms.</li>
-                <li>Do not hedge. If you are not sure, say so in one separate sentence.</li>
-                <li>Put warnings and cautions before the step they apply to.</li>
-            </ol>
+      <div class="m-section">
+        <div class="m-head">Pre-flight checklist · the 6 rules</div>
+        <ul class="check">
+          <li>Write one instruction per sentence.</li>
+          <li>Keep procedural sentences to 20 words or fewer.</li>
+          <li>Use the active voice. Use the imperative for steps.</li>
+          <li>Use one term for one thing. Do not use synonyms.</li>
+          <li>Do not hedge. If you are not sure, say so in one separate sentence.</li>
+          <li>Put warnings and cautions before the step they apply to.</li>
+        </ul>
+      </div>
+
+      <div class="m-section">
+        <div class="m-head">File your clearance</div>
+        <p class="lead" style="margin-bottom:14px;">Pick your tool. Copy the clearance. Paste it where shown. It then shapes every answer.</p>
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('claude', this)">Claude</button>
+          <button class="tab" onclick="switchTab('chatgpt', this)">ChatGPT</button>
+          <button class="tab" onclick="switchTab('gemini', this)">Gemini</button>
+          <button class="tab" onclick="switchTab('cursor', this)">Cursor / Copilot</button>
         </div>
 
-        <div class="m-section">
-            <h3>Adopt it in your AI work</h3>
-            <p class="lead" style="margin-bottom:14px;">Pick your tool. Copy the prompt. Paste it where shown. It then shapes every answer.</p>
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('claude', this)">Claude</button>
-                <button class="tab" onclick="switchTab('chatgpt', this)">ChatGPT</button>
-                <button class="tab" onclick="switchTab('gemini', this)">Gemini</button>
-                <button class="tab" onclick="switchTab('cursor', this)">Cursor / Copilot</button>
-            </div>
+        <div class="tab-panel active" id="tab-claude">
+          <p><strong>Claude Project</strong>Open your project. Click the settings icon. Find “Instructions”. Paste the clearance. Save.</p>
+          <p><strong>Claude Code</strong>Add the clearance to a <code>CLAUDE.md</code> file in your repository.</p>
+          <p><strong>Claude Skill</strong>Save the clearance as the skill's instructions. Claude loads it for matching tasks.</p>
+        </div>
+        <div class="tab-panel" id="tab-chatgpt">
+          <p><strong>Custom instructions</strong>Open Settings. Select “Personalization”. Open “Custom instructions”. Paste the clearance under “How would you like ChatGPT to respond?”. Save.</p>
+          <p><strong>A reusable GPT</strong>Create a Custom GPT. Paste the clearance into the “Instructions” field.</p>
+        </div>
+        <div class="tab-panel" id="tab-gemini">
+          <p><strong>A Gem</strong>Open the Gem manager. Create a new Gem. Paste the clearance into “Instructions”. Save the Gem.</p>
+          <p><strong>Saved info</strong>Open Settings, then “Saved info”. Add the clearance as a standing instruction.</p>
+        </div>
+        <div class="tab-panel" id="tab-cursor">
+          <p><strong>Cursor</strong>Create a file named <code>.cursorrules</code> in your project root. Paste the clearance. Save.</p>
+          <p><strong>GitHub Copilot</strong>Create <code>.github/copilot-instructions.md</code>. Paste the clearance. Save.</p>
+        </div>
 
-            <div class="tab-panel active" id="tab-claude">
-                <p><strong>Claude Project</strong>Open your project. Click the settings icon. Find “Instructions”. Paste the prompt. Save.</p>
-                <p><strong>Claude Code</strong>Add the prompt to a <code>CLAUDE.md</code> file in your repository.</p>
-                <p><strong>Claude Skill</strong>Save the prompt as the skill's instructions. Claude loads it for matching tasks.</p>
-            </div>
-            <div class="tab-panel" id="tab-chatgpt">
-                <p><strong>Custom instructions</strong>Open Settings. Select “Personalization”. Open “Custom instructions”. Paste the prompt under “How would you like ChatGPT to respond?”. Save.</p>
-                <p><strong>A reusable GPT</strong>Create a Custom GPT. Paste the prompt into the “Instructions” field.</p>
-            </div>
-            <div class="tab-panel" id="tab-gemini">
-                <p><strong>A Gem</strong>Open the Gem manager. Create a new Gem. Paste the prompt into “Instructions”. Save the Gem.</p>
-                <p><strong>Saved info</strong>Open Settings, then “Saved info”. Add the prompt as a standing instruction.</p>
-            </div>
-            <div class="tab-panel" id="tab-cursor">
-                <p><strong>Cursor</strong>Create a file named <code>.cursorrules</code> in your project root. Paste the prompt. Save.</p>
-                <p><strong>GitHub Copilot</strong>Create <code>.github/copilot-instructions.md</code>. Paste the prompt. Save.</p>
-            </div>
+        <div class="clearance">
+          <span class="clearance-label">⬢ Clearance · ASD-STE100</span>
+          <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+          <pre id="promptText"></pre>
+        </div>
+      </div>
 
-            <div class="prompt-box" id="promptText"><button class="copy-btn" onclick="copyPrompt()">Copy</button>Write at about 80% of the ASD-STE100 Simplified Technical English standard.
+      <div class="m-section">
+        <div class="m-head">Flight conditions</div>
+        <div class="cols2">
+          <div class="mini-card use">
+            <h4>Cleared for</h4>
+            <ul>
+              <li>Step-by-step guides and how-tos</li>
+              <li>Checklists and procedures</li>
+              <li>Output another tool must read</li>
+              <li>Readers who use English as a second language</li>
+            </ul>
+          </div>
+          <div class="mini-card skip">
+            <h4>Keep grounded</h4>
+            <ul>
+              <li>Marketing and sales copy</li>
+              <li>Analysis that weighs trade-offs</li>
+              <li>Creative writing</li>
+              <li>Casual conversation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-section">
+        <div class="m-head">Note to crew</div>
+        <p class="note" style="margin-bottom:12px;">
+          <span class="ctrl">The bigger win</span>
+          Most people use these rules to clean up what the AI <b>writes</b>. The larger gain is in what the AI <b>reads</b>.
+          If an assistant answers from your notes or docs, write those in the same style. One name per thing and one claim per sentence help it find the right passage.
+        </p>
+        <p class="note">
+          <span class="ctrl">Two limits</span>
+          The model copies the standard. It does not check every word against the official dictionary.
+          <b>Short sentences do not make a wrong answer right.</b> They only make a wrong answer easy to spot.
+        </p>
+      </div>
+
+      <div class="menu">
+        <button class="btn-primary" onclick="show('play'); startGame()">Run an inspection →</button>
+        <button class="btn-primary btn-line" onclick="show('home')">Hangar</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="hazard"></div>
+</div>
+
+<script>
+/* ---------- Clearance text ---------- */
+const PROMPT = `Write at about 80% of the ASD-STE100 Simplified Technical English standard.
 - One instruction per sentence. Procedural sentences: 20 words or fewer.
 - Use active voice. Use the imperative for steps.
 - Use one term for one thing. Do not use synonyms for technical terms.
 - Do not hedge. If you are not sure, say so in one separate sentence.
 - Put warnings and cautions before the step they apply to.
-- Keep standard technical terms and acronyms.</div>
-        </div>
+- Keep standard technical terms and acronyms.`;
 
-        <div class="m-section">
-            <h3>Where to use it</h3>
-            <div class="cols2">
-                <div class="mini-card use">
-                    <h4>Use it for</h4>
-                    <ul>
-                        <li>Step-by-step guides and how-tos</li>
-                        <li>Checklists and procedures</li>
-                        <li>Output another tool must read</li>
-                        <li>Readers who use English as a second language</li>
-                    </ul>
-                </div>
-                <div class="mini-card skip">
-                    <h4>Skip it for</h4>
-                    <ul>
-                        <li>Marketing and sales copy</li>
-                        <li>Analysis that weighs trade-offs</li>
-                        <li>Creative writing</li>
-                        <li>Casual conversation</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="m-section">
-            <h3>The bigger win</h3>
-            <p class="note">
-                Most people use these rules to clean up what the AI <b>writes</b>.
-                The larger gain is in what the AI <b>reads</b>. If an assistant answers from your
-                notes or docs, write those in the same style. One name per thing and one claim per
-                sentence help the assistant find the right passage.
-            </p>
-        </div>
-
-        <div class="m-section">
-            <h3>Two limits</h3>
-            <p class="note">
-                The model copies the standard. It does not check every word against the official dictionary.
-                <b>Short sentences do not make a wrong answer right.</b> They only make a wrong answer easy to spot.
-            </p>
-        </div>
-
-        <div class="menu">
-            <button class="btn btn-primary" onclick="show('play'); startGame()">Test yourself →</button>
-            <button class="btn" onclick="show('home')">Menu</button>
-        </div>
-    </div>
-</div>
-
-<script>
 /* ---------- Content ---------- */
-
-// Multiple-choice: pick the clearer version.
 const CHOOSE = [
-    {
-        task: "Make French press coffee",
-        prompt: "Which set of instructions follows the method?",
-        rule: "One action per sentence",
-        options: [
-            { t: "Add 30 g of coffee to the press. Pour 500 ml of water at 95°C. Wait 4 minutes. Press the plunger down slowly.", ok: true },
-            { t: "You'll generally want to add roughly the right amount of coffee, then pour in some hot water and wait a bit before you press it down.", ok: false }
-        ],
-        why: "The clear version puts one action in each sentence. Exact amounts replace 'roughly' and 'a bit'. No hedge words remain."
-    },
-    {
-        task: "Reset a Wi-Fi router",
-        prompt: "Which one handles the risk correctly?",
-        rule: "Warning before the step",
-        options: [
-            { t: "Warning: You lose internet for 2 minutes. Hold the Reset button for 10 seconds. Release the button. Wait for the power light to turn green.", ok: true },
-            { t: "Hold the reset button until it restarts. You might lose your connection for a while, by the way.", ok: false }
-        ],
-        why: "The warning comes before the step, not as an afterthought. The step uses an exact time, not 'a while'."
-    },
-    {
-        task: "Charge an e-scooter",
-        prompt: "Which one is easier to follow?",
-        rule: "One term for one thing",
-        options: [
-            { t: "Connect the charger to the scooter. The battery light blinks while the battery charges. The light turns green when the battery is full.", ok: true },
-            { t: "Plug the charger into the power pack. The battery light blinks while the cell fills up, and the unit is done when it stops.", ok: false }
-        ],
-        why: "The battery stays the 'battery'. 'power pack', 'cell' and 'unit' make the reader guess if these are the same thing."
-    },
-    {
-        task: "Hang a picture frame",
-        prompt: "Which one can you act on?",
-        rule: "Exact values, not vague ones",
-        options: [
-            { t: "Measure 150 cm from the floor. Mark the wall with a pencil. Hammer the nail into the mark.", ok: true },
-            { t: "Kind of measure where you want it, somewhere around eye level, then put a nail roughly there.", ok: false }
-        ],
-        why: "Exact numbers replace 'somewhere' and 'roughly'. Each sentence is one action you can do."
-    },
-    {
-        task: "Answer: does this charger fit my laptop?",
-        prompt: "The honest answer is partly uncertain. Which version is better?",
-        rule: "Do not hedge — isolate the uncertainty",
-        options: [
-            { t: "This charger fits the laptop port. I am not sure it supplies enough power. Check the wattage on the label.", ok: true },
-            { t: "This charger could maybe work, but it might not really supply enough power in some cases, possibly.", ok: false }
-        ],
-        why: "Uncertainty is real, so keep it. But put it in one clear sentence. Do not smear 'maybe' across the whole answer."
-    }
+  {
+    task: "Make French press coffee",
+    prompt: "Two manual pages. One is airworthy. Stamp the clear one.",
+    rule: "One action per sentence",
+    options: [
+      { t: "Add 30 g of coffee to the press. Pour 500 ml of water at 95°C. Wait 4 minutes. Press the plunger down slowly.", ok: true },
+      { t: "You'll generally want to add roughly the right amount of coffee, then pour in some hot water and wait a bit before you press it down.", ok: false }
+    ],
+    why: "The clear version puts one action in each sentence. Exact amounts replace 'roughly' and 'a bit'. No fog remains."
+  },
+  {
+    task: "Reset a Wi-Fi router",
+    prompt: "Which page handles the risk correctly?",
+    rule: "Warning before the step",
+    options: [
+      { t: "Warning: You lose internet for 2 minutes. Hold the Reset button for 10 seconds. Release the button. Wait for the power light to turn green.", ok: true },
+      { t: "Hold the reset button until it restarts. You might lose your connection for a while, by the way.", ok: false }
+    ],
+    why: "The warning comes before the step, not as an afterthought. The step uses an exact time, not 'a while'."
+  },
+  {
+    task: "Charge an e-scooter",
+    prompt: "Which page is easier to follow?",
+    rule: "One term for one thing",
+    options: [
+      { t: "Connect the charger to the scooter. The battery light blinks while the battery charges. The light turns green when the battery is full.", ok: true },
+      { t: "Plug the charger into the power pack. The battery light blinks while the cell fills up, and the unit is done when it stops.", ok: false }
+    ],
+    why: "The battery stays the 'battery'. 'power pack', 'cell' and 'unit' make the reader guess if these are the same thing."
+  },
+  {
+    task: "Hang a picture frame",
+    prompt: "Which page can you act on?",
+    rule: "Exact values, not vague ones",
+    options: [
+      { t: "Measure 150 cm from the floor. Mark the wall with a pencil. Hammer the nail into the mark.", ok: true },
+      { t: "Kind of measure where you want it, somewhere around eye level, then put a nail roughly there.", ok: false }
+    ],
+    why: "Exact numbers replace 'somewhere' and 'roughly'. Each sentence is one action you can do."
+  },
+  {
+    task: "Answer: does this charger fit my laptop?",
+    prompt: "The honest answer is partly uncertain. Which page is airworthy?",
+    rule: "Do not hedge — isolate the uncertainty",
+    options: [
+      { t: "This charger fits the laptop port. I am not sure it supplies enough power. Check the wattage on the label.", ok: true },
+      { t: "This charger could maybe work, but it might not really supply enough power in some cases, possibly.", ok: false }
+    ],
+    why: "Uncertainty is real, so keep it. But put it in one clear sentence. Do not smear 'maybe' across the whole answer."
+  }
 ];
 
-// Spot game: tap the words that break the rules (hedges / vague words).
-// Each token is [word, isBad].
 const SPOT = [
-    {
-        task: "Restart a frozen app",
-        tokens: [["This",0],["could",1],["potentially",1],["help",0],["in",0],["some",1],["cases,",0],["so",0],["you",0],["may",1],["want",0],["to",0],["restart",0],["the",0],["app.",0]],
-        fix: "Restart the app."
-    },
-    {
-        task: "Check a loose cable",
-        tokens: [["You",0],["might",1],["want",0],["to",0],["possibly",1],["check",0],["the",0],["cable,",0],["although",0],["it",0],["could",1],["be",0],["fine.",0]],
-        fix: "Check the cable. If it is loose, push it in."
-    },
-    {
-        task: "Water a plant",
-        tokens: [["Generally",1],["speaking,",0],["you",0],["should",0],["probably",1],["water",0],["it",0],["roughly",1],["once",0],["a",0],["week,",0],["depending.",1]],
-        fix: "Water the plant once a week. Give it 200 ml of water."
-    },
-    {
-        task: "Save your work",
-        tokens: [["It's",0],["usually",1],["a",0],["good",0],["idea",0],["to",0],["kind",1],["of",0],["save",0],["your",0],["work",0],["fairly",1],["often,",0],["just",1],["to",0],["be",0],["safe.",0]],
-        fix: "Save your work every 10 minutes."
-    },
-    {
-        task: "Update software",
-        tokens: [["You",0],["may",1],["possibly",1],["need",0],["to",0],["perhaps",1],["update",0],["the",0],["software",0],["if",0],["issues",0],["seem",1],["to",0],["arise.",0]],
-        fix: "Update the software now. The update fixes known errors."
-    }
+  { task: "Restart a frozen app", tokens: [["This",0],["could",1],["potentially",1],["help",0],["in",0],["some",1],["cases,",0],["so",0],["you",0],["may",1],["want",0],["to",0],["restart",0],["the",0],["app.",0]], fix: "Restart the app." },
+  { task: "Check a loose cable", tokens: [["You",0],["might",1],["want",0],["to",0],["possibly",1],["check",0],["the",0],["cable,",0],["although",0],["it",0],["could",1],["be",0],["fine.",0]], fix: "Check the cable. If it is loose, push it in." },
+  { task: "Water a plant", tokens: [["Generally",1],["speaking,",0],["you",0],["should",0],["probably",1],["water",0],["it",0],["roughly",1],["once",0],["a",0],["week,",0],["depending.",1]], fix: "Water the plant once a week. Give it 200 ml of water." },
+  { task: "Save your work", tokens: [["It's",0],["usually",1],["a",0],["good",0],["idea",0],["to",0],["kind",1],["of",0],["save",0],["your",0],["work",0],["fairly",1],["often,",0],["just",1],["to",0],["be",0],["safe.",0]], fix: "Save your work every 10 minutes." },
+  { task: "Update software", tokens: [["You",0],["may",1],["possibly",1],["need",0],["to",0],["perhaps",1],["update",0],["the",0],["software",0],["if",0],["issues",0],["seem",1],["to",0],["arise.",0]], fix: "Update the software now. The update fixes known errors." }
 ];
 
 const BA = [
-    {
-        topic: "Make French press coffee",
-        before: "If you want coffee, you'll generally want to add roughly the right amount of grounds — maybe a few scoops — and pour in hot water that isn't too hot, then let it sit for a bit before you slowly press the plunger down, more or less.",
-        warn: null,
-        after: ["Add 30 g of coffee to the press.", "Pour 500 ml of water at 95°C.", "Wait 4 minutes.", "Press the plunger down slowly."],
-        stats: [["Hedge words", "6", "0"], ["Structure", "1 sentence", "4 steps"], ["Amounts", "“a few scoops”", "“30 g”"]]
-    },
-    {
-        topic: "Set up a Wi-Fi router",
-        before: "To get online, you should probably plug everything in and wait a while for the lights to do their thing, and then you can maybe connect your phone once it seems ready, assuming nothing goes wrong.",
-        warn: "Keep the router away from water.",
-        after: ["Connect the router to the wall socket.", "Connect the router to the modem with the grey cable.", "Wait 2 minutes for the power light to turn green.", "On your phone, open Wi-Fi settings.", "Select the network name on the router label.", "Enter the password on the router label."],
-        stats: [["Hedge words", "5", "0"], ["Safety warning", "none", "before step 1"], ["Steps", "implied", "6 numbered"]]
-    },
-    {
-        topic: "Repot a plant",
-        before: "When the plant seems a bit too big, you might want to move it to a somewhat larger pot with some fresh soil, watering it a little afterward, more or less when it looks dry.",
-        warn: null,
-        after: ["Choose a pot 5 cm wider than the old pot.", "Fill the new pot one-third with fresh soil.", "Lift the plant out of the old pot.", "Place the plant in the new pot.", "Add soil around the roots.", "Water the plant with 200 ml of water."],
-        stats: [["Hedge words", "5", "0"], ["Sizes", "“somewhat larger”", "“5 cm wider”"], ["Steps", "1 sentence", "6 steps"]]
-    }
+  {
+    topic: "Make French press coffee",
+    before: "If you want coffee, you'll generally want to add roughly the right amount of grounds — maybe a few scoops — and pour in hot water that isn't too hot, then let it sit for a bit before you slowly press the plunger down, more or less.",
+    warn: null,
+    after: ["Add 30 g of coffee to the press.", "Pour 500 ml of water at 95°C.", "Wait 4 minutes.", "Press the plunger down slowly."],
+    stats: [["Fog words", "6", "0"], ["Structure", "1 sentence", "4 steps"], ["Amounts", "“a few scoops”", "“30 g”"]]
+  },
+  {
+    topic: "Set up a Wi-Fi router",
+    before: "To get online, you should probably plug everything in and wait a while for the lights to do their thing, and then you can maybe connect your phone once it seems ready, assuming nothing goes wrong.",
+    warn: "Keep the router away from water.",
+    after: ["Connect the router to the wall socket.", "Connect the router to the modem with the grey cable.", "Wait 2 minutes for the power light to turn green.", "On your phone, open Wi-Fi settings.", "Select the network name on the router label.", "Enter the password on the router label."],
+    stats: [["Fog words", "5", "0"], ["Safety warning", "none", "before step 1"], ["Steps", "implied", "6 numbered"]]
+  },
+  {
+    topic: "Repot a plant",
+    before: "When the plant seems a bit too big, you might want to move it to a somewhat larger pot with some fresh soil, watering it a little afterward, more or less when it looks dry.",
+    warn: null,
+    after: ["Choose a pot 5 cm wider than the old pot.", "Fill the new pot one-third with fresh soil.", "Lift the plant out of the old pot.", "Place the plant in the new pot.", "Add soil around the roots.", "Water the plant with 200 ml of water."],
+    stats: [["Fog words", "5", "0"], ["Sizes", "“somewhat larger”", "“5 cm wider”"], ["Steps", "1 sentence", "6 steps"]]
+  }
 ];
 
-/* ---------- App state ---------- */
-let rounds = [];
-let idx = 0;
-let score = 0;
-const ROUND_COUNT = 8;
-const POINTS = 100;
+/* ---------- State ---------- */
+let rounds = [], idx = 0, score = 0;
+const ROUND_COUNT = 8, POINTS = 100;
 
 function show(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    window.scrollTo(0, 0);
-    if (id === 'ba') renderBA();
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'ba') renderBA();
 }
 
 function shuffle(a) {
-    a = a.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
+  a = a.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
 }
 
 /* ---------- Game ---------- */
 function startGame() {
-    const pool = shuffle([
-        ...CHOOSE.map(c => ({ type: 'choose', data: c })),
-        ...SPOT.map(s => ({ type: 'spot', data: s }))
-    ]);
-    rounds = pool.slice(0, ROUND_COUNT);
-    idx = 0;
-    score = 0;
-    document.getElementById('roundTotal').textContent = rounds.length;
-    document.getElementById('maxScore').textContent = rounds.length * POINTS;
-    renderRound();
+  const pool = shuffle([
+    ...CHOOSE.map(c => ({ type: 'choose', data: c })),
+    ...SPOT.map(s => ({ type: 'spot', data: s }))
+  ]);
+  rounds = pool.slice(0, ROUND_COUNT);
+  idx = 0; score = 0;
+  document.getElementById('roundTotal').textContent = rounds.length;
+  document.getElementById('maxScore').textContent = rounds.length * POINTS;
+  renderRound();
 }
 
 function renderRound() {
-    const r = rounds[idx];
-    document.getElementById('roundNum').textContent = idx + 1;
-    document.getElementById('scoreNum').textContent = score;
-    document.getElementById('progress').style.width = (idx / rounds.length * 100) + '%';
-    document.getElementById('roundFeedback').innerHTML = '';
-    document.getElementById('nextBtn').classList.add('hidden');
-    document.getElementById('nextBtn').textContent = (idx + 1 < rounds.length) ? 'Next →' : 'See results →';
-
-    if (r.type === 'choose') renderChoose(r.data);
-    else renderSpot(r.data);
+  const r = rounds[idx];
+  document.getElementById('roundNum').textContent = idx + 1;
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('plane').style.left = 'calc(' + (idx / rounds.length * 100) + '% - ' + (idx / rounds.length * 18) + 'px)';
+  document.getElementById('roundFeedback').innerHTML = '';
+  const nb = document.getElementById('nextBtn');
+  nb.classList.add('hidden');
+  nb.textContent = (idx + 1 < rounds.length) ? 'Next Page →' : 'Finish inspection →';
+  if (r.type === 'choose') renderChoose(r.data); else renderSpot(r.data);
 }
 
 function renderChoose(d) {
-    const opts = shuffle(d.options);
-    const html = `
-        <span class="rule-tag">Rule · ${d.rule}</span>
-        <div class="q-task">${d.task}</div>
-        <div class="q-prompt">${d.prompt}</div>
-        <div class="options" id="opts">
-            ${opts.map((o, i) => `<div class="option" data-ok="${o.ok}" onclick="pickChoose(this)">${o.t}</div>`).join('')}
-        </div>`;
-    document.getElementById('roundBody').innerHTML = html;
+  const opts = shuffle(d.options);
+  document.getElementById('roundBody').innerHTML = `
+    <div class="rule-tag">Rule · ${d.rule}</div>
+    <div class="q-task">${d.task}</div>
+    <div class="q-prompt">${d.prompt}</div>
+    <div class="options" id="opts">
+      ${opts.map(o => `<div class="option" data-ok="${o.ok}" onclick="pickChoose(this)">${o.t}<span class="stamp"></span></div>`).join('')}
+    </div>`;
 }
 
 function pickChoose(el) {
-    const correct = el.dataset.ok === 'true';
-    document.querySelectorAll('#opts .option').forEach(o => {
-        o.classList.add('disabled');
-        if (o.dataset.ok === 'true') o.classList.add('correct');
-    });
-    if (!correct) el.classList.add('wrong');
-    if (correct) score += POINTS;
-    document.getElementById('scoreNum').textContent = score;
-
-    const d = rounds[idx].data;
-    showFeedback(correct, correct ? 'Correct.' : 'Not quite.', d.why);
+  const correct = el.dataset.ok === 'true';
+  document.querySelectorAll('#opts .option').forEach(o => {
+    o.classList.add('disabled');
+    const st = o.querySelector('.stamp');
+    if (o.dataset.ok === 'true') { o.classList.add('correct'); st.textContent = 'Approved'; st.classList.add('approved', 'show'); }
+    else { o.classList.add('wrong'); if (o === el) { st.textContent = 'Rejected'; st.classList.add('rejected', 'show'); } else { o.classList.add('dim'); } }
+  });
+  if (correct) { score += POINTS; document.getElementById('scoreNum').textContent = score; }
+  const d = rounds[idx].data;
+  showFeedback(correct, correct ? 'Cleared for takeoff.' : 'Grounded.', d.why);
 }
 
 function renderSpot(d) {
-    const html = `
-        <span class="rule-tag">Rule · No hedging</span>
-        <div class="q-task">${d.task}</div>
-        <div class="q-prompt">Tap every word that breaks the rules. Then submit.</div>
-        <div class="spot-sentence" id="spot">
-            ${d.tokens.map((t, i) => `<span class="word" data-i="${i}" onclick="toggleWord(this)">${t[0]}</span>`).join(' ')}
-        </div>
-        <p class="hint">Look for hedge words: could, might, may, maybe, possibly, perhaps, generally, usually, roughly, probably, seem.</p>
-        <button class="btn btn-primary" id="spotSubmit" onclick="submitSpot()">Submit</button>`;
-    document.getElementById('roundBody').innerHTML = html;
+  document.getElementById('roundBody').innerHTML = `
+    <div class="rule-tag">Rule · No hedging</div>
+    <div class="q-task">${d.task}</div>
+    <div class="q-prompt">Fog on the runway. Tap every weasel word, then call it in.</div>
+    <div class="spot-sentence" id="spot">
+      ${d.tokens.map((t, i) => `<span class="word" data-i="${i}" onclick="toggleWord(this)">${t[0]}</span>`).join(' ')}
+    </div>
+    <p class="hint">Weasel words: could, might, may, maybe, possibly, perhaps, generally, usually, roughly, probably, seem.</p>
+    <button class="btn-primary" id="spotSubmit" onclick="submitSpot()">Call it in</button>`;
 }
 
-function toggleWord(el) {
-    el.classList.toggle('picked');
-}
+function toggleWord(el) { el.classList.toggle('picked'); }
 
 function submitSpot() {
-    const d = rounds[idx].data;
-    document.getElementById('spotSubmit').classList.add('hidden');
-    let hits = 0, misses = 0, falsePicks = 0;
-    const totalBad = d.tokens.filter(t => t[1] === 1).length;
-
-    document.querySelectorAll('#spot .word').forEach(w => {
-        w.classList.add('locked');
-        const i = +w.dataset.i;
-        const isBad = d.tokens[i][1] === 1;
-        const picked = w.classList.contains('picked');
-        w.classList.remove('picked');
-        if (isBad && picked) { w.classList.add('hit'); hits++; }
-        else if (isBad && !picked) { w.classList.add('miss'); misses++; }
-        else if (!isBad && picked) { w.classList.add('falsepick'); falsePicks++; }
-    });
-
-    const raw = (hits - falsePicks) / totalBad;
-    const gained = Math.max(0, Math.round(raw * POINTS));
-    score += gained;
-    document.getElementById('scoreNum').textContent = score;
-
-    const good = gained >= POINTS;
-    const msg = good ? `All hedge words found. +${gained}` : `${hits}/${totalBad} found, ${falsePicks} wrong. +${gained}`;
-    showFeedback(good, msg, 'Clear version:', d.fix);
+  const d = rounds[idx].data;
+  document.getElementById('spotSubmit').classList.add('hidden');
+  let hits = 0, falsePicks = 0;
+  const totalBad = d.tokens.filter(t => t[1] === 1).length;
+  document.querySelectorAll('#spot .word').forEach(w => {
+    w.classList.add('locked');
+    const i = +w.dataset.i, isBad = d.tokens[i][1] === 1, picked = w.classList.contains('picked');
+    w.classList.remove('picked');
+    if (isBad && picked) { w.classList.add('hit'); hits++; }
+    else if (isBad && !picked) { w.classList.add('miss'); }
+    else if (!isBad && picked) { w.classList.add('falsepick'); falsePicks++; }
+  });
+  const gained = Math.max(0, Math.round((hits - falsePicks) / totalBad * POINTS));
+  score += gained;
+  document.getElementById('scoreNum').textContent = score;
+  const good = gained >= POINTS;
+  const msg = good ? `Skies clear. All fog cleared. +${gained}` : `${hits}/${totalBad} cleared, ${falsePicks} false call. +${gained}`;
+  showFeedback(good, msg, 'Rewrite the line clean:', d.fix);
 }
 
 function showFeedback(good, title, body, fix) {
-    const el = document.getElementById('roundFeedback');
-    el.innerHTML = `
-        <div class="feedback ${good ? 'good' : 'bad'}">
-            <b>${title}</b>${body}
-            ${fix ? `<div class="fix">${fix}</div>` : ''}
-        </div>`;
-    document.getElementById('nextBtn').classList.remove('hidden');
+  document.getElementById('roundFeedback').innerHTML = `
+    <div class="feedback ${good ? 'good' : 'bad'}">
+      <span class="ctrl">Ground Control</span>
+      <b>${title}</b> ${body}
+      ${fix ? `<div class="fix">${fix}</div>` : ''}
+    </div>`;
+  document.getElementById('nextBtn').classList.remove('hidden');
 }
 
 function nextRound() {
-    idx++;
-    if (idx < rounds.length) {
-        renderRound();
-    } else {
-        endGame();
-    }
+  idx++;
+  if (idx < rounds.length) renderRound(); else endGame();
 }
 
 function endGame() {
-    const max = rounds.length * POINTS;
-    document.getElementById('finalScore').textContent = score;
-    document.getElementById('verdict').textContent = verdictText(score / max);
-    show('results');
+  const max = rounds.length * POINTS, pct = score / max;
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('rank').textContent = rankName(pct);
+  document.getElementById('verdict').textContent = verdictText(pct);
+  const stamp = document.getElementById('certStamp');
+  const cleared = pct >= 0.65;
+  stamp.textContent = cleared ? 'Cleared' : 'Re-inspect';
+  stamp.style.color = cleared ? 'var(--green)' : 'var(--red)';
+  stamp.style.borderColor = cleared ? 'var(--green)' : 'var(--red)';
+  show('results');
 }
 
+function rankName(pct) {
+  if (pct >= 0.9) return "Chief Inspector";
+  if (pct >= 0.65) return "Captain";
+  if (pct >= 0.4) return "First Officer";
+  return "Cadet";
+}
 function verdictText(pct) {
-    if (pct >= 0.9) return "You write like a maintenance manual. One action, one sentence, no hedging.";
-    if (pct >= 0.65) return "Strong. You spot the hedging and pick the clear version most of the time.";
-    if (pct >= 0.4) return "Getting there. Read The Method, then play again.";
-    return "Start with The Method. The 6 rules make the next round much easier.";
+  if (pct >= 0.9) return "You stamp manuals like a pro. One action, one line, zero fog.";
+  if (pct >= 0.65) return "Steady hands. You spot the fog and clear the right page most of the time.";
+  if (pct >= 0.4) return "You are off the ground. Read The Manual, then re-inspect.";
+  return "Back to ground school. The 6-rule checklist makes the next run much easier.";
 }
 
-/* ---------- Before / After ---------- */
+/* ---------- Hangar (before/after) ---------- */
 function renderBA() {
-    document.getElementById('baContent').innerHTML = BA.map(b => `
-        <div class="ba-card">
-            <div class="ba-head">${b.topic}</div>
-            <div class="ba-body">
-                <div class="ba-col before">
-                    <div class="ba-label before">Without the method</div>
-                    <p>${b.before}</p>
-                </div>
-                <div class="ba-col after">
-                    <div class="ba-label after">With the method</div>
-                    ${b.warn ? `<div class="ba-warn">Warning: ${b.warn}</div>` : ''}
-                    <ol>${b.after.map(s => `<li>${s}</li>`).join('')}</ol>
-                </div>
-            </div>
-            <div class="ba-stats">
-                ${b.stats.map(s => `<span class="ba-stat">${s[0]}: <b>${s[1]}</b> <span class="arrow">→</span> <b>${s[2]}</b></span>`).join('')}
-            </div>
-        </div>`).join('');
+  document.getElementById('baContent').innerHTML = BA.map(b => `
+    <div class="ba-card">
+      <div class="ba-head">${b.topic}</div>
+      <div class="ba-body">
+        <div class="ba-col before">
+          <span class="ba-label before">Grounded</span>
+          <p>${b.before}</p>
+        </div>
+        <div class="ba-col after">
+          <span class="ba-label after">Cleared</span>
+          ${b.warn ? `<div class="ba-warn"><span>⚠ Warning: ${b.warn}</span></div>` : ''}
+          <ol>${b.after.map(s => `<li>${s}</li>`).join('')}</ol>
+        </div>
+      </div>
+      <div class="ba-stats">
+        ${b.stats.map(s => `<span class="ba-stat">${s[0]}: <b>${s[1]}</b> <span class="ar">→</span> <b>${s[2]}</b></span>`).join('')}
+      </div>
+    </div>`).join('');
 }
 
-/* ---------- Method ---------- */
+/* ---------- Manual (method) ---------- */
 function switchTab(name, btn) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
 }
 
-function copyPrompt() {
-    const text = document.getElementById('promptText').textContent.replace(/^Copy/, '').trim();
-    navigator.clipboard.writeText(text).then(() => {
-        const b = document.querySelector('.copy-btn');
-        b.textContent = 'Copied';
-        setTimeout(() => b.textContent = 'Copy', 1600);
-    }).catch(() => {});
+function copyPrompt(btn) {
+  navigator.clipboard.writeText(PROMPT).then(() => {
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => btn.textContent = 'Copy', 1600);
+  }).catch(() => {});
 }
+
+document.getElementById('promptText').textContent = PROMPT;
 </script>
 </body>
 </html>
